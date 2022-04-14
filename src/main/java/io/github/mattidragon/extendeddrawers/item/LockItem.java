@@ -5,6 +5,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemUsageContext;
 import net.minecraft.util.ActionResult;
 
+//TODO: tooltip? hard!
 public class LockItem extends Item {
     public LockItem(Settings settings) {
         super(settings);

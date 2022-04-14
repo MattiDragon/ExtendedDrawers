@@ -21,7 +21,6 @@ import net.minecraft.network.listener.ClientPlayPacketListener;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.util.math.BlockPos;
 
-import java.util.Arrays;
 import java.util.List;
 
 @SuppressWarnings("UnstableApiUsage")
@@ -29,7 +28,7 @@ public class DrawerBlockEntity extends BlockEntity {
     public final DrawerStorage[] storages = new DrawerStorage[((DrawerBlock)this.getCachedState().getBlock()).slots];
     public final Storage<ItemVariant> combinedStorage;
     public long lastInsertTimestamp = -1; // Used to handle double click
-    public long lastExtractTimestamp = -1; // Turns out because mojank it can be triggered multiple times per tick
+    public long lastExtractTimestamp = -1; // Turns out, because mojank, it can be triggered again if the hand item is changed
     
     static {
         ItemStorage.SIDED.registerForBlockEntity((drawer, dir) -> drawer.combinedStorage, ModBlocks.DRAWER_BLOCK_ENTITY);
@@ -142,6 +141,7 @@ public class DrawerBlockEntity extends BlockEntity {
         @Override
         protected void onFinalCommit() {
             markDirty();
+            assert world != null;
             world.updateListeners(pos, getCachedState(), getCachedState(), Block.NOTIFY_LISTENERS);
         }
     }

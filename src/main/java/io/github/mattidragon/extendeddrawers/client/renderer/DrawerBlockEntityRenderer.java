@@ -1,7 +1,5 @@
 package io.github.mattidragon.extendeddrawers.client.renderer;
 
-import com.google.common.collect.Iterables;
-import com.mojang.blaze3d.systems.RenderSystem;
 import io.github.mattidragon.extendeddrawers.ExtendedDrawers;
 import io.github.mattidragon.extendeddrawers.block.DrawerBlock;
 import io.github.mattidragon.extendeddrawers.block.entity.DrawerBlockEntity;
@@ -9,17 +7,22 @@ import io.github.mattidragon.extendeddrawers.registry.ModItems;
 import net.fabricmc.fabric.api.renderer.v1.RendererAccess;
 import net.fabricmc.fabric.api.renderer.v1.mesh.MutableQuadView;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.render.*;
+import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.client.render.OverlayTexture;
+import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.render.VertexConsumerProvider;
+import net.minecraft.client.render.WorldRenderer;
 import net.minecraft.client.render.block.entity.BlockEntityRenderer;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
-import net.minecraft.client.render.model.SpriteAtlasManager;
 import net.minecraft.client.render.model.json.ModelTransformation;
 import net.minecraft.client.texture.SpriteAtlasTexture;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.screen.PlayerScreenHandler;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Matrix4f;
 import net.minecraft.util.math.Vec3f;
 
+import java.util.Objects;
 import java.util.stream.StreamSupport;
 
 @SuppressWarnings("UnstableApiUsage")
@@ -38,7 +41,7 @@ public class DrawerBlockEntityRenderer implements BlockEntityRenderer<DrawerBloc
         matrices.multiply(Vec3f.POSITIVE_X.getDegreesQuaternion(-90));
         matrices.translate(0, 0, 0.01);
     
-        light = WorldRenderer.getLightmapCoordinates(entity.getWorld(), entity.getPos().offset(dir));
+        light = WorldRenderer.getLightmapCoordinates(Objects.requireNonNull(entity.getWorld()), entity.getPos().offset(dir));
         var slots = ((DrawerBlock)entity.getCachedState().getBlock()).slots;
     
         switch (slots) {
@@ -69,18 +72,23 @@ public class DrawerBlockEntityRenderer implements BlockEntityRenderer<DrawerBloc
     
     private void renderSlot(DrawerBlockEntity.DrawerStorage storage, int light, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int seed, int overlay) {
         renderText(storage, light, matrices, vertexConsumers);
-        if (storage.locked && StreamSupport.stream(MinecraftClient.getInstance().player.getItemsHand().spliterator(), false).anyMatch(stack -> stack.getItem() == ModItems.LOCK))
-            renderLock(light, matrices, vertexConsumers, overlay);
+        if (storage.locked) renderLock(light, matrices, vertexConsumers, overlay);
         renderItem(storage, light, matrices, vertexConsumers, seed);
     }
     
     private void renderLock(int light, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int overlay) {
+        var mc = MinecraftClient.getInstance();
+        
+        // check for item
+        if (mc.player != null && StreamSupport.stream(mc.player.getItemsHand().spliterator(), false).anyMatch(stack -> stack.isOf(ModItems.LOCK)))
+            return;
+        
         matrices.push();
         matrices.multiply(Vec3f.POSITIVE_X.getDegreesQuaternion(90));
         matrices.translate(-0.125, -0.24, -0.5);
         matrices.scale(0.25f, 0.25f, 0.25f);
-        var sprite = MinecraftClient.getInstance().getSpriteAtlas(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE).apply(ExtendedDrawers.id("item/lock"));
-        var emitter = RendererAccess.INSTANCE.getRenderer().meshBuilder().getEmitter();
+        var sprite = mc.getSpriteAtlas(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE).apply(ExtendedDrawers.id("item/lock"));
+        var emitter = Objects.requireNonNull(RendererAccess.INSTANCE.getRenderer()).meshBuilder().getEmitter();
         emitter.square(Direction.UP, 0, 0, 1, 1, 0);
         emitter.spriteBake(0, sprite, MutableQuadView.BAKE_LOCK_UV);
         vertexConsumers.getBuffer(RenderLayer.getCutout()).quad(matrices.peek(), emitter.toBakedQuad(0, sprite, false), 1, 1, 1, light, overlay);
