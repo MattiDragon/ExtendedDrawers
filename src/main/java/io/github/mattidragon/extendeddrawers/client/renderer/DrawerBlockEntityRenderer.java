@@ -69,22 +69,21 @@ public class DrawerBlockEntityRenderer implements BlockEntityRenderer<DrawerBloc
     
     private void renderSlot(DrawerBlockEntity.DrawerStorage storage, int light, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int seed, int overlay) {
         renderText(storage, light, matrices, vertexConsumers);
-        renderItem(storage, light, matrices, vertexConsumers, seed);
         if (storage.locked && StreamSupport.stream(MinecraftClient.getInstance().player.getItemsHand().spliterator(), false).anyMatch(stack -> stack.getItem() == ModItems.LOCK))
             renderLock(light, matrices, vertexConsumers, overlay);
+        renderItem(storage, light, matrices, vertexConsumers, seed);
     }
     
     private void renderLock(int light, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int overlay) {
         matrices.push();
         matrices.multiply(Vec3f.POSITIVE_X.getDegreesQuaternion(90));
-        matrices.translate(-0.5, -0.98, -0.2);
-        matrices.scale(0.5f, 0.5f, 0.5f);
-        RenderSystem.enableDepthTest();
+        matrices.translate(-0.125, -0.24, -0.5);
+        matrices.scale(0.25f, 0.25f, 0.25f);
         var sprite = MinecraftClient.getInstance().getSpriteAtlas(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE).apply(ExtendedDrawers.id("item/lock"));
         var emitter = RendererAccess.INSTANCE.getRenderer().meshBuilder().getEmitter();
         emitter.square(Direction.UP, 0, 0, 1, 1, 0);
         emitter.spriteBake(0, sprite, MutableQuadView.BAKE_LOCK_UV);
-        vertexConsumers.getBuffer(RenderLayer.getTranslucent()).quad(matrices.peek(), emitter.toBakedQuad(0, sprite, false), 1, 1, 1, light, overlay);
+        vertexConsumers.getBuffer(RenderLayer.getCutout()).quad(matrices.peek(), emitter.toBakedQuad(0, sprite, false), 1, 1, 1, light, overlay);
         matrices.pop();
     }
     
