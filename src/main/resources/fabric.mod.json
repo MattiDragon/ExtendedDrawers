@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "extended_drawers",
+  "version": "${version}",
+  "name": "ExtendedDrawers",
+  "description": "Adds drawers and more.",
+  "authors": [
+    "MattiDragon"
+  ],
+  "contact": {
+    "sources": "https://github.com/MattiDragon/ExtendedDrawers"
+  },
+  "license": "MIT",
+  "icon": "assets/extended_drawers/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "client": [
+      "io.github.mattidragon.extendeddrawers.client.ExtendedDrawersClient"
+    ],
+    "main": [
+      "io.github.mattidragon.extendeddrawers.ExtendedDrawers"
+    ]
+  },
+  "mixins": [
+    "extended_drawers.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.13.3",
+    "fabric": "*",
+    "minecraft": "1.18.2"
+  }
+}

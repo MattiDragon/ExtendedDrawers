@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/cube_bottom_top",
+  "textures": {
+    "top": "extended_drawers:block/double_drawer",
+    "bottom": "extended_drawers:block/drawer_base",
+    "side": "extended_drawers:block/drawer_base"
+  }
+}
