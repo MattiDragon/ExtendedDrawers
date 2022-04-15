@@ -28,6 +28,7 @@ public class DrawerBlockEntity extends BlockEntity {
     public final DrawerSlot[] storages = new DrawerSlot[((DrawerBlock)this.getCachedState().getBlock()).slots];
     public final Storage<ItemVariant> combinedStorage;
     public long lastInsertTimestamp = -1; // Used to handle double click
+    public ItemVariant lastInsertType = null;
     public long lastExtractTimestamp = -1; // Turns out, because mojank, it can be triggered again if the hand item is changed
     
     static {

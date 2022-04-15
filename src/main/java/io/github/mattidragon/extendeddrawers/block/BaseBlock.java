@@ -1,5 +1,6 @@
 package io.github.mattidragon.extendeddrawers.block;
 
+import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.BlockWithEntity;
 import net.minecraft.block.entity.BlockEntity;
@@ -8,6 +9,11 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 public abstract class BaseBlock<T extends BlockEntity> extends BlockWithEntity {
+    @Override
+    public BlockRenderType getRenderType(BlockState state) {
+        return BlockRenderType.MODEL;
+    }
+    
     protected BaseBlock(Settings settings) {
         super(settings);
     }

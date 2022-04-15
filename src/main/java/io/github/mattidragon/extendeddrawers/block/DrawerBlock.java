@@ -74,11 +74,6 @@ public class DrawerBlock extends BaseBlock<DrawerBlockEntity> implements Lockabl
     }
     
     @Override
-    public BlockRenderType getRenderType(BlockState state) {
-        return BlockRenderType.MODEL;
-    }
-    
-    @Override
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
         var internalPos = calculateFaceLocation(pos, hit.getPos(), hit.getSide(), state.get(FACING));
         if (internalPos == null) return ActionResult.PASS;
@@ -93,20 +88,20 @@ public class DrawerBlock extends BaseBlock<DrawerBlockEntity> implements Lockabl
             var storage = drawer.storages[slot];
             
             if (insertAll) {
-                inserted = (int) StorageUtil.move(PlayerInventoryStorage.of(player), storage, itemVariant -> true, storage.getCapacity() - storage.amount, t);
+                inserted = (int) StorageUtil.move(PlayerInventoryStorage.of(player), storage, itemVariant -> itemVariant.equals(drawer.lastInsertType), storage.getCapacity() - storage.amount, t);
                 drawer.lastInsertTimestamp = -1;
             } else {
                 var playerStack = player.getStackInHand(hand);
                 if (playerStack.isEmpty()) return ActionResult.PASS;
                 
                 inserted = (int) storage.insert(ItemVariant.of(playerStack), playerStack.getCount(), t);
-                playerStack.decrement(inserted);
                 drawer.lastInsertTimestamp = world.getTime();
+                drawer.lastInsertType = ItemVariant.of(playerStack);
+                playerStack.decrement(inserted);
             }
             if (inserted == 0) return ActionResult.PASS;
             
             t.commit();
-            drawer.markDirty();
             return ActionResult.SUCCESS;
         }
     }
