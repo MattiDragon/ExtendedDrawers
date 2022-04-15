@@ -1,7 +1,7 @@
 package io.github.mattidragon.extendeddrawers.block;
 
-import io.github.mattidragon.extendeddrawers.Lockable;
 import io.github.mattidragon.extendeddrawers.block.entity.DrawerBlockEntity;
+import io.github.mattidragon.extendeddrawers.registry.ModBlocks;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.item.PlayerInventoryStorage;
 import net.fabricmc.fabric.api.transfer.v1.storage.StorageUtil;
@@ -9,8 +9,8 @@ import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.BlockWithEntity;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.state.StateManager;
@@ -31,7 +31,7 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 @SuppressWarnings({"UnstableApiUsage", "deprecation"})
-public class DrawerBlock extends BlockWithEntity implements Lockable {
+public class DrawerBlock extends BaseBlock<DrawerBlockEntity> implements Lockable, NetworkComponent {
     public static final DirectionProperty FACING = Properties.HORIZONTAL_FACING;
     
     public final int slots;
@@ -60,6 +60,11 @@ public class DrawerBlock extends BlockWithEntity implements Lockable {
     @Override
     public BlockState mirror(BlockState state, BlockMirror mirror) {
         return state.rotate(mirror.getRotation(state.get(FACING)));
+    }
+    
+    @Override
+    protected BlockEntityType<DrawerBlockEntity> getType() {
+        return ModBlocks.DRAWER_BLOCK_ENTITY;
     }
     
     @Nullable
@@ -158,12 +163,6 @@ public class DrawerBlock extends BlockWithEntity implements Lockable {
         };
     }
     
-    private static DrawerBlockEntity getBlockEntity(World world, BlockPos pos) {
-        var entity = world.getBlockEntity(pos);
-        if (entity instanceof DrawerBlockEntity drawer) return drawer;
-        throw new IllegalStateException("Drawer missing block entity!");
-    }
-    
     private BlockHitResult getTarget(PlayerEntity player, BlockPos target) {
         var from = player.getEyePos();
         var length = Vec3d.ofCenter(target).subtract(from).length() + 1; //Add a bit of extra length for consistency
@@ -177,6 +176,6 @@ public class DrawerBlock extends BlockWithEntity implements Lockable {
         var facePos = calculateFaceLocation(pos, hitPos, side, state.get(FACING));
         if (facePos == null) return;
         var storage = getBlockEntity(world, pos).storages[getSlot(facePos)];
-        storage.locked = !storage.locked;
+        storage.setLocked(!storage.locked);
     }
 }

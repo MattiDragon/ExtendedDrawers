@@ -1,4 +1,4 @@
-package io.github.mattidragon.extendeddrawers;
+package io.github.mattidragon.extendeddrawers.block;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;

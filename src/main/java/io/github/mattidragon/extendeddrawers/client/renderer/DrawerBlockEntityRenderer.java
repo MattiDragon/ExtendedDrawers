@@ -7,7 +7,6 @@ import io.github.mattidragon.extendeddrawers.registry.ModItems;
 import net.fabricmc.fabric.api.renderer.v1.RendererAccess;
 import net.fabricmc.fabric.api.renderer.v1.mesh.MutableQuadView;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumerProvider;
@@ -15,7 +14,6 @@ import net.minecraft.client.render.WorldRenderer;
 import net.minecraft.client.render.block.entity.BlockEntityRenderer;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
 import net.minecraft.client.render.model.json.ModelTransformation;
-import net.minecraft.client.texture.SpriteAtlasTexture;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.screen.PlayerScreenHandler;
 import net.minecraft.util.math.Direction;
@@ -70,7 +68,7 @@ public class DrawerBlockEntityRenderer implements BlockEntityRenderer<DrawerBloc
         matrices.pop();
     }
     
-    private void renderSlot(DrawerBlockEntity.DrawerStorage storage, int light, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int seed, int overlay) {
+    private void renderSlot(DrawerBlockEntity.DrawerSlot storage, int light, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int seed, int overlay) {
         renderText(storage, light, matrices, vertexConsumers);
         if (storage.locked) renderLock(light, matrices, vertexConsumers, overlay);
         renderItem(storage, light, matrices, vertexConsumers, seed);
@@ -80,7 +78,7 @@ public class DrawerBlockEntityRenderer implements BlockEntityRenderer<DrawerBloc
         var mc = MinecraftClient.getInstance();
         
         // check for item
-        if (mc.player != null && StreamSupport.stream(mc.player.getItemsHand().spliterator(), false).anyMatch(stack -> stack.isOf(ModItems.LOCK)))
+        if (mc.player == null || StreamSupport.stream(mc.player.getItemsHand().spliterator(), false).noneMatch(stack -> stack.isOf(ModItems.LOCK)))
             return;
         
         matrices.push();
@@ -95,7 +93,7 @@ public class DrawerBlockEntityRenderer implements BlockEntityRenderer<DrawerBloc
         matrices.pop();
     }
     
-    private void renderItem(DrawerBlockEntity.DrawerStorage storage, int light, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int seed) {
+    private void renderItem(DrawerBlockEntity.DrawerSlot storage, int light, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int seed) {
         matrices.push();
         matrices.scale(0.75f, 0.75f, 1);
         matrices.multiplyPositionMatrix(Matrix4f.scale(1, 1, 0.01f));
@@ -103,7 +101,7 @@ public class DrawerBlockEntityRenderer implements BlockEntityRenderer<DrawerBloc
         matrices.pop();
     }
     
-    private void renderText(DrawerBlockEntity.DrawerStorage storage, int light, MatrixStack matrices, VertexConsumerProvider vertexConsumers) {
+    private void renderText(DrawerBlockEntity.DrawerSlot storage, int light, MatrixStack matrices, VertexConsumerProvider vertexConsumers) {
         if (storage.isResourceBlank()) return;
         
         matrices.push();

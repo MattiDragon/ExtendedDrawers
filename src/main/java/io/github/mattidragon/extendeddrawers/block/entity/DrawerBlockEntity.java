@@ -25,7 +25,7 @@ import java.util.List;
 
 @SuppressWarnings("UnstableApiUsage")
 public class DrawerBlockEntity extends BlockEntity {
-    public final DrawerStorage[] storages = new DrawerStorage[((DrawerBlock)this.getCachedState().getBlock()).slots];
+    public final DrawerSlot[] storages = new DrawerSlot[((DrawerBlock)this.getCachedState().getBlock()).slots];
     public final Storage<ItemVariant> combinedStorage;
     public long lastInsertTimestamp = -1; // Used to handle double click
     public long lastExtractTimestamp = -1; // Turns out, because mojank, it can be triggered again if the hand item is changed
@@ -36,7 +36,7 @@ public class DrawerBlockEntity extends BlockEntity {
     
     public DrawerBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlocks.DRAWER_BLOCK_ENTITY, pos, state);
-        for (int i = 0; i < storages.length; i++) storages[i] = new DrawerStorage();
+        for (int i = 0; i < storages.length; i++) storages[i] = new DrawerSlot();
         combinedStorage = new CombinedStorage<>(List.of(storages));
     }
     
@@ -80,10 +80,16 @@ public class DrawerBlockEntity extends BlockEntity {
         nbt.put("items", list);
     }
     
-    public final class DrawerStorage extends SnapshotParticipant<ResourceAmount<ItemVariant>> implements SingleSlotStorage<ItemVariant> {
-        public ItemVariant item;
+    public final class DrawerSlot extends SnapshotParticipant<ResourceAmount<ItemVariant>> implements SingleSlotStorage<ItemVariant> {
+        public ItemVariant item = ItemVariant.blank();
         public long amount;
         public boolean locked;
+        
+        public void setLocked(boolean locked) {
+            this.locked = locked;
+            update();
+            if (!locked && amount == 0) item = ItemVariant.blank();
+        }
         
         @Override
         public long insert(ItemVariant resource, long maxAmount, TransactionContext transaction) {
@@ -140,6 +146,10 @@ public class DrawerBlockEntity extends BlockEntity {
     
         @Override
         protected void onFinalCommit() {
+            update();
+        }
+    
+        public void update() {
             markDirty();
             assert world != null;
             world.updateListeners(pos, getCachedState(), getCachedState(), Block.NOTIFY_LISTENERS);
