@@ -1,14 +1,12 @@
 package io.github.mattidragon.extendeddrawers.block;
 
 import com.google.common.collect.Queues;
+import io.github.mattidragon.extendeddrawers.block.entity.DrawerBlockEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.BiPredicate;
 
 public interface NetworkComponent {
@@ -60,5 +58,19 @@ public interface NetworkComponent {
         }
     
         return found;
+    }
+    
+    static List<DrawerBlockEntity.DrawerSlot> getConnectedStorages(World world, BlockPos pos) {
+        return findAllDrawers(world, pos).stream()
+                .map(world::getBlockEntity)
+                .map(DrawerBlockEntity.class::cast)
+                .filter(Objects::nonNull)
+                .flatMap(drawer -> Arrays.stream(drawer.storages))
+                .sorted()
+                .toList();
+    }
+    
+    static List<BlockPos> findAllDrawers(World world, BlockPos pos) {
+        return NetworkComponent.findConnectedComponents(world, pos, (world1, pos1) -> world1.getBlockState(pos1).getBlock() instanceof DrawerBlock);
     }
 }

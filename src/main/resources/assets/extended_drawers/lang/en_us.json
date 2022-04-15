@@ -2,6 +2,7 @@
   "block.extended_drawers.double_drawer": "Double Drawer",
   "block.extended_drawers.quad_drawer": "Quad Drawer",
   "block.extended_drawers.single_drawer": "Drawer",
+  "block.extended_drawers.controller": "Drawer Controller",
 
   "item.extended_drawers.lock": "Drawer Lock"
 }

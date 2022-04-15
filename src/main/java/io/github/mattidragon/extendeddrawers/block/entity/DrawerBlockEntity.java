@@ -20,6 +20,7 @@ import net.minecraft.network.Packet;
 import net.minecraft.network.listener.ClientPlayPacketListener;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.util.math.BlockPos;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -27,9 +28,6 @@ import java.util.List;
 public class DrawerBlockEntity extends BlockEntity {
     public final DrawerSlot[] storages = new DrawerSlot[((DrawerBlock)this.getCachedState().getBlock()).slots];
     public final Storage<ItemVariant> combinedStorage;
-    public long lastInsertTimestamp = -1; // Used to handle double click
-    public ItemVariant lastInsertType = null;
-    public long lastExtractTimestamp = -1; // Turns out, because mojank, it can be triggered again if the hand item is changed
     
     static {
         ItemStorage.SIDED.registerForBlockEntity((drawer, dir) -> drawer.combinedStorage, ModBlocks.DRAWER_BLOCK_ENTITY);
@@ -81,7 +79,7 @@ public class DrawerBlockEntity extends BlockEntity {
         nbt.put("items", list);
     }
     
-    public final class DrawerSlot extends SnapshotParticipant<ResourceAmount<ItemVariant>> implements SingleSlotStorage<ItemVariant> {
+    public final class DrawerSlot extends SnapshotParticipant<ResourceAmount<ItemVariant>> implements SingleSlotStorage<ItemVariant>, Comparable<DrawerSlot> {
         public ItemVariant item = ItemVariant.blank();
         public long amount;
         public boolean locked;
@@ -154,6 +152,16 @@ public class DrawerBlockEntity extends BlockEntity {
             markDirty();
             assert world != null;
             world.updateListeners(pos, getCachedState(), getCachedState(), Block.NOTIFY_LISTENERS);
+        }
+    
+        @Override
+        public int compareTo(@NotNull DrawerSlot other) {
+            if (this.isResourceBlank() != other.isResourceBlank())
+                return this.isResourceBlank() ? 1 : -1;
+            if (this.locked != other.locked)
+                return this.locked ? -1 : 1;
+            
+            return 0;
         }
     }
 }

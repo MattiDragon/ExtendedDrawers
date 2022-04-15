@@ -7,7 +7,6 @@ import net.fabricmc.fabric.api.transfer.v1.item.PlayerInventoryStorage;
 import net.fabricmc.fabric.api.transfer.v1.storage.StorageUtil;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
@@ -29,6 +28,9 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.RaycastContext;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
+
+import static io.github.mattidragon.extendeddrawers.util.DrawerInteractionStatusManager.getAndResetExtractionTimer;
+import static io.github.mattidragon.extendeddrawers.util.DrawerInteractionStatusManager.getAndResetInsertStatus;
 
 @SuppressWarnings({"UnstableApiUsage", "deprecation"})
 public class DrawerBlock extends BaseBlock<DrawerBlockEntity> implements Lockable, NetworkComponent {
@@ -80,23 +82,20 @@ public class DrawerBlock extends BaseBlock<DrawerBlockEntity> implements Lockabl
         var slot = getSlot(internalPos);
         
         var drawer = getBlockEntity(world, pos);
-        var insertAll = world.getTime() - drawer.lastInsertTimestamp < 10; // TODO: add config
-        
+        var playerStack = player.getStackInHand(hand);
+        var insertStatus = getAndResetInsertStatus(player, pos, slot, ItemVariant.of(playerStack));
+    
         try (var t = Transaction.openOuter()) {
             int inserted;
     
             var storage = drawer.storages[slot];
-            
-            if (insertAll) {
-                inserted = (int) StorageUtil.move(PlayerInventoryStorage.of(player), storage, itemVariant -> itemVariant.equals(drawer.lastInsertType), storage.getCapacity() - storage.amount, t);
-                drawer.lastInsertTimestamp = -1;
+    
+            if (insertStatus.isPresent()) {
+                inserted = (int) StorageUtil.move(PlayerInventoryStorage.of(player), storage, itemVariant -> itemVariant.equals(insertStatus.get()), storage.getCapacity() - storage.amount, t);
             } else {
-                var playerStack = player.getStackInHand(hand);
                 if (playerStack.isEmpty()) return ActionResult.PASS;
                 
                 inserted = (int) storage.insert(ItemVariant.of(playerStack), playerStack.getCount(), t);
-                drawer.lastInsertTimestamp = world.getTime();
-                drawer.lastInsertType = ItemVariant.of(playerStack);
                 playerStack.decrement(inserted);
             }
             if (inserted == 0) return ActionResult.PASS;
@@ -111,7 +110,7 @@ public class DrawerBlock extends BaseBlock<DrawerBlockEntity> implements Lockabl
         if (world.isClient) return;
         
         var drawer = getBlockEntity(world, pos);
-        if (world.getTime() - drawer.lastExtractTimestamp <= 3) return; // Mojank moment
+        if (!getAndResetExtractionTimer(player)) return; // Mojank moment
         
         var hit = getTarget(player, pos);
         if (hit.getType() == HitResult.Type.MISS) return;
@@ -130,7 +129,6 @@ public class DrawerBlock extends BaseBlock<DrawerBlockEntity> implements Lockabl
     
             player.getInventory().insertStack(item.toStack(extracted));
             
-            drawer.lastExtractTimestamp = world.getTime();
             t.commit();
         }
     }
