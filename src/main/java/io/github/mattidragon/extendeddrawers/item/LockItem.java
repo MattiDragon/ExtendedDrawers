@@ -1,6 +1,6 @@
 package io.github.mattidragon.extendeddrawers.item;
 
-import io.github.mattidragon.extendeddrawers.block.Lockable;
+import io.github.mattidragon.extendeddrawers.block.base.Lockable;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemUsageContext;
 import net.minecraft.util.ActionResult;

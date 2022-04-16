@@ -1,6 +1,8 @@
 package io.github.mattidragon.extendeddrawers.block.entity;
 
 import io.github.mattidragon.extendeddrawers.block.DrawerBlock;
+import io.github.mattidragon.extendeddrawers.block.ShadowDrawerBlock;
+import io.github.mattidragon.extendeddrawers.block.base.NetworkComponent;
 import io.github.mattidragon.extendeddrawers.registry.ModBlocks;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
@@ -152,6 +154,11 @@ public class DrawerBlockEntity extends BlockEntity {
             markDirty();
             assert world != null;
             world.updateListeners(pos, getCachedState(), getCachedState(), Block.NOTIFY_LISTENERS);
+            NetworkComponent.findConnectedComponents(world, pos, (world1, pos1) -> world1.getBlockState(pos1).getBlock() instanceof ShadowDrawerBlock)
+                    .forEach(pos1 -> {
+                        var state = world.getBlockState(pos1);
+                        world.updateListeners(pos1, state, state, Block.NOTIFY_LISTENERS);
+                    });
         }
     
         @Override

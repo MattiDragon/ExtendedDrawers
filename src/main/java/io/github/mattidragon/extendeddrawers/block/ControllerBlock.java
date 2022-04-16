@@ -1,5 +1,7 @@
 package io.github.mattidragon.extendeddrawers.block;
 
+import io.github.mattidragon.extendeddrawers.block.base.Lockable;
+import io.github.mattidragon.extendeddrawers.block.base.NetworkComponent;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.item.PlayerInventoryStorage;

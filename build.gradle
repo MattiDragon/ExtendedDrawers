@@ -3,11 +3,14 @@ plugins {
     id 'maven-publish'
 }
 
-version = project.mod_version
-group = project.maven_group
+var run = System.env.GITHUB_RUN_NUMBER
+
+version project.mod_version + (run == null ? "" : "-dev.$run") + "+mc.$minecraft_version"
+group project.maven_group
+
+System.out.println version
 
 repositories {
-    maven { url "https://maven.jamieswhiteshirt.com/libs-release" }
 }
 
 dependencies {
@@ -16,15 +19,14 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:$loader_version"
 
     modImplementation "net.fabricmc.fabric-api:fabric-api:$fabric_version"
-    modCompileOnly "com.jamieswhiteshirt:reach-entity-attributes:$reach_entity_attributes_version"
 }
 
 processResources {
-    inputs.property "version", project.version
+    inputs.property "version", version
     filteringCharset "UTF-8"
 
     filesMatching("fabric.mod.json") {
-        expand "version": project.version
+        expand "version": version
     }
 }
 

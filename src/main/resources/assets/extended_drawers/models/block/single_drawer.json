@@ -1,8 +1,8 @@
 {
-  "parent": "minecraft:block/cube_bottom_top",
+  "parent": "minecraft:block/orientable",
   "textures": {
-    "top": "extended_drawers:block/single_drawer",
-    "bottom": "extended_drawers:block/drawer_base",
+    "front": "extended_drawers:block/single_drawer",
+    "top": "extended_drawers:block/drawer_base",
     "side": "extended_drawers:block/drawer_base"
   }
 }

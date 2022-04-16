@@ -1,11 +1,11 @@
 package io.github.mattidragon.extendeddrawers.block;
 
 import io.github.mattidragon.extendeddrawers.block.base.BaseBlock;
-import io.github.mattidragon.extendeddrawers.block.base.Lockable;
 import io.github.mattidragon.extendeddrawers.block.base.NetworkComponent;
-import io.github.mattidragon.extendeddrawers.block.entity.DrawerBlockEntity;
+import io.github.mattidragon.extendeddrawers.block.entity.ShadowDrawerBlockEntity;
 import io.github.mattidragon.extendeddrawers.registry.ModBlocks;
 import io.github.mattidragon.extendeddrawers.util.DrawerRaycastUtil;
+import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.item.PlayerInventoryStorage;
 import net.fabricmc.fabric.api.transfer.v1.storage.StorageUtil;
@@ -14,6 +14,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.DirectionProperty;
@@ -26,26 +27,27 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Vec2f;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 import static io.github.mattidragon.extendeddrawers.util.DrawerInteractionStatusManager.getAndResetExtractionTimer;
 import static io.github.mattidragon.extendeddrawers.util.DrawerInteractionStatusManager.getAndResetInsertStatus;
 
-@SuppressWarnings({"UnstableApiUsage", "deprecation"})
-public class DrawerBlock extends BaseBlock<DrawerBlockEntity> implements Lockable, NetworkComponent {
+@SuppressWarnings("UnstableApiUsage")
+public class ShadowDrawerBlock extends BaseBlock<ShadowDrawerBlockEntity> implements NetworkComponent {
     public static final DirectionProperty FACING = Properties.HORIZONTAL_FACING;
     
-    public final int slots;
-    
-    public DrawerBlock(Settings settings, int slots) {
+    public ShadowDrawerBlock(Settings settings) {
         super(settings);
-        this.slots = slots;
         setDefaultState(stateManager.getDefaultState().with(FACING, Direction.NORTH));
     }
     
+    
+    
     @Override
+    protected BlockEntityType<ShadowDrawerBlockEntity> getType() {
+        return ModBlocks.SHADOW_DRAWER_BLOCK_ENTITY;
+    }
+    
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
         builder.add(FACING);
     }
@@ -66,24 +68,26 @@ public class DrawerBlock extends BaseBlock<DrawerBlockEntity> implements Lockabl
     }
     
     @Override
-    protected BlockEntityType<DrawerBlockEntity> getType() {
-        return ModBlocks.DRAWER_BLOCK_ENTITY;
-    }
-    
-    @Override
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
-        var internalPos = DrawerRaycastUtil.calculateFaceLocation(pos, hit.getPos(), hit.getSide(), state.get(FACING));
-        if (internalPos == null) return ActionResult.PASS;
-        var slot = getSlot(internalPos);
+        if (hit.getSide() != state.get(FACING)) return ActionResult.PASS;
         
         var drawer = getBlockEntity(world, pos);
         var playerStack = player.getStackInHand(hand);
-        var insertStatus = getAndResetInsertStatus(player, pos, slot, ItemVariant.of(playerStack));
-    
+        
+        if (player.isSneaking() || drawer.item.isBlank()) {
+            drawer.item = ItemVariant.of(playerStack);
+            drawer.markDirty();
+            world.updateListeners(pos, state, state, Block.NOTIFY_LISTENERS);
+            return ActionResult.SUCCESS;
+        }
+        
+        var insertStatus = getAndResetInsertStatus(player, pos, 0, ItemVariant.of(playerStack));
+        
         try (var t = Transaction.openOuter()) {
             int inserted;
     
-            var storage = drawer.storages[slot];
+            var storage = ItemStorage.SIDED.find(world, pos, state, drawer, Direction.UP);
+            if (storage == null) throw new IllegalStateException("Shadow drawer doesn't have storage!");
     
             if (insertStatus.isPresent()) {
                 inserted = (int) StorageUtil.move(PlayerInventoryStorage.of(player), storage, itemVariant -> itemVariant.equals(insertStatus.get()), Long.MAX_VALUE, t);
@@ -109,39 +113,20 @@ public class DrawerBlock extends BaseBlock<DrawerBlockEntity> implements Lockabl
         
         var hit = DrawerRaycastUtil.getTarget(player, pos);
         if (hit.getType() == HitResult.Type.MISS) return;
-    
+        
         var internalPos = DrawerRaycastUtil.calculateFaceLocation(pos, hit.getPos(), hit.getSide(), state.get(FACING));
         if (internalPos == null) return;
     
-        var slot = getSlot(internalPos);
-        var storage = drawer.storages[slot];
-        if (storage.isResourceBlank()) return;
+        var storage = ItemStorage.SIDED.find(world, pos, state, drawer, Direction.UP);
+        if (storage == null) throw new IllegalStateException("Shadow drawer doesn't have storage!");
         
         try (var t = Transaction.openOuter()) {
-            var item = storage.item; // cache because it changes
-            var extracted = (int) storage.extract(item, player.isSneaking() ? item.getItem().getMaxCount() : 1, t);
+            // cache because it changes
+            var extracted = (int) storage.extract(drawer.item, player.isSneaking() ? drawer.item.getItem().getMaxCount() : 1, t);
             if (extracted == 0) return;
-    
-            player.getInventory().insertStack(item.toStack(extracted));
             
+            player.getInventory().insertStack(drawer.item.toStack(extracted));
             t.commit();
         }
-    }
-    
-    private int getSlot(Vec2f facePos) {
-        return switch (slots) {
-            case 1 -> 0;
-            case 2 -> facePos.x < 0.5f ? 0 : 1;
-            case 4 -> facePos.y < 0.5f ? facePos.x < 0.5f ? 0 : 1 : facePos.x < 0.5f ? 2 : 3;
-            default -> throw new IllegalStateException("unexpected drawer slot count");
-        };
-    }
-    
-    @Override
-    public void toggleLock(BlockState state, World world, BlockPos pos, Vec3d hitPos, Direction side) {
-        var facePos = DrawerRaycastUtil.calculateFaceLocation(pos, hitPos, side, state.get(FACING));
-        if (facePos == null) return;
-        var storage = getBlockEntity(world, pos).storages[getSlot(facePos)];
-        storage.setLocked(!storage.locked);
     }
 }

@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/orientable",
+  "textures": {
+    "front": "extended_drawers:block/shadow_drawer_front",
+    "top": "extended_drawers:block/shadow_drawer_side",
+    "side": "extended_drawers:block/shadow_drawer_side"
+  }
+}

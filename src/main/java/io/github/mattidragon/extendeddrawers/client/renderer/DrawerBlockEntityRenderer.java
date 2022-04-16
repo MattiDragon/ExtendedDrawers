@@ -25,8 +25,7 @@ import java.util.stream.StreamSupport;
 
 @SuppressWarnings("UnstableApiUsage")
 public class DrawerBlockEntityRenderer implements BlockEntityRenderer<DrawerBlockEntity> {
-    public DrawerBlockEntityRenderer(BlockEntityRendererFactory.Context context) {
-    }
+    public DrawerBlockEntityRenderer(BlockEntityRendererFactory.Context context) {}
     
     @Override
     public void render(DrawerBlockEntity entity, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
