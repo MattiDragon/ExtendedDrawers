@@ -81,6 +81,8 @@ public class ShadowDrawerBlock extends BaseBlock<ShadowDrawerBlockEntity> implem
             return ActionResult.SUCCESS;
         }
         
+        
+        
         var insertStatus = getAndResetInsertStatus(player, pos, 0, ItemVariant.of(playerStack));
         
         try (var t = Transaction.openOuter()) {
@@ -92,8 +94,8 @@ public class ShadowDrawerBlock extends BaseBlock<ShadowDrawerBlockEntity> implem
             if (insertStatus.isPresent()) {
                 inserted = (int) StorageUtil.move(PlayerInventoryStorage.of(player), storage, itemVariant -> itemVariant.equals(insertStatus.get()), Long.MAX_VALUE, t);
             } else {
-                if (playerStack.isEmpty()) return ActionResult.PASS;
-                
+                if (!ItemVariant.of(playerStack).equals(drawer.item) || playerStack.isEmpty()) return ActionResult.PASS;
+    
                 inserted = (int) storage.insert(ItemVariant.of(playerStack), playerStack.getCount(), t);
                 playerStack.decrement(inserted);
             }

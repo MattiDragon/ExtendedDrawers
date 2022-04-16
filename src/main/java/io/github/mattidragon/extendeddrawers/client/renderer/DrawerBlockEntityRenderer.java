@@ -1,9 +1,13 @@
 package io.github.mattidragon.extendeddrawers.client.renderer;
 
-import io.github.mattidragon.extendeddrawers.ExtendedDrawers;
+import com.google.common.collect.Collections2;
+import com.ibm.icu.impl.locale.XCldrStub;
 import io.github.mattidragon.extendeddrawers.block.DrawerBlock;
+import io.github.mattidragon.extendeddrawers.drawer.DrawerSlot;
 import io.github.mattidragon.extendeddrawers.block.entity.DrawerBlockEntity;
+import io.github.mattidragon.extendeddrawers.item.UpgradeItem;
 import io.github.mattidragon.extendeddrawers.registry.ModItems;
+import io.github.mattidragon.extendeddrawers.util.CollectionUtils;
 import net.fabricmc.fabric.api.renderer.v1.RendererAccess;
 import net.fabricmc.fabric.api.renderer.v1.mesh.MutableQuadView;
 import net.minecraft.client.MinecraftClient;
@@ -14,14 +18,22 @@ import net.minecraft.client.render.WorldRenderer;
 import net.minecraft.client.render.block.entity.BlockEntityRenderer;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
 import net.minecraft.client.render.model.json.ModelTransformation;
+import net.minecraft.client.texture.Sprite;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.item.ItemStack;
 import net.minecraft.screen.PlayerScreenHandler;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Matrix4f;
 import net.minecraft.util.math.Vec3f;
+import org.apache.commons.compress.utils.Lists;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Objects;
+import java.util.function.Predicate;
 import java.util.stream.StreamSupport;
+
+import static io.github.mattidragon.extendeddrawers.ExtendedDrawers.id;
 
 @SuppressWarnings("UnstableApiUsage")
 public class DrawerBlockEntityRenderer implements BlockEntityRenderer<DrawerBlockEntity> {
@@ -67,24 +79,42 @@ public class DrawerBlockEntityRenderer implements BlockEntityRenderer<DrawerBloc
         matrices.pop();
     }
     
-    private void renderSlot(DrawerBlockEntity.DrawerSlot storage, int light, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int seed, int overlay) {
+    private void renderSlot(DrawerSlot storage, int light, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int seed, int overlay) {
         renderText(storage, light, matrices, vertexConsumers);
-        if (storage.locked) renderLock(light, matrices, vertexConsumers, overlay);
+        renderIcons(storage, light, matrices, vertexConsumers, overlay);
         renderItem(storage, light, matrices, vertexConsumers, seed);
     }
     
-    private void renderLock(int light, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int overlay) {
+    private void renderIcons(DrawerSlot storage, int light, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int overlay) {
+        var icons = new ArrayList<Sprite>();
         var mc = MinecraftClient.getInstance();
+        var blockAtlas = mc.getSpriteAtlas(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE);
+    
+        //noinspection ConstantConditions
+        var handItems = StreamSupport.stream(mc.player.getItemsHand().spliterator(), false).map(ItemStack::getItem).toList();
         
-        // check for item
-        if (mc.player == null || StreamSupport.stream(mc.player.getItemsHand().spliterator(), false).noneMatch(stack -> stack.isOf(ModItems.LOCK)))
-            return;
+        if (storage.locked /*&& handItems.contains(ModItems.LOCK)*/)
+            icons.add(blockAtlas.apply(id("item/lock")));
         
+        if (storage.upgrade != null /* &&  CollectionUtils.anyMatch(handItems, item -> item instanceof UpgradeItem)*/)
+            icons.add(blockAtlas.apply(storage.upgrade.sprite));
+
+        
+        var increment = 1.0 / (icons.size() + 1.0);
+        matrices.push();
+        matrices.translate(-0.5, 0, 0);
+        for (var icon : icons) {
+            matrices.translate(increment, 0, 0);
+            renderIcon(icon, light, matrices, vertexConsumers, overlay);
+        }
+        matrices.pop();
+    }
+    
+    private void renderIcon(Sprite sprite, int light, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int overlay) {
         matrices.push();
         matrices.multiply(Vec3f.POSITIVE_X.getDegreesQuaternion(90));
         matrices.translate(-0.125, -0.24, -0.5);
         matrices.scale(0.25f, 0.25f, 0.25f);
-        var sprite = mc.getSpriteAtlas(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE).apply(ExtendedDrawers.id("item/lock"));
         var emitter = Objects.requireNonNull(RendererAccess.INSTANCE.getRenderer()).meshBuilder().getEmitter();
         emitter.square(Direction.UP, 0, 0, 1, 1, 0);
         emitter.spriteBake(0, sprite, MutableQuadView.BAKE_LOCK_UV);
@@ -92,7 +122,7 @@ public class DrawerBlockEntityRenderer implements BlockEntityRenderer<DrawerBloc
         matrices.pop();
     }
     
-    private void renderItem(DrawerBlockEntity.DrawerSlot storage, int light, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int seed) {
+    private void renderItem(DrawerSlot storage, int light, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int seed) {
         matrices.push();
         matrices.scale(0.75f, 0.75f, 1);
         matrices.multiplyPositionMatrix(Matrix4f.scale(1, 1, 0.01f));
@@ -100,7 +130,7 @@ public class DrawerBlockEntityRenderer implements BlockEntityRenderer<DrawerBloc
         matrices.pop();
     }
     
-    private void renderText(DrawerBlockEntity.DrawerSlot storage, int light, MatrixStack matrices, VertexConsumerProvider vertexConsumers) {
+    private void renderText(DrawerSlot storage, int light, MatrixStack matrices, VertexConsumerProvider vertexConsumers) {
         if (storage.isResourceBlank()) return;
         
         matrices.push();

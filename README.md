@@ -14,12 +14,12 @@ Drawer controllers are blocks that can interact with multiple drawers that are c
 within 64 blocks. They only support insertion in world, but can be extracted from using pipes
 and hoppers. They can also be used to lock a large amount of drawers at the same time.
 
-## Upcoming Features
+### Shadow Drawers
+Shadow drawers show the amount of a resource that is available in the whole network and allows
+for insertion and expansion of that resource, but they are only available in the 1 slot
+configuration.
+
 ### Capacity Upgrades
 Capacity upgrades are items that extend the capacity of a drawer slot. Only a single upgrade can be 
-installed at a time. They are planned to be available in 2x, 4x, 8x, 16x and 32x versions.
+installed at a time. They are planned to be available in 2x, 4x, 8x and 16x versions.
 
-### Shadow Drawers  
-Shadow drawers show the amount of a resource that is available in the whole network and allows 
-for insertion and expansion of that resource, but they are only available in the 1 slot 
-configuration.

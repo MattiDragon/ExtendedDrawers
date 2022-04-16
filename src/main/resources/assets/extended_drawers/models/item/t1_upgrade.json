@@ -1,0 +1,6 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "extended_drawers:item/t1_upgrade"
+  }
+}

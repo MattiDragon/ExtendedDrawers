@@ -2,6 +2,7 @@ package io.github.mattidragon.extendeddrawers.block.base;
 
 import com.google.common.collect.Queues;
 import io.github.mattidragon.extendeddrawers.block.DrawerBlock;
+import io.github.mattidragon.extendeddrawers.drawer.DrawerSlot;
 import io.github.mattidragon.extendeddrawers.block.entity.DrawerBlockEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -61,7 +62,7 @@ public interface NetworkComponent {
         return found;
     }
     
-    static List<DrawerBlockEntity.DrawerSlot> getConnectedStorages(World world, BlockPos pos) {
+    static List<DrawerSlot> getConnectedStorages(World world, BlockPos pos) {
         return findAllDrawers(world, pos).stream()
                 .map(world::getBlockEntity)
                 .map(DrawerBlockEntity.class::cast)

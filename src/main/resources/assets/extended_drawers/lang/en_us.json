@@ -5,5 +5,10 @@
   "block.extended_drawers.shadow_drawer": "Shadow Drawer",
   "block.extended_drawers.controller": "Drawer Controller",
 
+  "item.extended_drawers.t1_upgrade": "Drawer Upgrade I",
+  "item.extended_drawers.t2_upgrade": "Drawer Upgrade II",
+  "item.extended_drawers.t3_upgrade": "Drawer Upgrade III",
+  "item.extended_drawers.t4_upgrade": "Drawer Upgrade IV",
+  "item.extended_drawers.downgrade": "Drawer Downgrade",
   "item.extended_drawers.lock": "Drawer Lock"
 }

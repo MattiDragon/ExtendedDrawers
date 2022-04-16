@@ -3,7 +3,10 @@ package io.github.mattidragon.extendeddrawers.block;
 import io.github.mattidragon.extendeddrawers.block.base.BaseBlock;
 import io.github.mattidragon.extendeddrawers.block.base.Lockable;
 import io.github.mattidragon.extendeddrawers.block.base.NetworkComponent;
+import io.github.mattidragon.extendeddrawers.block.base.Upgradable;
 import io.github.mattidragon.extendeddrawers.block.entity.DrawerBlockEntity;
+import io.github.mattidragon.extendeddrawers.drawer.DrawerSlot;
+import io.github.mattidragon.extendeddrawers.item.UpgradeItem;
 import io.github.mattidragon.extendeddrawers.registry.ModBlocks;
 import io.github.mattidragon.extendeddrawers.util.DrawerRaycastUtil;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
@@ -13,8 +16,10 @@ import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemPlacementContext;
+import net.minecraft.item.ItemStack;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.DirectionProperty;
 import net.minecraft.state.property.Properties;
@@ -29,12 +34,13 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec2f;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 
 import static io.github.mattidragon.extendeddrawers.util.DrawerInteractionStatusManager.getAndResetExtractionTimer;
 import static io.github.mattidragon.extendeddrawers.util.DrawerInteractionStatusManager.getAndResetInsertStatus;
 
 @SuppressWarnings({"UnstableApiUsage", "deprecation"})
-public class DrawerBlock extends BaseBlock<DrawerBlockEntity> implements Lockable, NetworkComponent {
+public class DrawerBlock extends BaseBlock<DrawerBlockEntity> implements Lockable, Upgradable, NetworkComponent {
     public static final DirectionProperty FACING = Properties.HORIZONTAL_FACING;
     
     public final int slots;
@@ -78,6 +84,14 @@ public class DrawerBlock extends BaseBlock<DrawerBlockEntity> implements Lockabl
         
         var drawer = getBlockEntity(world, pos);
         var playerStack = player.getStackInHand(hand);
+        
+        // Upgrade removal
+        if (playerStack.isEmpty()) {
+            player.getInventory().offerOrDrop(new ItemStack(drawer.storages[slot].upgrade));
+            drawer.storages[slot].upgrade = null;
+            return ActionResult.SUCCESS;
+        }
+        
         var insertStatus = getAndResetInsertStatus(player, pos, slot, ItemVariant.of(playerStack));
     
         try (var t = Transaction.openOuter()) {
@@ -138,10 +152,48 @@ public class DrawerBlock extends BaseBlock<DrawerBlockEntity> implements Lockabl
     }
     
     @Override
-    public void toggleLock(BlockState state, World world, BlockPos pos, Vec3d hitPos, Direction side) {
+    public ActionResult toggleLock(BlockState state, World world, BlockPos pos, Vec3d hitPos, Direction side) {
         var facePos = DrawerRaycastUtil.calculateFaceLocation(pos, hitPos, side, state.get(FACING));
-        if (facePos == null) return;
+        if (facePos == null) return ActionResult.PASS;
         var storage = getBlockEntity(world, pos).storages[getSlot(facePos)];
         storage.setLocked(!storage.locked);
+        return ActionResult.SUCCESS;
     }
+    
+    @Override
+    public ActionResult upgrade(UpgradeItem upgrade, BlockState state, World world, BlockPos pos, Vec3d hitPos, Direction side, PlayerEntity player, ItemStack stack) {
+        if (world.isClient) return ActionResult.SUCCESS;
+       
+        var facePos = DrawerRaycastUtil.calculateFaceLocation(pos, hitPos, side, state.get(FACING));
+        if (facePos == null) return ActionResult.PASS;
+        var storage = getBlockEntity(world, pos).storages[getSlot(facePos)];
+        
+        stack.decrement(1);
+    
+        offerOrDrop(world, pos, side, player, new ItemStack(storage.upgrade));
+    
+        storage.upgrade = upgrade;
+        
+        if (storage.amount > storage.getCapacity()) {
+            var amount = storage.amount - storage.getCapacity();
+            while (amount > 0) {
+                int dropped = (int) Math.min(storage.item.getItem().getMaxCount(), amount);
+                offerOrDrop(world, pos, side, player, storage.item.toStack(dropped));
+                amount -= dropped;
+                storage.amount -= dropped;
+            }
+        }
+        
+        storage.update();
+        return ActionResult.SUCCESS;
+    }
+    
+    private void offerOrDrop(World world, BlockPos pos, Direction side, @Nullable PlayerEntity player, ItemStack stack) {
+        if (player == null)
+            world.spawnEntity(new ItemEntity(world, pos.getX() + side.getOffsetX(), pos.getY(), pos.getZ() + side.getOffsetZ(), stack));
+        else
+            player.getInventory().offerOrDrop(stack);
+    }
+    
+    
 }

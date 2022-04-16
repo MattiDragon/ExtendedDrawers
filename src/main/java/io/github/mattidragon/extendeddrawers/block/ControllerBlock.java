@@ -57,13 +57,14 @@ public class ControllerBlock extends Block implements Lockable, NetworkComponent
     }
     
     @Override
-    public void toggleLock(BlockState state, World world, BlockPos pos, Vec3d hitPos, Direction side) {
+    public ActionResult toggleLock(BlockState state, World world, BlockPos pos, Vec3d hitPos, Direction side) {
         var storages = NetworkComponent.getConnectedStorages(world, pos);
         var stateSum = storages.stream()
                 .map(storage -> storage.locked)
                 .reduce(0, (count, value) -> count + (value ? 1 : -1), Integer::sum);
         var currentState = stateSum > 0;
         storages.forEach(storage -> storage.setLocked(!currentState));
-    }
     
+        return storages.size() == 0 ? ActionResult.PASS : ActionResult.SUCCESS;
+    }
 }
