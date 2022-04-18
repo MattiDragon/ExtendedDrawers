@@ -36,6 +36,7 @@ loom {
 }
 
 sourceSets.main.resources.srcDirs += ["src/main/generated"]
+tasks.build.dependsOn runDatagen
 
 processResources {
     inputs.property "version", version
