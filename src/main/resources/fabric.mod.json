@@ -19,6 +19,9 @@
     ],
     "main": [
       "io.github.mattidragon.extendeddrawers.ExtendedDrawers"
+    ],
+    "fabric-datagen": [
+      "io.github.mattidragon.extendeddrawers.datagen.ExtendedDrawersDatagen"
     ]
   },
   "mixins": [
@@ -26,7 +29,7 @@
   ],
   "depends": {
     "fabricloader": ">=0.13.3",
-    "fabric": "*",
+    "fabric": ">=0.51.0",
     "minecraft": "1.18.2"
   }
 }

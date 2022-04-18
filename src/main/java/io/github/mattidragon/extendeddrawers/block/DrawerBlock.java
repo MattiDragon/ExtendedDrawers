@@ -23,10 +23,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.DirectionProperty;
 import net.minecraft.state.property.Properties;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.BlockMirror;
-import net.minecraft.util.BlockRotation;
-import net.minecraft.util.Hand;
+import net.minecraft.util.*;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
@@ -39,7 +36,7 @@ import org.jetbrains.annotations.Nullable;
 import static io.github.mattidragon.extendeddrawers.util.DrawerInteractionStatusManager.getAndResetExtractionTimer;
 import static io.github.mattidragon.extendeddrawers.util.DrawerInteractionStatusManager.getAndResetInsertStatus;
 
-@SuppressWarnings({"UnstableApiUsage", "deprecation"})
+@SuppressWarnings({"UnstableApiUsage", "deprecation"}) // transfer api and mojank block method deprecation
 public class DrawerBlock extends BaseBlock<DrawerBlockEntity> implements Lockable, Upgradable, NetworkComponent {
     public static final DirectionProperty FACING = Properties.HORIZONTAL_FACING;
     
@@ -77,6 +74,23 @@ public class DrawerBlock extends BaseBlock<DrawerBlockEntity> implements Lockabl
     }
     
     @Override
+    public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
+        if (!state.isOf(newState.getBlock()) && world.getBlockEntity(pos) instanceof DrawerBlockEntity drawer) {
+            // Drop all contained items and upgrades
+            for (var slot : drawer.storages) {
+                while (slot.amount > 0) {
+                    int dropped = (int) Math.min(slot.item.getItem().getMaxCount(), slot.amount);
+                    ItemScatterer.spawn(world, pos.getX(), pos.getY(), pos.getZ(), slot.item.toStack(dropped));
+                    slot.amount -= dropped;
+                }
+                ItemScatterer.spawn(world, pos.getX(), pos.getY(), pos.getZ(), new ItemStack(slot.upgrade));
+            }
+        }
+        
+        super.onStateReplaced(state, world, pos, newState, moved);
+    }
+    
+    @Override
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
         var internalPos = DrawerRaycastUtil.calculateFaceLocation(pos, hit.getPos(), hit.getSide(), state.get(FACING));
         if (internalPos == null) return ActionResult.PASS;
@@ -96,12 +110,11 @@ public class DrawerBlock extends BaseBlock<DrawerBlockEntity> implements Lockabl
     
         try (var t = Transaction.openOuter()) {
             int inserted;
-    
             var storage = drawer.storages[slot];
     
-            if (insertStatus.isPresent()) {
+            if (insertStatus.isPresent()) { // Double click
                 inserted = (int) StorageUtil.move(PlayerInventoryStorage.of(player), storage, itemVariant -> itemVariant.equals(insertStatus.get()), Long.MAX_VALUE, t);
-            } else {
+            } else { // First click
                 if (playerStack.isEmpty()) return ActionResult.PASS;
                 
                 inserted = (int) storage.insert(ItemVariant.of(playerStack), playerStack.getCount(), t);
@@ -121,9 +134,9 @@ public class DrawerBlock extends BaseBlock<DrawerBlockEntity> implements Lockabl
         var drawer = getBlockEntity(world, pos);
         if (!getAndResetExtractionTimer(player)) return; // Mojank moment
         
+        // We don't have sub-block position or a hit result, so we need to raycast ourselves
         var hit = DrawerRaycastUtil.getTarget(player, pos);
         if (hit.getType() == HitResult.Type.MISS) return;
-    
         var internalPos = DrawerRaycastUtil.calculateFaceLocation(pos, hit.getPos(), hit.getSide(), state.get(FACING));
         if (internalPos == null) return;
     
@@ -170,10 +183,12 @@ public class DrawerBlock extends BaseBlock<DrawerBlockEntity> implements Lockabl
         
         stack.decrement(1);
     
+        // give back old one
         offerOrDrop(world, pos, side, player, new ItemStack(storage.upgrade));
     
         storage.upgrade = upgrade;
         
+        // drop items that don't fit
         if (storage.amount > storage.getCapacity()) {
             var amount = storage.amount - storage.getCapacity();
             while (amount > 0) {
@@ -194,6 +209,4 @@ public class DrawerBlock extends BaseBlock<DrawerBlockEntity> implements Lockabl
         else
             player.getInventory().offerOrDrop(stack);
     }
-    
-    
 }
