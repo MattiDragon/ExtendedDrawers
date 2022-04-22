@@ -19,7 +19,10 @@ Shadow drawers show the amount of a resource that is available in the whole netw
 for insertion and expansion of that resource, but they are only available in the 1 slot
 configuration.
 
-### Capacity Upgrades
-Capacity upgrades are items that extend the capacity of a drawer slot. Only a single upgrade can be 
+### Upgrades
+Upgrades are items that extend the capacity of a drawer slot. Only a single upgrade can be 
 installed at a time. They are planned to be available in 2x, 4x, 8x and 16x versions.
 
+### Drawer Connectors
+Drawer connectors are blocks which only purpose it to connect drawer networks. They don't store 
+any data and offer no interactions.
