@@ -1,7 +1,7 @@
 package io.github.mattidragon.extendeddrawers.block;
 
 import io.github.mattidragon.extendeddrawers.block.base.Lockable;
-import io.github.mattidragon.extendeddrawers.block.base.NetworkComponent;
+import io.github.mattidragon.extendeddrawers.util.NetworkHelper;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.item.PlayerInventoryStorage;
@@ -21,13 +21,12 @@ import net.minecraft.world.World;
 
 import static io.github.mattidragon.extendeddrawers.util.DrawerInteractionStatusManager.getAndResetInsertStatus;
 
-@SuppressWarnings("UnstableApiUsage")
-public class ControllerBlock extends Block implements Lockable, NetworkComponent {
+@SuppressWarnings({"UnstableApiUsage", "deprecation"}) // transfer api and mojank block method deprecation
+public class ControllerBlock extends Block implements Lockable {
     public ControllerBlock(Settings settings) {
         super(settings);
     
-        //noinspection UnstableApiUsage
-        ItemStorage.SIDED.registerForBlocks((world, pos, state, entity, dir) -> new CombinedStorage<>(NetworkComponent.getConnectedStorages(world, pos)), this);
+        ItemStorage.SIDED.registerForBlocks((world, pos, state, entity, dir) -> new CombinedStorage<>(NetworkHelper.getConnectedStorages(world, pos)), this);
     }
     
     @Override
@@ -58,7 +57,7 @@ public class ControllerBlock extends Block implements Lockable, NetworkComponent
     
     @Override
     public ActionResult toggleLock(BlockState state, World world, BlockPos pos, Vec3d hitPos, Direction side) {
-        var storages = NetworkComponent.getConnectedStorages(world, pos);
+        var storages = NetworkHelper.getConnectedStorages(world, pos);
         var stateSum = storages.stream()
                 .map(storage -> storage.locked)
                 .reduce(0, (count, value) -> count + (value ? 1 : -1), Integer::sum);

@@ -1,7 +1,6 @@
 package io.github.mattidragon.extendeddrawers.block;
 
 import io.github.mattidragon.extendeddrawers.block.base.BaseBlock;
-import io.github.mattidragon.extendeddrawers.block.base.NetworkComponent;
 import io.github.mattidragon.extendeddrawers.block.entity.ShadowDrawerBlockEntity;
 import io.github.mattidragon.extendeddrawers.registry.ModBlocks;
 import io.github.mattidragon.extendeddrawers.util.DrawerRaycastUtil;
@@ -14,7 +13,6 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.DirectionProperty;
@@ -32,8 +30,8 @@ import net.minecraft.world.World;
 import static io.github.mattidragon.extendeddrawers.util.DrawerInteractionStatusManager.getAndResetExtractionTimer;
 import static io.github.mattidragon.extendeddrawers.util.DrawerInteractionStatusManager.getAndResetInsertStatus;
 
-@SuppressWarnings("UnstableApiUsage")
-public class ShadowDrawerBlock extends BaseBlock<ShadowDrawerBlockEntity> implements NetworkComponent {
+@SuppressWarnings({"UnstableApiUsage", "deprecation"}) // transfer api and mojank block method deprecation
+public class ShadowDrawerBlock extends BaseBlock<ShadowDrawerBlockEntity> {
     public static final DirectionProperty FACING = Properties.HORIZONTAL_FACING;
     
     public ShadowDrawerBlock(Settings settings) {

@@ -1,6 +1,7 @@
 package io.github.mattidragon.extendeddrawers.datagen;
 
 import io.github.mattidragon.extendeddrawers.registry.ModItems;
+import io.github.mattidragon.extendeddrawers.registry.ModTags;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
 import net.fabricmc.fabric.api.tag.convention.v1.ConventionalItemTags;
@@ -87,7 +88,7 @@ class DrawersRecipeProvider extends FabricRecipeProvider {
         ShapedRecipeJsonBuilder.create(ModItems.CONTROLLER)
                 .input('I', Items.IRON_INGOT)
                 .input('C', Items.COBBLESTONE)
-                .input('D', ExtendedDrawersDatagen.DRAWERS)
+                .input('D', ModTags.ItemTags.DRAWERS)
                 .pattern("CIC")
                 .pattern("IDI")
                 .pattern("CIC")

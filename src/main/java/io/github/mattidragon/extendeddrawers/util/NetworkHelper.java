@@ -1,9 +1,10 @@
-package io.github.mattidragon.extendeddrawers.block.base;
+package io.github.mattidragon.extendeddrawers.util;
 
 import com.google.common.collect.Queues;
 import io.github.mattidragon.extendeddrawers.block.DrawerBlock;
-import io.github.mattidragon.extendeddrawers.drawer.DrawerSlot;
 import io.github.mattidragon.extendeddrawers.block.entity.DrawerBlockEntity;
+import io.github.mattidragon.extendeddrawers.drawer.DrawerSlot;
+import io.github.mattidragon.extendeddrawers.registry.ModTags;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
@@ -11,9 +12,8 @@ import net.minecraft.world.World;
 import java.util.*;
 import java.util.function.BiPredicate;
 
-public interface NetworkComponent {
-    
-    static Optional<BlockPos> findFirstConnectedComponent(World world, BlockPos pos, BiPredicate<World, BlockPos> predicate) {
+public class NetworkHelper {
+    public static Optional<BlockPos> findFirstConnectedComponent(World world, BlockPos pos, BiPredicate<World, BlockPos> predicate) {
         var toSearch = Queues.newArrayDeque(Collections.singleton(pos));
         var searched = new ArrayList<>();
     
@@ -22,7 +22,7 @@ public interface NetworkComponent {
             searched.add(searching);
         
             var state = world.getBlockState(searching);
-            if (!(state.getBlock() instanceof NetworkComponent))
+            if (!state.isIn(ModTags.BlockTags.NETWORK_COMPONENTS))
                 continue;
             if (predicate.test(world, searching))
                 return Optional.of(searching);
@@ -37,7 +37,7 @@ public interface NetworkComponent {
         return Optional.empty();
     }
     
-    static List<BlockPos> findConnectedComponents(World world, BlockPos pos, BiPredicate<World, BlockPos> predicate) {
+    public static List<BlockPos> findConnectedComponents(World world, BlockPos pos, BiPredicate<World, BlockPos> predicate) {
         var toSearch = Queues.newArrayDeque(Collections.singleton(pos));
         var searched = new ArrayList<>();
         var found = new ArrayList<BlockPos>();
@@ -47,7 +47,7 @@ public interface NetworkComponent {
             searched.add(searching);
         
             var state = world.getBlockState(searching);
-            if (!(state.getBlock() instanceof NetworkComponent))
+            if (!state.isIn(ModTags.BlockTags.NETWORK_COMPONENTS))
                 continue;
             if (predicate.test(world, searching))
                 found.add(searching);
@@ -62,7 +62,7 @@ public interface NetworkComponent {
         return found;
     }
     
-    static List<DrawerSlot> getConnectedStorages(World world, BlockPos pos) {
+    public static List<DrawerSlot> getConnectedStorages(World world, BlockPos pos) {
         return findAllDrawers(world, pos).stream()
                 .map(world::getBlockEntity)
                 .map(DrawerBlockEntity.class::cast)
@@ -72,7 +72,7 @@ public interface NetworkComponent {
                 .toList();
     }
     
-    static List<BlockPos> findAllDrawers(World world, BlockPos pos) {
-        return NetworkComponent.findConnectedComponents(world, pos, (world1, pos1) -> world1.getBlockState(pos1).getBlock() instanceof DrawerBlock);
+    public static List<BlockPos> findAllDrawers(World world, BlockPos pos) {
+        return NetworkHelper.findConnectedComponents(world, pos, (world1, pos1) -> world1.getBlockState(pos1).getBlock() instanceof DrawerBlock);
     }
 }

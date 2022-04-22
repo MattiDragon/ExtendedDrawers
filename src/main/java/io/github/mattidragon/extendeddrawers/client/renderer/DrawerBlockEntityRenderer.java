@@ -1,13 +1,8 @@
 package io.github.mattidragon.extendeddrawers.client.renderer;
 
-import com.google.common.collect.Collections2;
-import com.ibm.icu.impl.locale.XCldrStub;
 import io.github.mattidragon.extendeddrawers.block.DrawerBlock;
-import io.github.mattidragon.extendeddrawers.drawer.DrawerSlot;
 import io.github.mattidragon.extendeddrawers.block.entity.DrawerBlockEntity;
-import io.github.mattidragon.extendeddrawers.item.UpgradeItem;
-import io.github.mattidragon.extendeddrawers.registry.ModItems;
-import io.github.mattidragon.extendeddrawers.util.CollectionUtils;
+import io.github.mattidragon.extendeddrawers.drawer.DrawerSlot;
 import net.fabricmc.fabric.api.renderer.v1.RendererAccess;
 import net.fabricmc.fabric.api.renderer.v1.mesh.MutableQuadView;
 import net.minecraft.client.MinecraftClient;
@@ -25,12 +20,9 @@ import net.minecraft.screen.PlayerScreenHandler;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Matrix4f;
 import net.minecraft.util.math.Vec3f;
-import org.apache.commons.compress.utils.Lists;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Objects;
-import java.util.function.Predicate;
 import java.util.stream.StreamSupport;
 
 import static io.github.mattidragon.extendeddrawers.ExtendedDrawers.id;

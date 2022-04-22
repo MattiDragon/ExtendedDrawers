@@ -1,7 +1,7 @@
 package io.github.mattidragon.extendeddrawers.block.entity;
 
-import io.github.mattidragon.extendeddrawers.block.base.NetworkComponent;
 import io.github.mattidragon.extendeddrawers.registry.ModBlocks;
+import io.github.mattidragon.extendeddrawers.util.NetworkHelper;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
@@ -28,7 +28,7 @@ public class ShadowDrawerBlockEntity extends BlockEntity {
     }
     
     public Storage<ItemVariant> createStorage() {
-        return new CombinedStorage<>(NetworkComponent.getConnectedStorages(world, pos).stream().filter(slot -> slot.item.equals(item) || slot.item.isBlank()).toList());
+        return new CombinedStorage<>(NetworkHelper.getConnectedStorages(world, pos).stream().filter(slot -> slot.item.equals(item) || slot.item.isBlank()).toList());
     }
     
     @Nullable
