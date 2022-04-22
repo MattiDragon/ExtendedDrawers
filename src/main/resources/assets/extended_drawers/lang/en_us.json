@@ -4,6 +4,7 @@
   "block.extended_drawers.single_drawer": "Drawer",
   "block.extended_drawers.shadow_drawer": "Shadow Drawer",
   "block.extended_drawers.controller": "Drawer Controller",
+  "block.extended_drawers.connector": "Drawer Connector",
 
   "item.extended_drawers.t1_upgrade": "Drawer Upgrade I",
   "item.extended_drawers.t2_upgrade": "Drawer Upgrade II",

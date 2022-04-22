@@ -14,6 +14,7 @@ public class ModItems {
     public static final Item SINGLE_DRAWER = new BlockItem(ModBlocks.SINGLE_DRAWER, new FabricItemSettings().group(MOD_GROUP));
     public static final Item DOUBLE_DRAWER = new BlockItem(ModBlocks.DOUBLE_DRAWER, new FabricItemSettings().group(MOD_GROUP));
     public static final Item QUAD_DRAWER = new BlockItem(ModBlocks.QUAD_DRAWER, new FabricItemSettings().group(MOD_GROUP));
+    public static final Item CONNECTOR = new BlockItem(ModBlocks.CONNECTOR, new FabricItemSettings().group(MOD_GROUP));
     public static final Item SHADOW_DRAWER = new BlockItem(ModBlocks.SHADOW_DRAWER, new FabricItemSettings().group(MOD_GROUP));
     public static final Item CONTROLLER = new BlockItem(ModBlocks.CONTROLLER, new FabricItemSettings().group(MOD_GROUP));
     
@@ -30,6 +31,7 @@ public class ModItems {
         Registry.register(Registry.ITEM, id("single_drawer"), SINGLE_DRAWER);
         Registry.register(Registry.ITEM, id("double_drawer"), DOUBLE_DRAWER);
         Registry.register(Registry.ITEM, id("quad_drawer"), QUAD_DRAWER);
+        Registry.register(Registry.ITEM, id("connector"), CONNECTOR);
         Registry.register(Registry.ITEM, id("shadow_drawer"), SHADOW_DRAWER);
         Registry.register(Registry.ITEM, id("controller"), CONTROLLER);
         

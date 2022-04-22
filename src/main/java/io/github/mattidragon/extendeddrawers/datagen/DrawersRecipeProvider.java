@@ -31,6 +31,7 @@ class DrawersRecipeProvider extends FabricRecipeProvider {
         offerLockRecipe(exporter);
         offerUpgradeFrameRecipe(exporter);
         offerControllerRecipe(exporter);
+        offerConnectorRecipe(exporter);
     }
     
     private void offerDrawerRecipes(Consumer<RecipeJsonProvider> exporter) {
@@ -91,6 +92,17 @@ class DrawersRecipeProvider extends FabricRecipeProvider {
                 .pattern("IDI")
                 .pattern("CIC")
                 .criterion(RecipeProvider.hasItem(ModItems.CONTROLLER), RecipeProvider.conditionsFromItem(ModItems.CONTROLLER))
+                .offerTo(exporter);
+    }
+    
+    private void offerConnectorRecipe(Consumer<RecipeJsonProvider> exporter) {
+        ShapedRecipeJsonBuilder.create(ModItems.CONNECTOR)
+                .input('L', ItemTags.LOGS)
+                .input('P', ItemTags.PLANKS)
+                .pattern("LPL")
+                .pattern("PPP")
+                .pattern("LPL")
+                .criterion(RecipeProvider.hasItem(ModItems.CONNECTOR), RecipeProvider.conditionsFromItem(ModItems.CONNECTOR))
                 .offerTo(exporter);
     }
     

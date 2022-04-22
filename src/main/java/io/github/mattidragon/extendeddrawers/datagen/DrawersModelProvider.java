@@ -4,10 +4,7 @@ import io.github.mattidragon.extendeddrawers.registry.ModBlocks;
 import io.github.mattidragon.extendeddrawers.registry.ModItems;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricModelProvider;
-import net.minecraft.data.client.BlockStateModelGenerator;
-import net.minecraft.data.client.ItemModelGenerator;
-import net.minecraft.data.client.Models;
-import net.minecraft.data.client.TextureMap;
+import net.minecraft.data.client.*;
 
 import static io.github.mattidragon.extendeddrawers.ExtendedDrawers.id;
 
@@ -19,6 +16,8 @@ class DrawersModelProvider extends FabricModelProvider {
     @Override
     public void generateBlockStateModels(BlockStateModelGenerator generator) {
         generator.registerSimpleCubeAll(ModBlocks.CONTROLLER);
+
+        generator.registerSingleton(ModBlocks.CONNECTOR, TextureMap.all(id("block/drawer_base")), Models.CUBE_ALL);
         
         var texture = TextureMap.sideEnd(id("block/drawer_base"), id("block/drawer_base"));
         generator.registerNorthDefaultHorizontalRotatable(ModBlocks.SINGLE_DRAWER, texture);
