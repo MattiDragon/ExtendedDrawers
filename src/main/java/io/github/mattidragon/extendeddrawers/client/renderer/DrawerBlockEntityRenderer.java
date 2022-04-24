@@ -2,6 +2,7 @@ package io.github.mattidragon.extendeddrawers.client.renderer;
 
 import io.github.mattidragon.extendeddrawers.block.DrawerBlock;
 import io.github.mattidragon.extendeddrawers.block.entity.DrawerBlockEntity;
+import io.github.mattidragon.extendeddrawers.config.ClientConfig;
 import io.github.mattidragon.extendeddrawers.drawer.DrawerSlot;
 import net.fabricmc.fabric.api.renderer.v1.RendererAccess;
 import net.fabricmc.fabric.api.renderer.v1.mesh.MutableQuadView;
@@ -15,21 +16,23 @@ import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
 import net.minecraft.client.render.model.json.ModelTransformation;
 import net.minecraft.client.texture.Sprite;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.item.ItemStack;
 import net.minecraft.screen.PlayerScreenHandler;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Matrix4f;
-import net.minecraft.util.math.Vec3f;
+import net.minecraft.util.math.*;
 
 import java.util.ArrayList;
 import java.util.Objects;
-import java.util.stream.StreamSupport;
 
 import static io.github.mattidragon.extendeddrawers.ExtendedDrawers.id;
 
 @SuppressWarnings("UnstableApiUsage")
 public class DrawerBlockEntityRenderer implements BlockEntityRenderer<DrawerBlockEntity> {
     public DrawerBlockEntityRenderer(BlockEntityRendererFactory.Context context) {}
+    
+    @Override
+    public int getRenderDistance() {
+        var config = ClientConfig.HANDLE.get();
+        return Math.max(config.iconRenderDistance(), Math.max(config.textRenderDistance(), config.itemRenderDistance()));
+    }
     
     @Override
     public void render(DrawerBlockEntity entity, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
@@ -44,26 +47,27 @@ public class DrawerBlockEntityRenderer implements BlockEntityRenderer<DrawerBloc
     
         light = WorldRenderer.getLightmapCoordinates(Objects.requireNonNull(entity.getWorld()), entity.getPos().offset(dir));
         var slots = ((DrawerBlock)entity.getCachedState().getBlock()).slots;
-    
+        var blockPos = entity.getPos();
+        
         switch (slots) {
-            case 1 -> renderSlot(entity.storages[0], light, matrices, vertexConsumers, (int) entity.getPos().asLong(), overlay);
+            case 1 -> renderSlot(entity.storages[0], light, matrices, vertexConsumers, (int) entity.getPos().asLong(), overlay, blockPos);
             case 2 -> {
                 matrices.scale(0.5f, 0.5f, 0.5f);
                 matrices.translate(-0.5, 0, 0);
-                renderSlot(entity.storages[0], light, matrices, vertexConsumers, (int) entity.getPos().asLong(), overlay);
+                renderSlot(entity.storages[0], light, matrices, vertexConsumers, (int) entity.getPos().asLong(), overlay, blockPos);
                 matrices.translate(1, 0, 0);
-                renderSlot(entity.storages[1], light, matrices, vertexConsumers, (int) entity.getPos().asLong(), overlay);
+                renderSlot(entity.storages[1], light, matrices, vertexConsumers, (int) entity.getPos().asLong(), overlay, blockPos);
             }
             case 4 -> {
                 matrices.scale(0.5f, 0.5f, 0.5f);
                 matrices.translate(-0.5, 0.5, 0);
-                renderSlot(entity.storages[0], light, matrices, vertexConsumers, (int) entity.getPos().asLong(), overlay);
+                renderSlot(entity.storages[0], light, matrices, vertexConsumers, (int) entity.getPos().asLong(), overlay, blockPos);
                 matrices.translate(1, 0, 0);
-                renderSlot(entity.storages[1], light, matrices, vertexConsumers, (int) entity.getPos().asLong(), overlay);
+                renderSlot(entity.storages[1], light, matrices, vertexConsumers, (int) entity.getPos().asLong(), overlay, blockPos);
                 matrices.translate(-1, -1, 0);
-                renderSlot(entity.storages[2], light, matrices, vertexConsumers, (int) entity.getPos().asLong(), overlay);
+                renderSlot(entity.storages[2], light, matrices, vertexConsumers, (int) entity.getPos().asLong(), overlay, blockPos);
                 matrices.translate(1, 0, 0);
-                renderSlot(entity.storages[3], light, matrices, vertexConsumers, (int) entity.getPos().asLong(), overlay);
+                renderSlot(entity.storages[3], light, matrices, vertexConsumers, (int) entity.getPos().asLong(), overlay, blockPos);
             }
             default -> throw new IllegalStateException("unexpected drawer slot count");
         }
@@ -71,24 +75,28 @@ public class DrawerBlockEntityRenderer implements BlockEntityRenderer<DrawerBloc
         matrices.pop();
     }
     
-    private void renderSlot(DrawerSlot storage, int light, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int seed, int overlay) {
-        renderText(storage, light, matrices, vertexConsumers);
-        renderIcons(storage, light, matrices, vertexConsumers, overlay);
-        renderItem(storage, light, matrices, vertexConsumers, seed);
+    private void renderSlot(DrawerSlot storage, int light, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int seed, int overlay, BlockPos pos) {
+        //noinspection ConstantConditions
+        var playerPos = MinecraftClient.getInstance().player.getPos();
+        var config = ClientConfig.HANDLE.get();
+        
+        if (pos.isWithinDistance(playerPos, config.textRenderDistance()))
+            renderText(storage, light, matrices, vertexConsumers);
+        if (pos.isWithinDistance(playerPos, config.iconRenderDistance()))
+            renderIcons(storage, light, matrices, vertexConsumers, overlay);
+        if (pos.isWithinDistance(playerPos, config.itemRenderDistance()))
+            renderItem(storage, light, matrices, vertexConsumers, seed);
     }
     
     private void renderIcons(DrawerSlot storage, int light, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int overlay) {
         var icons = new ArrayList<Sprite>();
         var mc = MinecraftClient.getInstance();
         var blockAtlas = mc.getSpriteAtlas(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE);
-    
-        //noinspection ConstantConditions
-        var handItems = StreamSupport.stream(mc.player.getItemsHand().spliterator(), false).map(ItemStack::getItem).toList();
-        
-        if (storage.locked /*&& handItems.contains(ModItems.LOCK)*/)
+
+        if (storage.locked)
             icons.add(blockAtlas.apply(id("item/lock")));
         
-        if (storage.upgrade != null /* &&  CollectionUtils.anyMatch(handItems, item -> item instanceof UpgradeItem)*/)
+        if (storage.upgrade != null)
             icons.add(blockAtlas.apply(storage.upgrade.sprite));
 
         

@@ -9,6 +9,9 @@ version project.mod_version + (run == null ? "" : "-dev.$run") + "+mc.$minecraft
 group project.maven_group
 
 repositories {
+    ext.maven = { String s -> maven {url(s)}}
+
+    maven "https://jitpack.io"
 }
 
 dependencies {
@@ -17,6 +20,7 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:$loader_version"
 
     modImplementation "net.fabricmc.fabric-api:fabric-api:$fabric_version"
+    include modImplementation("com.github.mattidragon:mconfig:$mconfig_version")
 }
 
 loom {

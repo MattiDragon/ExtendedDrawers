@@ -3,6 +3,7 @@ package io.github.mattidragon.extendeddrawers.util;
 import com.google.common.collect.Queues;
 import io.github.mattidragon.extendeddrawers.block.DrawerBlock;
 import io.github.mattidragon.extendeddrawers.block.entity.DrawerBlockEntity;
+import io.github.mattidragon.extendeddrawers.config.CommonConfig;
 import io.github.mattidragon.extendeddrawers.drawer.DrawerSlot;
 import io.github.mattidragon.extendeddrawers.registry.ModTags;
 import net.minecraft.util.math.BlockPos;
@@ -29,7 +30,7 @@ public class NetworkHelper {
         
             for (var dir : Direction.values()) {
                 var offsetPos = searching.offset(dir);
-                if (!searched.contains(offsetPos) && offsetPos.isWithinDistance(pos, 64))  // TODO: config
+                if (!searched.contains(offsetPos) && offsetPos.isWithinDistance(pos, CommonConfig.HANDLE.get().networkSearchDistance()))
                     toSearch.add(offsetPos);
             }
         }
@@ -54,7 +55,7 @@ public class NetworkHelper {
         
             for (var dir : Direction.values()) {
                 var offsetPos = searching.offset(dir);
-                if (!searched.contains(offsetPos) && offsetPos.isWithinDistance(pos, 64))  // TODO: config
+                if (!searched.contains(offsetPos) && offsetPos.isWithinDistance(pos, CommonConfig.HANDLE.get().networkSearchDistance()))
                     toSearch.add(offsetPos);
             }
         }
