@@ -1,7 +1,7 @@
 name: Bug Report
 description: Something is not working quite right
 title: [Bug]:
-labels: [bug]
+labels: ["bug"]
 body:
   - type: markdown
     attributes:
@@ -80,4 +80,3 @@ body:
     attributes:
       label: Extra Context
       description: Extra context for the bug. For example images, videos, related problems...
-
