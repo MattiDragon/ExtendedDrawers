@@ -1,0 +1,83 @@
+name: Bug Report
+description: Something is not working quite right
+title: [Bug]:
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: "## General Information"
+  - type: textarea
+    attributes:
+      label: Description of the issue
+      description: Describe what is not working correctly
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Reproduction steps
+      description: Step for step instructions on how to reproduce the issue
+      placeholder: "1.\n2.\n3.\n..."
+    validations:
+      required: true
+
+  - type: markdown
+    attributes:
+      value: "## Environment"
+  - type: input
+    attributes:
+      label: Mod version
+      placeholder: eg. v1.0.0
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: Operating System
+      placeholder: eg. Windows 10
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: Minecraft version
+      placeholder: eg. 1.18.2
+  - type: textarea
+    attributes:
+      label: Other mods
+      description: Other mods that are required for reproduction and their version
+      placeholder: "eg. Fabric API: 0.52.3 \n Dumb Mod: 1.4.3"
+    validations:
+      required: true
+
+  - type: markdown
+    attributes:
+      value: "## Other Info"
+  - type: dropdown
+    attributes:
+      label: Server
+      description: Does the issue happen on dedicated servers?
+      options:
+        - Not tested
+        - Happens
+        - Doesn't happen
+    validations:
+      required: true
+  - type: dropdown
+    attributes:
+      label: Client
+      description: Does the issue happen on the client side?
+      options:
+        - Not tested
+        - Happens
+        - Doesn't happen
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: Logs
+      description: The minecraft logs from when the issue was encountered. Please upload to pastebin or as a gist,
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Extra Context
+      description: Extra context for the bug. For example images, videos, related problems...
+
