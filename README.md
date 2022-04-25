@@ -1,17 +1,17 @@
 # Extended Drawers
-A mod inspired by storage drawers that aims to allow for easy creation of powerfull yet not
+A mod inspired by storage drawers that aims to allow for easy creation of powerful yet not
 overpowered storage using simple components.
 
 ## Features
 ### Drawers
-Drawers are blocks that can store a lot of a few item. They are available in 1, 2 and 4 slot
+Drawers are blocks that can store a lot of a few items. They are available in 1, 2 and 4 slot
 configurations. They can be interacted with in world or using hopper or pipes from other mods.
 They can be locked using a drawer key which will stop the item in the drawer from changing until 
 it's unlocked.
 
-### Controllers
-Drawer controllers are blocks that can interact with multiple drawers that are connected to them
-within 64 blocks. They only support insertion in world, but can be extracted from using pipes
+### Access Points
+Drawer access points are blocks that can interact with multiple drawers that are connected to them. 
+They only support insertion in world, but can be extracted from using pipes
 and hoppers. They can also be used to lock a large amount of drawers at the same time.
 
 ### Shadow Drawers

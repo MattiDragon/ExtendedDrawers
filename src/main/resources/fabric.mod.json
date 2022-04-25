@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "extended_drawers",
   "version": "${version}",
-  "name": "ExtendedDrawers",
+  "name": "Extended Drawers",
   "description": "Adds drawers and more.",
   "authors": [
     "MattiDragon"
@@ -11,7 +11,7 @@
     "sources": "https://github.com/MattiDragon/ExtendedDrawers"
   },
   "license": "MIT",
-  "icon": "assets/extended_drawers/icon.png",
+  "icon": "icon.png",
   "environment": "*",
   "entrypoints": {
     "client": [
