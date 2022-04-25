@@ -5,7 +5,7 @@ labels: ["bug"]
 body:
   - type: markdown
     attributes:
-      value: "## General Information"
+      value: "# General Information"
   - type: textarea
     attributes:
       label: Description of the issue
@@ -22,7 +22,7 @@ body:
 
   - type: markdown
     attributes:
-      value: "## Environment"
+      value: "# Environment"
   - type: input
     attributes:
       label: Mod version
@@ -43,13 +43,13 @@ body:
     attributes:
       label: Other mods
       description: Other mods that are required for reproduction and their version
-      placeholder: "eg. Fabric API: 0.52.3 \n Dumb Mod: 1.4.3"
+      placeholder: "eg. Fabric API: 0.52.3 \nDumb Mod: 1.4.3"
     validations:
       required: true
 
   - type: markdown
     attributes:
-      value: "## Other Info"
+      value: "# Other Info"
   - type: dropdown
     attributes:
       label: Server
