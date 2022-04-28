@@ -8,7 +8,9 @@
     "MattiDragon"
   ],
   "contact": {
-    "sources": "https://github.com/MattiDragon/ExtendedDrawers"
+    "sources": "https://github.com/MattiDragon/ExtendedDrawers",
+    "website": "https://modrinth.com/mod/extended-drawers",
+    "issues": "https://github.com/MattiDragon/ExtendedDrawers/issues"
   },
   "license": "MIT",
   "icon": "icon.png",

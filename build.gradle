@@ -11,7 +11,10 @@ group project.maven_group
 repositories {
     ext.maven = { String s -> maven {url(s)}}
 
-    maven "https://jitpack.io"
+    //mconfig dep
+    maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
+
+    maven { url "https://jitpack.io" }
 }
 
 dependencies {

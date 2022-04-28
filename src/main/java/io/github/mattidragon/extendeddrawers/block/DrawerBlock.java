@@ -90,6 +90,8 @@ public class DrawerBlock extends BaseBlock<DrawerBlockEntity> implements Lockabl
     
     @Override
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
+        if (!player.canModifyBlocks()) return ActionResult.PASS;
+        
         var internalPos = DrawerRaycastUtil.calculateFaceLocation(pos, hit.getPos(), hit.getSide(), state.get(FACING));
         if (internalPos == null) return ActionResult.PASS;
         var slot = getSlot(internalPos);
@@ -127,7 +129,7 @@ public class DrawerBlock extends BaseBlock<DrawerBlockEntity> implements Lockabl
     
     @Override
     public void onBlockBreakStart(BlockState state, World world, BlockPos pos, PlayerEntity player) {
-        if (world.isClient) return;
+        if (world.isClient || !player.canModifyBlocks()) return;
         
         var drawer = getBlockEntity(world, pos);
         if (!getAndResetExtractionTimer(player)) return; // Mojank moment
