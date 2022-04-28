@@ -48,6 +48,7 @@ public class DrawerBlockEntity extends BlockEntity {
                 .forEach(pos1 -> {
                     var state1 = world.getBlockState(pos1);
                     world.updateListeners(pos1, state1, state1, Block.NOTIFY_LISTENERS);
+                    if (world.getBlockEntity(pos1) instanceof ShadowDrawerBlockEntity drawer) drawer.clearCountCache();
                 });
     }
     

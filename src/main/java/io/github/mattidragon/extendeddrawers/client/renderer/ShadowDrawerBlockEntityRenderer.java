@@ -50,15 +50,14 @@ public class ShadowDrawerBlockEntityRenderer implements BlockEntityRenderer<Shad
         }
     
         if (!entity.item.isBlank() && entity.getPos().isWithinDistance(playerPos, config.textRenderDistance())) {
-            var amount = entity.createStorage().simulateExtract(entity.item, Long.MAX_VALUE, null);
-            
+    
             matrices.push();
             matrices.multiply(Vec3f.POSITIVE_X.getDegreesQuaternion(180));
             matrices.translate(0, 0.3, -0.01);
             matrices.scale(0.02f, 0.02f, 0.02f);
             var textRenderer = MinecraftClient.getInstance().textRenderer;
             
-            var text = Long.toString(amount);
+            var text = Long.toString(entity.getCount());
             textRenderer.draw(text, -textRenderer.getWidth(text) / 2f, 0, 0xffffff, false, matrices.peek().getPositionMatrix(), vertexConsumers, false, 0x000000, light);
             matrices.pop();
         }

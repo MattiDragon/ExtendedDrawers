@@ -18,6 +18,7 @@ import org.jetbrains.annotations.Nullable;
 @SuppressWarnings("UnstableApiUsage")
 public class ShadowDrawerBlockEntity extends BlockEntity {
     public ItemVariant item = ItemVariant.blank();
+    private long countCache = -1;
     
     public ShadowDrawerBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlocks.SHADOW_DRAWER_BLOCK_ENTITY, pos, state);
@@ -29,6 +30,15 @@ public class ShadowDrawerBlockEntity extends BlockEntity {
     
     public Storage<ItemVariant> createStorage() {
         return new CombinedStorage<>(NetworkHelper.getConnectedStorages(world, pos).stream().filter(slot -> slot.item.equals(item) || slot.item.isBlank()).toList());
+    }
+    
+    public void clearCountCache() {
+        countCache = -1;
+    }
+    
+    public long getCount() {
+        if (countCache == -1) countCache = createStorage().simulateExtract(item, Long.MAX_VALUE, null);
+        return countCache;
     }
     
     @Nullable
