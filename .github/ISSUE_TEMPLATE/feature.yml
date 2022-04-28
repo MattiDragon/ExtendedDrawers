@@ -1,0 +1,20 @@
+name: Feature Request
+description: You have an idea on how to improve the mod
+title: "[Feature]: "
+labels: ["feature"]
+body:
+  - type: markdown
+    attributes:
+      value: "# General Information"
+  - type: textarea
+    attributes:
+      label: Description of the feature
+      description: Describe what you think should be added/improved
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: How does it make the mod better?
+      description: Why do you think this feature is good idea? What makes it so good?
+    validations:
+      required: true
