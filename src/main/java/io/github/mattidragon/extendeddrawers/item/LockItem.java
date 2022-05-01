@@ -5,7 +5,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemUsageContext;
 import net.minecraft.util.ActionResult;
 
-//TODO: tooltip? hard!
 public class LockItem extends Item {
     public LockItem(Settings settings) {
         super(settings);
@@ -14,8 +13,7 @@ public class LockItem extends Item {
     @Override
     public ActionResult useOnBlock(ItemUsageContext context) {
         if (context.getWorld().getBlockState(context.getBlockPos()).getBlock() instanceof Lockable lockable) {
-            lockable.toggleLock(context.getWorld().getBlockState(context.getBlockPos()), context.getWorld(), context.getBlockPos(), context.getHitPos(), context.getSide());
-            return ActionResult.SUCCESS;
+            return lockable.toggleLock(context.getWorld().getBlockState(context.getBlockPos()), context.getWorld(), context.getBlockPos(), context.getHitPos(), context.getSide());
         }
         return ActionResult.PASS;
     }

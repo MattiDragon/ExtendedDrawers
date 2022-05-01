@@ -129,7 +129,7 @@ public class DrawerBlock extends BaseBlock<DrawerBlockEntity> implements Lockabl
     
     @Override
     public void onBlockBreakStart(BlockState state, World world, BlockPos pos, PlayerEntity player) {
-        if (world.isClient || !player.canModifyBlocks()) return;
+        if (/*world.isClient || */!player.canModifyBlocks()) return;
         
         var drawer = getBlockEntity(world, pos);
         if (!getAndResetExtractionTimer(player)) return; // Mojank moment
