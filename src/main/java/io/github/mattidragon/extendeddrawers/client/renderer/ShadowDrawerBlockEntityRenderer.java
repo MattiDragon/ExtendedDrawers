@@ -14,10 +14,13 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.math.Matrix4f;
 import net.minecraft.util.math.Vec3f;
 
+import java.util.List;
 import java.util.Objects;
 
-public class ShadowDrawerBlockEntityRenderer implements BlockEntityRenderer<ShadowDrawerBlockEntity> {
-    public ShadowDrawerBlockEntityRenderer(BlockEntityRendererFactory.Context context) {}
+public class ShadowDrawerBlockEntityRenderer extends AbstractDrawerBlockEntityRenderer<ShadowDrawerBlockEntity> {
+    public ShadowDrawerBlockEntityRenderer(BlockEntityRendererFactory.Context context) {
+        super(context);
+    }
     
     @Override
     public int getRenderDistance() {
@@ -31,8 +34,6 @@ public class ShadowDrawerBlockEntityRenderer implements BlockEntityRenderer<Shad
         matrices.push();
         var dir = entity.getCachedState().get(ShadowDrawerBlock.FACING);
         var pos = dir.getUnitVector();
-        var config = ClientConfig.HANDLE.get();
-        var playerPos = MinecraftClient.getInstance().player.getPos();
     
         matrices.translate(pos.getX() / 2 + 0.5, pos.getY() / 2 + 0.5, pos.getZ() / 2 + 0.5);
         matrices.multiply(dir.getRotationQuaternion());
@@ -41,26 +42,7 @@ public class ShadowDrawerBlockEntityRenderer implements BlockEntityRenderer<Shad
     
         light = WorldRenderer.getLightmapCoordinates(Objects.requireNonNull(entity.getWorld()), entity.getPos().offset(dir));
         
-        if (entity.getPos().isWithinDistance(playerPos, config.itemRenderDistance())) {
-            matrices.push();
-            matrices.scale(0.75f, 0.75f, 1);
-            matrices.multiplyPositionMatrix(Matrix4f.scale(1, 1, 0.01f));
-            MinecraftClient.getInstance().getItemRenderer().renderItem(entity.item.toStack(), ModelTransformation.Mode.GUI, light, OverlayTexture.DEFAULT_UV, matrices, vertexConsumers, (int) entity.getPos().asLong());
-            matrices.pop();
-        }
-    
-        if (!entity.item.isBlank() && entity.getPos().isWithinDistance(playerPos, config.textRenderDistance())) {
-    
-            matrices.push();
-            matrices.multiply(Vec3f.POSITIVE_X.getDegreesQuaternion(180));
-            matrices.translate(0, 0.3, -0.01);
-            matrices.scale(0.02f, 0.02f, 0.02f);
-            var textRenderer = MinecraftClient.getInstance().textRenderer;
-            
-            var text = Long.toString(entity.getCount());
-            textRenderer.draw(text, -textRenderer.getWidth(text) / 2f, 0, 0xffffff, false, matrices.peek().getPositionMatrix(), vertexConsumers, false, 0x000000, light);
-            matrices.pop();
-        }
+        renderSlot(entity.item, entity.item.isBlank() ? null : entity.getCount(), List.of(), matrices, vertexConsumers, light, overlay, (int) entity.getPos().asLong(), entity.getPos());
         matrices.pop();
     }
 }
