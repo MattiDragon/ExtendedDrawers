@@ -1,6 +1,6 @@
 package io.github.mattidragon.extendeddrawers.block;
 
-import io.github.mattidragon.extendeddrawers.block.base.Lockable;
+import io.github.mattidragon.extendeddrawers.block.base.DrawerInteractionHandler;
 import io.github.mattidragon.extendeddrawers.util.NetworkHelper;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
@@ -22,7 +22,7 @@ import net.minecraft.world.World;
 import static io.github.mattidragon.extendeddrawers.util.DrawerInteractionStatusManager.getAndResetInsertStatus;
 
 @SuppressWarnings({"UnstableApiUsage", "deprecation"}) // transfer api and mojank block method deprecation
-public class ControllerBlock extends Block implements Lockable {
+public class ControllerBlock extends Block implements DrawerInteractionHandler {
     public ControllerBlock(Settings settings) {
         super(settings);
     

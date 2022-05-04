@@ -1,8 +1,7 @@
 package io.github.mattidragon.extendeddrawers.block;
 
 import io.github.mattidragon.extendeddrawers.block.base.BaseBlock;
-import io.github.mattidragon.extendeddrawers.block.base.Lockable;
-import io.github.mattidragon.extendeddrawers.block.base.Upgradable;
+import io.github.mattidragon.extendeddrawers.block.base.DrawerInteractionHandler;
 import io.github.mattidragon.extendeddrawers.block.entity.DrawerBlockEntity;
 import io.github.mattidragon.extendeddrawers.item.UpgradeItem;
 import io.github.mattidragon.extendeddrawers.registry.ModBlocks;
@@ -35,7 +34,7 @@ import static io.github.mattidragon.extendeddrawers.util.DrawerInteractionStatus
 import static io.github.mattidragon.extendeddrawers.util.DrawerInteractionStatusManager.getAndResetInsertStatus;
 
 @SuppressWarnings({"UnstableApiUsage", "deprecation"}) // transfer api and mojank block method deprecation
-public class DrawerBlock extends BaseBlock<DrawerBlockEntity> implements Lockable, Upgradable {
+public class DrawerBlock extends BaseBlock<DrawerBlockEntity> implements DrawerInteractionHandler {
     public static final DirectionProperty FACING = Properties.HORIZONTAL_FACING;
     
     public final int slots;

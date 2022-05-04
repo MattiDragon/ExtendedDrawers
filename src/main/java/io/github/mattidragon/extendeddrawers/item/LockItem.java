@@ -1,6 +1,6 @@
 package io.github.mattidragon.extendeddrawers.item;
 
-import io.github.mattidragon.extendeddrawers.block.base.Lockable;
+import io.github.mattidragon.extendeddrawers.block.base.DrawerInteractionHandler;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemUsageContext;
 import net.minecraft.util.ActionResult;
@@ -12,7 +12,7 @@ public class LockItem extends Item {
     
     @Override
     public ActionResult useOnBlock(ItemUsageContext context) {
-        if (context.getWorld().getBlockState(context.getBlockPos()).getBlock() instanceof Lockable lockable) {
+        if (context.getWorld().getBlockState(context.getBlockPos()).getBlock() instanceof DrawerInteractionHandler lockable) {
             return lockable.toggleLock(context.getWorld().getBlockState(context.getBlockPos()), context.getWorld(), context.getBlockPos(), context.getHitPos(), context.getSide());
         }
         return ActionResult.PASS;
