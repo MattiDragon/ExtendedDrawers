@@ -1,5 +1,6 @@
 package io.github.mattidragon.extendeddrawers.drawer;
 
+import io.github.mattidragon.extendeddrawers.config.CommonConfig;
 import io.github.mattidragon.extendeddrawers.item.UpgradeItem;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.base.ResourceAmount;
@@ -67,7 +68,13 @@ public final class DrawerSlot extends SnapshotParticipant<ResourceAmount<ItemVar
     
     @Override
     public long getCapacity() {
-        return (long) (512 * (upgrade == null ? 1 : upgrade.multiplier));
+        var config = CommonConfig.HANDLE.get();
+        var multiplier = upgrade == null ? 1 : upgrade.multiplier;
+        if (multiplier == -1) return 64;
+        var capacity = (long) config.defaultCapacity() * multiplier;
+        if (config.stackSizeAffectsCapacity())
+            capacity /= 64.0 / item.getItem().getMaxCount();
+        return capacity;
     }
     
     @Override

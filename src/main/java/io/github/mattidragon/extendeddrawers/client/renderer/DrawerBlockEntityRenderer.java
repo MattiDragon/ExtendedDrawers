@@ -78,6 +78,6 @@ public class DrawerBlockEntityRenderer extends AbstractDrawerBlockEntityRenderer
         if (storage.locked) icons.add(blockAtlas.apply(id("item/lock")));
         if (storage.upgrade != null) icons.add(blockAtlas.apply(storage.upgrade.sprite));
         
-        renderSlot(storage.item, storage.amount == 0 ? null: storage.amount, icons, matrices, vertexConsumers, light, overlay, seed, pos);
+        renderSlot(storage.item, storage.amount == 0  || ClientConfig.HANDLE.get().displayEmptyCount() ? null : storage.amount, icons, matrices, vertexConsumers, light, overlay, seed, pos);
     }
 }

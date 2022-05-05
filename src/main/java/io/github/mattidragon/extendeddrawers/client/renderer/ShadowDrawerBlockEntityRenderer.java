@@ -42,7 +42,7 @@ public class ShadowDrawerBlockEntityRenderer extends AbstractDrawerBlockEntityRe
     
         light = WorldRenderer.getLightmapCoordinates(Objects.requireNonNull(entity.getWorld()), entity.getPos().offset(dir));
         
-        renderSlot(entity.item, entity.item.isBlank() ? null : entity.getCount(), List.of(), matrices, vertexConsumers, light, overlay, (int) entity.getPos().asLong(), entity.getPos());
+        renderSlot(entity.item, entity.item.isBlank() || ClientConfig.HANDLE.get().displayEmptyCount() ? null : entity.getCount(), List.of(), matrices, vertexConsumers, light, overlay, (int) entity.getPos().asLong(), entity.getPos());
         matrices.pop();
     }
 }

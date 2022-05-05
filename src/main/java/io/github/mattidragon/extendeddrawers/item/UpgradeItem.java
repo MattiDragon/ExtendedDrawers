@@ -8,9 +8,9 @@ import net.minecraft.util.Identifier;
 
 public class UpgradeItem extends Item {
     public final Identifier sprite;
-    public final double multiplier;
+    public final int multiplier;
     
-    public UpgradeItem(Settings settings, Identifier sprite, double multiplier) {
+    public UpgradeItem(Settings settings, Identifier sprite, int multiplier) {
         super(settings);
         this.sprite = sprite;
         this.multiplier = multiplier;

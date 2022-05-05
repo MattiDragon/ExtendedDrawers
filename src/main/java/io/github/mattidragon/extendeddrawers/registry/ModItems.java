@@ -23,7 +23,7 @@ public class ModItems {
     public static final UpgradeItem T2_UPGRADE = new UpgradeItem(new FabricItemSettings().group(MOD_GROUP), id("item/t2_upgrade"), 4);
     public static final UpgradeItem T3_UPGRADE = new UpgradeItem(new FabricItemSettings().group(MOD_GROUP), id("item/t3_upgrade"), 8);
     public static final UpgradeItem T4_UPGRADE = new UpgradeItem(new FabricItemSettings().group(MOD_GROUP), id("item/t4_upgrade"), 16);
-    public static final UpgradeItem DOWNGRADE = new UpgradeItem(new FabricItemSettings().group(MOD_GROUP), id("item/downgrade"), 0.125);
+    public static final UpgradeItem DOWNGRADE = new UpgradeItem(new FabricItemSettings().group(MOD_GROUP), id("item/downgrade"), -1);
     
     public static final Item LOCK = new LockItem(new FabricItemSettings().group(MOD_GROUP));
     
