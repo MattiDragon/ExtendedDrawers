@@ -1,2 +1,5 @@
 jdk:
   - openjdk17
+install:
+  - ./gradlew runDatagen
+  - ./gradlew assemble publishToMavenLocal

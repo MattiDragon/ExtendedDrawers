@@ -1,6 +1,7 @@
 plugins {
     id 'fabric-loom' version '0.12-SNAPSHOT'
     id 'maven-publish'
+    id "com.dorongold.task-tree" version "1.5"
 }
 
 var run = System.env.GITHUB_RUN_NUMBER
@@ -43,7 +44,6 @@ loom {
 }
 
 sourceSets.main.resources.srcDirs += ["src/main/generated"]
-tasks.jar.dependsOn runDatagen
 
 processResources {
     inputs.property "version", version
