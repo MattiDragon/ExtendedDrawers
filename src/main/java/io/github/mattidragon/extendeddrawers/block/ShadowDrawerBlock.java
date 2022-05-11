@@ -67,7 +67,7 @@ public class ShadowDrawerBlock extends BaseBlock<ShadowDrawerBlockEntity> {
     
     @Override
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
-        if (hit.getSide() != state.get(FACING)) return ActionResult.PASS;
+        if (hit.getSide() != state.get(FACING) || !player.canModifyBlocks()) return ActionResult.PASS;
         
         var drawer = getBlockEntity(world, pos);
         var playerStack = player.getStackInHand(hand);
