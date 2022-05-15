@@ -13,14 +13,16 @@ import org.jetbrains.annotations.Nullable;
 @SuppressWarnings("UnstableApiUsage")
 public final class DrawerSlot extends SnapshotParticipant<ResourceAmount<ItemVariant>> implements SingleSlotStorage<ItemVariant>, Comparable<DrawerSlot> {
     private final Runnable onChange;
+    private final double capacityMultiplier;
     public ItemVariant item = ItemVariant.blank();
     @Nullable
     public UpgradeItem upgrade = null;
     public long amount;
     public boolean locked;
     
-    public DrawerSlot(Runnable onChange) {
+    public DrawerSlot(Runnable onChange, double capacityMultiplier) {
         this.onChange = onChange;
+        this.capacityMultiplier = capacityMultiplier;
     }
     
     public void setLocked(boolean locked) {
@@ -71,7 +73,7 @@ public final class DrawerSlot extends SnapshotParticipant<ResourceAmount<ItemVar
         var config = CommonConfig.HANDLE.get();
         var multiplier = upgrade == null ? 1 : upgrade.multiplier;
         if (multiplier == -1) return 64;
-        var capacity = (long) config.defaultCapacity() * multiplier;
+        var capacity = (long) (config.defaultCapacity() * multiplier * this.capacityMultiplier);
         if (config.stackSizeAffectsCapacity())
             capacity /= 64.0 / item.getItem().getMaxCount();
         return capacity;

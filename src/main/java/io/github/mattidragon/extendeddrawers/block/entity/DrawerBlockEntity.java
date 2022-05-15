@@ -2,6 +2,7 @@ package io.github.mattidragon.extendeddrawers.block.entity;
 
 import io.github.mattidragon.extendeddrawers.block.DrawerBlock;
 import io.github.mattidragon.extendeddrawers.block.ShadowDrawerBlock;
+import io.github.mattidragon.extendeddrawers.config.CommonConfig;
 import io.github.mattidragon.extendeddrawers.drawer.DrawerSlot;
 import io.github.mattidragon.extendeddrawers.item.UpgradeItem;
 import io.github.mattidragon.extendeddrawers.registry.ModBlocks;
@@ -27,6 +28,7 @@ import java.util.List;
 
 @SuppressWarnings("UnstableApiUsage")
 public class DrawerBlockEntity extends BlockEntity {
+    public final int slots = ((DrawerBlock)this.getCachedState().getBlock()).slots;
     public final DrawerSlot[] storages = new DrawerSlot[((DrawerBlock)this.getCachedState().getBlock()).slots];
     public final Storage<ItemVariant> combinedStorage;
     
@@ -36,7 +38,7 @@ public class DrawerBlockEntity extends BlockEntity {
     
     public DrawerBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlocks.DRAWER_BLOCK_ENTITY, pos, state);
-        for (int i = 0; i < storages.length; i++) storages[i] = new DrawerSlot(this::onSlotChanged);
+        for (int i = 0; i < storages.length; i++) storages[i] = new DrawerSlot(this::onSlotChanged, CommonConfig.HANDLE.get().slotCountAffectsCapacity() ? 1.0 / slots : 1);
         combinedStorage = new CombinedStorage<>(List.of(storages));
     }
     

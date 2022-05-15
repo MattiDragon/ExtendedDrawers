@@ -16,7 +16,9 @@ public record CommonConfig(
         @Comment("How many items drawers are able to hold.")
         int defaultCapacity,
         @Comment("Wherther the stack size of the item should affect capacity")
-        boolean stackSizeAffectsCapacity
+        boolean stackSizeAffectsCapacity,
+        @Comment("Wherther the amount of slots on a drawers should affect capacity")
+        boolean slotCountAffectsCapacity
 ) {
-    public static final Config<CommonConfig> HANDLE = ConfigManager.register(ConfigType.COMMON, "extended_drawers", new CommonConfig(64, 10, true, 512, false));
+    public static final Config<CommonConfig> HANDLE = ConfigManager.register(ConfigType.COMMON, "extended_drawers", new CommonConfig(64, 10, true, 16 * 64, false, true));
 }
