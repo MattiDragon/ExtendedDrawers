@@ -11,6 +11,7 @@
   "item.extended_drawers.t3_upgrade": "Drawer Upgrade III",
   "item.extended_drawers.t4_upgrade": "Drawer Upgrade IV",
   "item.extended_drawers.downgrade": "Drawer Downgrade",
+  "item.extended_drawers.creative_upgrade": "Creative Drawer Upgrade",
   "item.extended_drawers.upgrade_frame": "Upgrade Frame",
   "item.extended_drawers.lock": "Drawer Lock",
 

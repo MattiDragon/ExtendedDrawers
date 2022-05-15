@@ -14,7 +14,7 @@ public record CommonConfig(
         @Comment("Whether to add a small cooldown to extractions to avoid double ones caused by a vanilla bug")
         boolean deduplicateExtraction,
         @Comment("How many items drawers are able to hold.")
-        int defaultCapacity,
+        long defaultCapacity,
         @Comment("Wherther the stack size of the item should affect capacity")
         boolean stackSizeAffectsCapacity,
         @Comment("Wherther the amount of slots on a drawers should affect capacity")

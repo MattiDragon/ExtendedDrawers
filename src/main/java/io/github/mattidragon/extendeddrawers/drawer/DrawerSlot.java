@@ -71,11 +71,11 @@ public final class DrawerSlot extends SnapshotParticipant<ResourceAmount<ItemVar
     @Override
     public long getCapacity() {
         var config = CommonConfig.HANDLE.get();
-        var multiplier = upgrade == null ? 1 : upgrade.multiplier;
-        if (multiplier == -1) return 64;
-        var capacity = (long) (config.defaultCapacity() * multiplier * this.capacityMultiplier);
+        var capacity = (long) (config.defaultCapacity() * this.capacityMultiplier);
         if (config.stackSizeAffectsCapacity())
             capacity /= 64.0 / item.getItem().getMaxCount();
+        if (upgrade != null)
+            capacity = upgrade.modifier.applyAsLong(capacity);
         return capacity;
     }
     
