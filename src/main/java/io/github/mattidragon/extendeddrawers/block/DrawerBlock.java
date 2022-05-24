@@ -5,6 +5,7 @@ import io.github.mattidragon.extendeddrawers.block.base.DrawerInteractionHandler
 import io.github.mattidragon.extendeddrawers.block.entity.DrawerBlockEntity;
 import io.github.mattidragon.extendeddrawers.item.UpgradeItem;
 import io.github.mattidragon.extendeddrawers.registry.ModBlocks;
+import io.github.mattidragon.extendeddrawers.util.DrawerInteractionStatusManager;
 import io.github.mattidragon.extendeddrawers.util.DrawerRaycastUtil;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.item.PlayerInventoryStorage;
@@ -29,9 +30,6 @@ import net.minecraft.util.math.Vec2f;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
-
-import static io.github.mattidragon.extendeddrawers.util.DrawerInteractionStatusManager.getAndResetExtractionTimer;
-import static io.github.mattidragon.extendeddrawers.util.DrawerInteractionStatusManager.getAndResetInsertStatus;
 
 @SuppressWarnings({"UnstableApiUsage", "deprecation"}) // transfer api and mojank block method deprecation
 public class DrawerBlock extends BaseBlock<DrawerBlockEntity> implements DrawerInteractionHandler {
@@ -89,7 +87,7 @@ public class DrawerBlock extends BaseBlock<DrawerBlockEntity> implements DrawerI
     
     @Override
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
-        if (!player.canModifyBlocks()) return ActionResult.PASS;
+        if (!player.canModifyBlocks() || hand == Hand.OFF_HAND) return ActionResult.PASS;
         
         var internalPos = DrawerRaycastUtil.calculateFaceLocation(pos, hit.getPos(), hit.getSide(), state.get(FACING));
         if (internalPos == null) return ActionResult.PASS;
@@ -99,21 +97,22 @@ public class DrawerBlock extends BaseBlock<DrawerBlockEntity> implements DrawerI
         var playerStack = player.getStackInHand(hand);
         
         // Upgrade removal
-        if (playerStack.isEmpty()) {
+        if (playerStack.isEmpty() && player.isSneaking()) {
             player.getInventory().offerOrDrop(new ItemStack(drawer.storages[slot].upgrade));
             drawer.storages[slot].upgrade = null;
             return ActionResult.SUCCESS;
         }
         
-        var insertStatus = getAndResetInsertStatus(player, pos, slot, ItemVariant.of(playerStack));
+        var isDoubleClick = DrawerInteractionStatusManager.getAndResetInsertStatus(player, pos, slot);
     
         try (var t = Transaction.openOuter()) {
             int inserted;
             var storage = drawer.storages[slot];
     
-            if (insertStatus.isPresent()) { // Double click
-                inserted = (int) StorageUtil.move(PlayerInventoryStorage.of(player), storage, itemVariant -> itemVariant.equals(insertStatus.get()), Long.MAX_VALUE, t);
-            } else { // First click
+            if (isDoubleClick) {
+                if (storage.isResourceBlank()) return ActionResult.PASS;
+                inserted = (int) StorageUtil.move(PlayerInventoryStorage.of(player), storage, itemVariant -> true, Long.MAX_VALUE, t);
+            } else {
                 if (playerStack.isEmpty()) return ActionResult.PASS;
                 
                 inserted = (int) storage.insert(ItemVariant.of(playerStack), playerStack.getCount(), t);
@@ -122,16 +121,15 @@ public class DrawerBlock extends BaseBlock<DrawerBlockEntity> implements DrawerI
             if (inserted == 0) return ActionResult.PASS;
             
             t.commit();
-            return ActionResult.SUCCESS;
+            return ActionResult.CONSUME;
         }
     }
     
     @Override
     public void onBlockBreakStart(BlockState state, World world, BlockPos pos, PlayerEntity player) {
-        if (/*world.isClient || */!player.canModifyBlocks()) return;
+        if (!player.canModifyBlocks()) return;
         
         var drawer = getBlockEntity(world, pos);
-        if (!getAndResetExtractionTimer(player)) return; // Mojank moment
         
         // We don't have sub-block position or a hit result, so we need to raycast ourselves
         var hit = DrawerRaycastUtil.getTarget(player, pos);

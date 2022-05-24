@@ -38,10 +38,10 @@ public class ControllerBlock extends Block implements DrawerInteractionHandler {
             if (storage == null) throw new IllegalStateException("Controller doesn't have storage!");
     
             var playerStack = player.getStackInHand(hand);
-            var insertStatus = getAndResetInsertStatus(player, pos, 0, ItemVariant.of(playerStack));
+            var isDoubleClick = getAndResetInsertStatus(player, pos, 0);
             
-            if (insertStatus.isPresent()) {
-                inserted = (int) StorageUtil.move(PlayerInventoryStorage.of(player), storage, itemVariant -> itemVariant.equals(insertStatus.get()), Long.MAX_VALUE, t);
+            if (isDoubleClick) {
+                inserted = (int) StorageUtil.move(PlayerInventoryStorage.of(player), storage, itemVariant -> StorageUtil.findStoredResource(storage, (itemVariant1) -> itemVariant1.equals(itemVariant), t) != null, Long.MAX_VALUE, t);
             } else {
                 if (playerStack.isEmpty()) return ActionResult.PASS;
             

@@ -27,7 +27,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 
-import static io.github.mattidragon.extendeddrawers.util.DrawerInteractionStatusManager.getAndResetExtractionTimer;
 import static io.github.mattidragon.extendeddrawers.util.DrawerInteractionStatusManager.getAndResetInsertStatus;
 
 @SuppressWarnings({"UnstableApiUsage", "deprecation"}) // transfer api and mojank block method deprecation
@@ -79,9 +78,7 @@ public class ShadowDrawerBlock extends BaseBlock<ShadowDrawerBlockEntity> {
             return ActionResult.SUCCESS;
         }
         
-        
-        
-        var insertStatus = getAndResetInsertStatus(player, pos, 0, ItemVariant.of(playerStack));
+        var isDoubleClick = getAndResetInsertStatus(player, pos, 0);
         
         try (var t = Transaction.openOuter()) {
             int inserted;
@@ -89,8 +86,9 @@ public class ShadowDrawerBlock extends BaseBlock<ShadowDrawerBlockEntity> {
             var storage = ItemStorage.SIDED.find(world, pos, state, drawer, Direction.UP);
             if (storage == null) throw new IllegalStateException("Shadow drawer doesn't have storage!");
     
-            if (insertStatus.isPresent()) {
-                inserted = (int) StorageUtil.move(PlayerInventoryStorage.of(player), storage, itemVariant -> itemVariant.equals(insertStatus.get()), Long.MAX_VALUE, t);
+            if (isDoubleClick) {
+                if (drawer.item.isBlank()) return ActionResult.PASS;
+                inserted = (int) StorageUtil.move(PlayerInventoryStorage.of(player), storage, itemVariant -> true, Long.MAX_VALUE, t);
             } else {
                 if (!ItemVariant.of(playerStack).equals(drawer.item) || playerStack.isEmpty()) return ActionResult.PASS;
     
@@ -106,10 +104,9 @@ public class ShadowDrawerBlock extends BaseBlock<ShadowDrawerBlockEntity> {
     
     @Override
     public void onBlockBreakStart(BlockState state, World world, BlockPos pos, PlayerEntity player) {
-        if (world.isClient) return;
+        if (!player.canModifyBlocks()) return;
         
         var drawer = getBlockEntity(world, pos);
-        if (!getAndResetExtractionTimer(player)) return; // Mojank moment
         
         var hit = DrawerRaycastUtil.getTarget(player, pos);
         if (hit.getType() == HitResult.Type.MISS) return;
@@ -121,7 +118,6 @@ public class ShadowDrawerBlock extends BaseBlock<ShadowDrawerBlockEntity> {
         if (storage == null) throw new IllegalStateException("Shadow drawer doesn't have storage!");
         
         try (var t = Transaction.openOuter()) {
-            // cache because it changes
             var extracted = (int) storage.extract(drawer.item, player.isSneaking() ? drawer.item.getItem().getMaxCount() : 1, t);
             if (extracted == 0) return;
             

@@ -11,8 +11,6 @@ public record CommonConfig(
         int networkSearchDistance,
         @Comment("The max time between the clicks of a double insert")
         int insertAllTime,
-        @Comment("Whether to add a small cooldown to extractions to avoid double ones caused by a vanilla bug")
-        boolean deduplicateExtraction,
         @Comment("How many items drawers are able to hold.")
         long defaultCapacity,
         @Comment("Wherther the stack size of the item should affect capacity")
@@ -20,5 +18,5 @@ public record CommonConfig(
         @Comment("Wherther the amount of slots on a drawers should affect capacity")
         boolean slotCountAffectsCapacity
 ) {
-    public static final Config<CommonConfig> HANDLE = ConfigManager.register(ConfigType.COMMON, "extended_drawers", new CommonConfig(64, 10, true, 16 * 64, false, true));
+    public static final Config<CommonConfig> HANDLE = ConfigManager.register(ConfigType.COMMON, "extended_drawers", new CommonConfig(64, 10, 16 * 64, false, true));
 }
