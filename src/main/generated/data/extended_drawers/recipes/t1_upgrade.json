@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "SSS",
+    "BMB",
+    "SSS"
+  ],
+  "key": {
+    "M": {
+      "item": "minecraft:barrel"
+    },
+    "B": {
+      "item": "extended_drawers:upgrade_frame"
+    },
+    "S": {
+      "item": "minecraft:stick"
+    }
+  },
+  "result": {
+    "item": "extended_drawers:t1_upgrade"
+  }
+}

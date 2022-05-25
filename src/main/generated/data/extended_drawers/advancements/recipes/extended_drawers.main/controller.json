@@ -1,0 +1,34 @@
+{
+  "parent": "minecraft:recipes/root",
+  "rewards": {
+    "recipes": [
+      "extended_drawers:controller"
+    ]
+  },
+  "criteria": {
+    "has_controller": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "extended_drawers:controller"
+            ]
+          }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "extended_drawers:controller"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_controller",
+      "has_the_recipe"
+    ]
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "CIC",
+    "IDI",
+    "CIC"
+  ],
+  "key": {
+    "I": {
+      "item": "minecraft:iron_ingot"
+    },
+    "C": {
+      "item": "minecraft:cobblestone"
+    },
+    "D": {
+      "tag": "extended_drawers:drawers"
+    }
+  },
+  "result": {
+    "item": "extended_drawers:controller"
+  }
+}

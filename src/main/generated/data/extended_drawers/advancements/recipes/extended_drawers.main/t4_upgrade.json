@@ -1,0 +1,34 @@
+{
+  "parent": "minecraft:recipes/root",
+  "rewards": {
+    "recipes": [
+      "extended_drawers:t4_upgrade"
+    ]
+  },
+  "criteria": {
+    "has_t4_upgrade": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "extended_drawers:t4_upgrade"
+            ]
+          }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "extended_drawers:t4_upgrade"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_t4_upgrade",
+      "has_the_recipe"
+    ]
+  ]
+}

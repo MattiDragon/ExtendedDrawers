@@ -1,0 +1,34 @@
+{
+  "parent": "minecraft:recipes/root",
+  "rewards": {
+    "recipes": [
+      "extended_drawers:shadow_drawer"
+    ]
+  },
+  "criteria": {
+    "has_shadow_drawer": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "extended_drawers:shadow_drawer"
+            ]
+          }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "extended_drawers:shadow_drawer"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_shadow_drawer",
+      "has_the_recipe"
+    ]
+  ]
+}

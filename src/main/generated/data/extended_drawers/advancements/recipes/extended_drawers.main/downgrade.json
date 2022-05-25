@@ -1,0 +1,34 @@
+{
+  "parent": "minecraft:recipes/root",
+  "rewards": {
+    "recipes": [
+      "extended_drawers:downgrade"
+    ]
+  },
+  "criteria": {
+    "has_downgrade": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "extended_drawers:downgrade"
+            ]
+          }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "extended_drawers:downgrade"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_downgrade",
+      "has_the_recipe"
+    ]
+  ]
+}

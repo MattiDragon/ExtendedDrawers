@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "SSS",
+    "BMB",
+    "SSS"
+  ],
+  "key": {
+    "M": {
+      "tag": "c:shulker_boxes"
+    },
+    "B": {
+      "item": "extended_drawers:t3_upgrade"
+    },
+    "S": {
+      "item": "minecraft:end_rod"
+    }
+  },
+  "result": {
+    "item": "extended_drawers:t4_upgrade"
+  }
+}

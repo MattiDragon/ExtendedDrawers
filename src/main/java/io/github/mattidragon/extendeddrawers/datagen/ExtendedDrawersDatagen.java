@@ -11,5 +11,6 @@ public class ExtendedDrawersDatagen implements DataGeneratorEntrypoint {
         dataGenerator.addProvider(DrawersRecipeProvider::new);
         var blockTagProvider = dataGenerator.addProvider(DrawersBlockTagProvider::new);
         dataGenerator.addProvider(new DrawersItemTagProvider(dataGenerator, blockTagProvider));
+        dataGenerator.addProvider(ReadmeDataProvider::new);
     }
 }

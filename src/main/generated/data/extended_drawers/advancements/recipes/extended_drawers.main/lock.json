@@ -1,0 +1,34 @@
+{
+  "parent": "minecraft:recipes/root",
+  "rewards": {
+    "recipes": [
+      "extended_drawers:lock"
+    ]
+  },
+  "criteria": {
+    "has_lock": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "extended_drawers:lock"
+            ]
+          }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "extended_drawers:lock"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_lock",
+      "has_the_recipe"
+    ]
+  ]
+}
