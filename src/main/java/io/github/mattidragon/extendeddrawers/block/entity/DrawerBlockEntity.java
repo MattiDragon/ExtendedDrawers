@@ -68,8 +68,6 @@ public class DrawerBlockEntity extends BlockEntity {
     
     @Override
     public void readNbt(NbtCompound nbt) {
-        super.readNbt(nbt);
-        
         var list = nbt.getList("items", NbtElement.COMPOUND_TYPE).stream().map(NbtCompound.class::cast).toList();
         for (int i = 0; i < list.size(); i++) {
             var storageNbt = list.get(i);
@@ -81,9 +79,7 @@ public class DrawerBlockEntity extends BlockEntity {
     }
     
     @Override
-    protected void writeNbt(NbtCompound nbt) {
-        super.writeNbt(nbt);
-        
+    public void writeNbt(NbtCompound nbt) {
         var list = new NbtList();
         for (var storage : storages) {
             var storageNbt = new NbtCompound();
@@ -95,5 +91,4 @@ public class DrawerBlockEntity extends BlockEntity {
         }
         nbt.put("items", list);
     }
-    
 }

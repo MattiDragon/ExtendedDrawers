@@ -18,6 +18,9 @@ import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
+import net.minecraft.loot.context.LootContext;
+import net.minecraft.loot.context.LootContextParameter;
+import net.minecraft.loot.context.LootContextParameters;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.DirectionProperty;
 import net.minecraft.state.property.Properties;
@@ -30,6 +33,10 @@ import net.minecraft.util.math.Vec2f;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
+
+import static io.github.mattidragon.extendeddrawers.ExtendedDrawers.id;
 
 @SuppressWarnings({"UnstableApiUsage", "deprecation"}) // transfer api and mojank block method deprecation
 public class DrawerBlock extends BaseBlock<DrawerBlockEntity> implements DrawerInteractionHandler {
@@ -66,23 +73,6 @@ public class DrawerBlock extends BaseBlock<DrawerBlockEntity> implements DrawerI
     @Override
     protected BlockEntityType<DrawerBlockEntity> getType() {
         return ModBlocks.DRAWER_BLOCK_ENTITY;
-    }
-    
-    @Override
-    public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
-        if (!state.isOf(newState.getBlock()) && world.getBlockEntity(pos) instanceof DrawerBlockEntity drawer) {
-            // Drop all contained items and upgrades
-            for (var slot : drawer.storages) {
-                while (slot.amount > 0) {
-                    int dropped = (int) Math.min(slot.item.getItem().getMaxCount(), slot.amount);
-                    ItemScatterer.spawn(world, pos.getX(), pos.getY(), pos.getZ(), slot.item.toStack(dropped));
-                    slot.amount -= dropped;
-                }
-                ItemScatterer.spawn(world, pos.getX(), pos.getY(), pos.getZ(), new ItemStack(slot.upgrade));
-            }
-        }
-        
-        super.onStateReplaced(state, world, pos, newState, moved);
     }
     
     @Override
@@ -159,6 +149,24 @@ public class DrawerBlock extends BaseBlock<DrawerBlockEntity> implements DrawerI
             case 4 -> facePos.y < 0.5f ? facePos.x < 0.5f ? 0 : 1 : facePos.x < 0.5f ? 2 : 3;
             default -> throw new IllegalStateException("unexpected drawer slot count");
         };
+    }
+    
+    @Override
+    public List<ItemStack> getDroppedStacks(BlockState state, LootContext.Builder builder) {
+        if (builder.get(LootContextParameters.BLOCK_ENTITY) instanceof DrawerBlockEntity drawer) {
+            builder = builder.putDrop(id("drawer"), (context, consumer) -> {
+                for (var slot : drawer.storages) {
+                    var amount = slot.amount;
+                    var item = slot.item;
+                    while (amount != 0) {
+                        var count = Math.min((int) amount, item.getItem().getMaxCount());
+                        consumer.accept(item.toStack(count));
+                        amount -= count;
+                    }
+                }
+            });
+        }
+        return super.getDroppedStacks(state, builder);
     }
     
     @Override

@@ -4,6 +4,7 @@ import io.github.mattidragon.extendeddrawers.config.ClientConfig;
 import io.github.mattidragon.extendeddrawers.config.CommonConfig;
 import io.github.mattidragon.extendeddrawers.registry.ModBlocks;
 import io.github.mattidragon.extendeddrawers.registry.ModItems;
+import io.github.mattidragon.extendeddrawers.util.DrawerContentsLootFunction;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
 import net.minecraft.item.ItemGroup;
@@ -22,6 +23,7 @@ public class ExtendedDrawers implements ModInitializer {
     public void onInitialize() {
         ModBlocks.register();
         ModItems.register();
+        DrawerContentsLootFunction.register();
         ClientConfig.HANDLE.load();
         CommonConfig.HANDLE.load();
     }
