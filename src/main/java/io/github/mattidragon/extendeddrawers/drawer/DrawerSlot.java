@@ -2,11 +2,16 @@ package io.github.mattidragon.extendeddrawers.drawer;
 
 import io.github.mattidragon.extendeddrawers.config.CommonConfig;
 import io.github.mattidragon.extendeddrawers.item.UpgradeItem;
+import io.github.mattidragon.extendeddrawers.util.ItemUtils;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.base.ResourceAmount;
 import net.fabricmc.fabric.api.transfer.v1.storage.base.SingleSlotStorage;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.fabricmc.fabric.api.transfer.v1.transaction.base.SnapshotParticipant;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
+import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -97,7 +102,14 @@ public final class DrawerSlot extends SnapshotParticipant<ResourceAmount<ItemVar
     
     public void update() {
         onChange.run();
-        
+    }
+    
+    public void dumpExcess(World world, BlockPos pos, Direction side, @Nullable PlayerEntity player) {
+        if (amount > getCapacity()) {
+            ItemUtils.offerOrDropStacks(world, pos, side, player, item, amount - getCapacity());
+            amount = getCapacity();
+        }
+        update();
     }
     
     @Override

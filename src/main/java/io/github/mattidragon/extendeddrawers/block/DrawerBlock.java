@@ -7,6 +7,7 @@ import io.github.mattidragon.extendeddrawers.item.UpgradeItem;
 import io.github.mattidragon.extendeddrawers.registry.ModBlocks;
 import io.github.mattidragon.extendeddrawers.util.DrawerInteractionStatusManager;
 import io.github.mattidragon.extendeddrawers.util.DrawerRaycastUtil;
+import io.github.mattidragon.extendeddrawers.util.ItemUtils;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.item.PlayerInventoryStorage;
 import net.fabricmc.fabric.api.transfer.v1.storage.StorageUtil;
@@ -14,12 +15,10 @@ import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.loot.context.LootContext;
-import net.minecraft.loot.context.LootContextParameter;
 import net.minecraft.loot.context.LootContextParameters;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.DirectionProperty;
@@ -32,7 +31,6 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec2f;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -85,19 +83,20 @@ public class DrawerBlock extends BaseBlock<DrawerBlockEntity> implements DrawerI
         
         var drawer = getBlockEntity(world, pos);
         var playerStack = player.getStackInHand(hand);
-        
+        var storage = drawer.storages[slot];
+    
         // Upgrade removal
         if (playerStack.isEmpty() && player.isSneaking()) {
             player.getInventory().offerOrDrop(new ItemStack(drawer.storages[slot].upgrade));
-            drawer.storages[slot].upgrade = null;
+            storage.upgrade = null;
+            storage.dumpExcess(world, pos, hit.getSide(), player);
             return ActionResult.SUCCESS;
         }
-        
+    
         var isDoubleClick = DrawerInteractionStatusManager.getAndResetInsertStatus(player, pos, slot);
     
         try (var t = Transaction.openOuter()) {
             int inserted;
-            var storage = drawer.storages[slot];
     
             if (isDoubleClick) {
                 if (storage.isResourceBlank()) return ActionResult.PASS;
@@ -189,29 +188,10 @@ public class DrawerBlock extends BaseBlock<DrawerBlockEntity> implements DrawerI
         stack.decrement(1);
     
         // give back old one
-        offerOrDrop(world, pos, side, player, new ItemStack(storage.upgrade));
+        ItemUtils.offerOrDrop(world, pos, side, player, new ItemStack(storage.upgrade));
     
         storage.upgrade = upgrade;
-        
-        // drop items that don't fit
-        if (storage.amount > storage.getCapacity()) {
-            var amount = storage.amount - storage.getCapacity();
-            while (amount > 0) {
-                int dropped = (int) Math.min(storage.item.getItem().getMaxCount(), amount);
-                offerOrDrop(world, pos, side, player, storage.item.toStack(dropped));
-                amount -= dropped;
-                storage.amount -= dropped;
-            }
-        }
-        
-        storage.update();
+        storage.dumpExcess(world, pos, side, player);
         return ActionResult.SUCCESS;
-    }
-    
-    private void offerOrDrop(World world, BlockPos pos, Direction side, @Nullable PlayerEntity player, ItemStack stack) {
-        if (player == null)
-            world.spawnEntity(new ItemEntity(world, pos.getX() + side.getOffsetX(), pos.getY(), pos.getZ() + side.getOffsetZ(), stack));
-        else
-            player.getInventory().offerOrDrop(stack);
     }
 }
