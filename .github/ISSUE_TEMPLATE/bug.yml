@@ -42,7 +42,7 @@ body:
   - type: textarea
     attributes:
       label: Other mods
-      description: Other mods that are required for reproduction and their version
+      description: Other mods that are required for reproduction and their version. \nPlease try to find a minimum test case that contains no mods that aren't required to reproduce the issue.
       placeholder: "eg. Fabric API: 0.52.3 \nDumb Mod: 1.4.3"
     validations:
       required: true
