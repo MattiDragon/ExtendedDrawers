@@ -1,5 +1,6 @@
 package io.github.mattidragon.extendeddrawers.block;
 
+import io.github.mattidragon.extendeddrawers.ExtendedDrawers;
 import io.github.mattidragon.extendeddrawers.block.base.BaseBlock;
 import io.github.mattidragon.extendeddrawers.block.base.DrawerInteractionHandler;
 import io.github.mattidragon.extendeddrawers.block.entity.DrawerBlockEntity;
@@ -178,18 +179,22 @@ public class DrawerBlock extends BaseBlock<DrawerBlockEntity> implements DrawerI
     }
     
     @Override
-    public ActionResult upgrade(UpgradeItem upgrade, BlockState state, World world, BlockPos pos, Vec3d hitPos, Direction side, PlayerEntity player, ItemStack stack) {
+    public ActionResult upgrade(BlockState state, World world, BlockPos pos, Vec3d hitPos, Direction side, PlayerEntity player, ItemStack stack) {
         if (world.isClient) return ActionResult.SUCCESS;
        
         var facePos = DrawerRaycastUtil.calculateFaceLocation(pos, hitPos, side, state.get(FACING));
         if (facePos == null) return ActionResult.PASS;
         var storage = getBlockEntity(world, pos).storages[getSlot(facePos)];
+    
+        if (!(stack.getItem() instanceof UpgradeItem upgrade)) {
+            ExtendedDrawers.LOGGER.warn("Expected drawer upgrade to be UpgradeItem but found " + stack.getItem().getClass().getSimpleName() + " instead");
+            return ActionResult.FAIL;
+        }
         
         stack.decrement(1);
     
         // give back old one
         ItemUtils.offerOrDrop(world, pos, side, player, new ItemStack(storage.upgrade));
-    
         storage.upgrade = upgrade;
         storage.dumpExcess(world, pos, side, player);
         return ActionResult.SUCCESS;

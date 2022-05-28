@@ -1,6 +1,5 @@
 package io.github.mattidragon.extendeddrawers.block.base;
 
-import io.github.mattidragon.extendeddrawers.item.UpgradeItem;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -16,7 +15,7 @@ public interface DrawerInteractionHandler {
         return ActionResult.PASS;
     }
     
-    default ActionResult upgrade(UpgradeItem upgrade, BlockState state, World world, BlockPos pos, Vec3d hitPos, Direction side, @Nullable PlayerEntity player, ItemStack stack) {
+    default ActionResult upgrade(BlockState state, World world, BlockPos pos, Vec3d hitPos, Direction side, @Nullable PlayerEntity player, ItemStack stack) {
         return ActionResult.PASS;
     }
 }
