@@ -1,10 +1,9 @@
-package io.github.mattidragon.extendeddrawers.util;
+package io.github.mattidragon.extendeddrawers.misc;
 
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import io.github.mattidragon.extendeddrawers.block.entity.DrawerBlockEntity;
 import io.github.mattidragon.extendeddrawers.registry.ModBlocks;
-import net.minecraft.inventory.Inventories;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.loot.condition.LootCondition;

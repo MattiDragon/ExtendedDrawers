@@ -1,4 +1,4 @@
-package io.github.mattidragon.extendeddrawers.util;
+package io.github.mattidragon.extendeddrawers.misc;
 
 import com.google.common.collect.Queues;
 import io.github.mattidragon.extendeddrawers.block.DrawerBlock;

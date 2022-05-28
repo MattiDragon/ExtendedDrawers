@@ -2,14 +2,20 @@ package io.github.mattidragon.extendeddrawers.mixin;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import io.github.mattidragon.extendeddrawers.block.base.CreativeBreakBlocker;
+import io.github.mattidragon.extendeddrawers.config.CommonConfig;
+import io.github.mattidragon.extendeddrawers.misc.CreativeExtractionBehaviour;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerInteractionManager;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Debug;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Slice;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Debug(export = true)
 @Mixin(ClientPlayerInteractionManager.class)
@@ -18,15 +24,19 @@ public class ClientPlayerInteractionManagerMixin {
     
     @ModifyExpressionValue(method = {"attackBlock", "updateBlockBreakingProgress"}, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/GameMode;isCreative()Z"))
     private boolean extended_drawers$stopCreativeBreaking(boolean original, BlockPos pos, Direction direction) {
+        if (CommonConfig.HANDLE.get().creativeExtractionMode() == CreativeExtractionBehaviour.NORMAL) return original;
         var world = MinecraftClient.getInstance().world;
         if (world == null) return original;
-        if (world.getBlockState(pos).getBlock() instanceof CreativeBreakBlocker blocker
-                && blocker.shouldBlock(world, pos, direction)) return false;
+        if (world.getBlockState(pos).getBlock() instanceof CreativeBreakBlocker blocker) {
+            if (!CommonConfig.HANDLE.get().creativeExtractionMode().isFrontOnly() || blocker.shouldBlock(world, pos, direction)) {
+                return false;
+            }
+        }
         return original;
     }
     
     
-    /*
+    
     @Inject(method = "updateBlockBreakingProgress",
             at = @At(value = "FIELD",
                     opcode = Opcodes.PUTFIELD,
@@ -38,7 +48,10 @@ public class ClientPlayerInteractionManagerMixin {
     private void extended_drawers$stopCreativeBreaking(BlockPos pos, Direction direction, CallbackInfoReturnable<Boolean> cir) {
         var world = MinecraftClient.getInstance().world;
         if (world == null) return;
-        if (world.getBlockState(pos).getBlock() instanceof CreativeBreakBlocker blocker && blocker.shouldBlock(world, pos, direction))
-            currentBreakingProgress = 0;
-    }*/
+        if (world.getBlockState(pos).getBlock() instanceof CreativeBreakBlocker blocker && !CommonConfig.HANDLE.get().creativeExtractionMode().isAllowMine()) {
+            if (!CommonConfig.HANDLE.get().creativeExtractionMode().isFrontOnly() || blocker.shouldBlock(world, pos, direction)) {
+                currentBreakingProgress = 0;
+            }
+        }
+    }
 }

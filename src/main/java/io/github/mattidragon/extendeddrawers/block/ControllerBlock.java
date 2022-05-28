@@ -1,7 +1,7 @@
 package io.github.mattidragon.extendeddrawers.block;
 
 import io.github.mattidragon.extendeddrawers.block.base.DrawerInteractionHandler;
-import io.github.mattidragon.extendeddrawers.util.NetworkHelper;
+import io.github.mattidragon.extendeddrawers.misc.NetworkHelper;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.item.PlayerInventoryStorage;
@@ -19,7 +19,7 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
-import static io.github.mattidragon.extendeddrawers.util.DrawerInteractionStatusManager.getAndResetInsertStatus;
+import static io.github.mattidragon.extendeddrawers.misc.DrawerInteractionStatusManager.getAndResetInsertStatus;
 
 @SuppressWarnings({"UnstableApiUsage", "deprecation"}) // transfer api and mojank block method deprecation
 public class ControllerBlock extends Block implements DrawerInteractionHandler {

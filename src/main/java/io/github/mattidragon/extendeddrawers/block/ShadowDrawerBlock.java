@@ -4,7 +4,7 @@ import io.github.mattidragon.extendeddrawers.block.base.BaseBlock;
 import io.github.mattidragon.extendeddrawers.block.base.CreativeBreakBlocker;
 import io.github.mattidragon.extendeddrawers.block.entity.ShadowDrawerBlockEntity;
 import io.github.mattidragon.extendeddrawers.registry.ModBlocks;
-import io.github.mattidragon.extendeddrawers.util.DrawerRaycastUtil;
+import io.github.mattidragon.extendeddrawers.misc.DrawerRaycastUtil;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.item.PlayerInventoryStorage;
@@ -28,7 +28,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 
-import static io.github.mattidragon.extendeddrawers.util.DrawerInteractionStatusManager.getAndResetInsertStatus;
+import static io.github.mattidragon.extendeddrawers.misc.DrawerInteractionStatusManager.getAndResetInsertStatus;
 
 @SuppressWarnings({"UnstableApiUsage", "deprecation"}) // transfer api and mojank block method deprecation
 public class ShadowDrawerBlock extends BaseBlock<ShadowDrawerBlockEntity> implements CreativeBreakBlocker {

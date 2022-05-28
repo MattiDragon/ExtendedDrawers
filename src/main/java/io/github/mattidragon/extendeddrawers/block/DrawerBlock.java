@@ -7,10 +7,9 @@ import io.github.mattidragon.extendeddrawers.block.base.DrawerInteractionHandler
 import io.github.mattidragon.extendeddrawers.block.entity.DrawerBlockEntity;
 import io.github.mattidragon.extendeddrawers.item.UpgradeItem;
 import io.github.mattidragon.extendeddrawers.registry.ModBlocks;
-import io.github.mattidragon.extendeddrawers.util.DrawerInteractionStatusManager;
-import io.github.mattidragon.extendeddrawers.util.DrawerRaycastUtil;
-import io.github.mattidragon.extendeddrawers.util.ItemUtils;
-import it.unimi.dsi.fastutil.chars.Char2ReferenceAVLTreeMap;
+import io.github.mattidragon.extendeddrawers.misc.DrawerInteractionStatusManager;
+import io.github.mattidragon.extendeddrawers.misc.DrawerRaycastUtil;
+import io.github.mattidragon.extendeddrawers.misc.ItemUtils;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.item.PlayerInventoryStorage;
 import net.fabricmc.fabric.api.transfer.v1.storage.StorageUtil;

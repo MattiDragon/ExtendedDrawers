@@ -1,4 +1,4 @@
-package io.github.mattidragon.extendeddrawers.util;
+package io.github.mattidragon.extendeddrawers.misc;
 
 import io.github.mattidragon.extendeddrawers.config.CommonConfig;
 import net.minecraft.entity.player.PlayerEntity;

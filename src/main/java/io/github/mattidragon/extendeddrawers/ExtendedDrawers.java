@@ -4,7 +4,7 @@ import io.github.mattidragon.extendeddrawers.config.ClientConfig;
 import io.github.mattidragon.extendeddrawers.config.CommonConfig;
 import io.github.mattidragon.extendeddrawers.registry.ModBlocks;
 import io.github.mattidragon.extendeddrawers.registry.ModItems;
-import io.github.mattidragon.extendeddrawers.util.DrawerContentsLootFunction;
+import io.github.mattidragon.extendeddrawers.misc.DrawerContentsLootFunction;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;

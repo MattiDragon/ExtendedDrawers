@@ -1,4 +1,4 @@
-package io.github.mattidragon.extendeddrawers.util;
+package io.github.mattidragon.extendeddrawers.misc;
 
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.minecraft.entity.ItemEntity;

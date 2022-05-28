@@ -1,4 +1,4 @@
-package io.github.mattidragon.extendeddrawers.util;
+package io.github.mattidragon.extendeddrawers.misc;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.hit.BlockHitResult;

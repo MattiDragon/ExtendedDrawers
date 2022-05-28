@@ -6,7 +6,7 @@ import io.github.mattidragon.extendeddrawers.config.CommonConfig;
 import io.github.mattidragon.extendeddrawers.drawer.DrawerSlot;
 import io.github.mattidragon.extendeddrawers.item.UpgradeItem;
 import io.github.mattidragon.extendeddrawers.registry.ModBlocks;
-import io.github.mattidragon.extendeddrawers.util.NetworkHelper;
+import io.github.mattidragon.extendeddrawers.misc.NetworkHelper;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
