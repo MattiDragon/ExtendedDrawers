@@ -22,6 +22,9 @@
     "main": [
       "io.github.mattidragon.extendeddrawers.ExtendedDrawers"
     ],
+    "preLaunch": [
+      "io.github.mattidragon.extendeddrawers.ExtendedDrawersPreLaunch"
+    ],
     "fabric-datagen": [
       "io.github.mattidragon.extendeddrawers.datagen.ExtendedDrawersDatagen"
     ]

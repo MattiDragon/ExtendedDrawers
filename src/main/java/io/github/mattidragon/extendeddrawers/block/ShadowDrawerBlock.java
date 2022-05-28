@@ -1,6 +1,7 @@
 package io.github.mattidragon.extendeddrawers.block;
 
 import io.github.mattidragon.extendeddrawers.block.base.BaseBlock;
+import io.github.mattidragon.extendeddrawers.block.base.CreativeBreakBlocker;
 import io.github.mattidragon.extendeddrawers.block.entity.ShadowDrawerBlockEntity;
 import io.github.mattidragon.extendeddrawers.registry.ModBlocks;
 import io.github.mattidragon.extendeddrawers.util.DrawerRaycastUtil;
@@ -30,7 +31,7 @@ import net.minecraft.world.World;
 import static io.github.mattidragon.extendeddrawers.util.DrawerInteractionStatusManager.getAndResetInsertStatus;
 
 @SuppressWarnings({"UnstableApiUsage", "deprecation"}) // transfer api and mojank block method deprecation
-public class ShadowDrawerBlock extends BaseBlock<ShadowDrawerBlockEntity> {
+public class ShadowDrawerBlock extends BaseBlock<ShadowDrawerBlockEntity> implements CreativeBreakBlocker {
     public static final DirectionProperty FACING = Properties.HORIZONTAL_FACING;
     
     public ShadowDrawerBlock(Settings settings) {
@@ -124,5 +125,10 @@ public class ShadowDrawerBlock extends BaseBlock<ShadowDrawerBlockEntity> {
             player.getInventory().insertStack(drawer.item.toStack(extracted));
             t.commit();
         }
+    }
+    
+    @Override
+    public boolean shouldBlock(World world, BlockPos pos, Direction direction) {
+        return world.getBlockState(pos).get(FACING) == direction;
     }
 }

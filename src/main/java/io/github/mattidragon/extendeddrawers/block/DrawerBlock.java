@@ -2,6 +2,7 @@ package io.github.mattidragon.extendeddrawers.block;
 
 import io.github.mattidragon.extendeddrawers.ExtendedDrawers;
 import io.github.mattidragon.extendeddrawers.block.base.BaseBlock;
+import io.github.mattidragon.extendeddrawers.block.base.CreativeBreakBlocker;
 import io.github.mattidragon.extendeddrawers.block.base.DrawerInteractionHandler;
 import io.github.mattidragon.extendeddrawers.block.entity.DrawerBlockEntity;
 import io.github.mattidragon.extendeddrawers.item.UpgradeItem;
@@ -9,6 +10,7 @@ import io.github.mattidragon.extendeddrawers.registry.ModBlocks;
 import io.github.mattidragon.extendeddrawers.util.DrawerInteractionStatusManager;
 import io.github.mattidragon.extendeddrawers.util.DrawerRaycastUtil;
 import io.github.mattidragon.extendeddrawers.util.ItemUtils;
+import it.unimi.dsi.fastutil.chars.Char2ReferenceAVLTreeMap;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.item.PlayerInventoryStorage;
 import net.fabricmc.fabric.api.transfer.v1.storage.StorageUtil;
@@ -38,7 +40,7 @@ import java.util.List;
 import static io.github.mattidragon.extendeddrawers.ExtendedDrawers.id;
 
 @SuppressWarnings({"UnstableApiUsage", "deprecation"}) // transfer api and mojank block method deprecation
-public class DrawerBlock extends BaseBlock<DrawerBlockEntity> implements DrawerInteractionHandler {
+public class DrawerBlock extends BaseBlock<DrawerBlockEntity> implements DrawerInteractionHandler, CreativeBreakBlocker {
     public static final DirectionProperty FACING = Properties.HORIZONTAL_FACING;
     
     public final int slots;
@@ -198,5 +200,10 @@ public class DrawerBlock extends BaseBlock<DrawerBlockEntity> implements DrawerI
         storage.upgrade = upgrade;
         storage.dumpExcess(world, pos, side, player);
         return ActionResult.SUCCESS;
+    }
+    
+    @Override
+    public boolean shouldBlock(World world, BlockPos pos, Direction direction) {
+        return world.getBlockState(pos).get(FACING) == direction;
     }
 }

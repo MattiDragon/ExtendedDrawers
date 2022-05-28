@@ -4,8 +4,10 @@
   "package": "io.github.mattidragon.extendeddrawers.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "ServerPlayerInteractionManagerMixin"
   ],
   "client": [
+    "ClientPlayerInteractionManagerMixin"
   ],
   "injectors": {
     "defaultRequire": 1
