@@ -30,19 +30,20 @@ public class ShadowDrawerBlockEntityRenderer extends AbstractDrawerBlockEntityRe
     
     @SuppressWarnings("UnstableApiUsage")
     @Override
-    public void render(ShadowDrawerBlockEntity entity, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
-        matrices.push();
-        var dir = entity.getCachedState().get(ShadowDrawerBlock.FACING);
+    public void render(ShadowDrawerBlockEntity drawer, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
+        var dir = drawer.getCachedState().get(ShadowDrawerBlock.FACING);
         var pos = dir.getUnitVector();
-    
+        if (!shouldRender(drawer, dir)) return;
+        
+        matrices.push();
         matrices.translate(pos.getX() / 2 + 0.5, pos.getY() / 2 + 0.5, pos.getZ() / 2 + 0.5);
         matrices.multiply(dir.getRotationQuaternion());
         matrices.multiply(Vec3f.POSITIVE_X.getDegreesQuaternion(-90));
         matrices.translate(0, 0, 0.01);
     
-        light = WorldRenderer.getLightmapCoordinates(Objects.requireNonNull(entity.getWorld()), entity.getPos().offset(dir));
+        light = WorldRenderer.getLightmapCoordinates(Objects.requireNonNull(drawer.getWorld()), drawer.getPos().offset(dir));
         
-        renderSlot(entity.item, entity.item.isBlank() || ClientConfig.HANDLE.get().displayEmptyCount() ? null : entity.getCount(), List.of(), matrices, vertexConsumers, light, overlay, (int) entity.getPos().asLong(), entity.getPos());
+        renderSlot(drawer.item, drawer.item.isBlank() || ClientConfig.HANDLE.get().displayEmptyCount() ? null : drawer.getCount(), List.of(), matrices, vertexConsumers, light, overlay, (int) drawer.getPos().asLong(), drawer.getPos());
         matrices.pop();
     }
 }

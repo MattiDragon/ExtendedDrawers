@@ -4,6 +4,8 @@ import io.github.mattidragon.extendeddrawers.config.ClientConfig;
 import net.fabricmc.fabric.api.renderer.v1.RendererAccess;
 import net.fabricmc.fabric.api.renderer.v1.mesh.MutableQuadView;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
+import net.minecraft.block.Block;
+import net.minecraft.block.SideShapeType;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.OverlayTexture;
@@ -38,6 +40,15 @@ public abstract class AbstractDrawerBlockEntityRenderer<T extends BlockEntity> i
             renderIcons(icons, light, matrices, vertexConsumers, overlay);
         if (pos.isWithinDistance(playerPos, config.itemRenderDistance()))
             renderItem(item, light, matrices, vertexConsumers, seed);
+    }
+    
+    protected final boolean shouldRender(T drawer, Direction facing) {
+        var world = drawer.getWorld();
+        if (world == null) return false;
+        var pos = drawer.getPos();
+        var state = drawer.getCachedState();
+        
+        return Block.shouldDrawSide(state, world, pos, facing, pos.offset(facing));
     }
     
     private void renderIcons(List<Sprite> icons, int light, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int overlay) {

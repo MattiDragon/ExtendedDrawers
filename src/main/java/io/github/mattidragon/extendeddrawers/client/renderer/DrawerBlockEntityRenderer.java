@@ -31,39 +31,40 @@ public class DrawerBlockEntityRenderer extends AbstractDrawerBlockEntityRenderer
     }
     
     @Override
-    public void render(DrawerBlockEntity entity, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
-        matrices.push();
-        var dir = entity.getCachedState().get(DrawerBlock.FACING);
+    public void render(DrawerBlockEntity drawer, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
+        var dir = drawer.getCachedState().get(DrawerBlock.FACING);
         var pos = dir.getUnitVector();
-    
+        if (!shouldRender(drawer, dir)) return;
+        
+        matrices.push();
         matrices.translate(pos.getX() / 2 + 0.5, pos.getY() / 2 + 0.5, pos.getZ() / 2 + 0.5);
         matrices.multiply(dir.getRotationQuaternion());
         matrices.multiply(Vec3f.POSITIVE_X.getDegreesQuaternion(-90));
         matrices.translate(0, 0, 0.01);
     
-        light = WorldRenderer.getLightmapCoordinates(Objects.requireNonNull(entity.getWorld()), entity.getPos().offset(dir));
-        var slots = ((DrawerBlock)entity.getCachedState().getBlock()).slots;
-        var blockPos = entity.getPos();
+        light = WorldRenderer.getLightmapCoordinates(Objects.requireNonNull(drawer.getWorld()), drawer.getPos().offset(dir));
+        var slots = ((DrawerBlock)drawer.getCachedState().getBlock()).slots;
+        var blockPos = drawer.getPos();
         
         switch (slots) {
-            case 1 -> renderSlot(entity.storages[0], light, matrices, vertexConsumers, (int) entity.getPos().asLong(), overlay, blockPos);
+            case 1 -> renderSlot(drawer.storages[0], light, matrices, vertexConsumers, (int) drawer.getPos().asLong(), overlay, blockPos);
             case 2 -> {
                 matrices.scale(0.5f, 0.5f, 0.5f);
                 matrices.translate(-0.5, 0, 0);
-                renderSlot(entity.storages[0], light, matrices, vertexConsumers, (int) entity.getPos().asLong(), overlay, blockPos);
+                renderSlot(drawer.storages[0], light, matrices, vertexConsumers, (int) drawer.getPos().asLong(), overlay, blockPos);
                 matrices.translate(1, 0, 0);
-                renderSlot(entity.storages[1], light, matrices, vertexConsumers, (int) entity.getPos().asLong(), overlay, blockPos);
+                renderSlot(drawer.storages[1], light, matrices, vertexConsumers, (int) drawer.getPos().asLong(), overlay, blockPos);
             }
             case 4 -> {
                 matrices.scale(0.5f, 0.5f, 0.5f);
                 matrices.translate(-0.5, 0.5, 0);
-                renderSlot(entity.storages[0], light, matrices, vertexConsumers, (int) entity.getPos().asLong(), overlay, blockPos);
+                renderSlot(drawer.storages[0], light, matrices, vertexConsumers, (int) drawer.getPos().asLong(), overlay, blockPos);
                 matrices.translate(1, 0, 0);
-                renderSlot(entity.storages[1], light, matrices, vertexConsumers, (int) entity.getPos().asLong(), overlay, blockPos);
+                renderSlot(drawer.storages[1], light, matrices, vertexConsumers, (int) drawer.getPos().asLong(), overlay, blockPos);
                 matrices.translate(-1, -1, 0);
-                renderSlot(entity.storages[2], light, matrices, vertexConsumers, (int) entity.getPos().asLong(), overlay, blockPos);
+                renderSlot(drawer.storages[2], light, matrices, vertexConsumers, (int) drawer.getPos().asLong(), overlay, blockPos);
                 matrices.translate(1, 0, 0);
-                renderSlot(entity.storages[3], light, matrices, vertexConsumers, (int) entity.getPos().asLong(), overlay, blockPos);
+                renderSlot(drawer.storages[3], light, matrices, vertexConsumers, (int) drawer.getPos().asLong(), overlay, blockPos);
             }
             default -> throw new IllegalStateException("unexpected drawer slot count");
         }
