@@ -1,6 +1,1 @@
-jdk:
-  - openjdk17
-install:
-  - chmod +x gradlew
-  - ./gradlew runDatagen
-  - ./gradlew assemble publishToMavenLocal
+jdk: ["openjdk17"]

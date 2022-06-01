@@ -47,7 +47,15 @@ loom {
     }
 }
 
-sourceSets.main.resources.srcDirs += ["src/main/generated"]
+task copyDatagen(type: Copy) {
+    from "src/main/generated"
+    into "build/resources/main"
+    dependsOn tasks.runDatagen
+}
+
+clean {
+    delete "src/main/generated"
+}
 
 processResources {
     inputs.property "version", version
@@ -79,6 +87,7 @@ jar {
     from("LICENSE") {
         rename { "${it}_${project.archivesBaseName}" }
     }
+    dependsOn tasks.copyDatagen
 }
 
 publishing {
