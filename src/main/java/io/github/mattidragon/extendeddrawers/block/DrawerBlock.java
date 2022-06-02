@@ -171,6 +171,16 @@ public class DrawerBlock extends BaseBlock<DrawerBlockEntity> implements DrawerI
     }
     
     @Override
+    public boolean hasComparatorOutput(BlockState state) {
+        return true;
+    }
+    
+    @Override
+    public int getComparatorOutput(BlockState state, World world, BlockPos pos) {
+        return StorageUtil.calculateComparatorOutput(getBlockEntity(world, pos).combinedStorage);
+    }
+    
+    @Override
     public ActionResult toggleLock(BlockState state, World world, BlockPos pos, Vec3d hitPos, Direction side) {
         var facePos = DrawerRaycastUtil.calculateFaceLocation(pos, hitPos, side, state.get(FACING));
         if (facePos == null) return ActionResult.PASS;

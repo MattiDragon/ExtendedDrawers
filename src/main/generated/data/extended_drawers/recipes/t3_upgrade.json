@@ -1,21 +1,21 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": [
-    "SSS",
-    "BMB",
-    "SSS"
-  ],
   "key": {
-    "M": {
-      "item": "minecraft:diamond_block"
-    },
     "B": {
       "item": "extended_drawers:t2_upgrade"
+    },
+    "M": {
+      "item": "minecraft:diamond_block"
     },
     "S": {
       "item": "minecraft:blaze_rod"
     }
   },
+  "pattern": [
+    "SSS",
+    "BMB",
+    "SSS"
+  ],
   "result": {
     "item": "extended_drawers:t3_upgrade"
   }

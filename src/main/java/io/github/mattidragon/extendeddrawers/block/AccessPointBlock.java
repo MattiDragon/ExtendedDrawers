@@ -22,8 +22,8 @@ import net.minecraft.world.World;
 import static io.github.mattidragon.extendeddrawers.misc.DrawerInteractionStatusManager.getAndResetInsertStatus;
 
 @SuppressWarnings({"UnstableApiUsage", "deprecation"}) // transfer api and mojank block method deprecation
-public class ControllerBlock extends Block implements DrawerInteractionHandler {
-    public ControllerBlock(Settings settings) {
+public class AccessPointBlock extends Block implements DrawerInteractionHandler {
+    public AccessPointBlock(Settings settings) {
         super(settings);
     
         ItemStorage.SIDED.registerForBlocks((world, pos, state, entity, dir) -> new CombinedStorage<>(NetworkHelper.getConnectedStorages(world, pos)), this);
@@ -41,7 +41,7 @@ public class ControllerBlock extends Block implements DrawerInteractionHandler {
             var isDoubleClick = getAndResetInsertStatus(player, pos, 0);
             
             if (isDoubleClick) {
-                inserted = (int) StorageUtil.move(PlayerInventoryStorage.of(player), storage, itemVariant -> StorageUtil.findStoredResource(storage, (itemVariant1) -> itemVariant1.equals(itemVariant), t) != null, Long.MAX_VALUE, t);
+                inserted = (int) StorageUtil.move(PlayerInventoryStorage.of(player), storage, itemVariant -> StorageUtil.findStoredResource(storage, (itemVariant1) -> itemVariant1.equals(itemVariant)) != null, Long.MAX_VALUE, t);
             } else {
                 if (playerStack.isEmpty()) return ActionResult.PASS;
             

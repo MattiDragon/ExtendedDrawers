@@ -40,13 +40,12 @@ outside this list could also be added.
 * **Compacting drawers**
   * Complicated to implement
   * Open to PRs for them
-* **Comparator support**
-  * Waiting on 1.19 (see [FabricMC/fabric#2139](https://github.com/FabricMC/fabric/pull/2139))
 * **Progress bars**
   * Not sure if there's any use
 * **Hiding drawer elements**
   * Not sure if needed
   * What's the best way to do this?
+  * Culling already implemented
 
 ## Other Info
 ### Modpack permission

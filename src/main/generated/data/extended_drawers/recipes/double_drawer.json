@@ -1,10 +1,5 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": [
-    "LPL",
-    "CPC",
-    "LPL"
-  ],
   "key": {
     "C": {
       "item": "minecraft:chest"
@@ -16,6 +11,11 @@
       "tag": "minecraft:planks"
     }
   },
+  "pattern": [
+    "LPL",
+    "CPC",
+    "LPL"
+  ],
   "result": {
     "item": "extended_drawers:double_drawer"
   }

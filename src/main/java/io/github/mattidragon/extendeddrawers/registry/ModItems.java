@@ -16,7 +16,7 @@ public class ModItems {
     public static final Item QUAD_DRAWER = new BlockItem(ModBlocks.QUAD_DRAWER, new FabricItemSettings().group(MOD_GROUP));
     public static final Item CONNECTOR = new BlockItem(ModBlocks.CONNECTOR, new FabricItemSettings().group(MOD_GROUP));
     public static final Item SHADOW_DRAWER = new BlockItem(ModBlocks.SHADOW_DRAWER, new FabricItemSettings().group(MOD_GROUP));
-    public static final Item CONTROLLER = new BlockItem(ModBlocks.CONTROLLER, new FabricItemSettings().group(MOD_GROUP));
+    public static final Item CONTROLLER = new BlockItem(ModBlocks.ACCESS_POINT, new FabricItemSettings().group(MOD_GROUP));
     
     public static final Item UPGRADE_FRAME = new Item(new FabricItemSettings().group(MOD_GROUP));
     public static final UpgradeItem T1_UPGRADE = new UpgradeItem(new FabricItemSettings().group(MOD_GROUP), id("item/t1_upgrade"), 2);

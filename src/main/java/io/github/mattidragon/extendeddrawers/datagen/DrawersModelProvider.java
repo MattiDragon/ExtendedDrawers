@@ -18,7 +18,7 @@ class DrawersModelProvider extends FabricModelProvider {
     
     @Override
     public void generateBlockStateModels(BlockStateModelGenerator generator) {
-        generator.registerSimpleCubeAll(ModBlocks.CONTROLLER);
+        generator.registerSimpleCubeAll(ModBlocks.ACCESS_POINT);
 
         generator.registerSingleton(ModBlocks.CONNECTOR, TextureMap.all(id("block/drawer_base")), Models.CUBE_ALL);
         

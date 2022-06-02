@@ -46,10 +46,12 @@ public class DrawerBlockEntity extends BlockEntity {
         markDirty();
         assert world != null;
         world.updateListeners(pos, getCachedState(), getCachedState(), Block.NOTIFY_LISTENERS);
+        world.updateComparators(pos, getCachedState().getBlock());
         NetworkHelper.findConnectedComponents(world, pos, (world1, pos1) -> world1.getBlockState(pos1).getBlock() instanceof ShadowDrawerBlock)
                 .forEach(pos1 -> {
                     var state1 = world.getBlockState(pos1);
                     world.updateListeners(pos1, state1, state1, Block.NOTIFY_LISTENERS);
+                    world.updateComparators(pos1, state1.getBlock());
                     if (world.getBlockEntity(pos1) instanceof ShadowDrawerBlockEntity drawer) drawer.clearCountCache();
                 });
     }

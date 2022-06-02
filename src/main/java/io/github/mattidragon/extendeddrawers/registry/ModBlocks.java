@@ -1,6 +1,6 @@
 package io.github.mattidragon.extendeddrawers.registry;
 
-import io.github.mattidragon.extendeddrawers.block.ControllerBlock;
+import io.github.mattidragon.extendeddrawers.block.AccessPointBlock;
 import io.github.mattidragon.extendeddrawers.block.DrawerBlock;
 import io.github.mattidragon.extendeddrawers.block.ShadowDrawerBlock;
 import io.github.mattidragon.extendeddrawers.block.entity.DrawerBlockEntity;
@@ -21,7 +21,7 @@ public class ModBlocks {
     public static final DrawerBlock DOUBLE_DRAWER = new DrawerBlock(FabricBlockSettings.of(Material.WOOD).strength(2f, 3f).sounds(BlockSoundGroup.WOOD), 2);
     public static final DrawerBlock QUAD_DRAWER = new DrawerBlock(FabricBlockSettings.of(Material.WOOD).strength(2f, 3f).sounds(BlockSoundGroup.WOOD), 4);
     public static final Block CONNECTOR = new Block(FabricBlockSettings.of(Material.WOOD).strength(2f, 3f).sounds(BlockSoundGroup.WOOD));
-    public static final ControllerBlock CONTROLLER = new ControllerBlock(FabricBlockSettings.of(Material.STONE).strength(3f, 9f).sounds(BlockSoundGroup.STONE));
+    public static final AccessPointBlock ACCESS_POINT = new AccessPointBlock(FabricBlockSettings.of(Material.STONE).strength(3f, 9f).sounds(BlockSoundGroup.STONE));
     public static final ShadowDrawerBlock SHADOW_DRAWER = new ShadowDrawerBlock(FabricBlockSettings.of(Material.STONE, MapColor.PALE_YELLOW).strength(3f, 9f).sounds(BlockSoundGroup.STONE));
     
     public static final BlockEntityType<DrawerBlockEntity> DRAWER_BLOCK_ENTITY = FabricBlockEntityTypeBuilder.create(DrawerBlockEntity::new, SINGLE_DRAWER, DOUBLE_DRAWER, QUAD_DRAWER).build();
@@ -32,7 +32,7 @@ public class ModBlocks {
         Registry.register(Registry.BLOCK, id("double_drawer"), DOUBLE_DRAWER);
         Registry.register(Registry.BLOCK, id("quad_drawer"), QUAD_DRAWER);
         Registry.register(Registry.BLOCK, id("connector"), CONNECTOR);
-        Registry.register(Registry.BLOCK, id("controller"), CONTROLLER);
+        Registry.register(Registry.BLOCK, id("access_point"), ACCESS_POINT);
         Registry.register(Registry.BLOCK, id("shadow_drawer"), SHADOW_DRAWER);
         
         Registry.register(Registry.BLOCK_ENTITY_TYPE, id("drawer"), DRAWER_BLOCK_ENTITY);

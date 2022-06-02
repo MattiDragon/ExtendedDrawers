@@ -1,18 +1,18 @@
 {
   "type": "minecraft:crafting_shaped",
+  "key": {
+    "C": {
+      "item": "minecraft:cobblestone"
+    },
+    "S": {
+      "item": "minecraft:stick"
+    }
+  },
   "pattern": [
     "SCS",
     "C C",
     "SCS"
   ],
-  "key": {
-    "S": {
-      "item": "minecraft:stick"
-    },
-    "C": {
-      "item": "minecraft:cobblestone"
-    }
-  },
   "result": {
     "item": "extended_drawers:upgrade_frame"
   }

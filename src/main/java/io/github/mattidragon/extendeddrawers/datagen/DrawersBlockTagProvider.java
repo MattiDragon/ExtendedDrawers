@@ -13,6 +13,6 @@ class DrawersBlockTagProvider extends FabricTagProvider.BlockTagProvider {
     @Override
     protected void generateTags() {
         getOrCreateTagBuilder(ModTags.BlockTags.DRAWERS).add(ModBlocks.SHADOW_DRAWER, ModBlocks.SINGLE_DRAWER, ModBlocks.DOUBLE_DRAWER, ModBlocks.QUAD_DRAWER);
-        getOrCreateTagBuilder(ModTags.BlockTags.NETWORK_COMPONENTS).addTag(ModTags.BlockTags.DRAWERS).add(ModBlocks.CONTROLLER, ModBlocks.CONNECTOR);
+        getOrCreateTagBuilder(ModTags.BlockTags.NETWORK_COMPONENTS).addTag(ModTags.BlockTags.DRAWERS).add(ModBlocks.ACCESS_POINT, ModBlocks.CONNECTOR);
     }
 }

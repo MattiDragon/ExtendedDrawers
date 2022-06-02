@@ -1,21 +1,21 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": [
-    "SSS",
-    "BMB",
-    "SSS"
-  ],
   "key": {
-    "M": {
-      "item": "minecraft:dirt"
-    },
     "B": {
       "item": "extended_drawers:upgrade_frame"
+    },
+    "M": {
+      "item": "minecraft:dirt"
     },
     "S": {
       "item": "minecraft:stick"
     }
   },
+  "pattern": [
+    "SSS",
+    "BMB",
+    "SSS"
+  ],
   "result": {
     "item": "extended_drawers:downgrade"
   }

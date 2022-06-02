@@ -23,7 +23,7 @@ class DrawersBlockLootTableProvider extends FabricBlockLootTableProvider {
         addDrop(ModBlocks.DOUBLE_DRAWER);
         addDrop(ModBlocks.QUAD_DRAWER);
         addDrop(ModBlocks.SHADOW_DRAWER);
-        addDrop(ModBlocks.CONTROLLER);
+        addDrop(ModBlocks.ACCESS_POINT);
         addDrop(ModBlocks.CONNECTOR);
     }
     

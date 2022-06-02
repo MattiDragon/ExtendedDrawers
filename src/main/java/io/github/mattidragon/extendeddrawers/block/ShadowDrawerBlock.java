@@ -39,7 +39,15 @@ public class ShadowDrawerBlock extends BaseBlock<ShadowDrawerBlockEntity> implem
         setDefaultState(stateManager.getDefaultState().with(FACING, Direction.NORTH));
     }
     
+    @Override
+    public boolean hasComparatorOutput(BlockState state) {
+        return true;
+    }
     
+    @Override
+    public int getComparatorOutput(BlockState state, World world, BlockPos pos) {
+        return StorageUtil.calculateComparatorOutput(getBlockEntity(world, pos).createStorage());
+    }
     
     @Override
     protected BlockEntityType<ShadowDrawerBlockEntity> getType() {

@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:block/cube_all",
   "textures": {
-    "all": "extended_drawers:block/controller"
+    "all": "extended_drawers:block/access_point"
   }
 }
