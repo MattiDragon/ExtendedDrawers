@@ -6,7 +6,7 @@ plugins {
 var run = System.env.GITHUB_RUN_NUMBER
 var isDev = System.env.DEV_BUILD == "true"
 
-version project.mod_version + (isDev ? "" : "-dev.$run") + "+mc.$minecraft_version"
+version project.mod_version + (isDev ? "-dev.$run" : "") + "+mc.$minecraft_version"
 group project.maven_group
 
 repositories {
