@@ -1,7 +1,0 @@
-// 1.19 Release Candidate 1	2022-06-02T18:37:37.5782971	Block Loot Tables
-4daba5a39bef914eed27c442f464cd5cc1c224c1 data\extended_drawers\loot_tables\blocks\quad_drawer.json
-911e842cf7edff0c2e480d7608976e826eaa2271 data\extended_drawers\loot_tables\blocks\double_drawer.json
-734748a343584dc7c563f25c7fd5ac654cb2329c data\extended_drawers\loot_tables\blocks\connector.json
-a3898f3fa7261de0d96b900e0b9eb7fe10b546ec data\extended_drawers\loot_tables\blocks\shadow_drawer.json
-08c4f81627cc94cb2b3ce4b5aac4eb92d51e44db data\extended_drawers\loot_tables\blocks\access_point.json
-f0b962f9805bd6c1f8631ce44ade6141833f009c data\extended_drawers\loot_tables\blocks\single_drawer.json
