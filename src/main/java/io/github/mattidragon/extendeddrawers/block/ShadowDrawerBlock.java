@@ -130,7 +130,7 @@ public class ShadowDrawerBlock extends BaseBlock<ShadowDrawerBlockEntity> implem
             var extracted = (int) storage.extract(drawer.item, player.isSneaking() ? drawer.item.getItem().getMaxCount() : 1, t);
             if (extracted == 0) return;
             
-            player.getInventory().insertStack(drawer.item.toStack(extracted));
+            player.getInventory().offerOrDrop(drawer.item.toStack(extracted));
             t.commit();
         }
     }

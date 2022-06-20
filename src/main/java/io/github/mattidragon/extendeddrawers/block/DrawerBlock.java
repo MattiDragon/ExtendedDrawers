@@ -137,7 +137,7 @@ public class DrawerBlock extends BaseBlock<DrawerBlockEntity> implements DrawerI
             var extracted = (int) storage.extract(item, player.isSneaking() ? item.getItem().getMaxCount() : 1, t);
             if (extracted == 0) return;
     
-            player.getInventory().insertStack(item.toStack(extracted));
+            player.getInventory().offerOrDrop(item.toStack(extracted));
             
             t.commit();
         }
