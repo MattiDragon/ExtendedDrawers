@@ -3,6 +3,7 @@ package io.github.mattidragon.extendeddrawers.drawer;
 import io.github.mattidragon.extendeddrawers.config.CommonConfig;
 import io.github.mattidragon.extendeddrawers.item.UpgradeItem;
 import io.github.mattidragon.extendeddrawers.misc.ItemUtils;
+import it.unimi.dsi.fastutil.booleans.BooleanConsumer;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.base.ResourceAmount;
 import net.fabricmc.fabric.api.transfer.v1.storage.base.SingleSlotStorage;
@@ -16,22 +17,24 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @SuppressWarnings("UnstableApiUsage")
-public final class DrawerSlot extends SnapshotParticipant<ResourceAmount<ItemVariant>> implements SingleSlotStorage<ItemVariant>, Comparable<DrawerSlot> {
-    private final Runnable onChange;
+public final class DrawerSlot extends SnapshotParticipant<DrawerSlot.Snapshot> implements SingleSlotStorage<ItemVariant>, Comparable<DrawerSlot> {
+    private final BooleanConsumer onChange;
     private final double capacityMultiplier;
+    private boolean itemChanged;
     public ItemVariant item = ItemVariant.blank();
     @Nullable
     public UpgradeItem upgrade = null;
     public long amount;
     public boolean locked;
     
-    public DrawerSlot(Runnable onChange, double capacityMultiplier) {
+    public DrawerSlot(BooleanConsumer onChange, double capacityMultiplier) {
         this.onChange = onChange;
         this.capacityMultiplier = capacityMultiplier;
     }
     
     public void setLocked(boolean locked) {
         this.locked = locked;
+        itemChanged = true;
         update();
         if (!locked && amount == 0) item = ItemVariant.blank();
     }
@@ -43,7 +46,10 @@ public final class DrawerSlot extends SnapshotParticipant<ResourceAmount<ItemVar
         updateSnapshots(transaction);
         var inserted = Math.min(getCapacity() - amount, maxAmount);
         amount += inserted;
-        if (item.isBlank()) item = resource;
+        if (item.isBlank()) {
+            item = resource;
+            itemChanged = true;
+        }
         return inserted;
     }
     
@@ -54,7 +60,10 @@ public final class DrawerSlot extends SnapshotParticipant<ResourceAmount<ItemVar
         updateSnapshots(transaction);
         var extracted = Math.min(amount, maxAmount);
         amount -= extracted;
-        if (amount == 0 && !locked) item = ItemVariant.blank();
+        if (amount == 0 && !locked) {
+            item = ItemVariant.blank();
+            itemChanged = true;
+        }
         return extracted;
     }
     
@@ -85,14 +94,15 @@ public final class DrawerSlot extends SnapshotParticipant<ResourceAmount<ItemVar
     }
     
     @Override
-    protected ResourceAmount<ItemVariant> createSnapshot() {
-        return new ResourceAmount<>(item, amount);
+    protected Snapshot createSnapshot() {
+        return new Snapshot(new ResourceAmount<>(item, amount), itemChanged);
     }
     
     @Override
-    protected void readSnapshot(ResourceAmount<ItemVariant> snapshot) {
-        item = snapshot.resource();
-        amount = snapshot.amount();
+    protected void readSnapshot(Snapshot snapshot) {
+        item = snapshot.contents.resource();
+        amount = snapshot.contents.amount();
+        itemChanged = snapshot.itemChanged;
     }
     
     @Override
@@ -101,7 +111,8 @@ public final class DrawerSlot extends SnapshotParticipant<ResourceAmount<ItemVar
     }
     
     public void update() {
-        onChange.run();
+        onChange.accept(itemChanged);
+        itemChanged = false;
     }
     
     public void dumpExcess(World world, BlockPos pos, Direction side, @Nullable PlayerEntity player) {
@@ -121,4 +132,6 @@ public final class DrawerSlot extends SnapshotParticipant<ResourceAmount<ItemVar
         
         return 0;
     }
+    
+    record Snapshot(ResourceAmount<ItemVariant> contents, boolean itemChanged) {}
 }

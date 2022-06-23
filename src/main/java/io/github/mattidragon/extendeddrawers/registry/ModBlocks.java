@@ -1,6 +1,7 @@
 package io.github.mattidragon.extendeddrawers.registry;
 
-import io.github.mattidragon.extendeddrawers.block.ControllerBlock;
+import io.github.mattidragon.extendeddrawers.block.AccessPointBlock;
+import io.github.mattidragon.extendeddrawers.block.ConnectorBlock;
 import io.github.mattidragon.extendeddrawers.block.DrawerBlock;
 import io.github.mattidragon.extendeddrawers.block.ShadowDrawerBlock;
 import io.github.mattidragon.extendeddrawers.block.entity.DrawerBlockEntity;
@@ -20,8 +21,8 @@ public class ModBlocks {
     public static final DrawerBlock SINGLE_DRAWER = new DrawerBlock(FabricBlockSettings.of(Material.WOOD).strength(2f, 3f).sounds(BlockSoundGroup.WOOD), 1);
     public static final DrawerBlock DOUBLE_DRAWER = new DrawerBlock(FabricBlockSettings.of(Material.WOOD).strength(2f, 3f).sounds(BlockSoundGroup.WOOD), 2);
     public static final DrawerBlock QUAD_DRAWER = new DrawerBlock(FabricBlockSettings.of(Material.WOOD).strength(2f, 3f).sounds(BlockSoundGroup.WOOD), 4);
-    public static final Block CONNECTOR = new Block(FabricBlockSettings.of(Material.WOOD).strength(2f, 3f).sounds(BlockSoundGroup.WOOD));
-    public static final ControllerBlock CONTROLLER = new ControllerBlock(FabricBlockSettings.of(Material.STONE).strength(3f, 9f).sounds(BlockSoundGroup.STONE));
+    public static final ConnectorBlock CONNECTOR = new ConnectorBlock(FabricBlockSettings.of(Material.WOOD).strength(2f, 3f).sounds(BlockSoundGroup.WOOD));
+    public static final AccessPointBlock CONTROLLER = new AccessPointBlock(FabricBlockSettings.of(Material.STONE).strength(3f, 9f).sounds(BlockSoundGroup.STONE));
     public static final ShadowDrawerBlock SHADOW_DRAWER = new ShadowDrawerBlock(FabricBlockSettings.of(Material.STONE, MapColor.PALE_YELLOW).strength(3f, 9f).sounds(BlockSoundGroup.STONE));
     
     public static final BlockEntityType<DrawerBlockEntity> DRAWER_BLOCK_ENTITY = FabricBlockEntityTypeBuilder.create(DrawerBlockEntity::new, SINGLE_DRAWER, DOUBLE_DRAWER, QUAD_DRAWER).build();

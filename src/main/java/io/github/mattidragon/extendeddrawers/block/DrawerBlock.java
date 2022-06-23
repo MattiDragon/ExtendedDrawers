@@ -1,15 +1,15 @@
 package io.github.mattidragon.extendeddrawers.block;
 
+import com.kneelawk.graphlib.graph.BlockNode;
 import io.github.mattidragon.extendeddrawers.ExtendedDrawers;
-import io.github.mattidragon.extendeddrawers.block.base.BaseBlock;
-import io.github.mattidragon.extendeddrawers.block.base.CreativeBreakBlocker;
-import io.github.mattidragon.extendeddrawers.block.base.DrawerInteractionHandler;
+import io.github.mattidragon.extendeddrawers.block.base.*;
 import io.github.mattidragon.extendeddrawers.block.entity.DrawerBlockEntity;
 import io.github.mattidragon.extendeddrawers.item.UpgradeItem;
-import io.github.mattidragon.extendeddrawers.registry.ModBlocks;
 import io.github.mattidragon.extendeddrawers.misc.DrawerInteractionStatusManager;
 import io.github.mattidragon.extendeddrawers.misc.DrawerRaycastUtil;
 import io.github.mattidragon.extendeddrawers.misc.ItemUtils;
+import io.github.mattidragon.extendeddrawers.network.node.DrawerBlockNode;
+import io.github.mattidragon.extendeddrawers.registry.ModBlocks;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.item.PlayerInventoryStorage;
 import net.fabricmc.fabric.api.transfer.v1.storage.StorageUtil;
@@ -22,10 +22,14 @@ import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.loot.context.LootContext;
 import net.minecraft.loot.context.LootContextParameters;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.DirectionProperty;
 import net.minecraft.state.property.Properties;
-import net.minecraft.util.*;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.BlockMirror;
+import net.minecraft.util.BlockRotation;
+import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
@@ -34,12 +38,13 @@ import net.minecraft.util.math.Vec2f;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
+import java.util.Collection;
 import java.util.List;
 
 import static io.github.mattidragon.extendeddrawers.ExtendedDrawers.id;
 
 @SuppressWarnings({"UnstableApiUsage", "deprecation"}) // transfer api and mojank block method deprecation
-public class DrawerBlock extends BaseBlock<DrawerBlockEntity> implements DrawerInteractionHandler, CreativeBreakBlocker {
+public class DrawerBlock extends NetworkBlockWithEntity<DrawerBlockEntity> implements DrawerInteractionHandler, CreativeBreakBlocker, NetworkComponent {
     public static final DirectionProperty FACING = Properties.HORIZONTAL_FACING;
     
     public final int slots;
@@ -77,8 +82,10 @@ public class DrawerBlock extends BaseBlock<DrawerBlockEntity> implements DrawerI
     
     @Override
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
-        if (!player.canModifyBlocks() || hand == Hand.OFF_HAND) return ActionResult.PASS;
-        
+        if (hit.getSide() != state.get(FACING) || !player.canModifyBlocks() || hand == Hand.OFF_HAND)
+            return ActionResult.PASS;
+        if (!(world instanceof ServerWorld serverWorld)) return ActionResult.CONSUME_PARTIAL;
+    
         var internalPos = DrawerRaycastUtil.calculateFaceLocation(pos, hit.getPos(), hit.getSide(), state.get(FACING));
         if (internalPos == null) return ActionResult.PASS;
         var slot = getSlot(internalPos);
@@ -109,7 +116,7 @@ public class DrawerBlock extends BaseBlock<DrawerBlockEntity> implements DrawerI
                 inserted = (int) storage.insert(ItemVariant.of(playerStack), playerStack.getCount(), t);
                 playerStack.decrement(inserted);
             }
-            if (inserted == 0) return ActionResult.PASS;
+            if (inserted == 0) return ActionResult.CONSUME_PARTIAL;
             
             t.commit();
             return ActionResult.CONSUME;
@@ -204,5 +211,10 @@ public class DrawerBlock extends BaseBlock<DrawerBlockEntity> implements DrawerI
     @Override
     public boolean shouldBlock(World world, BlockPos pos, Direction direction) {
         return world.getBlockState(pos).get(FACING) == direction;
+    }
+    
+    @Override
+    public Collection<BlockNode> createNodes() {
+        return List.of(new DrawerBlockNode());
     }
 }

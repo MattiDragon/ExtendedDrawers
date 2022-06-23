@@ -14,7 +14,9 @@ repositories {
 
     //mconfig dep
     maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
+
     maven { url "https://jitpack.io" }
+    maven { url "https://kneelawk.com/maven/" }
 }
 
 dependencies {
@@ -25,6 +27,7 @@ dependencies {
 
     // Mconfig
     include modImplementation("com.github.mattidragon:mconfig:$mconfig_version")
+    include modImplementation("com.kneelawk:graphlib:$graphlib_version")
 
     // Mixin Extras
     include implementation("com.github.LlamaLad7:MixinExtras:0.0.10")
