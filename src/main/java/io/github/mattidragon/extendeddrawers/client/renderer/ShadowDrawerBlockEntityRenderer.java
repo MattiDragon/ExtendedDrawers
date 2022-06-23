@@ -3,15 +3,10 @@ package io.github.mattidragon.extendeddrawers.client.renderer;
 import io.github.mattidragon.extendeddrawers.block.ShadowDrawerBlock;
 import io.github.mattidragon.extendeddrawers.block.entity.ShadowDrawerBlockEntity;
 import io.github.mattidragon.extendeddrawers.config.ClientConfig;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.WorldRenderer;
-import net.minecraft.client.render.block.entity.BlockEntityRenderer;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
-import net.minecraft.client.render.model.json.ModelTransformation;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.util.math.Matrix4f;
 import net.minecraft.util.math.Vec3f;
 
 import java.util.List;
@@ -42,8 +37,8 @@ public class ShadowDrawerBlockEntityRenderer extends AbstractDrawerBlockEntityRe
         matrices.translate(0, 0, 0.01);
     
         light = WorldRenderer.getLightmapCoordinates(Objects.requireNonNull(drawer.getWorld()), drawer.getPos().offset(dir));
-        
-        renderSlot(drawer.item, drawer.item.isBlank() || ClientConfig.HANDLE.get().displayEmptyCount() ? null : drawer.getCount(), List.of(), matrices, vertexConsumers, light, overlay, (int) drawer.getPos().asLong(), drawer.getPos());
+    
+        renderSlot(drawer.item, drawer.item.isBlank() || ClientConfig.HANDLE.get().displayEmptyCount() ? null : drawer.countCache, List.of(), matrices, vertexConsumers, light, overlay, (int) drawer.getPos().asLong(), drawer.getPos());
         matrices.pop();
     }
 }

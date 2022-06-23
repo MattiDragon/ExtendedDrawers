@@ -1,18 +1,27 @@
 package io.github.mattidragon.extendeddrawers;
 
+import com.kneelawk.graphlib.GraphLib;
+import io.github.mattidragon.extendeddrawers.block.base.NetworkComponent;
 import io.github.mattidragon.extendeddrawers.config.ClientConfig;
 import io.github.mattidragon.extendeddrawers.config.CommonConfig;
+import io.github.mattidragon.extendeddrawers.misc.DrawerContentsLootFunction;
+import io.github.mattidragon.extendeddrawers.network.NetworkRegistry;
+import io.github.mattidragon.extendeddrawers.network.UpdateHandler;
 import io.github.mattidragon.extendeddrawers.registry.ModBlocks;
 import io.github.mattidragon.extendeddrawers.registry.ModItems;
-import io.github.mattidragon.extendeddrawers.misc.DrawerContentsLootFunction;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerChunkEvents;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.ResourcePackActivationType;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
+import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Box;
+import net.minecraft.util.profiler.Profiler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,8 +41,30 @@ public class ExtendedDrawers implements ModInitializer {
         ModBlocks.register();
         ModItems.register();
         DrawerContentsLootFunction.register();
+        NetworkRegistry.register();
         ClientConfig.HANDLE.load();
         CommonConfig.HANDLE.load();
         ResourceManagerHelper.registerBuiltinResourcePack(id("alt"), MOD_CONTAINER, ResourcePackActivationType.NORMAL);
+    
+        ServerChunkEvents.CHUNK_LOAD.register((world, chunk) -> {
+            if (!CommonConfig.HANDLE.get().automaticNetworkHealing()) return;
+            
+            var profiler = world.getProfiler();
+            profiler.push("extended_drawers:update_chunks");
+            var chunkPos = chunk.getPos();
+            var controller = GraphLib.getController(world);
+            //LOGGER.info("Healing graphs for chunk at " + chunkPos.x + ", " + chunkPos.z);
+            var area = BlockPos.iterate(chunkPos.getStartX(), chunk.getBottomY(), chunkPos.getStartZ(), chunkPos.getEndX(), chunk.getTopY(), chunkPos.getEndZ());
+            for (var pos : area) {
+                var state = chunk.getBlockState(pos);
+                if (state.getBlock() instanceof NetworkComponent) {
+                    if (controller.getGraphsAt(pos).findAny().isEmpty()) {
+                        LOGGER.info("Scheduling graph refresh at " + pos.getX() + ", " + pos.getY() + ", " + pos.getZ());
+                        UpdateHandler.scheduleRefresh(world, pos.toImmutable());
+                    }
+                }
+            }
+            profiler.pop();
+        });
     }
 }

@@ -1,20 +1,26 @@
 package io.github.mattidragon.extendeddrawers.block;
 
-import io.github.mattidragon.extendeddrawers.block.base.BaseBlock;
+import com.kneelawk.graphlib.graph.BlockNode;
 import io.github.mattidragon.extendeddrawers.block.base.CreativeBreakBlocker;
+import io.github.mattidragon.extendeddrawers.block.base.NetworkBlockWithEntity;
 import io.github.mattidragon.extendeddrawers.block.entity.ShadowDrawerBlockEntity;
-import io.github.mattidragon.extendeddrawers.registry.ModBlocks;
 import io.github.mattidragon.extendeddrawers.misc.DrawerRaycastUtil;
-import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
+import io.github.mattidragon.extendeddrawers.network.NetworkStorageCache;
+import io.github.mattidragon.extendeddrawers.network.node.ShadowDrawerBlockNode;
+import io.github.mattidragon.extendeddrawers.registry.ModBlocks;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.item.PlayerInventoryStorage;
+import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
 import net.fabricmc.fabric.api.transfer.v1.storage.StorageUtil;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemPlacementContext;
+import net.minecraft.item.ItemStack;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.DirectionProperty;
 import net.minecraft.state.property.Properties;
@@ -27,11 +33,16 @@ import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Collection;
+import java.util.List;
 
 import static io.github.mattidragon.extendeddrawers.misc.DrawerInteractionStatusManager.getAndResetInsertStatus;
 
 @SuppressWarnings({"UnstableApiUsage", "deprecation"}) // transfer api and mojank block method deprecation
-public class ShadowDrawerBlock extends BaseBlock<ShadowDrawerBlockEntity> implements CreativeBreakBlocker {
+public class ShadowDrawerBlock extends NetworkBlockWithEntity<ShadowDrawerBlockEntity> implements CreativeBreakBlocker {
+
     public static final DirectionProperty FACING = Properties.HORIZONTAL_FACING;
     
     public ShadowDrawerBlock(Settings settings) {
@@ -48,7 +59,18 @@ public class ShadowDrawerBlock extends BaseBlock<ShadowDrawerBlockEntity> implem
     public int getComparatorOutput(BlockState state, World world, BlockPos pos) {
         return StorageUtil.calculateComparatorOutput(getBlockEntity(world, pos).createStorage());
     }
-    
+    @Override
+    public void onPlaced(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
+        super.onPlaced(world, pos, state, placer, itemStack);
+        getBlockEntity(world, pos).recalculateContents();
+    }
+
+    private static Storage<ItemVariant> createStorage(ServerWorld world, BlockPos pos) {
+        if (!(world.getBlockEntity(pos) instanceof ShadowDrawerBlockEntity shadowDrawer)) throw new IllegalStateException();
+
+        return shadowDrawer.new ShadowDrawerStorage(NetworkStorageCache.get(world, pos));
+    }
+
     @Override
     protected BlockEntityType<ShadowDrawerBlockEntity> getType() {
         return ModBlocks.SHADOW_DRAWER_BLOCK_ENTITY;
@@ -76,14 +98,15 @@ public class ShadowDrawerBlock extends BaseBlock<ShadowDrawerBlockEntity> implem
     @Override
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
         if (hit.getSide() != state.get(FACING) || !player.canModifyBlocks()) return ActionResult.PASS;
-        
+        if (!(world instanceof ServerWorld serverWorld)) return ActionResult.CONSUME_PARTIAL;
+
         var drawer = getBlockEntity(world, pos);
         var playerStack = player.getStackInHand(hand);
         
         if (player.isSneaking() || drawer.item.isBlank()) {
             drawer.item = ItemVariant.of(playerStack);
             drawer.markDirty();
-            world.updateListeners(pos, state, state, Block.NOTIFY_LISTENERS);
+            drawer.recalculateContents();
             return ActionResult.SUCCESS;
         }
         
@@ -92,19 +115,18 @@ public class ShadowDrawerBlock extends BaseBlock<ShadowDrawerBlockEntity> implem
         try (var t = Transaction.openOuter()) {
             int inserted;
     
-            var storage = ItemStorage.SIDED.find(world, pos, state, drawer, Direction.UP);
-            if (storage == null) throw new IllegalStateException("Shadow drawer doesn't have storage!");
+            var storage = createStorage(serverWorld, pos);
     
             if (isDoubleClick) {
                 if (drawer.item.isBlank()) return ActionResult.PASS;
                 inserted = (int) StorageUtil.move(PlayerInventoryStorage.of(player), storage, itemVariant -> true, Long.MAX_VALUE, t);
             } else {
-                if (!ItemVariant.of(playerStack).equals(drawer.item) || playerStack.isEmpty()) return ActionResult.PASS;
+                if (playerStack.isEmpty()) return ActionResult.PASS;
     
                 inserted = (int) storage.insert(ItemVariant.of(playerStack), playerStack.getCount(), t);
                 playerStack.decrement(inserted);
             }
-            if (inserted == 0) return ActionResult.PASS;
+            if (inserted == 0) return ActionResult.CONSUME_PARTIAL;
             
             t.commit();
             return ActionResult.SUCCESS;
@@ -114,7 +136,8 @@ public class ShadowDrawerBlock extends BaseBlock<ShadowDrawerBlockEntity> implem
     @Override
     public void onBlockBreakStart(BlockState state, World world, BlockPos pos, PlayerEntity player) {
         if (!player.canModifyBlocks()) return;
-        
+        if (!(world instanceof ServerWorld serverWorld)) return;
+
         var drawer = getBlockEntity(world, pos);
         
         var hit = DrawerRaycastUtil.getTarget(player, pos);
@@ -123,8 +146,7 @@ public class ShadowDrawerBlock extends BaseBlock<ShadowDrawerBlockEntity> implem
         var internalPos = DrawerRaycastUtil.calculateFaceLocation(pos, hit.getPos(), hit.getSide(), state.get(FACING));
         if (internalPos == null) return;
     
-        var storage = ItemStorage.SIDED.find(world, pos, state, drawer, Direction.UP);
-        if (storage == null) throw new IllegalStateException("Shadow drawer doesn't have storage!");
+        var storage = createStorage(serverWorld, pos);
         
         try (var t = Transaction.openOuter()) {
             var extracted = (int) storage.extract(drawer.item, player.isSneaking() ? drawer.item.getItem().getMaxCount() : 1, t);
@@ -138,5 +160,10 @@ public class ShadowDrawerBlock extends BaseBlock<ShadowDrawerBlockEntity> implem
     @Override
     public boolean shouldBlock(World world, BlockPos pos, Direction direction) {
         return world.getBlockState(pos).get(FACING) == direction;
+    }
+
+    @Override
+    public Collection<BlockNode> createNodes() {
+        return List.of(new ShadowDrawerBlockNode());
     }
 }
