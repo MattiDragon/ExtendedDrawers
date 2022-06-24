@@ -1,9 +1,17 @@
 # Extended Drawers
-
-<a href="https://modrinth.com/mod/extended-drawers">
-<img src="https://img.shields.io/badge/dynamic/json?color=5da545&label=modrinth&suffix=%20downloads%20&query=downloads&url=https://api.modrinth.com/api/v1/mod/AhtxbnpG&style=flat&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMSAxMSIgd2lkdGg9IjE0LjY2NyIgaGVpZ2h0PSIxNC42NjciICB4bWxuczp2PSJodHRwczovL3ZlY3RhLmlvL25hbm8iPjxkZWZzPjxjbGlwUGF0aCBpZD0iQSI+PHBhdGggZD0iTTAgMGgxMXYxMUgweiIvPjwvY2xpcFBhdGg+PC9kZWZzPjxnIGNsaXAtcGF0aD0idXJsKCNBKSI+PHBhdGggZD0iTTEuMzA5IDcuODU3YTQuNjQgNC42NCAwIDAgMS0uNDYxLTEuMDYzSDBDLjU5MSA5LjIwNiAyLjc5NiAxMSA1LjQyMiAxMWMxLjk4MSAwIDMuNzIyLTEuMDIgNC43MTEtMi41NTZoMGwtLjc1LS4zNDVjLS44NTQgMS4yNjEtMi4zMSAyLjA5Mi0zLjk2MSAyLjA5MmE0Ljc4IDQuNzggMCAwIDEtMy4wMDUtMS4wNTVsMS44MDktMS40NzQuOTg0Ljg0NyAxLjkwNS0xLjAwM0w4LjE3NCA1LjgybC0uMzg0LS43ODYtMS4xMTYuNjM1LS41MTYuNjk0LS42MjYuMjM2LS44NzMtLjM4N2gwbC0uMjEzLS45MS4zNTUtLjU2Ljc4Ny0uMzcuODQ1LS45NTktLjcwMi0uNTEtMS44NzQuNzEzLTEuMzYyIDEuNjUxLjY0NSAxLjA5OC0xLjgzMSAxLjQ5MnptOS42MTQtMS40NEE1LjQ0IDUuNDQgMCAwIDAgMTEgNS41QzExIDIuNDY0IDguNTAxIDAgNS40MjIgMCAyLjc5NiAwIC41OTEgMS43OTQgMCA0LjIwNmguODQ4QzEuNDE5IDIuMjQ1IDMuMjUyLjgwOSA1LjQyMi44MDljMi42MjYgMCA0Ljc1OCAyLjEwMiA0Ljc1OCA0LjY5MSAwIC4xOS0uMDEyLjM3Ni0uMDM0LjU2bC43NzcuMzU3aDB6IiBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGZpbGw9IiM1ZGE0MjYiLz48L2c+PC9zdmc+"/></a>
-
-<a href="https://www.curseforge.com/minecraft/mc-mods/extended-drawers"><img src="https://cf.way2muchnoise.eu/full_616602_downloads.svg"/></a>
+<!-- Modrinth -->
+<a href="https://modrinth.com/mod/extended-drawers" style="display: inline-block;">
+<img src="https://img.shields.io/badge/dynamic/json?
+color=2d2d2d&colorA=5da545&label=&suffix=%20downloads%20&query=downloads&url=https://api.modrinth.
+com/api/v1/mod/AhtxbnpG&style=flat-square&logo=data:image/svg+xml;base64,
+PHN2ZyB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxNCIgdmlld0JveD0iMCAwIDUxMiA1MTQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+ICA8cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGNsaXAtcnVsZT0iZXZlbm9kZCIgZD0iTTUwMy4xNiAzMjMuNTZDNTE0LjU1IDI4MS40NyA1MTUuMzIgMjM1LjkxIDUwMy4yIDE5MC43NkM0NjYuNTcgNTQuMjI5OSAzMjYuMDQgLTI2LjgwMDEgMTg5LjMzIDkuNzc5OTFDODMuODEwMSAzOC4wMTk5IDExLjM4OTkgMTI4LjA3IDAuNjg5OTQxIDIzMC40N0g0My45OUM1NC4yOSAxNDcuMzMgMTEzLjc0IDc0LjcyOTggMTk5Ljc1IDUxLjcwOThDMzA2LjA1IDIzLjI1OTggNDE1LjEzIDgwLjY2OTkgNDUzLjE3IDE4MS4zOEw0MTEuMDMgMTkyLjY1QzM5MS42NCAxNDUuOCAzNTIuNTcgMTExLjQ1IDMwNi4zIDk2LjgxOThMMjk4LjU2IDE0MC42NkMzMzUuMDkgMTU0LjEzIDM2NC43MiAxODQuNSAzNzUuNTYgMjI0LjkxQzM5MS4zNiAyODMuOCAzNjEuOTQgMzQ0LjE0IDMwOC41NiAzNjkuMTdMMzIwLjA5IDQxMi4xNkMzOTAuMjUgMzgzLjIxIDQzMi40IDMxMC4zIDQyMi40MyAyMzUuMTRMNDY0LjQxIDIyMy45MUM0NjguOTEgMjUyLjYyIDQ2Ny4zNSAyODEuMTYgNDYwLjU1IDMwOC4wN0w1MDMuMTYgMzIzLjU2WiIgZmlsbD0idmFyKC0tY29sb3ItYnJhbmQpIi8+ICA8cGF0aCBkPSJNMzIxLjk5IDUwNC4yMkMxODUuMjcgNTQwLjggNDQuNzUwMSA0NTkuNzcgOC4xMTAxMSAzMjMuMjRDMy44NDAxMSAzMDcuMzEgMS4xNyAyOTEuMzMgMCAyNzUuNDZINDMuMjdDNDQuMzYgMjg3LjM3IDQ2LjQ2OTkgMjk5LjM1IDQ5LjY3OTkgMzExLjI5QzUzLjAzOTkgMzIzLjggNTcuNDUgMzM1Ljc1IDYyLjc5IDM0Ny4wN0wxMDEuMzggMzIzLjkyQzk4LjEyOTkgMzE2LjQyIDk1LjM5IDMwOC42IDkzLjIxIDMwMC40N0M2OS4xNyAyMTAuODcgMTIyLjQxIDExOC43NyAyMTIuMTMgOTQuNzYwMUMyMjkuMTMgOTAuMjEwMSAyNDYuMjMgODguNDQwMSAyNjIuOTMgODkuMTUwMUwyNTUuMTkgMTMzQzI0NC43MyAxMzMuMDUgMjM0LjExIDEzNC40MiAyMjMuNTMgMTM3LjI1QzE1Ny4zMSAxNTQuOTggMTE4LjAxIDIyMi45NSAxMzUuNzUgMjg5LjA5QzEzNi44NSAyOTMuMTYgMTM4LjEzIDI5Ny4xMyAxMzkuNTkgMzAwLjk5TDE4OC45NCAyNzEuMzhMMTc0LjA3IDIzMS45NUwyMjAuNjcgMTg0LjA4TDI3OS41NyAxNzEuMzlMMjk2LjYyIDE5Mi4zOEwyNjkuNDcgMjE5Ljg4TDI0NS43OSAyMjcuMzNMMjI4Ljg3IDI0NC43MkwyMzcuMTYgMjY3Ljc5QzIzNy4xNiAyNjcuNzkgMjUzLjk1IDI4NS42MyAyNTMuOTggMjg1LjY0TDI3Ny43IDI3OS4zM0wyOTQuNTggMjYwLjc5TDMzMS40NCAyNDkuMTJMMzQyLjQyIDI3My44MkwzMDQuMzkgMzIwLjQ1TDI0MC42NiAzNDAuNjNMMjEyLjA4IDMwOC44MUwxNjIuMjYgMzM4LjdDMTg3LjggMzY3Ljc4IDIyNi4yIDM4My45MyAyNjYuMDEgMzgwLjU2TDI3Ny41NCA0MjMuNTVDMjE4LjEzIDQzMS40MSAxNjAuMSA0MDYuODIgMTI0LjA1IDM2MS42NEw4NS42Mzk5IDM4NC42OEMxMzYuMjUgNDUxLjE3IDIyMy44NCA0ODQuMTEgMzA5LjYxIDQ2MS4xNkMzNzEuMzUgNDQ0LjY0IDQxOS40IDQwMi41NiA0NDUuNDIgMzQ5LjM4TDQ4OC4wNiAzNjQuODhDNDU3LjE3IDQzMS4xNiAzOTguMjIgNDgzLjgyIDMyMS45OSA1MDQuMjJaIiBmaWxsPSJ2YXIoLS1jb2xvci1icmFuZCkiLz48L3N2Zz4=
+"/></a>
+<!-- Curseforge -->
+<a href="https://www.curseforge.com/minecraft/mc-mods/extended-drawers"><img src="https://cf.way2muchnoise.eu/full_616602_downloads.svg?badge_style=flat"/></a>
+<!-- Github -->
+<a href="https://discord.gg/55j2cn9Am3"><img src="https://img.shields.io/badge/-issues-0?logo=github&color=2d2d2d&style=flat-square&labelColor=6e5494&logoColor=2d2d2d"></img></a>
+<!-- Discord -->
+<a href="https://discord.gg/55j2cn9Am3"><img src="https://img.shields.io/badge/-support-000000?logo=discord&color=2d2d2d&style=flat-square&labelColor=5865f2&logoColor=2d2d2d"></img></a>
 
 A mod inspired by storage drawers that aims to allow for easy creation of powerful yet not
 overpowered storage using simple components.
@@ -40,6 +48,8 @@ outside this list could also be added.
 * **Compacting drawers**
   * Complicated to implement
   * Open to PRs for them
+* **Voiding mode**
+  * Deletes overflowing items.
 * **Progress bars**
   * Not sure if there's any use
 * **Hiding drawer elements**
@@ -51,9 +61,9 @@ outside this list could also be added.
 ### Modpack permission
 You can use this mod in any modpack.
 ### Other websites
-This mod is only officially available on curseforge, modrinth and github. Any other sites are third-party reuploads and should not be trusted.
+This mod is only officially available on [curseforge](https://www.curseforge.com/minecraft/mc-mods/extended-drawers), [modrinth](https://modrinth.com/mod/extended-drawers) and [github](https://github.com/mattidragon/extendeddrawers). Any other sites are third-party reuploads and should not be trusted.
 ### Version support
-I only support the latest minecraft version. Old versions may receive important patches, but I will not be backporting the mod.
+I only support the latest and mostly modded version of minecraft. Old versions may receive important patches, but I will not be backporting the mod.
 
 ## Licencing 
 Versions 1.3.0 and older and their source code are licensed under the MIT license. Newer versions
