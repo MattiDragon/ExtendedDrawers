@@ -1,7 +1,7 @@
-name: Bug Report
-description: Something is not working quite right
-title: "[Bug]: "
-labels: ["bug", "unconfirmed"]
+name: Crash Report
+description: The game crashes
+title: "[Crash]: "
+labels: ["crash", "unconfirmed"]
 body:
   - type: markdown
     attributes:
@@ -9,7 +9,7 @@ body:
   - type: textarea
     attributes:
       label: Description of the issue
-      description: Describe what is not working correctly
+      description: When did the crash occur? What where you doing?
     validations:
       required: true
   - type: textarea
@@ -26,7 +26,6 @@ body:
   - type: input
     attributes:
       label: Mod version
-      description: "'latest' is not a valid version, please specify the specific version"
       placeholder: eg. v1.0.0
     validations:
       required: true
@@ -74,7 +73,13 @@ body:
   - type: input
     attributes:
       label: Logs
-      description: The minecraft logs from when the issue was encountered. Please upload to pastebin or as a gist,
+      description: The minecraft logs from when the issue was encountered. Please upload to pastebin or as a gist.
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: Crash Report
+      description: The crash report from when the issue was encountered. Please upload to pastebin or as a gist.
     validations:
       required: true
   - type: textarea
