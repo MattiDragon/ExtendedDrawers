@@ -1,12 +1,11 @@
 package io.github.mattidragon.extendeddrawers.block.entity;
 
 import io.github.mattidragon.extendeddrawers.block.DrawerBlock;
-import io.github.mattidragon.extendeddrawers.block.ShadowDrawerBlock;
 import io.github.mattidragon.extendeddrawers.config.CommonConfig;
 import io.github.mattidragon.extendeddrawers.drawer.DrawerSlot;
 import io.github.mattidragon.extendeddrawers.item.UpgradeItem;
+import io.github.mattidragon.extendeddrawers.network.UpdateHandler;
 import io.github.mattidragon.extendeddrawers.registry.ModBlocks;
-import io.github.mattidragon.extendeddrawers.misc.NetworkHelper;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
@@ -20,6 +19,7 @@ import net.minecraft.nbt.NbtList;
 import net.minecraft.network.Packet;
 import net.minecraft.network.listener.ClientPlayPacketListener;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
@@ -42,18 +42,14 @@ public class DrawerBlockEntity extends BlockEntity {
         combinedStorage = new CombinedStorage<>(List.of(storages));
     }
     
-    private void onSlotChanged() {
+    private void onSlotChanged(boolean itemChanged) {
         markDirty();
         assert world != null;
-        world.updateListeners(pos, getCachedState(), getCachedState(), Block.NOTIFY_LISTENERS);
-        world.updateComparators(pos, getCachedState().getBlock());
-        NetworkHelper.findConnectedComponents(world, pos, (world1, pos1) -> world1.getBlockState(pos1).getBlock() instanceof ShadowDrawerBlock)
-                .forEach(pos1 -> {
-                    var state1 = world.getBlockState(pos1);
-                    world.updateListeners(pos1, state1, state1, Block.NOTIFY_LISTENERS);
-                    world.updateComparators(pos1, state1.getBlock());
-                    if (world.getBlockEntity(pos1) instanceof ShadowDrawerBlockEntity drawer) drawer.clearCountCache();
-                });
+        if (world instanceof ServerWorld serverWorld) {
+            UpdateHandler.scheduleUpdate(serverWorld, pos, itemChanged ? UpdateHandler.ChangeType.CONTENT : UpdateHandler.ChangeType.COUNT);
+            var state = getCachedState();
+            world.updateListeners(pos, state, state, Block.NOTIFY_LISTENERS);
+        }
     }
     
     @Override

@@ -57,7 +57,9 @@ public class ShadowDrawerBlock extends NetworkBlockWithEntity<ShadowDrawerBlockE
     
     @Override
     public int getComparatorOutput(BlockState state, World world, BlockPos pos) {
-        return StorageUtil.calculateComparatorOutput(getBlockEntity(world, pos).createStorage());
+        if (world instanceof ServerWorld serverWorld)
+            return StorageUtil.calculateComparatorOutput(createStorage(serverWorld, pos));
+        return 0;
     }
     @Override
     public void onPlaced(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {

@@ -1,12 +1,12 @@
 {
   "parent": "minecraft:recipes/root",
   "criteria": {
-    "has_controller": {
+    "has_access_point": {
       "conditions": {
         "items": [
           {
             "items": [
-              "extended_drawers:controller"
+              "extended_drawers:access_point"
             ]
           }
         ]
@@ -15,20 +15,20 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "extended_drawers:controller"
+        "recipe": "extended_drawers:access_point"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
   },
   "requirements": [
     [
-      "has_controller",
+      "has_access_point",
       "has_the_recipe"
     ]
   ],
   "rewards": {
     "recipes": [
-      "extended_drawers:controller"
+      "extended_drawers:access_point"
     ]
   }
 }

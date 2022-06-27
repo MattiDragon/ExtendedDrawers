@@ -85,14 +85,14 @@ class DrawersRecipeProvider extends FabricRecipeProvider {
     }
     
     private void offerControllerRecipe(Consumer<RecipeJsonProvider> exporter) {
-        ShapedRecipeJsonBuilder.create(ModItems.CONTROLLER)
+        ShapedRecipeJsonBuilder.create(ModItems.ACCESS_POINT)
                 .input('I', Items.IRON_INGOT)
                 .input('C', Items.COBBLESTONE)
                 .input('D', ModTags.ItemTags.DRAWERS)
                 .pattern("CIC")
                 .pattern("IDI")
                 .pattern("CIC")
-                .criterion(RecipeProvider.hasItem(ModItems.CONTROLLER), RecipeProvider.conditionsFromItem(ModItems.CONTROLLER))
+                .criterion(RecipeProvider.hasItem(ModItems.ACCESS_POINT), RecipeProvider.conditionsFromItem(ModItems.ACCESS_POINT))
                 .offerTo(exporter);
     }
     

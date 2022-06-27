@@ -11,7 +11,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "extended_drawers:controller"
+          "name": "extended_drawers:access_point"
         }
       ],
       "rolls": 1.0
