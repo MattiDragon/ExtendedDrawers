@@ -57,6 +57,8 @@ outside this list could also be added.
   * What's the best way to do this?
 
 ## Other Info
+### Incompatibilities with other mods
+There is a known incompatibility with the rendering engine of raw [Sodium](https://www.curseforge.com/minecraft/mc-mods/sodium). If you use [Sodium](https://www.curseforge.com/minecraft/mc-mods/sodium) you will need [Indium](https://www.curseforge.com/minecraft/mc-mods/indium) installed as well in order for this mod to work.
 ### Modpack permission
 You can use this mod in any modpack.
 ### Other websites
