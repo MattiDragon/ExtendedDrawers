@@ -1,0 +1,5 @@
+{
+  "name": "Modifiers",
+  "description": "Modifiers are items that can be added to drawers to change their behavior. Some work like toggles and can be used on multiple drawers while some have to be installed in the slot directly.",
+  "icon": "extended_drawers:t2_upgrade"
+}

@@ -1,0 +1,13 @@
+{
+  "name": "Lock",
+  "icon": "extended_drawers:lock",
+  "category": "extended_drawers:modifiers",
+  "pages": [
+    "Locking and unlocking is done using the $(item)Lock/$ item. It makes it impossible to change the type of item the drawer holds while allowing the count to change. $(br2)Useful when creating organised sorting systems or when linking to other mods.",
+    {
+      "type": "patchouli:crafting",
+      "recipe": "extended_drawers:lock",
+      "text": "Locks aren't consumed when used so you don't need to worry about making one for every drawer. It can also be used on access points to toggle the locks of the entire network."
+    }
+  ]
+}
