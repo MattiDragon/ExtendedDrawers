@@ -15,5 +15,8 @@
   "item.extended_drawers.upgrade_frame": "Upgrade Frame",
   "item.extended_drawers.lock": "Drawer Lock",
 
-  "itemGroup.extended_drawers.main": "Extended Drawers"
+  "itemGroup.extended_drawers.main": "Extended Drawers",
+
+  "book.extended_drawers.guide.name": "Extending Drawers",
+  "book.extended_drawers.guide.landing_text": "This guide will take you through all the steps of setting up great storage systems using drawers."
 }

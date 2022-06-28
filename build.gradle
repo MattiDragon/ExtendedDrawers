@@ -17,6 +17,7 @@ repositories {
 
     maven { url "https://jitpack.io" }
     maven { url "https://kneelawk.com/maven/" }
+    maven { url "https://maven.blamejared.com" }
 }
 
 dependencies {
@@ -32,6 +33,9 @@ dependencies {
     // Mixin Extras
     include implementation("com.github.LlamaLad7:MixinExtras:0.0.10")
     annotationProcessor("com.github.LlamaLad7:MixinExtras:0.0.10")
+
+    // 1.19-73
+    modImplementation "vazkii.patchouli:Patchouli:1.19-73-FABRIC"
 }
 
 loom {

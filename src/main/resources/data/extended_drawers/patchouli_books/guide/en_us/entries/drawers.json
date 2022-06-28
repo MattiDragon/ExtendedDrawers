@@ -1,0 +1,17 @@
+{
+  "name": "Normal Drawers",
+  "icon": "extended_drawers:single_drawer",
+  "category": "extended_drawers:blocks",
+  "pages": [
+    "$(item)Drawers/$ are the core components of networks as they store items and can be improved using $(thing)Modifiers/$. $(br2)They come in different configurations: 1x1, 2x1 and 2x2.",
+    {
+      "type": "patchouli:crafting",
+      "recipe": "extended_drawers:single_drawer",
+      "recipe2": "extended_drawers:double_drawer"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "extended_drawers:quad_drawer"
+    }
+  ]
+}
