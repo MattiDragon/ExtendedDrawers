@@ -10,22 +10,27 @@ import net.fabricmc.fabric.api.transfer.v1.storage.base.SingleSlotStorage;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.fabricmc.fabric.api.transfer.v1.transaction.base.SnapshotParticipant;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @SuppressWarnings("UnstableApiUsage")
 public final class DrawerSlot extends SnapshotParticipant<DrawerSlot.Snapshot> implements SingleSlotStorage<ItemVariant>, Comparable<DrawerSlot> {
+    // Fields are encapsulated to ensure updates on change
     private final BooleanConsumer onChange;
     private final double capacityMultiplier;
     private boolean itemChanged;
-    public ItemVariant item = ItemVariant.blank();
+    private ItemVariant item = ItemVariant.blank();
     @Nullable
-    public UpgradeItem upgrade = null;
-    public long amount;
-    public boolean locked;
+    private UpgradeItem upgrade = null;
+    private long amount;
+    private boolean locked;
     
     public DrawerSlot(BooleanConsumer onChange, double capacityMultiplier) {
         this.onChange = onChange;
@@ -35,10 +40,16 @@ public final class DrawerSlot extends SnapshotParticipant<DrawerSlot.Snapshot> i
     public void setLocked(boolean locked) {
         this.locked = locked;
         itemChanged = true;
-        update();
         if (!locked && amount == 0) item = ItemVariant.blank();
+        update();
     }
-    
+
+    public void changeUpgrade(@Nullable UpgradeItem newUpgrade, World world, BlockPos pos, Direction side, @Nullable PlayerEntity player) {
+        ItemUtils.offerOrDrop(world, pos, side, player, new ItemStack(upgrade));
+        upgrade = newUpgrade;
+        dumpExcess(world, pos, side, player);
+    }
+
     @Override
     public long insert(ItemVariant resource, long maxAmount, TransactionContext transaction) {
         if (!resource.equals(item) && !item.isBlank()) return 0;
@@ -132,6 +143,32 @@ public final class DrawerSlot extends SnapshotParticipant<DrawerSlot.Snapshot> i
         
         return 0;
     }
-    
+
+    public void readNbt(NbtCompound nbt) {
+        item = ItemVariant.fromNbt(nbt.getCompound("item"));
+        amount = nbt.getLong("amount");
+        locked = nbt.getBoolean("locked");
+        upgrade = Registry.ITEM.get(Identifier.tryParse(nbt.getString("upgrade"))) instanceof UpgradeItem upgrade ? upgrade : null;
+    }
+
+    public void writeNbt(NbtCompound nbt) {
+        nbt.put("item", item.toNbt());
+        nbt.putLong("amount", amount);
+        nbt.putBoolean("locked", locked);
+        nbt.putString("upgrade", Registry.ITEM.getId(upgrade).toString());
+    }
+
+    public ItemVariant getItem() {
+        return item;
+    }
+
+    public boolean isLocked() {
+        return locked;
+    }
+
+    public @Nullable UpgradeItem getUpgrade() {
+        return upgrade;
+    }
+
     record Snapshot(ResourceAmount<ItemVariant> contents, boolean itemChanged) {}
 }

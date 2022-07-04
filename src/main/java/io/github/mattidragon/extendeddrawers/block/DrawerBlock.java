@@ -96,9 +96,7 @@ public class DrawerBlock extends NetworkBlockWithEntity<DrawerBlockEntity> imple
     
         // Upgrade removal
         if (playerStack.isEmpty() && player.isSneaking()) {
-            player.getInventory().offerOrDrop(new ItemStack(drawer.storages[slot].upgrade));
-            storage.upgrade = null;
-            storage.dumpExcess(world, pos, hit.getSide(), player);
+            storage.changeUpgrade(null, world, pos, hit.getSide(), player);
             return ActionResult.SUCCESS;
         }
     
@@ -140,7 +138,7 @@ public class DrawerBlock extends NetworkBlockWithEntity<DrawerBlockEntity> imple
         if (storage.isResourceBlank()) return;
         
         try (var t = Transaction.openOuter()) {
-            var item = storage.item; // cache because it changes
+            var item = storage.getItem(); // cache because it changes
             var extracted = (int) storage.extract(item, player.isSneaking() ? item.getItem().getMaxCount() : 1, t);
             if (extracted == 0) return;
     
@@ -164,8 +162,8 @@ public class DrawerBlock extends NetworkBlockWithEntity<DrawerBlockEntity> imple
         if (builder.get(LootContextParameters.BLOCK_ENTITY) instanceof DrawerBlockEntity drawer) {
             builder = builder.putDrop(id("drawer"), (context, consumer) -> {
                 for (var slot : drawer.storages) {
-                    var amount = slot.amount;
-                    var item = slot.item;
+                    var amount = slot.getAmount();
+                    var item = slot.getItem();
                     while (amount != 0) {
                         var count = Math.min((int) amount, item.getItem().getMaxCount());
                         consumer.accept(item.toStack(count));
@@ -182,7 +180,7 @@ public class DrawerBlock extends NetworkBlockWithEntity<DrawerBlockEntity> imple
         var facePos = DrawerRaycastUtil.calculateFaceLocation(pos, hitPos, side, state.get(FACING));
         if (facePos == null) return ActionResult.PASS;
         var storage = getBlockEntity(world, pos).storages[getSlot(facePos)];
-        storage.setLocked(!storage.locked);
+        storage.setLocked(!storage.isLocked());
         return ActionResult.SUCCESS;
     }
     
@@ -201,10 +199,7 @@ public class DrawerBlock extends NetworkBlockWithEntity<DrawerBlockEntity> imple
         
         stack.decrement(1);
     
-        // give back old one
-        ItemUtils.offerOrDrop(world, pos, side, player, new ItemStack(storage.upgrade));
-        storage.upgrade = upgrade;
-        storage.dumpExcess(world, pos, side, player);
+        storage.changeUpgrade(upgrade, world, pos, side, player);
         return ActionResult.SUCCESS;
     }
     

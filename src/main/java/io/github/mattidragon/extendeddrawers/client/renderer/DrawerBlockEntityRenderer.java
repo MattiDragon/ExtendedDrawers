@@ -76,9 +76,9 @@ public class DrawerBlockEntityRenderer extends AbstractDrawerBlockEntityRenderer
         var icons = new ArrayList<Sprite>();
         var blockAtlas = MinecraftClient.getInstance().getSpriteAtlas(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE);
         
-        if (storage.locked) icons.add(blockAtlas.apply(id("item/lock")));
-        if (storage.upgrade != null) icons.add(blockAtlas.apply(storage.upgrade.sprite));
+        if (storage.isLocked()) icons.add(blockAtlas.apply(id("item/lock")));
+        if (storage.getUpgrade() != null) icons.add(blockAtlas.apply(storage.getUpgrade().sprite));
         
-        renderSlot(storage.item, storage.amount == 0  || ClientConfig.HANDLE.get().displayEmptyCount() ? null : storage.amount, icons, matrices, vertexConsumers, light, overlay, seed, pos);
+        renderSlot(storage.getItem(), storage.getAmount() == 0  || ClientConfig.HANDLE.get().displayEmptyCount() ? null : storage.getAmount(), icons, matrices, vertexConsumers, light, overlay, seed, pos);
     }
 }

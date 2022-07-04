@@ -8,7 +8,6 @@ import io.github.mattidragon.extendeddrawers.network.UpdateHandler;
 import io.github.mattidragon.extendeddrawers.registry.ModBlocks;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
-import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
 import net.fabricmc.fabric.api.transfer.v1.storage.base.CombinedStorage;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -24,13 +23,14 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings("UnstableApiUsage")
 public class DrawerBlockEntity extends BlockEntity {
     public final int slots = ((DrawerBlock)this.getCachedState().getBlock()).slots;
     public final DrawerSlot[] storages = new DrawerSlot[((DrawerBlock)this.getCachedState().getBlock()).slots];
-    public final Storage<ItemVariant> combinedStorage;
+    public final CombinedStorage<ItemVariant, DrawerSlot> combinedStorage;
     
     static {
         ItemStorage.SIDED.registerForBlockEntity((drawer, dir) -> drawer.combinedStorage, ModBlocks.DRAWER_BLOCK_ENTITY);
@@ -39,13 +39,20 @@ public class DrawerBlockEntity extends BlockEntity {
     public DrawerBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlocks.DRAWER_BLOCK_ENTITY, pos, state);
         for (int i = 0; i < storages.length; i++) storages[i] = new DrawerSlot(this::onSlotChanged, CommonConfig.HANDLE.get().slotCountAffectsCapacity() ? 1.0 / slots : 1);
-        combinedStorage = new CombinedStorage<>(List.of(storages));
+        combinedStorage = new CombinedStorage<>(new ArrayList<>(List.of(storages)));
+        sortSlots();
     }
-    
+
+    private void sortSlots() {
+        combinedStorage.parts.sort(null);
+    }
+
     private void onSlotChanged(boolean itemChanged) {
         markDirty();
         assert world != null;
         if (world instanceof ServerWorld serverWorld) {
+            if (itemChanged)
+                sortSlots();
             UpdateHandler.scheduleUpdate(serverWorld, pos, itemChanged ? UpdateHandler.ChangeType.CONTENT : UpdateHandler.ChangeType.COUNT);
             var state = getCachedState();
             world.updateListeners(pos, state, state, Block.NOTIFY_LISTENERS);
@@ -68,12 +75,9 @@ public class DrawerBlockEntity extends BlockEntity {
     public void readNbt(NbtCompound nbt) {
         var list = nbt.getList("items", NbtElement.COMPOUND_TYPE).stream().map(NbtCompound.class::cast).toList();
         for (int i = 0; i < list.size(); i++) {
-            var storageNbt = list.get(i);
-            storages[i].item = ItemVariant.fromNbt(storageNbt.getCompound("item"));
-            storages[i].amount = storageNbt.getLong("amount");
-            storages[i].locked = storageNbt.getBoolean("locked");
-            storages[i].upgrade = Registry.ITEM.get(Identifier.tryParse(storageNbt.getString("upgrade"))) instanceof UpgradeItem upgrade ? upgrade : null;
+            storages[i].readNbt(list.get(i));
         }
+        sortSlots();
     }
     
     @Override
@@ -81,10 +85,7 @@ public class DrawerBlockEntity extends BlockEntity {
         var list = new NbtList();
         for (var storage : storages) {
             var storageNbt = new NbtCompound();
-            storageNbt.put("item", storage.item.toNbt());
-            storageNbt.putLong("amount", storage.amount);
-            storageNbt.putBoolean("locked", storage.locked);
-            storageNbt.putString("upgrade", Registry.ITEM.getId(storage.upgrade).toString());
+            storage.writeNbt(storageNbt);
             list.add(storageNbt);
         }
         nbt.put("items", list);
