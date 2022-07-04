@@ -3,6 +3,7 @@ package io.github.mattidragon.extendeddrawers.block;
 import com.kneelawk.graphlib.graph.BlockNode;
 import io.github.mattidragon.extendeddrawers.block.base.DrawerInteractionHandler;
 import io.github.mattidragon.extendeddrawers.block.base.NetworkBlock;
+import io.github.mattidragon.extendeddrawers.drawer.DrawerSlot;
 import io.github.mattidragon.extendeddrawers.network.node.AccessPointBlockNode;
 import io.github.mattidragon.extendeddrawers.network.NetworkStorageCache;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
@@ -69,7 +70,7 @@ public class AccessPointBlock extends NetworkBlock implements DrawerInteractionH
         if (!(world instanceof ServerWorld serverWorld)) return ActionResult.PASS;
         var storages = NetworkStorageCache.get(serverWorld, pos).parts;
         var currentState = storages.stream()
-                .map(storage1 -> storage1.locked)
+                .map(DrawerSlot::isLocked)
                 .reduce(0, (count, value) -> count + (value ? 1 : -1), Integer::sum) > 0;
         storages.forEach(storage -> storage.setLocked(!currentState));
     
