@@ -71,6 +71,9 @@ processResources {
     filesMatching("fabric.mod.json") {
         expand "version": version
     }
+    filesMatching("**/assets/*/lang/*.json") {
+        expand "version": project.mod_version
+    }
 }
 
 def targetJavaVersion = 17

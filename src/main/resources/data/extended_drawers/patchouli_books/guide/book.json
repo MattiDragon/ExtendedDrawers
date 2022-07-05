@@ -1,5 +1,18 @@
 {
   "name": "book.extended_drawers.guide.name",
   "landing_text": "book.extended_drawers.guide.landing_text",
-  "version": "1.0.0"
+  "subtitle": "book.extended_drawers.guide.subtitle",
+  "version": "0",
+  "book_texture": "patchouli:textures/gui/book_blue.png",
+  "creative_tab": "extended_drawers.main",
+  "show_progress": false,
+  "nameplate_color": "dddddd",
+  "model": "extended_drawers:guide_book",
+  "macros": {
+    "@thing@": "$(thing)",
+    "@item@": "$(item)",
+    "@mod@": "$(#eb2cf5)",
+    "@!": "$()",
+    "@p@": "$(p)"
+  }
 }

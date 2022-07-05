@@ -71,7 +71,8 @@ public class AccessPointBlock extends NetworkBlock implements DrawerInteractionH
         var storages = NetworkStorageCache.get(serverWorld, pos).parts;
         var currentState = storages.stream()
                 .map(DrawerSlot::isLocked)
-                .reduce(0, (count, value) -> count + (value ? 1 : -1), Integer::sum) > 0;
+                .mapToInt(value -> value ? 1 : -1)
+                .sum() > 0;
         storages.forEach(storage -> storage.setLocked(!currentState));
     
         return storages.size() == 0 ? ActionResult.PASS : ActionResult.SUCCESS;

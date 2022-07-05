@@ -41,5 +41,6 @@ class DrawersModelProvider extends FabricModelProvider {
         generator.register(ModItems.CREATIVE_UPGRADE, Models.GENERATED);
         generator.register(ModItems.LOCK, Models.GENERATED);
         generator.register(ModItems.UPGRADE_FRAME, Models.GENERATED);
+
     }
 }

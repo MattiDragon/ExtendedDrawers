@@ -18,5 +18,6 @@
   "itemGroup.extended_drawers.main": "Extended Drawers",
 
   "book.extended_drawers.guide.name": "Extending Drawers",
-  "book.extended_drawers.guide.landing_text": "This guide will take you through all the steps of setting up great storage systems using drawers."
+  "book.extended_drawers.guide.landing_text": "This guide will take you through all the steps of setting up great storage systems using drawers, as well as how each item and block in the mod work.",
+  "book.extended_drawers.guide.subtitle": "Version ${version}"
 }
