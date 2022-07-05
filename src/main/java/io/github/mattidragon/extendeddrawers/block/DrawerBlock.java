@@ -193,7 +193,16 @@ public class DrawerBlock extends NetworkBlockWithEntity<DrawerBlockEntity> imple
         storage.setLocked(!storage.isLocked());
         return ActionResult.SUCCESS;
     }
-    
+
+    @Override
+    public ActionResult toggleVoid(BlockState state, World world, BlockPos pos, Vec3d hitPos, Direction side) {
+        var facePos = DrawerRaycastUtil.calculateFaceLocation(pos, hitPos, side, state.get(FACING));
+        if (facePos == null) return ActionResult.PASS;
+        var storage = getBlockEntity(world, pos).storages[getSlot(facePos)];
+        storage.setVoiding(!storage.isVoiding());
+        return ActionResult.SUCCESS;
+    }
+
     @Override
     public ActionResult upgrade(BlockState state, World world, BlockPos pos, Vec3d hitPos, Direction side, PlayerEntity player, ItemStack stack) {
         if (world.isClient) return ActionResult.SUCCESS;

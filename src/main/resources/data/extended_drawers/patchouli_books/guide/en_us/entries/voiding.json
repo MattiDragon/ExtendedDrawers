@@ -1,0 +1,9 @@
+{
+  "name": "Voiding Mode",
+  "icon": "minecraft:lava_bucket",
+  "category": "extended_drawers:modifiers",
+  "pages": [
+    "Voiding mode can be toggled with a $(item)lava bucket/$. It makes it so that the $(l:drawers)drawer@! deletes excess items. @p@This is mostly useful when you have bulk storage for a very common item and don't want it to clog the system when it fills up.",
+    "Like $(l:lock)locks@! they aren't consumed and can be applied to access points. @p@Be careful as it can easily void important items if used improperly. Also make sure to aim well, or you might end up placing the lava instead."
+  ]
+}

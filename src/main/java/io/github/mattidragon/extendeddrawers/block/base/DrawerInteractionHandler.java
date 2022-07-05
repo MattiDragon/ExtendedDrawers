@@ -14,7 +14,11 @@ public interface DrawerInteractionHandler {
     default ActionResult toggleLock(BlockState state, World world, BlockPos pos, Vec3d hitPos, Direction side) {
         return ActionResult.PASS;
     }
-    
+
+    default ActionResult toggleVoid(BlockState state, World world, BlockPos pos, Vec3d hitPos, Direction side) {
+        return ActionResult.PASS;
+    }
+
     default ActionResult upgrade(BlockState state, World world, BlockPos pos, Vec3d hitPos, Direction side, @Nullable PlayerEntity player, ItemStack stack) {
         return ActionResult.PASS;
     }
