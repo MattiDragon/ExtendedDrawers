@@ -69,15 +69,28 @@ public class AccessPointBlock extends NetworkBlock implements DrawerInteractionH
     public ActionResult toggleLock(BlockState state, World world, BlockPos pos, Vec3d hitPos, Direction side) {
         if (!(world instanceof ServerWorld serverWorld)) return ActionResult.PASS;
         var storages = NetworkStorageCache.get(serverWorld, pos).parts;
-        var currentState = storages.stream()
+        var newState = storages.stream()
                 .map(DrawerSlot::isLocked)
                 .mapToInt(value -> value ? 1 : -1)
-                .sum() > 0;
-        storages.forEach(storage -> storage.setLocked(!currentState));
+                .sum() <= 0;
+        storages.forEach(storage -> storage.setLocked(newState));
     
         return storages.size() == 0 ? ActionResult.PASS : ActionResult.SUCCESS;
     }
     
+    @Override
+    public ActionResult toggleVoid(BlockState state, World world, BlockPos pos, Vec3d hitPos, Direction side) {
+        if (!(world instanceof ServerWorld serverWorld)) return ActionResult.PASS;
+        var storages = NetworkStorageCache.get(serverWorld, pos).parts;
+        var newState = storages.stream()
+                .map(DrawerSlot::isVoiding)
+                .mapToInt(value -> value ? 1 : -1)
+                .sum() <= 0;
+        storages.forEach(storage -> storage.setVoiding(newState));
+
+        return storages.size() == 0 ? ActionResult.PASS : ActionResult.SUCCESS;
+    }
+
     @Override
     public Collection<BlockNode> createNodes() {
         return List.of(new AccessPointBlockNode());

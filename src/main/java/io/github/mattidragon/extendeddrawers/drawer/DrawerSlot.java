@@ -24,22 +24,50 @@ import org.jetbrains.annotations.Nullable;
 public final class DrawerSlot extends SnapshotParticipant<DrawerSlot.Snapshot> implements SingleSlotStorage<ItemVariant>, Comparable<DrawerSlot> {
     // Fields are encapsulated to ensure updates on change
     private final BooleanConsumer onChange;
+    /**
+     * This flag dictates if the slot order of a network needs to be recalculated during the next update.
+     */
+    private boolean sortingChanged;
+    /**
+     * A multiplier for capacity set by the containing drawer. Depends on slot count.
+     */
     private final double capacityMultiplier;
-    private boolean itemChanged;
+    /**
+     * The item the slot contains, blank for empty.
+     */
     private ItemVariant item = ItemVariant.blank();
+    /**
+     * The amount currently contained in the dlot.
+     */
+    private long amount;
+    /**
+     * An upgrade item that is installed. {@code null} for empty.
+     */
     @Nullable
     private UpgradeItem upgrade = null;
-    private long amount;
+    /**
+     * Whether the slot is locked. The item in a locked slot doesn't change when empty.
+     */
     private boolean locked;
-    
+    /**
+     * Whether the slot is in voiding mode. Voiding slots delete overflowing items
+     */
+    private boolean voiding;
+
     public DrawerSlot(BooleanConsumer onChange, double capacityMultiplier) {
         this.onChange = onChange;
         this.capacityMultiplier = capacityMultiplier;
     }
-    
+
+    public void setVoiding(boolean voiding) {
+        this.voiding = voiding;
+        sortingChanged = true;
+        update();
+    }
+
     public void setLocked(boolean locked) {
         this.locked = locked;
-        itemChanged = true;
+        sortingChanged = true;
         if (!locked && amount == 0) item = ItemVariant.blank();
         update();
     }
@@ -53,46 +81,47 @@ public final class DrawerSlot extends SnapshotParticipant<DrawerSlot.Snapshot> i
     @Override
     public long insert(ItemVariant resource, long maxAmount, TransactionContext transaction) {
         if (!resource.equals(item) && !item.isBlank()) return 0;
-        
+
         updateSnapshots(transaction);
         var inserted = Math.min(getCapacity() - amount, maxAmount);
         amount += inserted;
         if (item.isBlank()) {
             item = resource;
-            itemChanged = true;
+            sortingChanged = true;
         }
-        return inserted;
+        // In voiding mode we return the max even if it doesn't fit. We just delete it this way
+        return voiding ? maxAmount : inserted;
     }
-    
+
     @Override
     public long extract(ItemVariant resource, long maxAmount, TransactionContext transaction) {
         if (!resource.equals(item)) return 0;
-        
+
         updateSnapshots(transaction);
         var extracted = Math.min(amount, maxAmount);
         amount -= extracted;
         if (amount == 0 && !locked) {
             item = ItemVariant.blank();
-            itemChanged = true;
+            sortingChanged = true;
         }
         return extracted;
     }
-    
+
     @Override
     public boolean isResourceBlank() {
         return item.isBlank();
     }
-    
+
     @Override
     public ItemVariant getResource() {
         return item;
     }
-    
+
     @Override
     public long getAmount() {
         return amount;
     }
-    
+
     @Override
     public long getCapacity() {
         var config = CommonConfig.HANDLE.get();
@@ -103,29 +132,29 @@ public final class DrawerSlot extends SnapshotParticipant<DrawerSlot.Snapshot> i
             capacity = upgrade.modifier.applyAsLong(capacity);
         return capacity;
     }
-    
+
     @Override
     protected Snapshot createSnapshot() {
-        return new Snapshot(new ResourceAmount<>(item, amount), itemChanged);
+        return new Snapshot(new ResourceAmount<>(item, amount), sortingChanged);
     }
-    
+
     @Override
     protected void readSnapshot(Snapshot snapshot) {
         item = snapshot.contents.resource();
         amount = snapshot.contents.amount();
-        itemChanged = snapshot.itemChanged;
+        sortingChanged = snapshot.itemChanged;
     }
-    
+
     @Override
     protected void onFinalCommit() {
         update();
     }
-    
+
     public void update() {
-        onChange.accept(itemChanged);
-        itemChanged = false;
+        onChange.accept(sortingChanged);
+        sortingChanged = false;
     }
-    
+
     public void dumpExcess(World world, BlockPos pos, Direction side, @Nullable PlayerEntity player) {
         if (amount > getCapacity()) {
             ItemUtils.offerOrDropStacks(world, pos, side, player, item, amount - getCapacity());
@@ -133,14 +162,16 @@ public final class DrawerSlot extends SnapshotParticipant<DrawerSlot.Snapshot> i
         }
         update();
     }
-    
+
     @Override
     public int compareTo(@NotNull DrawerSlot other) {
         if (this.isResourceBlank() != other.isResourceBlank())
             return this.isResourceBlank() ? 1 : -1;
         if (this.locked != other.locked)
             return this.locked ? -1 : 1;
-        
+        if (this.voiding != other.voiding)
+            return this.voiding ? 1 : -1;
+
         return 0;
     }
 
@@ -164,6 +195,10 @@ public final class DrawerSlot extends SnapshotParticipant<DrawerSlot.Snapshot> i
 
     public boolean isLocked() {
         return locked;
+    }
+
+    public boolean isVoiding() {
+        return voiding;
     }
 
     public @Nullable UpgradeItem getUpgrade() {
