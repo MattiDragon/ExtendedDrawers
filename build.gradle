@@ -34,8 +34,7 @@ dependencies {
     include implementation("com.github.LlamaLad7:MixinExtras:0.0.10")
     annotationProcessor("com.github.LlamaLad7:MixinExtras:0.0.10")
 
-    // 1.19-73
-    modImplementation "vazkii.patchouli:Patchouli:1.19-73-FABRIC"
+    modImplementation "vazkii.patchouli:Patchouli:1.18.2-71.1-FABRIC"
 }
 
 loom {
