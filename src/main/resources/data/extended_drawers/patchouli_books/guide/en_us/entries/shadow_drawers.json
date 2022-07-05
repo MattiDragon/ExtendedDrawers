@@ -3,7 +3,7 @@
   "icon": "extended_drawers:shadow_drawer",
   "category": "extended_drawers:blocks",
   "pages": [
-    "$(item)Shadow Drawers/$ are similar to $(item)Access Points/$ but only work with one item. They also allow players to extract items and show the count. $(br2)They behave like they would be locked, but their item can be cleared by shift-clicking.",
+    "$(item)Shadow Drawers/$ are similar to $(l:access_points)access points/$ but only work with one item. They also allow players to extract items and show the count. $(br2)They behave like they would be $(l:lock)locked@!, but their item can be cleared by shift-clicking.",
     {
       "type": "patchouli:crafting",
       "recipe": "extended_drawers:shadow_drawer"

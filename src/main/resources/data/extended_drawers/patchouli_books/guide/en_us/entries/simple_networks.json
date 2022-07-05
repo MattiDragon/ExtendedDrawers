@@ -1,0 +1,23 @@
+{
+  "name": "Simple Networks",
+  "icon": "extended_drawers:single_drawer",
+  "category": "extended_drawers:networks",
+  "pages": [
+    "Just by placing some $(l:drawers)drawers@! next to each other you have created as simple network. However, that network doesn't do anything yet. $(br2)We'll start simple and add an $(l:access_points)access point@! to the network. It allows you to insert items into the drawers they belong in without walking over to them.",
+    {
+      "type": "patchouli:multiblock",
+      "multiblock": {
+        "mapping": {
+          "D": "extended_drawers:single_drawer[facing=west]",
+          "0": "extended_drawers:single_drawer[facing=west]",
+          "A": "extended_drawers:access_point"
+        },
+        "pattern": [
+          ["D0A"]
+        ]
+      },
+      "enable_visualize": false,
+      "text": ""
+    }
+  ]
+}

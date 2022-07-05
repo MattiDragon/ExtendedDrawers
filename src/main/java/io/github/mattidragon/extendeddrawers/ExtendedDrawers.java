@@ -16,12 +16,9 @@ import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.ResourcePackActivationType;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
-import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Box;
-import net.minecraft.util.profiler.Profiler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,7 +42,8 @@ public class ExtendedDrawers implements ModInitializer {
         ClientConfig.HANDLE.load();
         CommonConfig.HANDLE.load();
         ResourceManagerHelper.registerBuiltinResourcePack(id("alt"), MOD_CONTAINER, ResourcePackActivationType.NORMAL);
-    
+
+        //TODO: move to better place
         ServerChunkEvents.CHUNK_LOAD.register((world, chunk) -> {
             if (!CommonConfig.HANDLE.get().automaticNetworkHealing()) return;
             

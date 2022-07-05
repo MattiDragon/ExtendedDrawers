@@ -3,7 +3,7 @@
   "icon": "extended_drawers:downgrade",
   "category": "extended_drawers:modifiers",
   "pages": [
-    "Downgrades are a special type of upgrade that limits the capacity of the drawer to exactly 64. $(br2)They are most useful when building automated setups.",
+    "@item@Downgrades@! are a special type of $(l:upgrades)upgrade@! that limits the capacity of the $(l:drawers)drawer@! to exactly 64. @p@They are most useful when building automated setups.",
     {
       "type": "patchouli:crafting",
       "recipe": "extended_drawers:downgrade"

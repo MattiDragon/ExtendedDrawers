@@ -3,7 +3,7 @@
   "icon": "extended_drawers:lock",
   "category": "extended_drawers:modifiers",
   "pages": [
-    "Locking and unlocking is done using the $(item)Lock/$ item. It makes it impossible to change the type of item the drawer holds while allowing the count to change. $(br2)Useful when creating organised sorting systems or when linking to other mods.",
+    "Locking and unlocking is done using the $(item)Lock/$ item. It makes it impossible to change the type of item the $(l:drawers)drawer@! holds while allowing the count to change. @p@Useful when creating organised sorting systems or when $(l:mod_interoperability)linking to other mods@!.",
     {
       "type": "patchouli:crafting",
       "recipe": "extended_drawers:lock",
