@@ -1,12 +1,12 @@
 {
   "name": "Access Points",
-  "icon": "extended_drawers:access_point",
+  "icon": "extended_drawers:controller",
   "category": "extended_drawers:blocks",
   "pages": [
     "@item@Access Points@! allow inserting items to the whole $(l:simple_networks)network@!, automatically finding the right drawer, see $(l:insertion_order)this@! for ordering. @p@They also act as an interface for other mods to access the network, see $(l:mod_interoperability)this@! for more info.",
     {
       "type": "patchouli:crafting",
-      "recipe": "extended_drawers:access_point"
+      "recipe": "extended_drawers:controller"
     }
   ]
 }

@@ -1,6 +1,6 @@
 {
   "name": "Insertion Order",
-  "icon": "extended_drawers:access_point",
+  "icon": "extended_drawers:controller",
   "category": "extended_drawers:networks",
   "pages": [
     "You may have noticed that when inserting items into a $(l:networks)network@! they prefer certain slots. This is because I have included a little bit of logic in networks so that they prioritizes certain slots to make your life easier. @p@Knowing these rules will be useful when designing storage systems so I have decided to write them down here.",

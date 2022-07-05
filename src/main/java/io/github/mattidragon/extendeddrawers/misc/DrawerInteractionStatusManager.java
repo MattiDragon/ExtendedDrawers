@@ -25,7 +25,7 @@ public final class DrawerInteractionStatusManager {
         if (interaction != null)
             return interaction.pos.equals(pos) && timestamp - interaction.timestamp < CommonConfig.HANDLE.get().insertAllTime() && interaction.slot == slot;
             
-        INSERTIONS.get().put(player, new Interaction(timestamp, pos, slot));
+        INSERTIONS.get().put(player, new Interaction(timestamp, pos.toImmutable(), slot));
         return false;
     }
     
