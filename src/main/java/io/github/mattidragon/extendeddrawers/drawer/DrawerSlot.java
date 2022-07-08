@@ -179,6 +179,7 @@ public final class DrawerSlot extends SnapshotParticipant<DrawerSlot.Snapshot> i
         item = ItemVariant.fromNbt(nbt.getCompound("item"));
         amount = nbt.getLong("amount");
         locked = nbt.getBoolean("locked");
+        voiding = nbt.getBoolean("voiding");
         upgrade = Registry.ITEM.get(Identifier.tryParse(nbt.getString("upgrade"))) instanceof UpgradeItem upgrade ? upgrade : null;
     }
 
@@ -186,6 +187,7 @@ public final class DrawerSlot extends SnapshotParticipant<DrawerSlot.Snapshot> i
         nbt.put("item", item.toNbt());
         nbt.putLong("amount", amount);
         nbt.putBoolean("locked", locked);
+        nbt.putBoolean("voiding", voiding);
         nbt.putString("upgrade", Registry.ITEM.getId(upgrade).toString());
     }
 
