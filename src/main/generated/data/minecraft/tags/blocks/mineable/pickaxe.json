@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "values": [
+    "extended_drawers:controller",
+    "extended_drawers:connector",
+    "extended_drawers:shadow_drawer"
+  ]
+}

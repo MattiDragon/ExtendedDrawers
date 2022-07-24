@@ -12,6 +12,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 import org.jetbrains.annotations.Nullable;
 
+@SuppressWarnings("deprecation") // mojank block method deprecation
 public abstract class NetworkBlock extends Block implements NetworkComponent {
     protected NetworkBlock(Settings settings) {
         super(settings);
@@ -19,7 +20,7 @@ public abstract class NetworkBlock extends Block implements NetworkComponent {
     
     @Override
     public BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState neighborState, WorldAccess world, BlockPos pos, BlockPos neighborPos) {
-        if (world instanceof ServerWorld serverWorld) {
+        if (world instanceof ServerWorld serverWorld && neighborState.getBlock() instanceof NetworkComponent) {
             UpdateHandler.scheduleRefresh(serverWorld, pos);
         }
         return super.getStateForNeighborUpdate(state, direction, neighborState, world, pos, neighborPos);
