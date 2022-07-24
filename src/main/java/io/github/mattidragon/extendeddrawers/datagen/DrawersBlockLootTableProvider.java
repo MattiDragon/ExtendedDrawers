@@ -20,8 +20,8 @@ class DrawersBlockLootTableProvider extends FabricBlockLootTableProvider {
     @Override
     protected void generateBlockLootTables() {
         addDrop(ModBlocks.SINGLE_DRAWER, DrawersBlockLootTableProvider::drawerDrops);
-        addDrop(ModBlocks.DOUBLE_DRAWER);
-        addDrop(ModBlocks.QUAD_DRAWER);
+        addDrop(ModBlocks.DOUBLE_DRAWER, DrawersBlockLootTableProvider::drawerDrops);
+        addDrop(ModBlocks.QUAD_DRAWER, DrawersBlockLootTableProvider::drawerDrops);
         addDrop(ModBlocks.SHADOW_DRAWER);
         addDrop(ModBlocks.CONTROLLER);
         addDrop(ModBlocks.CONNECTOR);
