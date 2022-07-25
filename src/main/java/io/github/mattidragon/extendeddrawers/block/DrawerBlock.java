@@ -13,30 +13,38 @@ import io.github.mattidragon.extendeddrawers.registry.ModBlocks;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.item.PlayerInventoryStorage;
 import net.fabricmc.fabric.api.transfer.v1.storage.StorageUtil;
+import net.fabricmc.fabric.api.transfer.v1.storage.base.ResourceAmount;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.loot.context.LootContext;
 import net.minecraft.loot.context.LootContextParameters;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
+import net.minecraft.nbt.NbtList;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.DirectionProperty;
 import net.minecraft.state.property.Properties;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.BlockMirror;
-import net.minecraft.util.BlockRotation;
-import net.minecraft.util.Hand;
+import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
+import net.minecraft.util.*;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec2f;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.List;
@@ -46,15 +54,36 @@ import static io.github.mattidragon.extendeddrawers.ExtendedDrawers.id;
 @SuppressWarnings({"UnstableApiUsage", "deprecation"}) // transfer api and mojank block method deprecation
 public class DrawerBlock extends NetworkBlockWithEntity<DrawerBlockEntity> implements DrawerInteractionHandler, CreativeBreakBlocker, NetworkComponent {
     public static final DirectionProperty FACING = Properties.HORIZONTAL_FACING;
-    
     public final int slots;
-    
+
     public DrawerBlock(Settings settings, int slots) {
         super(settings);
         this.slots = slots;
         setDefaultState(stateManager.getDefaultState().with(FACING, Direction.NORTH));
     }
-    
+
+    @Override
+    public void appendTooltip(ItemStack stack, @Nullable BlockView world, List<Text> tooltip, TooltipContext options) {
+        var nbt = BlockItem.getBlockEntityNbt(stack);
+        if (nbt == null) return;
+
+        var list = nbt.getList("items", NbtElement.COMPOUND_TYPE).stream()
+                .map(NbtCompound.class::cast)
+                .map(slot -> new ResourceAmount<>(ItemVariant.fromNbt(slot.getCompound("item")), slot.getLong("amount")))
+                .filter(resource -> !resource.resource().isBlank())
+                .toList();
+        if (list.isEmpty()) return;
+
+        tooltip.add(new TranslatableText("tooltip.extended_drawers.drawer_contents").formatted(Formatting.GRAY));
+        for (var slot : list) {
+            tooltip.add(new LiteralText(" - ")
+                    .append(new LiteralText(String.valueOf(slot.amount())))
+                    .append(" ")
+                    .append(slot.resource().toStack().getName())
+                    .formatted(Formatting.GRAY));
+        }
+    }
+
     @Override
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
         builder.add(FACING);
@@ -104,7 +133,7 @@ public class DrawerBlock extends NetworkBlockWithEntity<DrawerBlockEntity> imple
     
         try (var t = Transaction.openOuter()) {
             int inserted;
-    
+
             if (isDoubleClick) {
                 if (storage.isResourceBlank()) return ActionResult.PASS;
                 inserted = (int) StorageUtil.move(PlayerInventoryStorage.of(player), storage, itemVariant -> true, Long.MAX_VALUE, t);
