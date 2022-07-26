@@ -8,11 +8,11 @@ import io.github.mattidragon.mconfig.config.*;
 public record CommonConfig(
         @Comment("The max time between the clicks of a double insert")
         int insertAllTime,
-        @Comment("How many items drawers are able to hold.")
+        @Comment("How many items drawers are able to hold")
         long defaultCapacity,
-        @Comment("Wherther the stack size of the item should affect capacity")
+        @Comment("Whether the stack size of the item should affect capacity")
         boolean stackSizeAffectsCapacity,
-        @Comment("Wherther the amount of slots on a drawers should affect capacity")
+        @Comment("Whether the amount of slots on a drawers should affect capacity")
         boolean slotCountAffectsCapacity,
         @Comment("""
                 How extraction in creative should be handled. Possible values:
@@ -22,7 +22,17 @@ public record CommonConfig(
                  - 'front_no_break': The block can't be broken from the front
                  - 'all_no_break': The block can't be broken at all""")
         CreativeExtractionBehaviour creativeExtractionMode,
-        @Comment("Wherther to fix drawer networks on chunk load. Disable only if it causes issues")
-        boolean automaticNetworkHealing) {
-    public static final Config<CommonConfig> HANDLE = ConfigManager.register(ConfigType.COMMON, "extended_drawers", new CommonConfig(10, 16 * 64, false, true, CreativeExtractionBehaviour.FRONT_NO_BREAK, true));
+        @Comment("Whether to fix drawer networks on chunk load. Disable only if it causes issues")
+        boolean automaticNetworkHealing,
+        @Comment("If enabled you can't remove upgrades if the slot would overflow after removal")
+        boolean blockUpgradeRemovalsWithOverflow) {
+    public static final Config<CommonConfig> HANDLE = ConfigManager.register(ConfigType.COMMON,
+            "extended_drawers",
+            new CommonConfig(10,
+                    16 * 64,
+                    false,
+                    true,
+                    CreativeExtractionBehaviour.FRONT_NO_BREAK,
+                    true,
+                    true));
 }

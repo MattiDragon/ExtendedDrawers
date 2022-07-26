@@ -12,6 +12,7 @@ import net.fabricmc.fabric.api.transfer.v1.transaction.base.SnapshotParticipant;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -72,10 +73,23 @@ public final class DrawerSlot extends SnapshotParticipant<DrawerSlot.Snapshot> i
         update();
     }
 
-    public void changeUpgrade(@Nullable UpgradeItem newUpgrade, World world, BlockPos pos, Direction side, @Nullable PlayerEntity player) {
-        ItemUtils.offerOrDrop(world, pos, side, player, new ItemStack(upgrade));
+    /**
+     * Attempts to change the upgrade of this slot.
+     * @return Whether the change was successful.
+     */
+    public boolean changeUpgrade(@Nullable UpgradeItem newUpgrade, World world, BlockPos pos, Direction side, @Nullable PlayerEntity player) {
+        var oldUpgrade = upgrade;
         upgrade = newUpgrade;
+        if (getCapacity() < getAmount() && CommonConfig.HANDLE.get().blockUpgradeRemovalsWithOverflow()) {
+            upgrade = oldUpgrade;
+            if (player != null)
+                player.sendMessage(new TranslatableText("extended_drawer.drawer.upgrade_fail"), true);
+            return false;
+        }
+
+        ItemUtils.offerOrDrop(world, pos, side, player, new ItemStack(oldUpgrade));
         dumpExcess(world, pos, side, player);
+        return true;
     }
 
     @Override
