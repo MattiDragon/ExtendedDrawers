@@ -125,8 +125,8 @@ public class DrawerBlock extends NetworkBlockWithEntity<DrawerBlockEntity> imple
     
         // Upgrade removal
         if (playerStack.isEmpty() && player.isSneaking()) {
-            storage.changeUpgrade(null, world, pos, hit.getSide(), player);
-            return ActionResult.SUCCESS;
+            var changeResult = storage.changeUpgrade(null, world, pos, hit.getSide(), player);
+            return changeResult ? ActionResult.SUCCESS : ActionResult.FAIL;
         }
     
         var isDoubleClick = DrawerInteractionStatusManager.getAndResetInsertStatus(player, pos, slot);
@@ -234,11 +234,12 @@ public class DrawerBlock extends NetworkBlockWithEntity<DrawerBlockEntity> imple
             ExtendedDrawers.LOGGER.warn("Expected drawer upgrade to be UpgradeItem but found " + stack.getItem().getClass().getSimpleName() + " instead");
             return ActionResult.FAIL;
         }
-        
-        stack.decrement(1);
-    
-        storage.changeUpgrade(upgrade, world, pos, side, player);
-        return ActionResult.SUCCESS;
+
+        var changed = storage.changeUpgrade(upgrade, world, pos, side, player);
+        if (changed)
+            stack.decrement(1);
+
+        return changed ? ActionResult.SUCCESS : ActionResult.FAIL;
     }
     
     @Override
