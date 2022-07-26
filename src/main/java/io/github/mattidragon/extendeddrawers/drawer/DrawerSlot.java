@@ -12,7 +12,7 @@ import net.fabricmc.fabric.api.transfer.v1.transaction.base.SnapshotParticipant;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -83,7 +83,7 @@ public final class DrawerSlot extends SnapshotParticipant<DrawerSlot.Snapshot> i
         if (getCapacity() < getAmount() && CommonConfig.HANDLE.get().blockUpgradeRemovalsWithOverflow()) {
             upgrade = oldUpgrade;
             if (player != null)
-                player.sendMessage(new TranslatableText("extended_drawer.drawer.upgrade_fail"), true);
+                player.sendMessage(Text.translatable("extended_drawer.drawer.upgrade_fail"), true);
             return false;
         }
 
