@@ -3,39 +3,34 @@ plugins {
     id 'maven-publish'
 }
 
-var run = System.env.GITHUB_RUN_NUMBER
-var isDev = System.env.DEV_BUILD == "true"
+def run = System.env.GITHUB_RUN_NUMBER
+def isDev = System.env.DEV_BUILD == "true"
 
 version project.mod_version + (isDev ? "-dev.$run" : "") + "+mc.$minecraft_version"
 group project.maven_group
 
 repositories {
-    ext.maven = { String s -> maven {url(s)}}
-
-    //mconfig dep
     maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
-
     maven { url "https://jitpack.io" }
     maven { url "https://kneelawk.com/maven/" }
     maven { url "https://maven.blamejared.com" }
 }
 
 dependencies {
+    // Fabric
     minecraft "com.mojang:minecraft:$minecraft_version"
     mappings "net.fabricmc:yarn:$yarn_mappings:v2"
     modImplementation "net.fabricmc:fabric-loader:$loader_version"
     modImplementation "net.fabricmc.fabric-api:fabric-api:$fabric_version"
 
-    // Mconfig
+    // Dependencies
     include modImplementation("com.github.mattidragon:mconfig:$mconfig_version")
     include modImplementation("com.kneelawk:graphlib:$graphlib_version")
+    modImplementation "vazkii.patchouli:Patchouli:1.19-73-FABRIC"
 
     // Mixin Extras
     include implementation("com.github.LlamaLad7:MixinExtras:0.0.10")
     annotationProcessor("com.github.LlamaLad7:MixinExtras:0.0.10")
-
-    // 1.19-73
-    modImplementation "vazkii.patchouli:Patchouli:1.19-73-FABRIC"
 }
 
 loom {
@@ -49,14 +44,23 @@ loom {
 
             ideConfigGenerated = true
 
-            runDir "build/datagen"
+            runDir "build/datagen/run"
         }
     }
 }
 
+task cleanDatagen(type: Delete) {
+    delete "build/datagen/generated"
+}
+
 task copyDatagen(type: Copy) {
     from "src/main/generated"
-    into "build/resources/main"
+    into "build/datagen/generated"
+
+    exclude "README.md"
+    exclude ".cache"
+
+    dependsOn tasks.cleanDatagen
     dependsOn tasks.runDatagen
 }
 
@@ -76,6 +80,14 @@ processResources {
     }
 }
 
+jar {
+    from("LICENSE") {
+        rename { "${it}_${project.archivesBaseName}" }
+    }
+    from "build/datagen/generated"
+    dependsOn tasks.copyDatagen
+}
+
 def targetJavaVersion = 17
 tasks.withType(JavaCompile).configureEach {
     it.options.encoding = "UTF-8"
@@ -93,12 +105,6 @@ java {
     withSourcesJar()
 }
 
-jar {
-    from("LICENSE") {
-        rename { "${it}_${project.archivesBaseName}" }
-    }
-    dependsOn tasks.copyDatagen
-}
 
 publishing {
     publications {
