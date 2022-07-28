@@ -26,11 +26,14 @@ dependencies {
     // Dependencies
     include modImplementation("com.github.mattidragon:mconfig:$mconfig_version")
     include modImplementation("com.kneelawk:graphlib:$graphlib_version")
-    modImplementation "vazkii.patchouli:Patchouli:1.19-73-FABRIC"
+    modImplementation "vazkii.patchouli:Patchouli:$patchouli_version"
 
     // Mixin Extras
-    include implementation("com.github.LlamaLad7:MixinExtras:0.0.10")
-    annotationProcessor("com.github.LlamaLad7:MixinExtras:0.0.10")
+    include implementation("com.github.LlamaLad7:MixinExtras:$mixinextras_version")
+    annotationProcessor("com.github.LlamaLad7:MixinExtras:$mixinextras_version")
+
+    // Add generated data to runtime classpath (slightly hacky)
+    runtimeOnly files("src/main/generated")
 }
 
 loom {
@@ -44,29 +47,21 @@ loom {
 
             ideConfigGenerated = true
 
-            runDir "build/datagen/run"
+            runDir "build/datagen/"
+        }
+    }
+
+    // Apply datagen at runtime
+    mods {
+        extended_drawers {
+            sourceSet sourceSets.main
+            modFiles.from file("src/main/generated")
         }
     }
 }
 
-task cleanDatagen(type: Delete) {
-    delete "build/datagen/generated"
-}
-
-task copyDatagen(type: Copy) {
-    from "src/main/generated"
-    into "build/datagen/generated"
-
-    exclude "README.md"
-    exclude ".cache"
-
-    dependsOn tasks.cleanDatagen
-    dependsOn tasks.runDatagen
-}
-
-clean {
-    delete "src/main/generated"
-}
+// Delete datagen on clean
+clean.delete("src/main/generated")
 
 processResources {
     inputs.property "version", version
@@ -84,23 +79,16 @@ jar {
     from("LICENSE") {
         rename { "${it}_${project.archivesBaseName}" }
     }
-    from "build/datagen/generated"
-    dependsOn tasks.copyDatagen
-}
 
-def targetJavaVersion = 17
-tasks.withType(JavaCompile).configureEach {
-    it.options.encoding = "UTF-8"
-    if (targetJavaVersion >= 10 || JavaVersion.current().isJava10Compatible()) {
-        it.options.release.set(targetJavaVersion)
+    // Copy datagen to jar
+    dependsOn tasks.runDatagen
+    from("src/main/generated") {
+        exclude "README.md"
+        exclude ".cache"
     }
 }
 
 java {
-    def javaVersion = JavaVersion.toVersion(targetJavaVersion)
-    if (JavaVersion.current() < javaVersion) {
-        toolchain.languageVersion = JavaLanguageVersion.of(targetJavaVersion)
-    }
     archivesBaseName = project.archives_base_name
     withSourcesJar()
 }
