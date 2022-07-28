@@ -26,6 +26,6 @@ jobs:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           automatic_release_tag: "dev-${{ github.ref_name }}"
           prerelease: true
-          title: "Development Build"
+          title: "Development Build (${{ github.ref_name }})"
           files: |
             ./build/libs/*.jar
