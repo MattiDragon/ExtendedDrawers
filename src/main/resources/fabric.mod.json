@@ -35,7 +35,8 @@
   "depends": {
     "fabricloader": ">=0.14.6",
     "fabric": ">=0.54.0",
-    "minecraft": "~1.19.1"
+    "minecraft": "~1.19.1",
+    "graphlib": "*"
   },
   "suggests": {
     "patchouli": "*"
