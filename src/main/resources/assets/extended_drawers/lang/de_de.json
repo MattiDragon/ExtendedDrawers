@@ -1,0 +1,25 @@
+{
+  "block.extended_drawers.double_drawer": "Doppelte Schublade",
+  "block.extended_drawers.quad_drawer": "Vierfache Schublade",
+  "block.extended_drawers.single_drawer": "Schublade",
+  "block.extended_drawers.shadow_drawer": "Schatten Schublade",
+  "block.extended_drawers.controller": "Schubladen Zugangspunkt",
+  "block.extended_drawers.connector": "Schubladen Verbinder",
+
+  "item.extended_drawers.t1_upgrade": "Schubladen Upgrade I",
+  "item.extended_drawers.t2_upgrade": "Schubladen Upgrade II",
+  "item.extended_drawers.t3_upgrade": "Schubladen Upgrade III",
+  "item.extended_drawers.t4_upgrade": "Schubladen Upgrade IV",
+  "item.extended_drawers.downgrade": "Schubladen Downgrade",
+  "item.extended_drawers.creative_upgrade": "Unendliches Schubladen Upgrade",
+  "item.extended_drawers.upgrade_frame": "Upgrade Rahmen",
+  "item.extended_drawers.lock": "Schloss",
+
+  "tooltip.extended_drawers.drawer_contents": "Beinhaltet:",
+  "itemGroup.extended_drawers.main": "Extended Drawers",
+  "extended_drawer.drawer.upgrade_fail": "Es konnte nichts verbessert werden. Es wurden zu viele Upgrades eingefügt.",
+
+  "book.extended_drawers.guide.name": "Extending Drawers",
+  "book.extended_drawers.guide.landing_text": "Dieses Buch hilft dir Schritt für Schritt ein Lagersystem mit den Schubladen aufzubauen, sowie auch zeigen wie all die Blöcke und Items funktionieren.",
+  "book.extended_drawers.guide.subtitle": "Version ${version}"
+}
