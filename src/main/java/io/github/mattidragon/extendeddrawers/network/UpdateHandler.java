@@ -11,6 +11,7 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.World;
+import org.apache.commons.lang3.ObjectUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,16 +32,18 @@ public class UpdateHandler {
     }
     
     public static void scheduleUpdate(ServerWorld world, long id, ChangeType type) {
-        UPDATES.computeIfAbsent(world.getRegistryKey(), k -> new Long2ObjectOpenHashMap<>()).put(id, type);
+        var map = UPDATES.computeIfAbsent(world.getRegistryKey(), k -> new Long2ObjectOpenHashMap<>());
+        map.compute(id, (__, old) -> ObjectUtils.max(old, type));
     }
     
     public static void flushUpdates(ServerWorld world) {
+        var controller = GraphLib.getController(world);
         var profiler = world.getProfiler();
         profiler.push("extended_drawers:network_updates");
         var updates = UPDATES.remove(world.getRegistryKey());
         if (updates != null) {
             updates.forEach((id, type) -> {
-                var graph = GraphLib.getController(world).getGraph(id);
+                var graph = controller.getGraph(id);
                 if (graph == null) return;
                 NetworkStorageCache.update(world, id, type);
                 updateGraph(world, graph.getNodes(), type);
@@ -51,7 +54,6 @@ public class UpdateHandler {
         profiler.push("extended_drawers:node_updates");
         var refreshes = REFRESHES.remove(world.getRegistryKey());
         if (refreshes != null) {
-            var controller = GraphLib.getController(world);
             for (BlockPos pos : refreshes) {
                 ExtendedDrawers.LOGGER.debug("Refreshing graph at " + pos);
                 controller.updateNodes(pos);
@@ -59,7 +61,12 @@ public class UpdateHandler {
         }
         profiler.pop();
     }
-    
+
+    public static void clear() {
+        UPDATES.clear();
+        REFRESHES.clear();
+    }
+
     private static void updateGraph(ServerWorld world, Stream<Node<BlockNodeHolder>> nodes, ChangeType type) {
         nodes.forEach(node -> {
             if (node.data().getNode() instanceof AbstractDrawerBlockNode drawerNode) {

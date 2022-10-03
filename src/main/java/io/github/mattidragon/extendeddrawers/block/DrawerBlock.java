@@ -2,12 +2,14 @@ package io.github.mattidragon.extendeddrawers.block;
 
 import com.kneelawk.graphlib.graph.BlockNode;
 import io.github.mattidragon.extendeddrawers.ExtendedDrawers;
-import io.github.mattidragon.extendeddrawers.block.base.*;
+import io.github.mattidragon.extendeddrawers.block.base.CreativeBreakBlocker;
+import io.github.mattidragon.extendeddrawers.block.base.DrawerInteractionHandler;
+import io.github.mattidragon.extendeddrawers.block.base.NetworkBlockWithEntity;
+import io.github.mattidragon.extendeddrawers.block.base.NetworkComponent;
 import io.github.mattidragon.extendeddrawers.block.entity.DrawerBlockEntity;
 import io.github.mattidragon.extendeddrawers.item.UpgradeItem;
 import io.github.mattidragon.extendeddrawers.misc.DrawerInteractionStatusManager;
 import io.github.mattidragon.extendeddrawers.misc.DrawerRaycastUtil;
-import io.github.mattidragon.extendeddrawers.misc.ItemUtils;
 import io.github.mattidragon.extendeddrawers.network.node.DrawerBlockNode;
 import io.github.mattidragon.extendeddrawers.registry.ModBlocks;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
@@ -27,7 +29,6 @@ import net.minecraft.loot.context.LootContext;
 import net.minecraft.loot.context.LootContextParameters;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
-import net.minecraft.nbt.NbtList;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.DirectionProperty;
@@ -113,7 +114,7 @@ public class DrawerBlock extends NetworkBlockWithEntity<DrawerBlockEntity> imple
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
         if (hit.getSide() != state.get(FACING) || !player.canModifyBlocks() || hand == Hand.OFF_HAND)
             return ActionResult.PASS;
-        if (!(world instanceof ServerWorld serverWorld)) return ActionResult.CONSUME_PARTIAL;
+        if (!(world instanceof ServerWorld)) return ActionResult.CONSUME_PARTIAL;
     
         var internalPos = DrawerRaycastUtil.calculateFaceLocation(pos, hit.getPos(), hit.getSide(), state.get(FACING));
         if (internalPos == null) return ActionResult.PASS;
@@ -219,6 +220,15 @@ public class DrawerBlock extends NetworkBlockWithEntity<DrawerBlockEntity> imple
         if (facePos == null) return ActionResult.PASS;
         var storage = getBlockEntity(world, pos).storages[getSlot(facePos)];
         storage.setVoiding(!storage.isVoiding());
+        return ActionResult.SUCCESS;
+    }
+
+    @Override
+    public ActionResult toggleHide(BlockState state, World world, BlockPos pos, Vec3d hitPos, Direction side) {
+        var facePos = DrawerRaycastUtil.calculateFaceLocation(pos, hitPos, side, state.get(FACING));
+        if (facePos == null) return ActionResult.PASS;
+        var storage = getBlockEntity(world, pos).storages[getSlot(facePos)];
+        storage.setHidden(!storage.isHidden());
         return ActionResult.SUCCESS;
     }
 

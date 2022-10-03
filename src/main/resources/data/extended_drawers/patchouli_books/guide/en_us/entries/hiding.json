@@ -1,0 +1,9 @@
+{
+  "name": "Hidden Mode",
+  "icon": "minecraft:black_dye",
+  "category": "extended_drawers:modifiers",
+  "pages": [
+    "Hidden mode can be toggled with a $(item)black dye/$. It makes it so that the $(l:drawers)drawer@! doesn't show it's item'. @p@This is mostly useful when you have a big network of drawers and want to improve performance as rendering the item icons can be very expensive.",
+    "Like $(l:lock)locks@! the items aren't consumed and can be applied to access points. @p@Hiding can also applied to $(l:shadow_drawers)shadow drawers@!. This is mostly useful if you want to use one in a contraption."
+  ]
+}

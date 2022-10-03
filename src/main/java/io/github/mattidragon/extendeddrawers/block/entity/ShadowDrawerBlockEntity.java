@@ -1,9 +1,7 @@
 package io.github.mattidragon.extendeddrawers.block.entity;
 
-import io.github.mattidragon.extendeddrawers.ExtendedDrawers;
-import io.github.mattidragon.extendeddrawers.block.ShadowDrawerBlock;
+import io.github.mattidragon.extendeddrawers.drawer.DrawerSlot;
 import io.github.mattidragon.extendeddrawers.network.NetworkStorageCache;
-import io.github.mattidragon.extendeddrawers.network.UpdateHandler;
 import io.github.mattidragon.extendeddrawers.registry.ModBlocks;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
@@ -18,7 +16,6 @@ import net.minecraft.network.listener.ClientPlayPacketListener;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 @SuppressWarnings("UnstableApiUsage")
@@ -28,6 +25,7 @@ public class ShadowDrawerBlockEntity extends BlockEntity {
      * Stores the amount of items currently available. On the server this is a cache and on the client it stores the number synced from the server.
      */
     public long countCache = -1;
+    private boolean hidden = false;
     
     public ShadowDrawerBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlocks.SHADOW_DRAWER_BLOCK_ENTITY, pos, state);
@@ -44,11 +42,19 @@ public class ShadowDrawerBlockEntity extends BlockEntity {
     }
     
     public void recalculateContents() {
-        if (!(this.world instanceof ServerWorld world))
-            return;
-        
-        countCache = createStorage(world, pos).simulateExtract(item, Long.MAX_VALUE, null);
-    
+        if (this.world instanceof ServerWorld world && !item.isBlank()) {
+            var storage = NetworkStorageCache.get(world, pos);
+            long amount = 0L;
+            for (DrawerSlot slot : storage.parts) {
+                if (slot.getResource().equals(item)) {
+                    amount += slot.getAmount();
+                }
+            }
+            countCache = amount;
+
+            //countCache = createStorage(world, pos).simulateExtract(item, Long.MAX_VALUE, null);
+
+        }
         var state = getCachedState();
         world.updateListeners(pos, state, state, Block.NOTIFY_LISTENERS);
     }
@@ -64,6 +70,7 @@ public class ShadowDrawerBlockEntity extends BlockEntity {
         var nbt = new NbtCompound();
         writeNbt(nbt);
         nbt.putLong("count", countCache);
+        nbt.putBoolean("hidden", isHidden());
         return nbt;
     }
     
@@ -72,6 +79,7 @@ public class ShadowDrawerBlockEntity extends BlockEntity {
         super.readNbt(nbt);
         if (nbt.contains("count")) countCache = nbt.getLong("count");
         item = ItemVariant.fromNbt(nbt.getCompound("item"));
+        hidden = nbt.getBoolean("hidden");
     }
     
     @Override
@@ -79,7 +87,17 @@ public class ShadowDrawerBlockEntity extends BlockEntity {
         super.writeNbt(nbt);
         nbt.put("item", item.toNbt());
     }
-    
+
+    public boolean isHidden() {
+        return hidden;
+    }
+
+    public void setHidden(boolean hidden) {
+        this.hidden = hidden;
+        var state = getCachedState();
+        world.updateListeners(pos, state, state, Block.NOTIFY_LISTENERS);
+    }
+
     public class ShadowDrawerStorage extends FilteringStorage<ItemVariant> {
         public ShadowDrawerStorage(Storage<ItemVariant> backingStorage) {
             super(backingStorage);
