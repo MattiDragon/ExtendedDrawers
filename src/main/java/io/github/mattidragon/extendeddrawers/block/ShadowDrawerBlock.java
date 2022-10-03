@@ -2,6 +2,7 @@ package io.github.mattidragon.extendeddrawers.block;
 
 import com.kneelawk.graphlib.graph.BlockNode;
 import io.github.mattidragon.extendeddrawers.block.base.CreativeBreakBlocker;
+import io.github.mattidragon.extendeddrawers.block.base.DrawerInteractionHandler;
 import io.github.mattidragon.extendeddrawers.block.base.NetworkBlockWithEntity;
 import io.github.mattidragon.extendeddrawers.block.entity.ShadowDrawerBlockEntity;
 import io.github.mattidragon.extendeddrawers.misc.DrawerRaycastUtil;
@@ -32,6 +33,7 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
@@ -41,7 +43,7 @@ import java.util.List;
 import static io.github.mattidragon.extendeddrawers.misc.DrawerInteractionStatusManager.getAndResetInsertStatus;
 
 @SuppressWarnings({"UnstableApiUsage", "deprecation"}) // transfer api and mojank block method deprecation
-public class ShadowDrawerBlock extends NetworkBlockWithEntity<ShadowDrawerBlockEntity> implements CreativeBreakBlocker {
+public class ShadowDrawerBlock extends NetworkBlockWithEntity<ShadowDrawerBlockEntity> implements CreativeBreakBlocker, DrawerInteractionHandler {
 
     public static final DirectionProperty FACING = Properties.HORIZONTAL_FACING;
     
@@ -167,5 +169,13 @@ public class ShadowDrawerBlock extends NetworkBlockWithEntity<ShadowDrawerBlockE
     @Override
     public Collection<BlockNode> createNodes() {
         return List.of(new ShadowDrawerBlockNode());
+    }
+
+    @Override
+    public ActionResult toggleHide(BlockState state, World world, BlockPos pos, Vec3d hitPos, Direction side) {
+        if (side != state.get(FACING)) return ActionResult.PASS;
+        var drawer = getBlockEntity(world, pos);
+        drawer.setHidden(!drawer.isHidden());
+        return ActionResult.SUCCESS;
     }
 }

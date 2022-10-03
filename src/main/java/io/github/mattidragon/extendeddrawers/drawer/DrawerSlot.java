@@ -50,27 +50,20 @@ public final class DrawerSlot extends SnapshotParticipant<DrawerSlot.Snapshot> i
      * Whether the slot is locked. The item in a locked slot doesn't change when empty.
      */
     private boolean locked;
+
     /**
      * Whether the slot is in voiding mode. Voiding slots delete overflowing items
      */
     private boolean voiding;
 
+    /**
+     * Whether the slot is hidden. Hidden slots don't display items.
+     */
+    private boolean hidden;
+
     public DrawerSlot(BooleanConsumer onChange, double capacityMultiplier) {
         this.onChange = onChange;
         this.capacityMultiplier = capacityMultiplier;
-    }
-
-    public void setVoiding(boolean voiding) {
-        this.voiding = voiding;
-        sortingChanged = true;
-        update();
-    }
-
-    public void setLocked(boolean locked) {
-        this.locked = locked;
-        sortingChanged = true;
-        if (!locked && amount == 0) item = ItemVariant.blank();
-        update();
     }
 
     /**
@@ -194,6 +187,7 @@ public final class DrawerSlot extends SnapshotParticipant<DrawerSlot.Snapshot> i
         amount = nbt.getLong("amount");
         locked = nbt.getBoolean("locked");
         voiding = nbt.getBoolean("voiding");
+        hidden = nbt.getBoolean("hidden");
         upgrade = Registry.ITEM.get(Identifier.tryParse(nbt.getString("upgrade"))) instanceof UpgradeItem upgrade ? upgrade : null;
     }
 
@@ -202,6 +196,7 @@ public final class DrawerSlot extends SnapshotParticipant<DrawerSlot.Snapshot> i
         nbt.putLong("amount", amount);
         nbt.putBoolean("locked", locked);
         nbt.putBoolean("voiding", voiding);
+        nbt.putBoolean("hidden", hidden);
         nbt.putString("upgrade", Registry.ITEM.getId(upgrade).toString());
     }
 
@@ -217,8 +212,30 @@ public final class DrawerSlot extends SnapshotParticipant<DrawerSlot.Snapshot> i
         return voiding;
     }
 
+    public boolean isHidden() {
+        return hidden;
+    }
+
     public @Nullable UpgradeItem getUpgrade() {
         return upgrade;
+    }
+
+    public void setHidden(boolean hidden) {
+        this.hidden = hidden;
+        update();
+    }
+
+    public void setVoiding(boolean voiding) {
+        this.voiding = voiding;
+        sortingChanged = true;
+        update();
+    }
+
+    public void setLocked(boolean locked) {
+        this.locked = locked;
+        sortingChanged = true;
+        if (!locked && amount == 0) item = ItemVariant.blank();
+        update();
     }
 
     record Snapshot(ResourceAmount<ItemVariant> contents, boolean itemChanged) {}

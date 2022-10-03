@@ -23,6 +23,7 @@ import java.util.function.LongFunction;
 /**
  * Caches storages of all slots in networks to make lookup less expensive.
  */
+//FIXME: small mem leak due to caching of removed graphs (not important)
 @SuppressWarnings("UnstableApiUsage")
 public class NetworkStorageCache {
     private static final Map<RegistryKey<World>, Long2ObjectMap<CombinedStorage<ItemVariant, DrawerSlot>>> CACHE = new HashMap<>();
@@ -65,6 +66,10 @@ public class NetworkStorageCache {
                         .flatMap(drawer -> Arrays.stream(drawer.storages))
                         .sorted()
                         .toList());
+    }
+
+    public static void clear() {
+        CACHE.clear();
     }
 }
 

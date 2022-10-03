@@ -17,14 +17,21 @@ public abstract class ItemStackMixin {
     @Shadow public abstract boolean isOf(Item item);
 
     @Inject(method = "useOnBlock", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/Item;useOnBlock(Lnet/minecraft/item/ItemUsageContext;)Lnet/minecraft/util/ActionResult;"), cancellable = true)
-    private void lavaBucketUsage(ItemUsageContext context, CallbackInfoReturnable<ActionResult> cir) {
+    private void extended_drawers$applyModifiers(ItemUsageContext context, CallbackInfoReturnable<ActionResult> cir) {
         var world = context.getWorld();
         var state = world.getBlockState(context.getBlockPos());
 
-        if (isOf(Items.LAVA_BUCKET) && state.getBlock() instanceof DrawerInteractionHandler handler) {
-            var result = handler.toggleVoid(state, world, context.getBlockPos(), context.getHitPos(), context.getSide());
-            if (result != ActionResult.PASS)
-                cir.setReturnValue(result);
+        if (state.getBlock() instanceof DrawerInteractionHandler handler) {
+            if (isOf(Items.LAVA_BUCKET)) {
+                var result = handler.toggleVoid(state, world, context.getBlockPos(), context.getHitPos(), context.getSide());
+                if (result != ActionResult.PASS)
+                    cir.setReturnValue(result);
+            }
+            if (isOf(Items.BLACK_DYE)) {
+                var result = handler.toggleHide(state, world, context.getBlockPos(), context.getHitPos(), context.getSide());
+                if (result != ActionResult.PASS)
+                    cir.setReturnValue(result);
+            }
         }
     }
 }

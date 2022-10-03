@@ -1,8 +1,14 @@
 package io.github.mattidragon.extendeddrawers.block;
 
+import com.kneelawk.graphlib.GraphLib;
+import com.kneelawk.graphlib.graph.BlockGraph;
+import com.kneelawk.graphlib.graph.BlockGraphController;
 import com.kneelawk.graphlib.graph.BlockNode;
+import com.kneelawk.graphlib.graph.BlockNodeHolder;
+import com.kneelawk.graphlib.graph.struct.Node;
 import io.github.mattidragon.extendeddrawers.block.base.DrawerInteractionHandler;
 import io.github.mattidragon.extendeddrawers.block.base.NetworkBlock;
+import io.github.mattidragon.extendeddrawers.block.entity.ShadowDrawerBlockEntity;
 import io.github.mattidragon.extendeddrawers.drawer.DrawerSlot;
 import io.github.mattidragon.extendeddrawers.network.node.AccessPointBlockNode;
 import io.github.mattidragon.extendeddrawers.network.NetworkStorageCache;
@@ -25,6 +31,7 @@ import net.minecraft.world.World;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 import static io.github.mattidragon.extendeddrawers.misc.DrawerInteractionStatusManager.getAndResetInsertStatus;
 
@@ -87,6 +94,32 @@ public class AccessPointBlock extends NetworkBlock implements DrawerInteractionH
                 .mapToInt(value -> value ? 1 : -1)
                 .sum() <= 0;
         storages.forEach(storage -> storage.setVoiding(newState));
+
+        return storages.size() == 0 ? ActionResult.PASS : ActionResult.SUCCESS;
+    }
+
+    @Override
+    public ActionResult toggleHide(BlockState state, World world, BlockPos pos, Vec3d hitPos, Direction side) {
+        if (!(world instanceof ServerWorld serverWorld)) return ActionResult.PASS;
+        var storages = NetworkStorageCache.get(serverWorld, pos).parts;
+        var newState = storages.stream()
+                .map(DrawerSlot::isHidden)
+                .mapToInt(value -> value ? 1 : -1)
+                .sum() <= 0;
+        storages.forEach(storage -> storage.setHidden(newState));
+
+        //TODO: find better way to do this, integrate shadow drawers into math
+        BlockGraphController controller = GraphLib.getController(serverWorld);
+        controller.getGraphsAt(pos)
+                .mapToObj(controller::getGraph)
+                .filter(Objects::nonNull)
+                .flatMap(BlockGraph::getNodes)
+                .map(Node::data)
+                .map(BlockNodeHolder::getPos)
+                .map(serverWorld::getBlockEntity)
+                .filter(ShadowDrawerBlockEntity.class::isInstance)
+                .map(ShadowDrawerBlockEntity.class::cast)
+                .forEach(drawer -> drawer.setHidden(newState));
 
         return storages.size() == 0 ? ActionResult.PASS : ActionResult.SUCCESS;
     }

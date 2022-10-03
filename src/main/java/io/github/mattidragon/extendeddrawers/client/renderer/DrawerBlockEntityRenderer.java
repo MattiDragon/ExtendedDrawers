@@ -5,6 +5,7 @@ import io.github.mattidragon.extendeddrawers.block.DrawerBlock;
 import io.github.mattidragon.extendeddrawers.block.entity.DrawerBlockEntity;
 import io.github.mattidragon.extendeddrawers.config.ClientConfig;
 import io.github.mattidragon.extendeddrawers.drawer.DrawerSlot;
+import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.WorldRenderer;
@@ -21,6 +22,7 @@ import java.util.Objects;
 
 import static io.github.mattidragon.extendeddrawers.ExtendedDrawers.id;
 
+@SuppressWarnings("UnstableApiUsage")
 public class DrawerBlockEntityRenderer extends AbstractDrawerBlockEntityRenderer<DrawerBlockEntity> {
     public DrawerBlockEntityRenderer(BlockEntityRendererFactory.Context context) {
         super(context);
@@ -80,8 +82,9 @@ public class DrawerBlockEntityRenderer extends AbstractDrawerBlockEntityRenderer
         
         if (storage.isLocked()) icons.add(blockAtlas.apply(id("item/lock")));
         if (storage.isVoiding()) icons.add(blockAtlas.apply(new Identifier("minecraft", "item/lava_bucket")));
+        if (storage.isHidden()) icons.add(blockAtlas.apply(new Identifier("minecraft", "item/black_dye")));
         if (storage.getUpgrade() != null) icons.add(blockAtlas.apply(storage.getUpgrade().sprite));
         
-        renderSlot(storage.getItem(), ((storage.getAmount() == 0) || ClientConfig.HANDLE.get().displayEmptyCount()) ? null : storage.getAmount(), icons, matrices, vertexConsumers, light, overlay, seed, pos);
+        renderSlot(storage.isHidden() ? ItemVariant.blank() : storage.getItem(), ((storage.getAmount() == 0) || ClientConfig.HANDLE.get().displayEmptyCount()) ? null : storage.getAmount(), icons, matrices, vertexConsumers, light, overlay, seed, pos);
     }
 }
