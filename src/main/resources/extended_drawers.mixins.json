@@ -5,7 +5,9 @@
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "ItemStackMixin",
-    "ServerPlayerInteractionManagerMixin"
+    "ServerPlayerInteractionManagerMixin",
+    "patchouli.BookRegistryMixin",
+    "patchouli.FabricXplatModContainerAccess"
   ],
   "client": [
     "ClientPlayerInteractionManagerMixin"
