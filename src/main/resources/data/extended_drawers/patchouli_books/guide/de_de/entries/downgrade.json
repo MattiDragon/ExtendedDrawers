@@ -3,7 +3,7 @@
   "icon": "extended_drawers:downgrade",
   "category": "extended_drawers:modifiers",
   "pages": [
-    "@item@Schubladen Downgrades@! sind eine spezielle Art von $(l:upgrades)Verbesserungen@!. Diese limitieren die kapazität von $(l:drawers)Schubladen@ auf genau 64 items! @p@Sie sind sehr nützlich für automatisierte Vorgänge.",
+    "@item@Schubladen Downgrades@! sind eine spezielle Art von $(l:upgrades)Verbesserungen@!. Diese limitieren die kapazitÃ¤t von $(l:drawers)Schubladen@! auf genau 64 items! @p@Sie sind sehr nÃ¼tzlich fÃ¼r automatisierte VorgÃ¤nge.",
     {
       "type": "patchouli:crafting",
       "recipe": "extended_drawers:downgrade"

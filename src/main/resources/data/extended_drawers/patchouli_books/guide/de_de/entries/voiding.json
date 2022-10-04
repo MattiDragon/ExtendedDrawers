@@ -3,7 +3,7 @@
   "icon": "minecraft:lava_bucket",
   "category": "extended_drawers:modifiers",
   "pages": [
-    "Der Leere Modus kann mit einem $(item)Lava Eimer/$ aktiviert werden. In diesem Modus wird die $(l:drawers)Schublade@! überschüssige Items zerstören. @p@Dieser Mods ist nützlich wenn man zu viel von einem ungewöhnlichen Item hat und du nicht willst dass dein Netzwerk verstopft wird.",
-    "Genau wie $(l:lock)Schlösser@! wird der Eimer nicht verbraucht. @p@Pass aud denn der Leere Modus beim falchem Gebrauch wichtige Items verstören. Passe ebenfalls auf dass du die Lava beim aktivieren nicht zufällig platzierst."
+    "Der Leere Modus kann mit einem $(item)Lava Eimer/$ aktiviert werden. In diesem Modus wird die $(l:drawers)Schublade@! Ã¼berschÃ¼ssige Items zerstÃ¶ren. @p@Dieser Mods ist nÃ¼tzlich wenn man zu viel von einem ungewÃ¶hnlichen Item hat und du nicht willst dass dein Netzwerk verstopft wird.",
+    "Genau wie $(l:lock)SchlÃ¶sser@! wird der Eimer nicht verbraucht. @p@Pass aud denn der Leere Modus beim falchem Gebrauch wichtige Items verstÃ¶ren. Passe ebenfalls auf dass du die Lava beim aktivieren nicht zufÃ¤llig platzierst."
   ]
 }

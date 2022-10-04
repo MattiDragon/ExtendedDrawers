@@ -3,7 +3,7 @@
   "icon": "extended_drawers:t2_upgrade",
   "category": "extended_drawers:modifiers",
   "pages": [
-    "@item@Upgrades@! haben verschiedene Stufen. Sie erhöhen die Kapazität von $(l:drawers)Schubladen@!. @p@Um ein Upgrade einzusetzen, clicke auf eine Schublade mit einem @item@Upgrade@! während du schleichst. @p@Sie sind sehr nützlich wenn wir ein großes, sortiertes System bauen wollen.",
+    "@item@Upgrades@! haben verschiedene Stufen. Sie erhÃ¶hen die KapazitÃ¤t von $(l:drawers)Schubladen@!. @p@Um ein Upgrade einzusetzen, clicke auf eine Schublade mit einem @item@Upgrade@! wÃ¤hrend du schleichst. @p@Sie sind sehr nÃ¼tzlich wenn wir ein groÃŸes, sortiertes System bauen wollen.",
     {
       "type": "patchouli:crafting",
       "recipe": "extended_drawers:upgrade_frame",
