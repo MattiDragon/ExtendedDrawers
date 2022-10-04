@@ -3,7 +3,7 @@
   "icon": "extended_drawers:single_drawer",
   "category": "extended_drawers:networks",
   "pages": [
-    "Wenn du eingie $(l:drawers)Schubladen@! nebeneinander platzierst, hast du ein simples Netzwerk erstellt. Dieses Netzerk kann aber noch nichts tun. $(br2)Wir fangen einfach an und fügen einen $(l:access_points)Zugangspunkt@! zum Netzwerk hinzu. Dieser erlaubt und Items in das System einzulagern an die einzelnen Schubladen zu gehen.",
+    "Wenn du eingie $(l:drawers)Schubladen@! nebeneinander platzierst, hast du ein simples Netzwerk erstellt. Dieses Netzerk kann aber noch nichts tun. $(br2)Wir fangen einfach an und fÃ¼gen einen $(l:access_points)Zugangspunkt@! zum Netzwerk hinzu. Dieser erlaubt und Items in das System einzulagern an die einzelnen Schubladen zu gehen.",
     {
       "type": "patchouli:multiblock",
       "multiblock": {
