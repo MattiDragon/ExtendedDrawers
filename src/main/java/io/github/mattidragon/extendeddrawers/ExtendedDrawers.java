@@ -12,7 +12,6 @@ import io.github.mattidragon.extendeddrawers.registry.ModItems;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerChunkEvents;
-import net.fabricmc.fabric.api.event.player.UseItemCallback;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.ResourcePackActivationType;
 import net.fabricmc.loader.api.FabricLoader;
@@ -42,11 +41,10 @@ public class ExtendedDrawers implements ModInitializer {
         NetworkRegistry.register();
         ClientConfig.HANDLE.load();
         CommonConfig.HANDLE.load();
-        ResourceManagerHelper.registerBuiltinResourcePack(id("alt"), MOD_CONTAINER, ResourcePackActivationType.NORMAL);
+        ResourceManagerHelper.registerBuiltinResourcePack(id("alt"), MOD_CONTAINER, "ED: Alternative Textures", ResourcePackActivationType.NORMAL);
+        ResourceManagerHelper.registerBuiltinResourcePack(id("dev"), MOD_CONTAINER, "ED: Programmer Art", ResourcePackActivationType.NORMAL);
 
         //TODO: move to better place
-
-
         ServerChunkEvents.CHUNK_LOAD.register((world, chunk) -> {
             if (!CommonConfig.HANDLE.get().automaticNetworkHealing()) return;
             
