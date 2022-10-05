@@ -32,6 +32,9 @@ You can use a lock on drawers to make them keep their selected item even when em
 ### Voiding mode
 If sneak clicked with a lava bucket, drawers will start voiding excess items
 
+### Hidden mode
+Hide icons on drawers to reduce lag or hide your valuables. Remember, anyone can change it.
+
 ## Upcoming and Potential Features
 Here are some features that are **not** in mod yet. Some may be added others may not. Features 
 outside this list could also be added.
@@ -41,10 +44,6 @@ outside this list could also be added.
   * Open to PRs for them
 * **Progress bars**
   * Not sure if there's any use
-* **Hiding drawer elements**
-  * Not sure if needed
-  * What's the best way to do this?
-  * Culling already implemented
 
 ## Other Info
 ### Modpack permission
@@ -54,11 +53,12 @@ You can use this mod in any modpack as long as you don't reupload the mod. You c
 This mod is only officially available on [curseforge](https://www.curseforge.com/minecraft/mc-mods/extended-drawers), [modrinth](https://modrinth.com/mod/extended-drawers) and [github](https://github.com/mattidragon/extendeddrawers). Any other sites are third-party reuploads and should not be trusted.
 
 ### Version support
-I only support the latest and mostly modded version of minecraft. Old versions may receive important patches, but I will not be backporting the mod.
+I only support the latest and mostly modded version of minecraft. Old versions may receive important patches, but I will not be backporting the mod. 
+
+*1.18 support has been abandoned. 1.19 will be the main focus now*
 
 ### Incompatibilities
 I intend to try and stay compatible with as many mods as possible, but might abandon support for some if it becomes too hard.
-
 * **Sodium** is only compatible if [indium](https://modrinth.com/mod/indium) is installed.
 * **Optifine** will never be officially supported. Might work, might not.
 
