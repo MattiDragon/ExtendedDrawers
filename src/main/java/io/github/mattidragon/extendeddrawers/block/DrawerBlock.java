@@ -188,6 +188,9 @@ public class DrawerBlock extends NetworkBlockWithEntity<DrawerBlockEntity> imple
     @Override
     public List<ItemStack> getDroppedStacks(BlockState state, LootContext.Builder builder) {
         if (builder.get(LootContextParameters.BLOCK_ENTITY) instanceof DrawerBlockEntity drawer) {
+            if (drawer.isBlank()) {
+                return List.of(new ItemStack(this.asItem(), 1));
+            }
             builder = builder.putDrop(id("drawer"), (context, consumer) -> {
                 for (var slot : drawer.storages) {
                     var amount = slot.getAmount();

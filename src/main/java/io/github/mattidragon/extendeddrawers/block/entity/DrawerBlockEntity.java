@@ -43,6 +43,15 @@ public class DrawerBlockEntity extends BlockEntity {
         sortSlots();
     }
 
+    public boolean isBlank() {
+        for (int i = 0; i < storages.length; i++) {
+            if (!storages[i].isBlank()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     private void sortSlots() {
         combinedStorage.parts.sort(null);
     }
