@@ -129,6 +129,10 @@ public final class DrawerSlot extends SnapshotParticipant<DrawerSlot.Snapshot> i
         return amount;
     }
 
+    public boolean isBlank() {
+        return this.isResourceBlank() && !this.isHidden() && !this.isLocked() && !this.isVoiding() && this.getUpgrade() == null;
+    }
+
     @Override
     public long getCapacity() {
         var config = CommonConfig.HANDLE.get();
