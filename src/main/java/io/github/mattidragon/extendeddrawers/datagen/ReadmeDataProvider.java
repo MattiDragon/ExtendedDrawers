@@ -2,15 +2,12 @@ package io.github.mattidragon.extendeddrawers.datagen;
 
 import com.google.common.hash.HashCode;
 import com.google.common.hash.Hashing;
-import net.minecraft.data.DataCache;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.DataWriter;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.util.Objects;
 
 public class ReadmeDataProvider implements DataProvider {
     private static final String README = """

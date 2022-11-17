@@ -10,8 +10,8 @@ import io.github.mattidragon.extendeddrawers.block.base.DrawerInteractionHandler
 import io.github.mattidragon.extendeddrawers.block.base.NetworkBlock;
 import io.github.mattidragon.extendeddrawers.block.entity.ShadowDrawerBlockEntity;
 import io.github.mattidragon.extendeddrawers.drawer.DrawerSlot;
-import io.github.mattidragon.extendeddrawers.network.node.AccessPointBlockNode;
 import io.github.mattidragon.extendeddrawers.network.NetworkStorageCache;
+import io.github.mattidragon.extendeddrawers.network.node.AccessPointBlockNode;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.item.PlayerInventoryStorage;
