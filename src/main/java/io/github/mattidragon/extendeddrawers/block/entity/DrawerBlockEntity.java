@@ -3,7 +3,6 @@ package io.github.mattidragon.extendeddrawers.block.entity;
 import io.github.mattidragon.extendeddrawers.block.DrawerBlock;
 import io.github.mattidragon.extendeddrawers.config.CommonConfig;
 import io.github.mattidragon.extendeddrawers.drawer.DrawerSlot;
-import io.github.mattidragon.extendeddrawers.item.UpgradeItem;
 import io.github.mattidragon.extendeddrawers.network.UpdateHandler;
 import io.github.mattidragon.extendeddrawers.registry.ModBlocks;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
@@ -19,9 +18,7 @@ import net.minecraft.network.Packet;
 import net.minecraft.network.listener.ClientPlayPacketListener;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.registry.Registry;
 
 import java.util.ArrayList;
 import java.util.List;

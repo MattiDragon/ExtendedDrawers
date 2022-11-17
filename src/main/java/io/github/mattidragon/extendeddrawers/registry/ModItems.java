@@ -1,5 +1,6 @@
 package io.github.mattidragon.extendeddrawers.registry;
 
+import io.github.mattidragon.extendeddrawers.item.DrawerItem;
 import io.github.mattidragon.extendeddrawers.item.LockItem;
 import io.github.mattidragon.extendeddrawers.item.UpgradeItem;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
@@ -11,11 +12,11 @@ import static io.github.mattidragon.extendeddrawers.ExtendedDrawers.MOD_GROUP;
 import static io.github.mattidragon.extendeddrawers.ExtendedDrawers.id;
 
 public class ModItems {
-    public static final Item SINGLE_DRAWER = new BlockItem(ModBlocks.SINGLE_DRAWER, new FabricItemSettings().group(MOD_GROUP));
-    public static final Item DOUBLE_DRAWER = new BlockItem(ModBlocks.DOUBLE_DRAWER, new FabricItemSettings().group(MOD_GROUP));
-    public static final Item QUAD_DRAWER = new BlockItem(ModBlocks.QUAD_DRAWER, new FabricItemSettings().group(MOD_GROUP));
+    public static final Item SINGLE_DRAWER = new DrawerItem(ModBlocks.SINGLE_DRAWER, new FabricItemSettings().group(MOD_GROUP));
+    public static final Item DOUBLE_DRAWER = new DrawerItem(ModBlocks.DOUBLE_DRAWER, new FabricItemSettings().group(MOD_GROUP));
+    public static final Item QUAD_DRAWER = new DrawerItem(ModBlocks.QUAD_DRAWER, new FabricItemSettings().group(MOD_GROUP));
     public static final Item CONNECTOR = new BlockItem(ModBlocks.CONNECTOR, new FabricItemSettings().group(MOD_GROUP));
-    public static final Item SHADOW_DRAWER = new BlockItem(ModBlocks.SHADOW_DRAWER, new FabricItemSettings().group(MOD_GROUP));
+    public static final Item SHADOW_DRAWER = new DrawerItem(ModBlocks.SHADOW_DRAWER, new FabricItemSettings().group(MOD_GROUP));
     public static final Item CONTROLLER = new BlockItem(ModBlocks.CONTROLLER, new FabricItemSettings().group(MOD_GROUP));
     
     public static final Item UPGRADE_FRAME = new Item(new FabricItemSettings().group(MOD_GROUP));

@@ -1,9 +1,7 @@
 package io.github.mattidragon.extendeddrawers.block.base;
 
 import net.minecraft.block.BlockEntityProvider;
-import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.BlockWithEntity;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.util.math.BlockPos;
