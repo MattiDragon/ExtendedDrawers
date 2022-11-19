@@ -67,6 +67,14 @@ public class DrawerBlockEntity extends BlockEntity {
         writeNbt(nbt);
         return nbt;
     }
+
+    public boolean isEmpty() {
+        for (var storage : storages) {
+            if (storage.getUpgrade() != null || !storage.isResourceBlank() || storage.isHidden() || storage.isLocked() || storage.isVoiding())
+                return false;
+        }
+        return true;
+    }
     
     @Override
     public void readNbt(NbtCompound nbt) {

@@ -25,8 +25,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
-import net.minecraft.loot.context.LootContext;
-import net.minecraft.loot.context.LootContextParameters;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.server.world.ServerWorld;
@@ -49,8 +47,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.List;
-
-import static io.github.mattidragon.extendeddrawers.ExtendedDrawers.id;
 
 @SuppressWarnings({"UnstableApiUsage", "deprecation"}) // transfer api and mojank block method deprecation
 public class DrawerBlock extends NetworkBlockWithEntity<DrawerBlockEntity> implements DrawerInteractionHandler, CreativeBreakBlocker, NetworkComponent {
@@ -186,25 +182,7 @@ public class DrawerBlock extends NetworkBlockWithEntity<DrawerBlockEntity> imple
             default -> throw new IllegalStateException("unexpected drawer slot count");
         };
     }
-    
-    @Override
-    public List<ItemStack> getDroppedStacks(BlockState state, LootContext.Builder builder) {
-        if (builder.get(LootContextParameters.BLOCK_ENTITY) instanceof DrawerBlockEntity drawer) {
-            builder = builder.putDrop(id("drawer"), (context, consumer) -> {
-                for (var slot : drawer.storages) {
-                    var amount = slot.getAmount();
-                    var item = slot.getItem();
-                    while (amount != 0) {
-                        var count = Math.min((int) amount, item.getItem().getMaxCount());
-                        consumer.accept(item.toStack(count));
-                        amount -= count;
-                    }
-                }
-            });
-        }
-        return super.getDroppedStacks(state, builder);
-    }
-    
+
     @Override
     public ActionResult toggleLock(BlockState state, World world, BlockPos pos, Vec3d hitPos, Direction side) {
         var facePos = DrawerRaycastUtil.calculateFaceLocation(pos, hitPos, side, state.get(FACING));

@@ -35,7 +35,7 @@ public class DrawerContentsLootFunction extends ConditionalLootFunction {
     @Override
     protected ItemStack process(ItemStack stack, LootContext context) {
         if (stack.isEmpty()) return stack;
-        if (context.get(LootContextParameters.BLOCK_ENTITY) instanceof DrawerBlockEntity drawer) {
+        if (context.get(LootContextParameters.BLOCK_ENTITY) instanceof DrawerBlockEntity drawer && !drawer.isEmpty()) {
             var nbt = new NbtCompound();
             drawer.writeNbt(nbt);
             var itemNbt = BlockItem.getBlockEntityNbt(stack);
