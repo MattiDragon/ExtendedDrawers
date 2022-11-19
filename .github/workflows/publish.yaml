@@ -27,11 +27,20 @@ jobs:
 
       - name: Fix lines in changelog
         id: changelog
-        uses: mad9000/actions-find-and-replace-string@2
-        with:
-          source: "${{ inputs.changelog }}"
-          find: "\\n"
-          replace: "\n"
+        shell: python
+        env:
+          THE_INPUT: "${{ inputs.description }}"
+        run: |
+          import os
+          import random
+          import string
+          
+          value = os.getenv("THE_INPUT").replace("\\n", "\n")
+          # Random delimiter to avoid escapes
+          delimiter = "".join(random.choice(string.ascii_letters + string.digits) for i in range(30))
+          
+          with open(os.environ["GITHUB_OUTPUT"], "w") as out:
+              out.write(f"value<<{delimiter}\n{value}\n{delimiter}")
 
       - name: Print changelog
         run: "echo \"${{ steps.changelog.outputs.value }}\""
@@ -62,11 +71,11 @@ jobs:
           changelog: ${{ steps.changelog.outputs.value }}
 
           modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
-          modrinth-id: IF0Y4xFw
+          modrinth-id: AhtxbnpG
           modrinth-featured: false
 
           curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
-          curseforge-id: 689404
+          curseforge-id: 616602
 
           github-token: ${{ secrets.GITHUB_TOKEN }}
           github-tag: ${{ steps.versions.outputs.mod_version }}+mc.${{ steps.versions.outputs.minecraft_version }}
