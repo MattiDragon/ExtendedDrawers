@@ -1,0 +1,72 @@
+name: Publish
+
+on:
+  workflow_dispatch:
+    inputs:
+      changelog:
+        description: The changelog
+        required: true
+        type: string
+      version-type:
+        description: The type of release
+        required: true
+        type: choice
+        options: ["alpha", "beta", "release"]
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: 'gradle'
+
+      - name: Fix lines in changelog
+        id: changelog
+        uses: mad9000/actions-find-and-replace-string@2
+        with:
+          source: "${{ inputs.changelog }}"
+          find: "\\n"
+          replace: "\n"
+
+      - name: Print changelog
+        run: "echo \"${{ steps.changelog.outputs.value }}\""
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+      - name: Build with Gradle
+        run: ./gradlew build
+
+      - name: Read mod version
+        id: versions
+        uses: christian-draeger/read-properties@1.1.0
+        with:
+          path: gradle.properties
+          properties: "mod_version minecraft_version"
+
+      - name: Publish
+        uses: Kir-Antipov/mc-publish@v3.2
+        with:
+          name: "v${{ steps.versions.outputs.mod_version }} [${{ steps.versions.outputs.minecraft_version }}]"
+          version: ${{ steps.versions.outputs.mod_version }}+mc.${{ steps.versions.outputs.minecraft_version }}
+          version-type: ${{ inputs.version-type }}
+
+          loaders: fabric quilt
+          java: 17 18
+
+          game-versions: ${{ steps.versions.outputs.minecraft_version }}
+          changelog: ${{ steps.changelog.outputs.value }}
+
+          modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
+          modrinth-id: IF0Y4xFw
+          modrinth-featured: false
+
+          curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
+          curseforge-id: 689404
+
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-tag: ${{ steps.versions.outputs.mod_version }}+mc.${{ steps.versions.outputs.minecraft_version }}
