@@ -55,18 +55,18 @@ public class DrawerBlockEntityRenderer extends AbstractDrawerBlockEntityRenderer
         
         switch (slots) {
             case 1 -> {
-                matrices.scale(itemScale, itemScale, itemScale);
+                matrices.scale(itemScale, itemScale, 1);
                 renderSlot(drawer.storages[0], light, matrices, vertexConsumers, (int) drawer.getPos().asLong(), overlay, blockPos);
             }
             case 2 -> {
-                matrices.scale(0.5f*itemScale, 0.5f*itemScale, 0.5f*itemScale);
+                matrices.scale(0.5f*itemScale, 0.5f*itemScale, 1);
                 matrices.translate(-0.5*(1/itemScale), 0, 0);
                 renderSlot(drawer.storages[0], light, matrices, vertexConsumers, (int) drawer.getPos().asLong(), overlay, blockPos);
                 matrices.translate(1*(1/itemScale), 0, 0);
                 renderSlot(drawer.storages[1], light, matrices, vertexConsumers, (int) drawer.getPos().asLong(), overlay, blockPos);
             }
             case 4 -> {
-                matrices.scale(0.5f*itemScale, 0.5f*itemScale, 0.5f*itemScale);
+                matrices.scale(0.5f*itemScale, 0.5f*itemScale, 1);
                 matrices.translate(-0.5*(1/itemScale), 0.5*(1/itemScale), 0);
                 renderSlot(drawer.storages[0], light, matrices, vertexConsumers, (int) drawer.getPos().asLong(), overlay, blockPos);
                 matrices.translate(1*(1/itemScale), 0, 0);
