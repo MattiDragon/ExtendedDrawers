@@ -14,7 +14,9 @@ public record ClientConfig(
         @Comment("The render distance of the number of items on the drawers")
         int textRenderDistance,
         @Comment("Whether to display the amount of items on empty drawers")
-        boolean displayEmptyCount
+        boolean displayEmptyCount,
+        @Comment("The scale at which to render the items")
+        float itemScale
 ) {
-    public static final Config<ClientConfig> HANDLE = ConfigManager.register(ConfigType.CLIENT, "extended_drawers", new ClientConfig(64, 16, 32, false));
+    public static final Config<ClientConfig> HANDLE = ConfigManager.register(ConfigType.CLIENT, "extended_drawers", new ClientConfig(64, 16, 32, false, 1.0f));
 }
