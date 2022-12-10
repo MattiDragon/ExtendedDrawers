@@ -2,7 +2,7 @@ package io.github.mattidragon.extendeddrawers.datagen;
 
 import io.github.mattidragon.extendeddrawers.registry.ModBlocks;
 import io.github.mattidragon.extendeddrawers.registry.ModItems;
-import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
+import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricModelProvider;
 import net.minecraft.block.Block;
 import net.minecraft.data.client.*;
@@ -12,8 +12,8 @@ import java.util.Optional;
 import static io.github.mattidragon.extendeddrawers.ExtendedDrawers.id;
 
 class DrawersModelProvider extends FabricModelProvider {
-    public DrawersModelProvider(FabricDataGenerator generator) {
-        super(generator);
+    public DrawersModelProvider(FabricDataOutput output) {
+        super(output);
     }
     
     @Override

@@ -12,11 +12,11 @@ import net.fabricmc.fabric.api.transfer.v1.transaction.base.SnapshotParticipant;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.registry.Registries;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
-import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -188,7 +188,7 @@ public final class DrawerSlot extends SnapshotParticipant<DrawerSlot.Snapshot> i
         locked = nbt.getBoolean("locked");
         voiding = nbt.getBoolean("voiding");
         hidden = nbt.getBoolean("hidden");
-        upgrade = Registry.ITEM.get(Identifier.tryParse(nbt.getString("upgrade"))) instanceof UpgradeItem upgrade ? upgrade : null;
+        upgrade = Registries.ITEM.get(Identifier.tryParse(nbt.getString("upgrade"))) instanceof UpgradeItem upgrade ? upgrade : null;
     }
 
     public void writeNbt(NbtCompound nbt) {
@@ -197,7 +197,7 @@ public final class DrawerSlot extends SnapshotParticipant<DrawerSlot.Snapshot> i
         nbt.putBoolean("locked", locked);
         nbt.putBoolean("voiding", voiding);
         nbt.putBoolean("hidden", hidden);
-        nbt.putString("upgrade", Registry.ITEM.getId(upgrade).toString());
+        nbt.putString("upgrade", Registries.ITEM.getId(upgrade).toString());
     }
 
     public ItemVariant getItem() {

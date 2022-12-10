@@ -15,7 +15,7 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.screen.PlayerScreenHandler;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3f;
+import net.minecraft.util.math.RotationAxis;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -41,9 +41,9 @@ public class DrawerBlockEntityRenderer extends AbstractDrawerBlockEntityRenderer
         if (!shouldRender(drawer, dir)) return;
         
         matrices.push();
-        matrices.translate(pos.getX() / 2 + 0.5, pos.getY() / 2 + 0.5, pos.getZ() / 2 + 0.5);
+        matrices.translate(pos.x / 2 + 0.5, pos.y / 2 + 0.5, pos.z / 2 + 0.5);
         matrices.multiply(dir.getRotationQuaternion());
-        matrices.multiply(Vec3f.POSITIVE_X.getDegreesQuaternion(-90));
+        matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(-90));
         matrices.translate(0, 0, 0.01);
     
         light = WorldRenderer.getLightmapCoordinates(Objects.requireNonNull(drawer.getWorld()), drawer.getPos().offset(dir));

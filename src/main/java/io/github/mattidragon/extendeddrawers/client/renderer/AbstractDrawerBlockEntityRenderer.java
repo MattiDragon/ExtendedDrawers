@@ -17,9 +17,9 @@ import net.minecraft.client.texture.Sprite;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Matrix4f;
-import net.minecraft.util.math.Vec3f;
+import net.minecraft.util.math.RotationAxis;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Matrix4f;
 
 import java.util.List;
 import java.util.Objects;
@@ -63,7 +63,7 @@ public abstract class AbstractDrawerBlockEntityRenderer<T extends BlockEntity> i
     
     private void renderIcon(Sprite sprite, int light, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int overlay) {
         matrices.push();
-        matrices.multiply(Vec3f.POSITIVE_X.getDegreesQuaternion(90));
+        matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(90));
         matrices.translate(-0.125, -0.24, -0.5);
         matrices.scale(0.25f, 0.25f, 0.25f);
         var emitter = Objects.requireNonNull(RendererAccess.INSTANCE.getRenderer()).meshBuilder().getEmitter();
@@ -76,14 +76,14 @@ public abstract class AbstractDrawerBlockEntityRenderer<T extends BlockEntity> i
     private void renderItem(ItemVariant item, int light, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int seed) {
         matrices.push();
         matrices.scale(0.75f, 0.75f, 1);
-        matrices.multiplyPositionMatrix(Matrix4f.scale(1, 1, 0.01f));
+        matrices.multiplyPositionMatrix(new Matrix4f().scale(1, 1, 0.01f));
         MinecraftClient.getInstance().getItemRenderer().renderItem(item.toStack(), ModelTransformation.Mode.GUI, light, OverlayTexture.DEFAULT_UV, matrices, vertexConsumers, seed);
         matrices.pop();
     }
     
     private void renderText(long amount, int light, MatrixStack matrices, VertexConsumerProvider vertexConsumers) {
         matrices.push();
-        matrices.multiply(Vec3f.POSITIVE_X.getDegreesQuaternion(180));
+        matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(180));
         matrices.translate(0, 0.3, -0.01);
         matrices.scale(0.02f, 0.02f, 0.02f);
         var textRenderer = MinecraftClient.getInstance().textRenderer;

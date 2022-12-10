@@ -2,19 +2,19 @@ package io.github.mattidragon.extendeddrawers.registry;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
-import net.minecraft.tag.TagKey;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.tag.TagKey;
 
 import static io.github.mattidragon.extendeddrawers.ExtendedDrawers.id;
 
 public class ModTags {
     public static class ItemTags {
-        public static final TagKey<Item> DRAWERS = TagKey.of(Registry.ITEM_KEY, id("drawers"));
-        public static final TagKey<Item> UPGRADES = TagKey.of(Registry.ITEM_KEY, id("upgrade"));
+        public static final TagKey<Item> DRAWERS = TagKey.of(RegistryKeys.ITEM, id("drawers"));
+        public static final TagKey<Item> UPGRADES = TagKey.of(RegistryKeys.ITEM, id("upgrade"));
     }
     
     public static class BlockTags {
-        public static final TagKey<Block> DRAWERS = TagKey.of(Registry.BLOCK_KEY, id("drawers"));
-        public static final TagKey<Block> NETWORK_COMPONENTS = TagKey.of(Registry.BLOCK_KEY, id("network_components"));
+        public static final TagKey<Block> DRAWERS = TagKey.of(RegistryKeys.BLOCK, id("drawers"));
+        public static final TagKey<Block> NETWORK_COMPONENTS = TagKey.of(RegistryKeys.BLOCK, id("network_components"));
     }
 }

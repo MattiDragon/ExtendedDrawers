@@ -12,7 +12,8 @@ import net.minecraft.loot.context.LootContextParameters;
 import net.minecraft.loot.function.ConditionalLootFunction;
 import net.minecraft.loot.function.LootFunctionType;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
 
 import static io.github.mattidragon.extendeddrawers.ExtendedDrawers.id;
 
@@ -25,7 +26,7 @@ public class DrawerContentsLootFunction extends ConditionalLootFunction {
     }
     
     public static void register() {
-        Registry.register(Registry.LOOT_FUNCTION_TYPE, id("drawer_contents"), TYPE);
+        Registry.register(Registries.LOOT_FUNCTION_TYPE, id("drawer_contents"), TYPE);
     }
     
     public static ConditionalLootFunction.Builder<?> builder() {

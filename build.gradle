@@ -27,7 +27,7 @@ dependencies {
     // Dependencies
     include modImplementation("com.github.mattidragon:mconfig:$mconfig_version")
     include modImplementation("com.kneelawk:graphlib:$graphlib_version")
-    modImplementation "vazkii.patchouli:Patchouli:$patchouli_version"
+    //modImplementation "vazkii.patchouli:Patchouli:$patchouli_version"
 
     // Mixin Extras
     include implementation("com.github.LlamaLad7:MixinExtras:$mixinextras_version")

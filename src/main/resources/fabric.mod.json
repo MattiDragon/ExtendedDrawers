@@ -23,7 +23,7 @@
       "io.github.mattidragon.extendeddrawers.ExtendedDrawers"
     ],
     "preLaunch": [
-      "io.github.mattidragon.extendeddrawers.ExtendedDrawersPreLaunch"
+      "com.llamalad7.mixinextras.MixinExtrasBootstrap::init"
     ],
     "fabric-datagen": [
       "io.github.mattidragon.extendeddrawers.datagen.ExtendedDrawersDatagen"
@@ -35,7 +35,7 @@
   "depends": {
     "fabricloader": ">=0.14.9",
     "fabric": ">=0.61.0",
-    "minecraft": "~1.19.2",
+    "minecraft": "~1.19.3-rc.1",
     "graphlib": "*"
   },
   "suggests": {

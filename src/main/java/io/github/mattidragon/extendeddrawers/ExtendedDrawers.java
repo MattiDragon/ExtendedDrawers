@@ -10,8 +10,8 @@ import io.github.mattidragon.extendeddrawers.network.UpdateHandler;
 import io.github.mattidragon.extendeddrawers.registry.ModBlocks;
 import io.github.mattidragon.extendeddrawers.registry.ModItems;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerChunkEvents;
+import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.ResourcePackActivationType;
 import net.fabricmc.loader.api.FabricLoader;
@@ -24,8 +24,26 @@ import org.slf4j.LoggerFactory;
 
 public class ExtendedDrawers implements ModInitializer {
     public static final String MOD_ID = "extended_drawers";
-    @SuppressWarnings("Convert2MethodRef") // We can't load ModItems before this is done
-    public static final ItemGroup MOD_GROUP = FabricItemGroupBuilder.create(id("main")).icon(() -> ModItems.SHADOW_DRAWER.getDefaultStack()).build();
+    public static final ItemGroup MOD_GROUP = FabricItemGroup.builder(id("main"))
+            .icon(ModItems.SHADOW_DRAWER::getDefaultStack)
+            .entries(((enabledFeatures, entries, operatorEnabled) -> {
+                entries.add(ModBlocks.SINGLE_DRAWER);
+                entries.add(ModBlocks.DOUBLE_DRAWER);
+                entries.add(ModBlocks.QUAD_DRAWER);
+                entries.add(ModBlocks.CONNECTOR);
+                entries.add(ModBlocks.ACCESS_POINT);
+                entries.add(ModBlocks.SHADOW_DRAWER);
+
+                entries.add(ModItems.T1_UPGRADE);
+                entries.add(ModItems.T2_UPGRADE);
+                entries.add(ModItems.T3_UPGRADE);
+                entries.add(ModItems.T4_UPGRADE);
+                entries.add(ModItems.DOWNGRADE);
+                entries.add(ModItems.CREATIVE_UPGRADE);
+                entries.add(ModItems.UPGRADE_FRAME);
+                entries.add(ModItems.LOCK);
+            }))
+            .build();
     public static final ModContainer MOD_CONTAINER = FabricLoader.getInstance().getModContainer(MOD_ID).orElseThrow();
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
     

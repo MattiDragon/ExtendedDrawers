@@ -2,26 +2,27 @@ package io.github.mattidragon.extendeddrawers.datagen;
 
 import io.github.mattidragon.extendeddrawers.registry.ModItems;
 import io.github.mattidragon.extendeddrawers.registry.ModTags;
-import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
+import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
 import net.fabricmc.fabric.api.tag.convention.v1.ConventionalItemTags;
-import net.minecraft.data.server.RecipeProvider;
 import net.minecraft.data.server.recipe.RecipeJsonProvider;
+import net.minecraft.data.server.recipe.RecipeProvider;
 import net.minecraft.data.server.recipe.ShapedRecipeJsonBuilder;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
 import net.minecraft.recipe.Ingredient;
-import net.minecraft.tag.ItemTags;
+import net.minecraft.recipe.book.RecipeCategory;
+import net.minecraft.registry.tag.ItemTags;
 
 import java.util.function.Consumer;
 
 class DrawersRecipeProvider extends FabricRecipeProvider {
-    public DrawersRecipeProvider(FabricDataGenerator dataGenerator) {
-        super(dataGenerator);
+    public DrawersRecipeProvider(FabricDataOutput output) {
+        super(output);
     }
     
     @Override
-    protected void generateRecipes(Consumer<RecipeJsonProvider> exporter) {
+    public void generate(Consumer<RecipeJsonProvider> exporter) {
         offerUpgradeRecipe(exporter, ModItems.DOWNGRADE, Ingredient.ofItems(Items.DIRT), ModItems.UPGRADE_FRAME, Items.STICK);
         offerUpgradeRecipe(exporter, ModItems.T1_UPGRADE, Ingredient.ofItems(Items.BARREL), ModItems.UPGRADE_FRAME, Items.STICK);
         offerUpgradeRecipe(exporter, ModItems.T2_UPGRADE, Ingredient.ofItems(Items.IRON_BLOCK), ModItems.T1_UPGRADE, Items.STICK);
@@ -36,7 +37,7 @@ class DrawersRecipeProvider extends FabricRecipeProvider {
     }
     
     private void offerDrawerRecipes(Consumer<RecipeJsonProvider> exporter) {
-        ShapedRecipeJsonBuilder.create(ModItems.SHADOW_DRAWER)
+        ShapedRecipeJsonBuilder.create(RecipeCategory.DECORATIONS, ModItems.SHADOW_DRAWER)
                 .input('E', Items.END_STONE_BRICKS)
                 .input('C', Items.END_CRYSTAL)
                 .pattern("EEE")
@@ -44,7 +45,7 @@ class DrawersRecipeProvider extends FabricRecipeProvider {
                 .pattern("EEE")
                 .criterion(RecipeProvider.hasItem(ModItems.SHADOW_DRAWER), RecipeProvider.conditionsFromItem(ModItems.SHADOW_DRAWER))
                 .offerTo(exporter);
-        ShapedRecipeJsonBuilder.create(ModItems.SINGLE_DRAWER)
+        ShapedRecipeJsonBuilder.create(RecipeCategory.DECORATIONS, ModItems.SINGLE_DRAWER)
                 .input('C', Items.CHEST)
                 .input('L', ItemTags.LOGS)
                 .input('P', ItemTags.PLANKS)
@@ -53,7 +54,7 @@ class DrawersRecipeProvider extends FabricRecipeProvider {
                 .pattern("LPL")
                 .criterion(RecipeProvider.hasItem(ModItems.SINGLE_DRAWER), RecipeProvider.conditionsFromItem(ModItems.SINGLE_DRAWER))
                 .offerTo(exporter);
-    ShapedRecipeJsonBuilder.create(ModItems.DOUBLE_DRAWER)
+    ShapedRecipeJsonBuilder.create(RecipeCategory.DECORATIONS, ModItems.DOUBLE_DRAWER)
                 .input('C', Items.CHEST)
                 .input('L', ItemTags.LOGS)
                 .input('P', ItemTags.PLANKS)
@@ -62,7 +63,7 @@ class DrawersRecipeProvider extends FabricRecipeProvider {
                 .pattern("LPL")
                 .criterion(RecipeProvider.hasItem(ModItems.SINGLE_DRAWER), RecipeProvider.conditionsFromItem(ModItems.SINGLE_DRAWER))
                 .offerTo(exporter);
-    ShapedRecipeJsonBuilder.create(ModItems.QUAD_DRAWER)
+    ShapedRecipeJsonBuilder.create(RecipeCategory.DECORATIONS, ModItems.QUAD_DRAWER)
                 .input('C', Items.CHEST)
                 .input('L', ItemTags.LOGS)
                 .input('P', ItemTags.PLANKS)
@@ -74,7 +75,7 @@ class DrawersRecipeProvider extends FabricRecipeProvider {
     }
     
     private void offerLockRecipe(Consumer<RecipeJsonProvider> exporter) {
-        ShapedRecipeJsonBuilder.create(ModItems.LOCK)
+        ShapedRecipeJsonBuilder.create(RecipeCategory.TOOLS, ModItems.LOCK)
                 .input('G', Items.GOLD_INGOT)
                 .input('g', Items.GOLD_NUGGET)
                 .pattern(" g ")
@@ -85,7 +86,7 @@ class DrawersRecipeProvider extends FabricRecipeProvider {
     }
     
     private void offerControllerRecipe(Consumer<RecipeJsonProvider> exporter) {
-        ShapedRecipeJsonBuilder.create(ModItems.ACCESS_POINT)
+        ShapedRecipeJsonBuilder.create(RecipeCategory.DECORATIONS, ModItems.ACCESS_POINT)
                 .input('I', Items.IRON_INGOT)
                 .input('C', Items.COBBLESTONE)
                 .input('D', ModTags.ItemTags.DRAWERS)
@@ -97,7 +98,7 @@ class DrawersRecipeProvider extends FabricRecipeProvider {
     }
     
     private void offerConnectorRecipe(Consumer<RecipeJsonProvider> exporter) {
-        ShapedRecipeJsonBuilder.create(ModItems.CONNECTOR)
+        ShapedRecipeJsonBuilder.create(RecipeCategory.DECORATIONS, ModItems.CONNECTOR)
                 .input('L', ItemTags.LOGS)
                 .input('P', ItemTags.PLANKS)
                 .pattern("LPL")
@@ -108,7 +109,7 @@ class DrawersRecipeProvider extends FabricRecipeProvider {
     }
     
     private void offerUpgradeFrameRecipe(Consumer<RecipeJsonProvider> exporter) {
-        ShapedRecipeJsonBuilder.create(ModItems.UPGRADE_FRAME)
+        ShapedRecipeJsonBuilder.create(RecipeCategory.MISC, ModItems.UPGRADE_FRAME)
                 .input('S', Items.STICK)
                 .input('C', Items.COBBLESTONE)
                 .pattern("SCS")
@@ -119,7 +120,7 @@ class DrawersRecipeProvider extends FabricRecipeProvider {
     }
     
     private void offerUpgradeRecipe(Consumer<RecipeJsonProvider> exporter, Item result, Ingredient material, Item base, Item stick) {
-        ShapedRecipeJsonBuilder.create(result)
+        ShapedRecipeJsonBuilder.create(RecipeCategory.MISC, result)
                 .input('M', material)
                 .input('B', base)
                 .input('S', stick)
