@@ -11,10 +11,10 @@ version project.mod_version + (isDev ? "-dev.$run" : "") + "+mc.$minecraft_versi
 group project.maven_group
 
 repositories {
-    maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
-    maven { url "https://jitpack.io" }
     maven { url "https://kneelawk.com/maven/" }
+    maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
     maven { url "https://maven.blamejared.com" }
+    maven { url "https://jitpack.io" }
 }
 
 dependencies {
