@@ -3,7 +3,7 @@
   "block.extended_drawers.quad_drawer": "Vierfache Schublade",
   "block.extended_drawers.single_drawer": "Schublade",
   "block.extended_drawers.shadow_drawer": "Schatten Schublade",
-  "block.extended_drawers.controller": "Schubladen Zugangspunkt",
+  "block.extended_drawers.access_point": "Schubladen Zugangspunkt",
   "block.extended_drawers.connector": "Schubladen Verbinder",
 
   "item.extended_drawers.t1_upgrade": "Schubladen Upgrade I",
