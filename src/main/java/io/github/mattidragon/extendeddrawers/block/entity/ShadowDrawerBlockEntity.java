@@ -51,12 +51,10 @@ public class ShadowDrawerBlockEntity extends BlockEntity {
                 }
             }
             countCache = amount;
-
-            //countCache = createStorage(world, pos).simulateExtract(item, Long.MAX_VALUE, null);
-
         }
         var state = getCachedState();
         world.updateListeners(pos, state, state, Block.NOTIFY_LISTENERS);
+        world.updateComparators(pos, state.getBlock());
     }
     
     @Nullable
