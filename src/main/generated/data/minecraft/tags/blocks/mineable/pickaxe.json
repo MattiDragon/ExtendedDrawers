@@ -2,7 +2,6 @@
   "replace": false,
   "values": [
     "extended_drawers:access_point",
-    "extended_drawers:connector",
     "extended_drawers:shadow_drawer"
   ]
 }
