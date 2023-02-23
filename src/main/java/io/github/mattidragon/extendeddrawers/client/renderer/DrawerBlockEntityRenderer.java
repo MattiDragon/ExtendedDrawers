@@ -38,6 +38,9 @@ public class DrawerBlockEntityRenderer extends AbstractDrawerBlockEntityRenderer
     public void render(DrawerBlockEntity drawer, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
         var dir = drawer.getCachedState().get(DrawerBlock.FACING);
         var pos = dir.getUnitVector();
+
+        float itemScale = ClientConfig.HANDLE.get().itemScale();
+
         if (!shouldRender(drawer, dir)) return;
         
         matrices.push();
@@ -51,23 +54,26 @@ public class DrawerBlockEntityRenderer extends AbstractDrawerBlockEntityRenderer
         var blockPos = drawer.getPos();
         
         switch (slots) {
-            case 1 -> renderSlot(drawer.storages[0], light, matrices, vertexConsumers, (int) drawer.getPos().asLong(), overlay, blockPos);
-            case 2 -> {
-                matrices.scale(0.5f, 0.5f, 0.5f);
-                matrices.translate(-0.5, 0, 0);
+            case 1 -> {
+                matrices.scale(itemScale, itemScale, 1);
                 renderSlot(drawer.storages[0], light, matrices, vertexConsumers, (int) drawer.getPos().asLong(), overlay, blockPos);
-                matrices.translate(1, 0, 0);
+            }
+            case 2 -> {
+                matrices.scale(0.5f * itemScale, 0.5f * itemScale, 1);
+                matrices.translate(-0.5 * (1 / itemScale), 0, 0);
+                renderSlot(drawer.storages[0], light, matrices, vertexConsumers, (int) drawer.getPos().asLong(), overlay, blockPos);
+                matrices.translate(1 * (1 / itemScale), 0, 0);
                 renderSlot(drawer.storages[1], light, matrices, vertexConsumers, (int) drawer.getPos().asLong(), overlay, blockPos);
             }
             case 4 -> {
-                matrices.scale(0.5f, 0.5f, 0.5f);
-                matrices.translate(-0.5, 0.5, 0);
+                matrices.scale(0.5f * itemScale, 0.5f * itemScale, 1);
+                matrices.translate(-0.5 * (1 / itemScale), 0.5 * (1 / itemScale), 0);
                 renderSlot(drawer.storages[0], light, matrices, vertexConsumers, (int) drawer.getPos().asLong(), overlay, blockPos);
-                matrices.translate(1, 0, 0);
+                matrices.translate(1 * (1 / itemScale), 0, 0);
                 renderSlot(drawer.storages[1], light, matrices, vertexConsumers, (int) drawer.getPos().asLong(), overlay, blockPos);
-                matrices.translate(-1, -1, 0);
+                matrices.translate(-1 * (1 / itemScale), -1 * (1 / itemScale), 0);
                 renderSlot(drawer.storages[2], light, matrices, vertexConsumers, (int) drawer.getPos().asLong(), overlay, blockPos);
-                matrices.translate(1, 0, 0);
+                matrices.translate(1 * (1 / itemScale), 0, 0);
                 renderSlot(drawer.storages[3], light, matrices, vertexConsumers, (int) drawer.getPos().asLong(), overlay, blockPos);
             }
             default -> ExtendedDrawers.LOGGER.error("Unexpected drawer slot count, skipping rendering. Are you an addon dev adding more configurations? If so please mixin into DrawerBlockEntityRenderer and add your layout.");
