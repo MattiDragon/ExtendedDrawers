@@ -16,6 +16,7 @@ import net.fabricmc.fabric.api.resource.ResourcePackActivationType;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
 import net.minecraft.item.ItemGroup;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import org.slf4j.Logger;
@@ -58,8 +59,8 @@ public class ExtendedDrawers implements ModInitializer {
         NetworkRegistry.register();
         ClientConfig.HANDLE.load();
         CommonConfig.HANDLE.load();
-        ResourceManagerHelper.registerBuiltinResourcePack(id("alt"), MOD_CONTAINER, "ED: Alternative Textures", ResourcePackActivationType.NORMAL);
-        ResourceManagerHelper.registerBuiltinResourcePack(id("dev"), MOD_CONTAINER, "ED: Programmer Art", ResourcePackActivationType.NORMAL);
+        ResourceManagerHelper.registerBuiltinResourcePack(id("alt"), MOD_CONTAINER, Text.translatable("resourcepack.extended_drawers.alt"), ResourcePackActivationType.NORMAL);
+        ResourceManagerHelper.registerBuiltinResourcePack(id("dev"), MOD_CONTAINER, Text.translatable("resourcepack.extended_drawers.programmer_art"), ResourcePackActivationType.NORMAL);
 
         //TODO: move to better place
         ServerChunkEvents.CHUNK_LOAD.register((world, chunk) -> {
