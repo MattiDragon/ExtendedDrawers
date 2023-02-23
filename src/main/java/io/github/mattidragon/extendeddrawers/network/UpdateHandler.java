@@ -3,8 +3,7 @@ package io.github.mattidragon.extendeddrawers.network;
 import com.kneelawk.graphlib.GraphLib;
 import com.kneelawk.graphlib.graph.BlockNodeHolder;
 import com.kneelawk.graphlib.graph.struct.Node;
-import io.github.mattidragon.extendeddrawers.ExtendedDrawers;
-import io.github.mattidragon.extendeddrawers.network.node.AbstractDrawerBlockNode;
+import io.github.mattidragon.extendeddrawers.network.node.DrawerNetworkBlockNode;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import net.minecraft.registry.RegistryKey;
@@ -13,20 +12,13 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.apache.commons.lang3.ObjectUtils;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
 public class UpdateHandler {
     private static final Map<RegistryKey<World>, Long2ObjectMap<ChangeType>> UPDATES = new HashMap<>();
-    private static final Map<RegistryKey<World>, List<BlockPos>> REFRESHES = new HashMap<>();
-    
-    public static void scheduleRefresh(ServerWorld world, BlockPos pos) {
-        REFRESHES.computeIfAbsent(world.getRegistryKey(), key -> new ArrayList<>()).add(pos);
-    }
-    
+
     public static void scheduleUpdate(ServerWorld world, BlockPos pos, ChangeType type) {
         GraphLib.getController(world).getGraphsAt(pos).forEach(graph -> scheduleUpdate(world, graph, type));
     }
@@ -50,26 +42,15 @@ public class UpdateHandler {
             });
         }
         profiler.pop();
-        
-        profiler.push("extended_drawers:node_updates");
-        var refreshes = REFRESHES.remove(world.getRegistryKey());
-        if (refreshes != null) {
-            for (BlockPos pos : refreshes) {
-                ExtendedDrawers.LOGGER.debug("Refreshing graph at " + pos);
-                controller.updateNodes(pos);
-            }
-        }
-        profiler.pop();
     }
 
     public static void clear() {
         UPDATES.clear();
-        REFRESHES.clear();
     }
 
     private static void updateGraph(ServerWorld world, Stream<Node<BlockNodeHolder>> nodes, ChangeType type) {
         nodes.forEach(node -> {
-            if (node.data().getNode() instanceof AbstractDrawerBlockNode drawerNode) {
+            if (node.data().getNode() instanceof DrawerNetworkBlockNode drawerNode) {
                 drawerNode.update(world, node, type);
             }
         });

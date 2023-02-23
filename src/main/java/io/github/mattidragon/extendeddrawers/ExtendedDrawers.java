@@ -6,7 +6,6 @@ import io.github.mattidragon.extendeddrawers.config.ClientConfig;
 import io.github.mattidragon.extendeddrawers.config.CommonConfig;
 import io.github.mattidragon.extendeddrawers.misc.DrawerContentsLootFunction;
 import io.github.mattidragon.extendeddrawers.network.NetworkRegistry;
-import io.github.mattidragon.extendeddrawers.network.UpdateHandler;
 import io.github.mattidragon.extendeddrawers.registry.ModBlocks;
 import io.github.mattidragon.extendeddrawers.registry.ModItems;
 import net.fabricmc.api.ModInitializer;
@@ -77,7 +76,8 @@ public class ExtendedDrawers implements ModInitializer {
                 if (state.getBlock() instanceof NetworkComponent) {
                     if (controller.getGraphsAt(pos).findAny().isEmpty()) {
                         LOGGER.info("Scheduling graph refresh at " + pos.getX() + ", " + pos.getY() + ", " + pos.getZ());
-                        UpdateHandler.scheduleRefresh(world, pos.toImmutable());
+                        BlockPos pos1 = pos.toImmutable();
+                        GraphLib.getController(world).updateNodes(pos1);
                     }
                 }
             }

@@ -1,6 +1,6 @@
 package io.github.mattidragon.extendeddrawers.block.base;
 
-import io.github.mattidragon.extendeddrawers.network.UpdateHandler;
+import com.kneelawk.graphlib.GraphLib;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.LivingEntity;
@@ -21,7 +21,7 @@ public abstract class NetworkBlock extends Block implements NetworkComponent {
     @Override
     public BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState neighborState, WorldAccess world, BlockPos pos, BlockPos neighborPos) {
         if (world instanceof ServerWorld serverWorld && neighborState.getBlock() instanceof NetworkComponent) {
-            UpdateHandler.scheduleRefresh(serverWorld, pos);
+            GraphLib.getController(serverWorld).updateNodes(pos);
         }
         return super.getStateForNeighborUpdate(state, direction, neighborState, world, pos, neighborPos);
     }
@@ -29,7 +29,7 @@ public abstract class NetworkBlock extends Block implements NetworkComponent {
     @Override
     public void onPlaced(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
         if (world instanceof ServerWorld serverWorld) {
-            UpdateHandler.scheduleRefresh(serverWorld, pos);
+            GraphLib.getController(serverWorld).updateNodes(pos);
         }
     }
     
@@ -37,7 +37,7 @@ public abstract class NetworkBlock extends Block implements NetworkComponent {
     public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
         super.onStateReplaced(state, world, pos, newState, moved);
         if (world instanceof ServerWorld serverWorld) {
-            UpdateHandler.scheduleRefresh(serverWorld, pos);
+            GraphLib.getController(serverWorld).updateNodes(pos);
         }
     }
 }

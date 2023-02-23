@@ -167,7 +167,7 @@ public class ShadowDrawerBlock extends NetworkBlockWithEntity<ShadowDrawerBlockE
 
     @Override
     public Collection<BlockNode> createNodes() {
-        return List.of(new ShadowDrawerBlockNode());
+        return List.of(ShadowDrawerBlockNode.INSTANCE);
     }
 
     @Override

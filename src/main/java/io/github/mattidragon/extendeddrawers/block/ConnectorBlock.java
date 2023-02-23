@@ -14,6 +14,6 @@ public class ConnectorBlock extends NetworkBlock {
     
     @Override
     public Collection<BlockNode> createNodes() {
-        return List.of(new ConnectorBlockNode());
+        return List.of(ConnectorBlockNode.INSTANCE);
     }
 }
