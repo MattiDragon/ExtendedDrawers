@@ -25,7 +25,9 @@ public record CommonConfig(
         @Comment("Whether to fix drawer networks on chunk load. Disable only if it causes issues")
         boolean automaticNetworkHealing,
         @Comment("If enabled you can't remove upgrades if the slot would overflow after removal")
-        boolean blockUpgradeRemovalsWithOverflow) {
+        boolean blockUpgradeRemovalsWithOverflow,
+        @Comment("Allows you to place drawers insider shulker boxes and other drawers. Deeply nested storage can lead to chunk and player data corruption.")
+        boolean allowRecursion) {
     public static final Config<CommonConfig> HANDLE = ConfigManager.register(ConfigType.COMMON,
             "extended_drawers",
             new CommonConfig(10,
@@ -34,5 +36,6 @@ public record CommonConfig(
                     true,
                     CreativeExtractionBehaviour.FRONT_NO_BREAK,
                     true,
-                    true));
+                    true,
+                    false));
 }
