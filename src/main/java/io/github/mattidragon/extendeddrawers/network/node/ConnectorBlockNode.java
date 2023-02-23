@@ -1,7 +1,5 @@
 package io.github.mattidragon.extendeddrawers.network.node;
 
-import com.kneelawk.graphlib.graph.BlockNode;
-import com.kneelawk.graphlib.graph.BlockNodeDecoder;
 import com.kneelawk.graphlib.graph.BlockNodeHolder;
 import com.kneelawk.graphlib.graph.struct.Node;
 import io.github.mattidragon.extendeddrawers.network.UpdateHandler;
@@ -13,13 +11,15 @@ import org.jetbrains.annotations.Nullable;
 
 import static io.github.mattidragon.extendeddrawers.ExtendedDrawers.id;
 
-public class ConnectorBlockNode extends AbstractDrawerBlockNode {
+public class ConnectorBlockNode implements DrawerNetworkBlockNode {
     public static final Identifier ID = id("connector");
-    public static final BlockNodeDecoder DECODER = new Decoder();
-    
+    public static final ConnectorBlockNode INSTANCE = new ConnectorBlockNode();
+
+    private ConnectorBlockNode() {
+    }
+
     @Override
     public void update(ServerWorld world, Node<BlockNodeHolder> node, UpdateHandler.ChangeType type) {
-    
     }
     
     @Override
@@ -30,12 +30,5 @@ public class ConnectorBlockNode extends AbstractDrawerBlockNode {
     @Override
     public @Nullable NbtElement toTag() {
         return null;
-    }
-    
-    private static class Decoder implements BlockNodeDecoder {
-        @Override
-        public @Nullable BlockNode createBlockNodeFromTag(@Nullable NbtElement tag) {
-            return new DrawerBlockNode();
-        }
     }
 }

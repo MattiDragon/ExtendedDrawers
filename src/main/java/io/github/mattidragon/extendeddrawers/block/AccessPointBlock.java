@@ -126,6 +126,6 @@ public class AccessPointBlock extends NetworkBlock implements DrawerInteractionH
 
     @Override
     public Collection<BlockNode> createNodes() {
-        return List.of(new AccessPointBlockNode());
+        return List.of(AccessPointBlockNode.INSTANCE);
     }
 }

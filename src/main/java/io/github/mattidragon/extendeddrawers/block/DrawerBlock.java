@@ -245,6 +245,6 @@ public class DrawerBlock extends NetworkBlockWithEntity<DrawerBlockEntity> imple
     
     @Override
     public Collection<BlockNode> createNodes() {
-        return List.of(new DrawerBlockNode());
+        return List.of(DrawerBlockNode.INSTANCE);
     }
 }

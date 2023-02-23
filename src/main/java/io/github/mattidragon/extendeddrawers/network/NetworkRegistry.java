@@ -11,7 +11,7 @@ import net.minecraft.util.registry.Registry;
 import java.util.List;
 
 public class NetworkRegistry {
-    public static final WireConnectionFilter CONNECTION_FILTER = (self, other) -> other instanceof AbstractDrawerBlockNode;
+    public static final WireConnectionFilter CONNECTION_FILTER = (self, other) -> other instanceof DrawerNetworkBlockNode;
     
     public static void register() {
         GraphLib.registerDiscoverer((world, pos) -> {
@@ -20,10 +20,10 @@ public class NetworkRegistry {
             }
             return List.of();
         });
-        Registry.register(GraphLib.BLOCK_NODE_DECODER, DrawerBlockNode.ID, DrawerBlockNode.DECODER);
-        Registry.register(GraphLib.BLOCK_NODE_DECODER, ShadowDrawerBlockNode.ID, ShadowDrawerBlockNode.DECODER);
-        Registry.register(GraphLib.BLOCK_NODE_DECODER, AccessPointBlockNode.ID, AccessPointBlockNode.DECODER);
-        Registry.register(GraphLib.BLOCK_NODE_DECODER, ConnectorBlockNode.ID, ConnectorBlockNode.DECODER);
+        Registry.register(GraphLib.BLOCK_NODE_DECODER, DrawerBlockNode.ID, nbt -> DrawerBlockNode.INSTANCE);
+        Registry.register(GraphLib.BLOCK_NODE_DECODER, ShadowDrawerBlockNode.ID, nbt -> ShadowDrawerBlockNode.INSTANCE);
+        Registry.register(GraphLib.BLOCK_NODE_DECODER, AccessPointBlockNode.ID, nbt -> AccessPointBlockNode.INSTANCE);
+        Registry.register(GraphLib.BLOCK_NODE_DECODER, ConnectorBlockNode.ID, nbt -> ConnectorBlockNode.INSTANCE);
     
         ServerTickEvents.END_WORLD_TICK.register(UpdateHandler::flushUpdates);
         ServerLifecycleEvents.SERVER_STOPPING.register(server -> {

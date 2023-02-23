@@ -1,7 +1,5 @@
 package io.github.mattidragon.extendeddrawers.network.node;
 
-import com.kneelawk.graphlib.graph.BlockNode;
-import com.kneelawk.graphlib.graph.BlockNodeDecoder;
 import com.kneelawk.graphlib.graph.BlockNodeHolder;
 import com.kneelawk.graphlib.graph.struct.Node;
 import io.github.mattidragon.extendeddrawers.block.entity.ShadowDrawerBlockEntity;
@@ -14,9 +12,12 @@ import org.jetbrains.annotations.Nullable;
 
 import static io.github.mattidragon.extendeddrawers.ExtendedDrawers.id;
 
-public class ShadowDrawerBlockNode extends AbstractDrawerBlockNode {
+public class ShadowDrawerBlockNode implements DrawerNetworkBlockNode {
     public static final Identifier ID = id("shadow_drawers");
-    public static final BlockNodeDecoder DECODER = new Decoder();
+    public static final ShadowDrawerBlockNode INSTANCE = new ShadowDrawerBlockNode();
+
+    private ShadowDrawerBlockNode() {
+    }
     
     @Override
     public @NotNull Identifier getTypeId() {
@@ -31,16 +32,8 @@ public class ShadowDrawerBlockNode extends AbstractDrawerBlockNode {
     @Override
     public void update(ServerWorld world, Node<BlockNodeHolder> node, UpdateHandler.ChangeType type) {
         var pos = node.data().getPos();
-        var state = world.getBlockState(pos);
-        
+
         if (world.getBlockEntity(pos) instanceof ShadowDrawerBlockEntity drawer)
             drawer.recalculateContents();
-    }
-    
-    private static class Decoder implements BlockNodeDecoder {
-        @Override
-        public @Nullable BlockNode createBlockNodeFromTag(@Nullable NbtElement tag) {
-            return new ShadowDrawerBlockNode();
-        }
     }
 }
