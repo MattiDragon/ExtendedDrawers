@@ -74,7 +74,10 @@ public abstract class AbstractDrawerBlockEntityRenderer<T extends BlockEntity> i
     }
     
     private void renderItem(ItemVariant item, int light, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int seed) {
+        var itemScale = ClientConfig.HANDLE.get().itemScale();
+
         matrices.push();
+        matrices.scale(itemScale, itemScale, 1);
         matrices.scale(0.75f, 0.75f, 1);
         matrices.multiplyPositionMatrix(Matrix4f.scale(1, 1, 0.01f));
         MinecraftClient.getInstance().getItemRenderer().renderItem(item.toStack(), ModelTransformation.Mode.GUI, light, OverlayTexture.DEFAULT_UV, matrices, vertexConsumers, seed);
@@ -82,9 +85,12 @@ public abstract class AbstractDrawerBlockEntityRenderer<T extends BlockEntity> i
     }
     
     private void renderText(long amount, int light, MatrixStack matrices, VertexConsumerProvider vertexConsumers) {
+        var itemScale = ClientConfig.HANDLE.get().itemScale();
+
         matrices.push();
         matrices.multiply(Vec3f.POSITIVE_X.getDegreesQuaternion(180));
         matrices.translate(0, 0.3, -0.01);
+        matrices.scale(itemScale, itemScale, 1);
         matrices.scale(0.02f, 0.02f, 0.02f);
         var textRenderer = MinecraftClient.getInstance().textRenderer;
         var text = Long.toString(amount);
