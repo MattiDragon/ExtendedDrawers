@@ -3,15 +3,11 @@ name: Publish
 on:
   workflow_dispatch:
     inputs:
-      changelog:
-        description: The changelog
-        required: true
-        type: string
       version-type:
         description: The type of release
         required: true
         type: choice
-        options: ["alpha", "beta", "release"]
+        options: ["release", "beta", "alpha"]
 
 jobs:
   publish:
@@ -25,26 +21,6 @@ jobs:
           distribution: 'temurin'
           cache: 'gradle'
 
-      - name: Fix lines in changelog
-        id: changelog
-        shell: python
-        env:
-          THE_INPUT: "${{ inputs.changelog }}"
-        run: |
-          import os
-          import random
-          import string
-          
-          value = os.getenv("THE_INPUT").replace("\\n", "\n")
-          # Random delimiter to avoid escapes
-          delimiter = "".join(random.choice(string.ascii_letters + string.digits) for i in range(30))
-          
-          with open(os.environ["GITHUB_OUTPUT"], "w") as out:
-              out.write(f"value<<{delimiter}\n{value}\n{delimiter}")
-
-      - name: Print changelog
-        run: "echo \"${{ steps.changelog.outputs.value }}\""
-
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
       - name: Build with Gradle
@@ -57,6 +33,12 @@ jobs:
           path: gradle.properties
           properties: "mod_version minecraft_version"
 
+      - name: Read changelog
+        uses: juliangruber/read-file-action@v1
+        id: changelog
+        with:
+          path: "./changelog/${{ steps.versions.outputs.mod_version }}+${{ steps.versions.outputs.minecraft_version }}.md"
+
       - name: Publish
         uses: Kir-Antipov/mc-publish@v3.2
         with:
@@ -68,7 +50,7 @@ jobs:
           java: 17 18
 
           game-versions: ${{ steps.versions.outputs.minecraft_version }}
-          changelog: ${{ steps.changelog.outputs.value }}
+          changelog: ${{ steps.changelog.outputs.content }}
 
           modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
           modrinth-id: AhtxbnpG
