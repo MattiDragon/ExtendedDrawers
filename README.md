@@ -10,6 +10,7 @@ overpowered storage using simple components.
 ## Features
 ### In-game Guide Book
 Crafted by combining a book with and upgrade frame, the guide book will explain in more detail how the mod works.
+**[Patchouli](https://modrinth.com/mod/patchouli) is required for the guide book to load ingame!**
 
 ### Drawers
 Drawers are blocks that can store a lot of a few items. They can be interacted with in world or using hopper or pipes from other mods.

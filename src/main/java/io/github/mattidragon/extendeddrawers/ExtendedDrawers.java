@@ -26,7 +26,7 @@ public class ExtendedDrawers implements ModInitializer {
     public static final String MOD_ID = "extended_drawers";
     public static final ItemGroup MOD_GROUP = FabricItemGroup.builder(id("main"))
             .icon(ModItems.SHADOW_DRAWER::getDefaultStack)
-            .entries(((enabledFeatures, entries, operatorEnabled) -> {
+            .entries((context, entries) -> {
                 entries.add(ModBlocks.SINGLE_DRAWER);
                 entries.add(ModBlocks.DOUBLE_DRAWER);
                 entries.add(ModBlocks.QUAD_DRAWER);
@@ -42,7 +42,7 @@ public class ExtendedDrawers implements ModInitializer {
                 entries.add(ModItems.CREATIVE_UPGRADE);
                 entries.add(ModItems.UPGRADE_FRAME);
                 entries.add(ModItems.LOCK);
-            }))
+            })
             .build();
     public static final ModContainer MOD_CONTAINER = FabricLoader.getInstance().getModContainer(MOD_ID).orElseThrow();
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);

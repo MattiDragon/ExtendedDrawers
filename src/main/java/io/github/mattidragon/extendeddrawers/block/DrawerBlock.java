@@ -86,7 +86,7 @@ public class DrawerBlock extends NetworkBlockWithEntity<DrawerBlockEntity> imple
     
     @Override
     public BlockState getPlacementState(ItemPlacementContext ctx) {
-        return this.getDefaultState().with(FACING, ctx.getPlayerFacing().getOpposite());
+        return this.getDefaultState().with(FACING, ctx.getHorizontalPlayerFacing().getOpposite());
     }
     
     @Override

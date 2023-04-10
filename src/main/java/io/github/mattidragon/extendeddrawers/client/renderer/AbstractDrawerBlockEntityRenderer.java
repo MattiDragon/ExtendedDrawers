@@ -7,17 +7,19 @@ import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.minecraft.block.Block;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.block.entity.BlockEntityRenderer;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
-import net.minecraft.client.render.model.json.ModelTransformation;
+import net.minecraft.client.render.model.json.ModelTransformationMode;
 import net.minecraft.client.texture.Sprite;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.RotationAxis;
+import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 
@@ -28,7 +30,7 @@ import java.util.Objects;
 public abstract class AbstractDrawerBlockEntityRenderer<T extends BlockEntity> implements BlockEntityRenderer<T> {
     public AbstractDrawerBlockEntityRenderer(BlockEntityRendererFactory.Context context) {}
     
-    public void renderSlot(ItemVariant item, @Nullable Long amount, List<Sprite> icons, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay, int seed, BlockPos pos) {
+    public void renderSlot(ItemVariant item, @Nullable Long amount, List<Sprite> icons, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay, int seed, BlockPos pos, World world) {
         //noinspection ConstantConditions
         var playerPos = MinecraftClient.getInstance().player.getPos();
         var config = ClientConfig.HANDLE.get();
@@ -38,7 +40,7 @@ public abstract class AbstractDrawerBlockEntityRenderer<T extends BlockEntity> i
         if (pos.isWithinDistance(playerPos, config.iconRenderDistance()))
             renderIcons(icons, light, matrices, vertexConsumers, overlay);
         if (pos.isWithinDistance(playerPos, config.itemRenderDistance()))
-            renderItem(item, light, matrices, vertexConsumers, seed);
+            renderItem(item, light, matrices, vertexConsumers, world, seed);
     }
     
     protected final boolean shouldRender(T drawer, Direction facing) {
@@ -73,14 +75,14 @@ public abstract class AbstractDrawerBlockEntityRenderer<T extends BlockEntity> i
         matrices.pop();
     }
     
-    private void renderItem(ItemVariant item, int light, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int seed) {
+    private void renderItem(ItemVariant item, int light, MatrixStack matrices, VertexConsumerProvider vertexConsumers, World world, int seed) {
         var itemScale = ClientConfig.HANDLE.get().itemScale();
 
         matrices.push();
         matrices.scale(itemScale, itemScale, 1);
         matrices.scale(0.75f, 0.75f, 1);
         matrices.multiplyPositionMatrix(new Matrix4f().scale(1, 1, 0.01f));
-        MinecraftClient.getInstance().getItemRenderer().renderItem(item.toStack(), ModelTransformation.Mode.GUI, light, OverlayTexture.DEFAULT_UV, matrices, vertexConsumers, seed);
+        MinecraftClient.getInstance().getItemRenderer().renderItem(item.toStack(), ModelTransformationMode.GUI, light, OverlayTexture.DEFAULT_UV, matrices, vertexConsumers, world, seed);
         matrices.pop();
     }
     
@@ -94,7 +96,7 @@ public abstract class AbstractDrawerBlockEntityRenderer<T extends BlockEntity> i
         matrices.scale(0.02f, 0.02f, 0.02f);
         var textRenderer = MinecraftClient.getInstance().textRenderer;
         var text = Long.toString(amount);
-        textRenderer.draw(text, -textRenderer.getWidth(text) / 2f, 0, 0xffffff, false, matrices.peek().getPositionMatrix(), vertexConsumers, false, 0x000000, light);
+        textRenderer.draw(text, -textRenderer.getWidth(text) / 2f, 0, 0xffffff, false, matrices.peek().getPositionMatrix(), vertexConsumers, TextRenderer.TextLayerType.NORMAL, 0x000000, light);
         matrices.pop();
     }
 }
