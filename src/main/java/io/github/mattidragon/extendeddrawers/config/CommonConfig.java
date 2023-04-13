@@ -10,13 +10,13 @@ public record CommonConfig(
         int insertAllTime,
         @Comment("How many items drawers are able to hold")
         long defaultCapacity,
-        @Comment("Multiplier for the T1 upgrade, Default: 2*2")
+        @Comment("Multiplier for the T1 upgrade, Default: 2")
         long CapacityMultiplierT1,
-        @Comment("Multiplier for the T2 upgrade, Default: 4*4")
+        @Comment("Multiplier for the T2 upgrade, Default: 4")
         long CapacityMultiplierT2,
-        @Comment("Multiplier for the T3 upgrade, Default: 8*8")
+        @Comment("Multiplier for the T3 upgrade, Default: 8")
         long CapacityMultiplierT3,
-        @Comment("Multiplier for the T4 upgrade, Default: 16*16")
+        @Comment("Multiplier for the T4 upgrade, Default: 16")
         long CapacityMultiplierT4,
         @Comment("Whether the stack size of the item should affect capacity")
         boolean stackSizeAffectsCapacity,
