@@ -10,6 +10,14 @@ public record CommonConfig(
         int insertAllTime,
         @Comment("How many items drawers are able to hold")
         long defaultCapacity,
+        @Comment("Multiplier for the T1 upgrade, Default: 2*2")
+        long CapacityMultiplierT1,
+        @Comment("Multiplier for the T2 upgrade, Default: 4*4")
+        long CapacityMultiplierT2,
+        @Comment("Multiplier for the T3 upgrade, Default: 8*8")
+        long CapacityMultiplierT3,
+        @Comment("Multiplier for the T4 upgrade, Default: 16*16")
+        long CapacityMultiplierT4,
         @Comment("Whether the stack size of the item should affect capacity")
         boolean stackSizeAffectsCapacity,
         @Comment("Whether the amount of slots on a drawers should affect capacity")
@@ -31,7 +39,11 @@ public record CommonConfig(
     public static final Config<CommonConfig> HANDLE = ConfigManager.register(ConfigType.COMMON,
             "extended_drawers",
             new CommonConfig(10,
-                    16 * 64,
+                    16 * 64 * 1,
+                    2 * 1,
+                    4 * 1,
+                    8 * 1,
+                    16 * 1,
                     false,
                     true,
                     CreativeExtractionBehaviour.FRONT_NO_BREAK,
