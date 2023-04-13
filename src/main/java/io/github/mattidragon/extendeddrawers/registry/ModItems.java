@@ -19,11 +19,28 @@ public class ModItems {
     public static final Item SHADOW_DRAWER = new DrawerItem(ModBlocks.SHADOW_DRAWER, new FabricItemSettings().group(MOD_GROUP));
     public static final Item ACCESS_POINT = new BlockItem(ModBlocks.ACCESS_POINT, new FabricItemSettings().group(MOD_GROUP));
     
+    public static long getCapacityT1() {
+        var config = CommonConfig.HANDLE.get();
+        return config.CapacityMultiplierT1();
+    }
+    public static long getCapacityT2() {
+        var config = CommonConfig.HANDLE.get();
+        return config.CapacityMultiplierT2();
+    }
+    public static long getCapacityT3() {
+        var config = CommonConfig.HANDLE.get();
+        return config.CapacityMultiplierT3();
+    }
+    public static long getCapacityT4() {
+        var config = CommonConfig.HANDLE.get();
+        return config.CapacityMultiplierT4();
+    }
+    
     public static final Item UPGRADE_FRAME = new Item(new FabricItemSettings().group(MOD_GROUP));
-    public static final UpgradeItem T1_UPGRADE = new UpgradeItem(new FabricItemSettings().group(MOD_GROUP), id("item/t1_upgrade"), 2);
-    public static final UpgradeItem T2_UPGRADE = new UpgradeItem(new FabricItemSettings().group(MOD_GROUP), id("item/t2_upgrade"), 4);
-    public static final UpgradeItem T3_UPGRADE = new UpgradeItem(new FabricItemSettings().group(MOD_GROUP), id("item/t3_upgrade"), 8);
-    public static final UpgradeItem T4_UPGRADE = new UpgradeItem(new FabricItemSettings().group(MOD_GROUP), id("item/t4_upgrade"), 16);
+    public static final UpgradeItem T1_UPGRADE = new UpgradeItem(new FabricItemSettings().group(MOD_GROUP), id("item/t1_upgrade"), (int) getCapacityT1());
+    public static final UpgradeItem T2_UPGRADE = new UpgradeItem(new FabricItemSettings().group(MOD_GROUP), id("item/t2_upgrade"), (int) getCapacityT2());
+    public static final UpgradeItem T3_UPGRADE = new UpgradeItem(new FabricItemSettings().group(MOD_GROUP), id("item/t3_upgrade"), (int) getCapacityT3());
+    public static final UpgradeItem T4_UPGRADE = new UpgradeItem(new FabricItemSettings().group(MOD_GROUP), id("item/t4_upgrade"), (int) getCapacityT4());
     public static final UpgradeItem DOWNGRADE = new UpgradeItem(new FabricItemSettings().group(MOD_GROUP), id("item/downgrade"), value -> 64);
     public static final UpgradeItem CREATIVE_UPGRADE = new UpgradeItem(new FabricItemSettings().group(MOD_GROUP), id("item/creative_upgrade"), value -> Long.MAX_VALUE);
     
