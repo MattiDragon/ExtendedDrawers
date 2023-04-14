@@ -50,18 +50,7 @@ public class ShadowDrawerBlock extends NetworkBlockWithEntity<ShadowDrawerBlockE
         super(settings);
         setDefaultState(stateManager.getDefaultState().with(FACING, Direction.NORTH));
     }
-    
-    @Override
-    public boolean hasComparatorOutput(BlockState state) {
-        return true;
-    }
-    
-    @Override
-    public int getComparatorOutput(BlockState state, World world, BlockPos pos) {
-        if (world instanceof ServerWorld serverWorld)
-            return StorageUtil.calculateComparatorOutput(createStorage(serverWorld, pos));
-        return 0;
-    }
+
     @Override
     public void onPlaced(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
         super.onPlaced(world, pos, state, placer, itemStack);

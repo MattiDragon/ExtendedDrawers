@@ -37,13 +37,24 @@ import static io.github.mattidragon.extendeddrawers.misc.DrawerInteractionStatus
 
 @SuppressWarnings({"UnstableApiUsage", "deprecation"}) // transfer api and mojank block method deprecation
 public class AccessPointBlock extends NetworkBlock implements DrawerInteractionHandler {
-
     public AccessPointBlock(Settings settings) {
         super(settings);
     
         ItemStorage.SIDED.registerForBlocks((world, pos, state, entity, dir) -> world instanceof ServerWorld serverWorld ? NetworkStorageCache.get(serverWorld, pos) : Storage.empty(), this);
     }
-    
+
+    @Override
+    public boolean hasComparatorOutput(BlockState state) {
+        return true;
+    }
+
+    @Override
+    public int getComparatorOutput(BlockState state, World world, BlockPos pos) {
+        if (world instanceof ServerWorld serverWorld)
+            return StorageUtil.calculateComparatorOutput(NetworkStorageCache.get(serverWorld, pos));
+        return 0;
+    }
+
     @Override
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
         if (!player.canModifyBlocks()) return ActionResult.PASS;
