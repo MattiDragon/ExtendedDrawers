@@ -17,7 +17,7 @@ public final class DrawerInteractionStatusManager {
      * @param player The player performing the insertion
      * @param pos The position of the drawer
      * @param slot The slot that was interacted with
-     * @return Wherther there shouldn be a multi-stack insertion.
+     * @return Whether there should be a multi-stack insertion.
      */
     public static boolean getAndResetInsertStatus(PlayerEntity player, BlockPos pos, int slot) {
         var timestamp = player.getWorld().getTime();

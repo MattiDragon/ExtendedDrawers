@@ -38,7 +38,7 @@ public final class DrawerSlot extends SnapshotParticipant<DrawerSlot.Snapshot> i
      */
     private ItemVariant item = ItemVariant.blank();
     /**
-     * The amount currently contained in the dlot.
+     * The amount currently contained in the slot.
      */
     private long amount;
     /**
