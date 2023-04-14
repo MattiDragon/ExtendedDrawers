@@ -27,7 +27,15 @@ public record CommonConfig(
         @Comment("If enabled you can't remove upgrades if the slot would overflow after removal")
         boolean blockUpgradeRemovalsWithOverflow,
         @Comment("Allows you to place drawers insider shulker boxes and other drawers. Deeply nested storage can lead to chunk and player data corruption.")
-        boolean allowRecursion) {
+        boolean allowRecursion,
+        @Comment("The multiplier the T1 upgrade applies to the capacity of drawers")
+        int t1UpgradeMultiplier,
+        @Comment("The multiplier the T2 upgrade applies to the capacity of drawers")
+        int t2UpgradeMultiplier,
+        @Comment("The multiplier the T3 upgrade applies to the capacity of drawers")
+        int t3UpgradeMultiplier,
+        @Comment("The multiplier the T4 upgrade applies to the capacity of drawers")
+        int t4UpgradeMultiplier) {
     public static final Config<CommonConfig> HANDLE = ConfigManager.register(ConfigType.COMMON,
             "extended_drawers",
             new CommonConfig(10,
@@ -37,5 +45,9 @@ public record CommonConfig(
                     CreativeExtractionBehaviour.FRONT_NO_BREAK,
                     true,
                     true,
-                    false));
+                    false,
+                    2,
+                    4,
+                    8,
+                    16));
 }

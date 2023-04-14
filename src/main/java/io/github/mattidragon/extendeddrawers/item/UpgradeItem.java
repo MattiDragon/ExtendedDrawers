@@ -1,6 +1,7 @@
 package io.github.mattidragon.extendeddrawers.item;
 
 import io.github.mattidragon.extendeddrawers.block.base.DrawerInteractionHandler;
+import io.github.mattidragon.extendeddrawers.config.CommonConfig;
 import it.unimi.dsi.fastutil.longs.Long2LongFunction;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemUsageContext;
@@ -13,14 +14,25 @@ public class UpgradeItem extends Item {
     public final Identifier sprite;
     public final LongUnaryOperator modifier;
     
-    public UpgradeItem(Settings settings, Identifier sprite, int multiplier) {
-        this(settings, sprite, value -> value * multiplier);
+    public UpgradeItem(Settings settings, Identifier sprite, int tier) {
+        this(settings, sprite, value -> value * getMultiplier(tier));
     }
     
     public UpgradeItem(Settings settings, Identifier sprite, Long2LongFunction modifier) {
         super(settings);
         this.sprite = sprite;
         this.modifier = modifier;
+    }
+
+    private static int getMultiplier(int tier) {
+        var config = CommonConfig.HANDLE.get();
+        return switch (tier) {
+            case 1 -> config.t1UpgradeMultiplier();
+            case 2 -> config.t2UpgradeMultiplier();
+            case 3 -> config.t3UpgradeMultiplier();
+            case 4 -> config.t4UpgradeMultiplier();
+            default -> 1;
+        };
     }
     
     @Override
