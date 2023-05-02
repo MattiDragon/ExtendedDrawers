@@ -129,6 +129,7 @@ public class DrawerBlock extends NetworkBlockWithEntity<DrawerBlockEntity> imple
         try (var t = Transaction.openOuter()) {
             int inserted;
 
+            storage.overrideLock(t);
             if (isDoubleClick) {
                 if (storage.isResourceBlank()) return ActionResult.PASS;
                 inserted = (int) StorageUtil.move(PlayerInventoryStorage.of(player), storage, itemVariant -> true, Long.MAX_VALUE, t);
