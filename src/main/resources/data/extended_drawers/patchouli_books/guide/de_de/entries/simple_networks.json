@@ -10,7 +10,7 @@
         "mapping": {
           "D": "extended_drawers:single_drawer[facing=west]",
           "0": "extended_drawers:single_drawer[facing=west]",
-          "A": "extended_drawers:controller"
+          "A": "extended_drawers:access_point"
         },
         "pattern": [
           ["D0A"]
