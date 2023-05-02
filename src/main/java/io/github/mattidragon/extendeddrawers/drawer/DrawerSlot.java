@@ -1,5 +1,6 @@
 package io.github.mattidragon.extendeddrawers.drawer;
 
+import io.github.mattidragon.extendeddrawers.ExtendedDrawers;
 import io.github.mattidragon.extendeddrawers.config.CommonConfig;
 import io.github.mattidragon.extendeddrawers.item.UpgradeItem;
 import io.github.mattidragon.extendeddrawers.misc.ItemUtils;
@@ -50,12 +51,11 @@ public final class DrawerSlot extends SnapshotParticipant<DrawerSlot.Snapshot> i
      * Whether the slot is locked. The item in a locked slot doesn't change when empty.
      */
     private boolean locked;
-
+    private boolean lockOverridden = false;
     /**
      * Whether the slot is in voiding mode. Voiding slots delete overflowing items
      */
     private boolean voiding;
-
     /**
      * Whether the slot is hidden. Hidden slots don't display items.
      */
@@ -85,10 +85,26 @@ public final class DrawerSlot extends SnapshotParticipant<DrawerSlot.Snapshot> i
         return true;
     }
 
+    /**
+     * Temporarily overrides the lock of the slot for inserting.
+     * Used by {@link io.github.mattidragon.extendeddrawers.block.DrawerBlock#onUse DrawerBlock#onUse} to allow adding items to locked drawers manually.
+     * Should not be used multiple times within the same transaction.
+     * @param transaction The transaction for which the lock stays overridden. When closed
+     */
+    public void overrideLock(TransactionContext transaction) {
+        if (lockOverridden) {
+            ExtendedDrawers.LOGGER.warn("Tried to override drawer lock while already overridden. Unexpected behavior may follow.");
+            return;
+        }
+        transaction.addCloseCallback((transaction1, result) -> lockOverridden = false);
+        lockOverridden = true;
+    }
+
     @Override
     public long insert(ItemVariant resource, long maxAmount, TransactionContext transaction) {
         if (!resource.equals(item) && !item.isBlank()) return 0;
         if (!CommonConfig.HANDLE.get().allowRecursion() && !resource.getItem().canBeNested()) return 0;
+        if (item.isBlank() && locked && !lockOverridden) return 0;
 
         updateSnapshots(transaction);
         var inserted = Math.min(getCapacity() - amount, maxAmount);
