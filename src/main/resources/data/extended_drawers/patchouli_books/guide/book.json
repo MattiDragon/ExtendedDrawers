@@ -4,7 +4,7 @@
   "subtitle": "book.extended_drawers.guide.subtitle",
   "version": "0",
   "book_texture": "patchouli:textures/gui/book_blue.png",
-  "creative_tab": "extended_drawers.main",
+  "creative_tab": "extended_drawers:main",
   "show_progress": false,
   "nameplate_color": "dddddd",
   "model": "extended_drawers:guide_book",
