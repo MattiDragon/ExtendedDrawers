@@ -1,4 +1,4 @@
-package io.github.mattidragon.extendeddrawers.drawer;
+package io.github.mattidragon.extendeddrawers.storage;
 
 import io.github.mattidragon.extendeddrawers.block.entity.DrawerBlockEntity;
 import io.github.mattidragon.extendeddrawers.config.CommonConfig;
