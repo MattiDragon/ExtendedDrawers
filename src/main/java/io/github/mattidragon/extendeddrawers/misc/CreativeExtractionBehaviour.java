@@ -1,5 +1,6 @@
 package io.github.mattidragon.extendeddrawers.misc;
 
+@SuppressWarnings("unused") // Accessed by values()
 public enum CreativeExtractionBehaviour {
     FRONT_MINE(true, true),
     ALL_MINE(false, true),

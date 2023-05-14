@@ -38,7 +38,7 @@ public class UpdateHandler {
                 var graph = controller.getGraph(id);
                 if (graph == null) return;
                 NetworkStorageCache.update(world, id, type);
-                updateGraph(world, graph.getNodes(), type);
+                updateGraph(world, graph.getNodes());
             });
         }
         profiler.pop();
@@ -48,10 +48,10 @@ public class UpdateHandler {
         UPDATES.clear();
     }
 
-    private static void updateGraph(ServerWorld world, Stream<Node<BlockNodeHolder>> nodes, ChangeType type) {
+    private static void updateGraph(ServerWorld world, Stream<Node<BlockNodeHolder>> nodes) {
         nodes.forEach(node -> {
             if (node.data().getNode() instanceof DrawerNetworkBlockNode drawerNode) {
-                drawerNode.update(world, node, type);
+                drawerNode.update(world, node);
             }
         });
     }

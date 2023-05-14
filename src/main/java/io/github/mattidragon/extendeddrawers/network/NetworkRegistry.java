@@ -24,7 +24,8 @@ public class NetworkRegistry {
         Registry.register(GraphLib.BLOCK_NODE_DECODER, ShadowDrawerBlockNode.ID, nbt -> ShadowDrawerBlockNode.INSTANCE);
         Registry.register(GraphLib.BLOCK_NODE_DECODER, AccessPointBlockNode.ID, nbt -> AccessPointBlockNode.INSTANCE);
         Registry.register(GraphLib.BLOCK_NODE_DECODER, ConnectorBlockNode.ID, nbt -> ConnectorBlockNode.INSTANCE);
-    
+        Registry.register(GraphLib.BLOCK_NODE_DECODER, CompactingDrawerBlockNode.ID, nbt -> CompactingDrawerBlockNode.INSTANCE);
+
         ServerTickEvents.END_WORLD_TICK.register(UpdateHandler::flushUpdates);
         ServerLifecycleEvents.SERVER_STOPPING.register(server -> {
             NetworkStorageCache.clear();

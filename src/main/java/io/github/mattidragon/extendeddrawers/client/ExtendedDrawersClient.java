@@ -1,5 +1,6 @@
 package io.github.mattidragon.extendeddrawers.client;
 
+import io.github.mattidragon.extendeddrawers.client.renderer.CompactingDrawerBlockEntityRenderer;
 import io.github.mattidragon.extendeddrawers.client.renderer.DrawerBlockEntityRenderer;
 import io.github.mattidragon.extendeddrawers.client.renderer.ShadowDrawerBlockEntityRenderer;
 import io.github.mattidragon.extendeddrawers.registry.ModBlocks;
@@ -14,5 +15,6 @@ public class ExtendedDrawersClient implements ClientModInitializer {
     public void onInitializeClient() {
         BlockEntityRendererFactories.register(ModBlocks.DRAWER_BLOCK_ENTITY, DrawerBlockEntityRenderer::new);
         BlockEntityRendererFactories.register(ModBlocks.SHADOW_DRAWER_BLOCK_ENTITY, ShadowDrawerBlockEntityRenderer::new);
+        BlockEntityRendererFactories.register(ModBlocks.COMPACTING_DRAWER_BLOCK_ENTITY, CompactingDrawerBlockEntityRenderer::new);
     }
 }

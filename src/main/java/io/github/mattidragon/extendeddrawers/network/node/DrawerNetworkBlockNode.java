@@ -29,5 +29,5 @@ public interface DrawerNetworkBlockNode extends FullWireBlockNode {
         UpdateHandler.scheduleUpdate(world, self.data().getGraphId(), UpdateHandler.ChangeType.STRUCTURE);
     }
     
-    void update(ServerWorld world, Node<BlockNodeHolder> node, UpdateHandler.ChangeType type);
+    void update(ServerWorld world, Node<BlockNodeHolder> node);
 }

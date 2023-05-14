@@ -10,13 +10,13 @@ class DrawersBlockTagProvider extends FabricTagProvider.BlockTagProvider {
     public DrawersBlockTagProvider(FabricDataGenerator dataGenerator) {
         super(dataGenerator);
     }
-    
+
     @Override
     protected void generateTags() {
-        getOrCreateTagBuilder(ModTags.BlockTags.DRAWERS).add(ModBlocks.SHADOW_DRAWER, ModBlocks.SINGLE_DRAWER, ModBlocks.DOUBLE_DRAWER, ModBlocks.QUAD_DRAWER);
+        getOrCreateTagBuilder(ModTags.BlockTags.DRAWERS).add(ModBlocks.SHADOW_DRAWER, ModBlocks.COMPACTING_DRAWER, ModBlocks.COMPACTING_DRAWER, ModBlocks.SINGLE_DRAWER, ModBlocks.DOUBLE_DRAWER, ModBlocks.QUAD_DRAWER);
         getOrCreateTagBuilder(ModTags.BlockTags.NETWORK_COMPONENTS).addTag(ModTags.BlockTags.DRAWERS).add(ModBlocks.ACCESS_POINT, ModBlocks.CONNECTOR);
 
         getOrCreateTagBuilder(BlockTags.AXE_MINEABLE).add(ModBlocks.SINGLE_DRAWER, ModBlocks.DOUBLE_DRAWER, ModBlocks.QUAD_DRAWER, ModBlocks.CONNECTOR);
-        getOrCreateTagBuilder(BlockTags.PICKAXE_MINEABLE).add(ModBlocks.ACCESS_POINT, ModBlocks.SHADOW_DRAWER);
+        getOrCreateTagBuilder(BlockTags.PICKAXE_MINEABLE).add(ModBlocks.ACCESS_POINT, ModBlocks.COMPACTING_DRAWER, ModBlocks.SHADOW_DRAWER);
     }
 }

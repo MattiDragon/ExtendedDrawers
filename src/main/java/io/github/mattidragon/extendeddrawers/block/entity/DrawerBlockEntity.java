@@ -3,28 +3,27 @@ package io.github.mattidragon.extendeddrawers.block.entity;
 import io.github.mattidragon.extendeddrawers.block.DrawerBlock;
 import io.github.mattidragon.extendeddrawers.config.CommonConfig;
 import io.github.mattidragon.extendeddrawers.drawer.DrawerSlot;
-import io.github.mattidragon.extendeddrawers.network.UpdateHandler;
+import io.github.mattidragon.extendeddrawers.drawer.DrawerStorage;
 import io.github.mattidragon.extendeddrawers.registry.ModBlocks;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.base.CombinedStorage;
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.network.Packet;
 import net.minecraft.network.listener.ClientPlayPacketListener;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Stream;
 
 @SuppressWarnings("UnstableApiUsage")
-public class DrawerBlockEntity extends BlockEntity {
+public class DrawerBlockEntity extends StorageDrawerBlockEntity {
     public final int slots = ((DrawerBlock)this.getCachedState().getBlock()).slots;
     public final DrawerSlot[] storages = new DrawerSlot[((DrawerBlock)this.getCachedState().getBlock()).slots];
     public final CombinedStorage<ItemVariant, DrawerSlot> combinedStorage;
@@ -35,7 +34,10 @@ public class DrawerBlockEntity extends BlockEntity {
     
     public DrawerBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlocks.DRAWER_BLOCK_ENTITY, pos, state);
-        for (int i = 0; i < storages.length; i++) storages[i] = new DrawerSlot(this::onSlotChanged, CommonConfig.HANDLE.get().slotCountAffectsCapacity() ? 1.0 / slots : 1);
+        var capacityMultiplier = CommonConfig.HANDLE.get().slotCountAffectsCapacity() ? 1.0 / slots : 1;
+        for (int i = 0; i < storages.length; i++) {
+            storages[i] = new DrawerSlot(this, capacityMultiplier);
+        }
         combinedStorage = new CombinedStorage<>(new ArrayList<>(List.of(storages)));
         sortSlots();
     }
@@ -44,16 +46,9 @@ public class DrawerBlockEntity extends BlockEntity {
         combinedStorage.parts.sort(null);
     }
 
-    private void onSlotChanged(boolean itemChanged) {
-        markDirty();
-        assert world != null;
-        if (world instanceof ServerWorld serverWorld) {
-            if (itemChanged)
-                sortSlots();
-            UpdateHandler.scheduleUpdate(serverWorld, pos, itemChanged ? UpdateHandler.ChangeType.CONTENT : UpdateHandler.ChangeType.COUNT);
-            var state = getCachedState();
-            world.updateListeners(pos, state, state, Block.NOTIFY_LISTENERS);
-        }
+    public void onSlotChanged(boolean sortingChanged) {
+        if (sortingChanged) sortSlots();
+        super.onSlotChanged(sortingChanged);
     }
     
     @Override
@@ -68,6 +63,12 @@ public class DrawerBlockEntity extends BlockEntity {
         return nbt;
     }
 
+    @Override
+    public Stream<? extends DrawerStorage> streamStorages() {
+        return Arrays.stream(storages);
+    }
+
+    @Override
     public boolean isEmpty() {
         for (var storage : storages) {
             if (storage.getUpgrade() != null || !storage.isResourceBlank() || storage.isHidden() || storage.isLocked() || storage.isVoiding())
