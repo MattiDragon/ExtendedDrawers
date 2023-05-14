@@ -1,7 +1,7 @@
 package io.github.mattidragon.extendeddrawers.block.entity;
 
-import io.github.mattidragon.extendeddrawers.drawer.CompactingDrawerStorage;
-import io.github.mattidragon.extendeddrawers.drawer.DrawerStorage;
+import io.github.mattidragon.extendeddrawers.storage.CompactingDrawerStorage;
+import io.github.mattidragon.extendeddrawers.storage.DrawerStorage;
 import io.github.mattidragon.extendeddrawers.registry.ModBlocks;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
 import net.minecraft.block.BlockState;
