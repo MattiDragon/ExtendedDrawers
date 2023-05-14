@@ -10,6 +10,8 @@ public record CommonConfig(
         int insertAllTime,
         @Comment("How many items drawers are able to hold")
         long defaultCapacity,
+        @Comment("How many items compacting drawers are able to hold")
+        long compactingCapacity,
         @Comment("Whether the stack size of the item should affect capacity")
         boolean stackSizeAffectsCapacity,
         @Comment("Whether the amount of slots on a drawers should affect capacity")
@@ -39,6 +41,7 @@ public record CommonConfig(
     public static final Config<CommonConfig> HANDLE = ConfigManager.register(ConfigType.COMMON,
             "extended_drawers",
             new CommonConfig(10,
+                    16 * 64,
                     16 * 64,
                     false,
                     true,

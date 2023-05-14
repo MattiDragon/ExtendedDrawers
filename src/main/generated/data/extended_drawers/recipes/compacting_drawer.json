@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": {
+      "item": "minecraft:chest"
+    },
+    "P": {
+      "item": "minecraft:piston"
+    },
+    "S": {
+      "tag": "minecraft:stone_crafting_materials"
+    }
+  },
+  "pattern": [
+    "SPS",
+    "CCC",
+    "SPS"
+  ],
+  "result": {
+    "item": "extended_drawers:compacting_drawer"
+  }
+}

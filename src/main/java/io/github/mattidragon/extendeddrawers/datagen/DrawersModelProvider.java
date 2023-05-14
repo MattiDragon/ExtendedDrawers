@@ -19,7 +19,6 @@ class DrawersModelProvider extends FabricModelProvider {
     @Override
     public void generateBlockStateModels(BlockStateModelGenerator generator) {
         generator.registerSimpleCubeAll(ModBlocks.ACCESS_POINT);
-
         generator.registerSingleton(ModBlocks.CONNECTOR, TextureMap.all(id("block/drawer_base")), Models.CUBE_ALL);
 
         registerDrawerModel(ModBlocks.SINGLE_DRAWER, generator);
@@ -28,6 +27,8 @@ class DrawersModelProvider extends FabricModelProvider {
 
         generator.registerNorthDefaultHorizontalRotatable(ModBlocks.SHADOW_DRAWER,
                 TextureMap.sideEnd(id("block/shadow_drawer_side"), id("block/shadow_drawer_side")));
+        generator.registerNorthDefaultHorizontalRotatable(ModBlocks.COMPACTING_DRAWER,
+                TextureMap.sideEnd(id("block/compacting_drawer_side"), id("block/compacting_drawer_side")));
     }
     
     @Override

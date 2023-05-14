@@ -9,7 +9,7 @@ import com.kneelawk.graphlib.graph.struct.Node;
 import io.github.mattidragon.extendeddrawers.block.base.DrawerInteractionHandler;
 import io.github.mattidragon.extendeddrawers.block.base.NetworkBlock;
 import io.github.mattidragon.extendeddrawers.block.entity.ShadowDrawerBlockEntity;
-import io.github.mattidragon.extendeddrawers.drawer.DrawerSlot;
+import io.github.mattidragon.extendeddrawers.drawer.DrawerStorage;
 import io.github.mattidragon.extendeddrawers.network.NetworkStorageCache;
 import io.github.mattidragon.extendeddrawers.network.node.AccessPointBlockNode;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
@@ -88,7 +88,7 @@ public class AccessPointBlock extends NetworkBlock implements DrawerInteractionH
         if (!(world instanceof ServerWorld serverWorld)) return ActionResult.PASS;
         var storages = NetworkStorageCache.get(serverWorld, pos).parts;
         var newState = storages.stream()
-                .map(DrawerSlot::isLocked)
+                .map(DrawerStorage::isLocked)
                 .mapToInt(value -> value ? 1 : -1)
                 .sum() <= 0;
         storages.forEach(storage -> storage.setLocked(newState));
@@ -101,7 +101,7 @@ public class AccessPointBlock extends NetworkBlock implements DrawerInteractionH
         if (!(world instanceof ServerWorld serverWorld)) return ActionResult.PASS;
         var storages = NetworkStorageCache.get(serverWorld, pos).parts;
         var newState = storages.stream()
-                .map(DrawerSlot::isVoiding)
+                .map(DrawerStorage::isVoiding)
                 .mapToInt(value -> value ? 1 : -1)
                 .sum() <= 0;
         storages.forEach(storage -> storage.setVoiding(newState));
@@ -114,7 +114,7 @@ public class AccessPointBlock extends NetworkBlock implements DrawerInteractionH
         if (!(world instanceof ServerWorld serverWorld)) return ActionResult.PASS;
         var storages = NetworkStorageCache.get(serverWorld, pos).parts;
         var newState = storages.stream()
-                .map(DrawerSlot::isHidden)
+                .map(DrawerStorage::isHidden)
                 .mapToInt(value -> value ? 1 : -1)
                 .sum() <= 0;
         storages.forEach(storage -> storage.setHidden(newState));

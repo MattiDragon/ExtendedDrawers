@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "extended_drawers:block/compacting_drawer",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "extended_drawers:block/compacting_drawer"
+    },
+    "facing=south": {
+      "model": "extended_drawers:block/compacting_drawer",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "extended_drawers:block/compacting_drawer",
+      "y": 270
+    }
+  }
+}

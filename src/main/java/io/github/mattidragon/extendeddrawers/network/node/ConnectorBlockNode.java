@@ -2,7 +2,6 @@ package io.github.mattidragon.extendeddrawers.network.node;
 
 import com.kneelawk.graphlib.graph.BlockNodeHolder;
 import com.kneelawk.graphlib.graph.struct.Node;
-import io.github.mattidragon.extendeddrawers.network.UpdateHandler;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
@@ -19,7 +18,7 @@ public class ConnectorBlockNode implements DrawerNetworkBlockNode {
     }
 
     @Override
-    public void update(ServerWorld world, Node<BlockNodeHolder> node, UpdateHandler.ChangeType type) {
+    public void update(ServerWorld world, Node<BlockNodeHolder> node) {
     }
     
     @Override
