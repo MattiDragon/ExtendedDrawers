@@ -8,17 +8,20 @@ import net.minecraft.block.Block;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.block.entity.BlockEntityRenderer;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
+import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.render.model.json.ModelTransformationMode;
 import net.minecraft.client.texture.Sprite;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.RotationAxis;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
@@ -28,11 +31,17 @@ import java.util.Objects;
 
 @SuppressWarnings("UnstableApiUsage")
 public abstract class AbstractDrawerBlockEntityRenderer<T extends BlockEntity> implements BlockEntityRenderer<T> {
-    public AbstractDrawerBlockEntityRenderer(BlockEntityRendererFactory.Context context) {}
+    private final ItemRenderer itemRenderer;
+    private final TextRenderer textRenderer;
+
+    public AbstractDrawerBlockEntityRenderer(BlockEntityRendererFactory.Context context) {
+        this.itemRenderer = context.getItemRenderer();
+        this.textRenderer = context.getTextRenderer();
+    }
     
     public void renderSlot(ItemVariant item, @Nullable Long amount, List<Sprite> icons, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay, int seed, BlockPos pos, World world) {
-        //noinspection ConstantConditions
-        var playerPos = MinecraftClient.getInstance().player.getPos();
+        var player = MinecraftClient.getInstance().player;
+        var playerPos = player == null ? Vec3d.ofCenter(pos) : player.getPos();
         var config = ClientConfig.HANDLE.get();
     
         if (pos.isWithinDistance(playerPos, config.textRenderDistance()) && amount != null)
@@ -52,7 +61,7 @@ public abstract class AbstractDrawerBlockEntityRenderer<T extends BlockEntity> i
         return Block.shouldDrawSide(state, world, pos, facing, pos.offset(facing));
     }
     
-    private void renderIcons(List<Sprite> icons, int light, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int overlay) {
+    protected void renderIcons(List<Sprite> icons, int light, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int overlay) {
         var increment = 1.0 / (icons.size() + 1.0);
         matrices.push();
         matrices.translate(-0.5, 0, 0);
@@ -62,7 +71,7 @@ public abstract class AbstractDrawerBlockEntityRenderer<T extends BlockEntity> i
         }
         matrices.pop();
     }
-    
+
     private void renderIcon(Sprite sprite, int light, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int overlay) {
         matrices.push();
         matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(90));
@@ -74,19 +83,19 @@ public abstract class AbstractDrawerBlockEntityRenderer<T extends BlockEntity> i
         vertexConsumers.getBuffer(RenderLayer.getCutout()).quad(matrices.peek(), emitter.toBakedQuad(0, sprite, false), 1, 1, 1, light, overlay);
         matrices.pop();
     }
-    
-    private void renderItem(ItemVariant item, int light, MatrixStack matrices, VertexConsumerProvider vertexConsumers, World world, int seed) {
+
+    protected void renderItem(ItemVariant item, int light, MatrixStack matrices, VertexConsumerProvider vertexConsumers, World world, int seed) {
         var itemScale = ClientConfig.HANDLE.get().itemScale();
 
         matrices.push();
         matrices.scale(itemScale, itemScale, 1);
         matrices.scale(0.75f, 0.75f, 1);
         matrices.multiplyPositionMatrix(new Matrix4f().scale(1, 1, 0.01f));
-        MinecraftClient.getInstance().getItemRenderer().renderItem(item.toStack(), ModelTransformationMode.GUI, light, OverlayTexture.DEFAULT_UV, matrices, vertexConsumers, world, seed);
+        itemRenderer.renderItem(item.toStack(), ModelTransformationMode.GUI, light, OverlayTexture.DEFAULT_UV, matrices, vertexConsumers, world, seed);
         matrices.pop();
     }
     
-    private void renderText(long amount, int light, MatrixStack matrices, VertexConsumerProvider vertexConsumers) {
+    protected void renderText(long amount, int light, MatrixStack matrices, VertexConsumerProvider vertexConsumers) {
         var itemScale = ClientConfig.HANDLE.get().itemScale();
 
         matrices.push();
@@ -94,7 +103,6 @@ public abstract class AbstractDrawerBlockEntityRenderer<T extends BlockEntity> i
         matrices.translate(0, 0.3, -0.01);
         matrices.scale(itemScale, itemScale, 1);
         matrices.scale(0.02f, 0.02f, 0.02f);
-        var textRenderer = MinecraftClient.getInstance().textRenderer;
         var text = Long.toString(amount);
         textRenderer.draw(text, -textRenderer.getWidth(text) / 2f, 0, 0xffffff, false, matrices.peek().getPositionMatrix(), vertexConsumers, TextRenderer.TextLayerType.NORMAL, 0x000000, light);
         matrices.pop();

@@ -1,9 +1,7 @@
 package io.github.mattidragon.extendeddrawers.registry;
 
-import io.github.mattidragon.extendeddrawers.block.AccessPointBlock;
-import io.github.mattidragon.extendeddrawers.block.ConnectorBlock;
-import io.github.mattidragon.extendeddrawers.block.DrawerBlock;
-import io.github.mattidragon.extendeddrawers.block.ShadowDrawerBlock;
+import io.github.mattidragon.extendeddrawers.block.*;
+import io.github.mattidragon.extendeddrawers.block.entity.CompactingDrawerBlockEntity;
 import io.github.mattidragon.extendeddrawers.block.entity.DrawerBlockEntity;
 import io.github.mattidragon.extendeddrawers.block.entity.ShadowDrawerBlockEntity;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
@@ -24,8 +22,10 @@ public class ModBlocks {
     public static final ConnectorBlock CONNECTOR = new ConnectorBlock(FabricBlockSettings.of(Material.WOOD).strength(2f, 3f).sounds(BlockSoundGroup.WOOD));
     public static final AccessPointBlock ACCESS_POINT = new AccessPointBlock(FabricBlockSettings.of(Material.STONE).strength(3f, 9f).sounds(BlockSoundGroup.STONE));
     public static final ShadowDrawerBlock SHADOW_DRAWER = new ShadowDrawerBlock(FabricBlockSettings.of(Material.STONE, MapColor.PALE_YELLOW).strength(3f, 9f).sounds(BlockSoundGroup.STONE));
-    
+    public static final CompactingDrawerBlock COMPACTING_DRAWER = new CompactingDrawerBlock(FabricBlockSettings.of(Material.STONE).strength(3f, 9f).sounds(BlockSoundGroup.STONE));
+
     public static final BlockEntityType<DrawerBlockEntity> DRAWER_BLOCK_ENTITY = FabricBlockEntityTypeBuilder.create(DrawerBlockEntity::new, SINGLE_DRAWER, DOUBLE_DRAWER, QUAD_DRAWER).build();
+    public static final BlockEntityType<CompactingDrawerBlockEntity> COMPACTING_DRAWER_BLOCK_ENTITY = FabricBlockEntityTypeBuilder.create(CompactingDrawerBlockEntity::new, COMPACTING_DRAWER).build();
     public static final BlockEntityType<ShadowDrawerBlockEntity> SHADOW_DRAWER_BLOCK_ENTITY = FabricBlockEntityTypeBuilder.create(ShadowDrawerBlockEntity::new, SHADOW_DRAWER).build();
     
     public static void register() {
@@ -35,8 +35,10 @@ public class ModBlocks {
         Registry.register(Registries.BLOCK, id("connector"), CONNECTOR);
         Registry.register(Registries.BLOCK, id("access_point"), ACCESS_POINT);
         Registry.register(Registries.BLOCK, id("shadow_drawer"), SHADOW_DRAWER);
-        
+        Registry.register(Registries.BLOCK, id("compacting_drawer"), COMPACTING_DRAWER);
+
         Registry.register(Registries.BLOCK_ENTITY_TYPE, id("drawer"), DRAWER_BLOCK_ENTITY);
+        Registry.register(Registries.BLOCK_ENTITY_TYPE, id("compacting_drawer"), COMPACTING_DRAWER_BLOCK_ENTITY);
         Registry.register(Registries.BLOCK_ENTITY_TYPE, id("shadow_drawer"), SHADOW_DRAWER_BLOCK_ENTITY);
     }
 }

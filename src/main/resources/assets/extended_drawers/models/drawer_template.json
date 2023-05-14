@@ -1,5 +1,5 @@
 {
-	"parent": "minecraft:block/cube",
+	"parent": "minecraft:block/block",
 	"textures": {
 		"side": "extended_drawers:block/drawer_side",
 		"back": "extended_drawers:block/drawer_base",

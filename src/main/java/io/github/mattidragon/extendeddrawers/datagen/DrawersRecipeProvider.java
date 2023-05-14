@@ -45,6 +45,15 @@ class DrawersRecipeProvider extends FabricRecipeProvider {
                 .pattern("EEE")
                 .criterion(RecipeProvider.hasItem(ModItems.SHADOW_DRAWER), RecipeProvider.conditionsFromItem(ModItems.SHADOW_DRAWER))
                 .offerTo(exporter);
+        ShapedRecipeJsonBuilder.create(RecipeCategory.DECORATIONS, ModItems.COMPACTING_DRAWER)
+                .input('C', Items.CHEST)
+                .input('S', ItemTags.STONE_CRAFTING_MATERIALS)
+                .input('P', Items.PISTON)
+                .pattern("SPS")
+                .pattern("CCC")
+                .pattern("SPS")
+                .criterion(RecipeProvider.hasItem(ModItems.COMPACTING_DRAWER), RecipeProvider.conditionsFromItem(ModItems.COMPACTING_DRAWER))
+                .offerTo(exporter);
         ShapedRecipeJsonBuilder.create(RecipeCategory.DECORATIONS, ModItems.SINGLE_DRAWER)
                 .input('C', Items.CHEST)
                 .input('L', ItemTags.LOGS)

@@ -5,20 +5,20 @@
     "C": {
       "item": "minecraft:chest"
     },
-    "L": {
-      "tag": "minecraft:logs"
-    },
     "P": {
-      "tag": "minecraft:planks"
+      "item": "minecraft:piston"
+    },
+    "S": {
+      "tag": "minecraft:stone_crafting_materials"
     }
   },
   "pattern": [
-    "LCL",
-    "CPC",
-    "LCL"
+    "SPS",
+    "CCC",
+    "SPS"
   ],
   "result": {
-    "item": "extended_drawers:quad_drawer"
+    "item": "extended_drawers:compacting_drawer"
   },
   "show_notification": true
 }

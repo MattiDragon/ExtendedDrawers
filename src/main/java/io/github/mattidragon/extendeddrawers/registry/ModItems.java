@@ -17,6 +17,7 @@ public class ModItems {
     public static final Item QUAD_DRAWER = new DrawerItem(ModBlocks.QUAD_DRAWER, new FabricItemSettings());
     public static final Item CONNECTOR = new BlockItem(ModBlocks.CONNECTOR, new FabricItemSettings());
     public static final Item SHADOW_DRAWER = new DrawerItem(ModBlocks.SHADOW_DRAWER, new FabricItemSettings());
+    public static final Item COMPACTING_DRAWER = new DrawerItem(ModBlocks.COMPACTING_DRAWER, new FabricItemSettings());
     public static final Item ACCESS_POINT = new BlockItem(ModBlocks.ACCESS_POINT, new FabricItemSettings());
     
     public static final Item UPGRADE_FRAME = new Item(new FabricItemSettings());
@@ -35,6 +36,7 @@ public class ModItems {
         Registry.register(Registries.ITEM, id("quad_drawer"), QUAD_DRAWER);
         Registry.register(Registries.ITEM, id("connector"), CONNECTOR);
         Registry.register(Registries.ITEM, id("shadow_drawer"), SHADOW_DRAWER);
+        Registry.register(Registries.ITEM, id("compacting_drawer"), COMPACTING_DRAWER);
         Registry.register(Registries.ITEM, id("access_point"), ACCESS_POINT);
         
         Registry.register(Registries.ITEM, id("upgrade_frame"), UPGRADE_FRAME);

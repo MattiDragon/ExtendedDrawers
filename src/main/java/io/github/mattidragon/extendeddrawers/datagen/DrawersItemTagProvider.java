@@ -16,7 +16,7 @@ class DrawersItemTagProvider extends FabricTagProvider.ItemTagProvider {
 
     @Override
     protected void configure(RegistryWrapper.WrapperLookup arg) {
-        getOrCreateTagBuilder(ModTags.ItemTags.DRAWERS).add(ModItems.SHADOW_DRAWER, ModItems.SINGLE_DRAWER, ModItems.DOUBLE_DRAWER, ModItems.QUAD_DRAWER);
+        copy(ModTags.BlockTags.DRAWERS, ModTags.ItemTags.DRAWERS);
         getOrCreateTagBuilder(ModTags.ItemTags.UPGRADES).add(ModItems.T1_UPGRADE, ModItems.T2_UPGRADE, ModItems.T3_UPGRADE, ModItems.T4_UPGRADE, ModItems.CREATIVE_UPGRADE, ModItems.DOWNGRADE);
     }
 }

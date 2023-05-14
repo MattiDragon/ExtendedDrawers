@@ -19,5 +19,6 @@
   ],
   "result": {
     "item": "extended_drawers:downgrade"
-  }
+  },
+  "show_notification": true
 }

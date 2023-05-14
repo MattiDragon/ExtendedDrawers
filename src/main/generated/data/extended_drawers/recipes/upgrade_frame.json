@@ -16,5 +16,6 @@
   ],
   "result": {
     "item": "extended_drawers:upgrade_frame"
-  }
+  },
+  "show_notification": true
 }

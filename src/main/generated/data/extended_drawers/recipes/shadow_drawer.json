@@ -16,5 +16,6 @@
   ],
   "result": {
     "item": "extended_drawers:shadow_drawer"
-  }
+  },
+  "show_notification": true
 }

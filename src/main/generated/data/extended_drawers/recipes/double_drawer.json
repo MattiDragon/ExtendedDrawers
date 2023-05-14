@@ -19,5 +19,6 @@
   ],
   "result": {
     "item": "extended_drawers:double_drawer"
-  }
+  },
+  "show_notification": true
 }

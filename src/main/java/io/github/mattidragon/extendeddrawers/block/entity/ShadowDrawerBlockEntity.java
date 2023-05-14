@@ -1,6 +1,5 @@
 package io.github.mattidragon.extendeddrawers.block.entity;
 
-import io.github.mattidragon.extendeddrawers.drawer.DrawerSlot;
 import io.github.mattidragon.extendeddrawers.network.NetworkStorageCache;
 import io.github.mattidragon.extendeddrawers.registry.ModBlocks;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
@@ -41,12 +40,16 @@ public class ShadowDrawerBlockEntity extends BlockEntity {
     }
     
     public void recalculateContents() {
+        if (world == null) return;
+
         if (this.world instanceof ServerWorld world && !item.isBlank()) {
             var storage = NetworkStorageCache.get(world, pos);
             long amount = 0L;
-            for (DrawerSlot slot : storage.parts) {
-                if (slot.getResource().equals(item)) {
-                    amount += slot.getAmount();
+            for (var slot : storage.parts) {
+                for (var view : slot) {
+                    if (view.getResource().equals(item)) {
+                        amount += view.getAmount();
+                    }
                 }
             }
             countCache = amount;
@@ -91,7 +94,9 @@ public class ShadowDrawerBlockEntity extends BlockEntity {
     public void setHidden(boolean hidden) {
         this.hidden = hidden;
         var state = getCachedState();
-        world.updateListeners(pos, state, state, Block.NOTIFY_LISTENERS);
+        if (world != null) {
+            world.updateListeners(pos, state, state, Block.NOTIFY_LISTENERS);
+        }
     }
 
     public class ShadowDrawerStorage extends FilteringStorage<ItemVariant> {

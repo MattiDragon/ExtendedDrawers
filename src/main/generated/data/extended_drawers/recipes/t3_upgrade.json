@@ -19,5 +19,6 @@
   ],
   "result": {
     "item": "extended_drawers:t3_upgrade"
-  }
+  },
+  "show_notification": true
 }

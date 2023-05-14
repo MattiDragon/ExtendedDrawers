@@ -15,7 +15,6 @@ import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.ResourcePackActivationType;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
-import net.minecraft.item.ItemGroup;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
@@ -24,26 +23,6 @@ import org.slf4j.LoggerFactory;
 
 public class ExtendedDrawers implements ModInitializer {
     public static final String MOD_ID = "extended_drawers";
-    public static final ItemGroup MOD_GROUP = FabricItemGroup.builder(id("main"))
-            .icon(ModItems.SHADOW_DRAWER::getDefaultStack)
-            .entries((context, entries) -> {
-                entries.add(ModBlocks.SINGLE_DRAWER);
-                entries.add(ModBlocks.DOUBLE_DRAWER);
-                entries.add(ModBlocks.QUAD_DRAWER);
-                entries.add(ModBlocks.CONNECTOR);
-                entries.add(ModBlocks.ACCESS_POINT);
-                entries.add(ModBlocks.SHADOW_DRAWER);
-
-                entries.add(ModItems.T1_UPGRADE);
-                entries.add(ModItems.T2_UPGRADE);
-                entries.add(ModItems.T3_UPGRADE);
-                entries.add(ModItems.T4_UPGRADE);
-                entries.add(ModItems.DOWNGRADE);
-                entries.add(ModItems.CREATIVE_UPGRADE);
-                entries.add(ModItems.UPGRADE_FRAME);
-                entries.add(ModItems.LOCK);
-            })
-            .build();
     public static final ModContainer MOD_CONTAINER = FabricLoader.getInstance().getModContainer(MOD_ID).orElseThrow();
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
     
@@ -56,6 +35,7 @@ public class ExtendedDrawers implements ModInitializer {
         ModBlocks.register();
         ModItems.register();
         DrawerContentsLootFunction.register();
+        registerItemGroup();
         NetworkRegistry.register();
         ClientConfig.HANDLE.load();
         CommonConfig.HANDLE.load();
@@ -84,5 +64,29 @@ public class ExtendedDrawers implements ModInitializer {
             }
             profiler.pop();
         });
+    }
+
+    private void registerItemGroup() {
+        FabricItemGroup.builder(id("main"))
+                .icon(ModItems.SHADOW_DRAWER::getDefaultStack)
+                .entries((context, entries) -> {
+                    entries.add(ModBlocks.SINGLE_DRAWER);
+                    entries.add(ModBlocks.DOUBLE_DRAWER);
+                    entries.add(ModBlocks.QUAD_DRAWER);
+                    entries.add(ModBlocks.CONNECTOR);
+                    entries.add(ModBlocks.ACCESS_POINT);
+                    entries.add(ModBlocks.SHADOW_DRAWER);
+                    entries.add(ModBlocks.COMPACTING_DRAWER);
+
+                    entries.add(ModItems.T1_UPGRADE);
+                    entries.add(ModItems.T2_UPGRADE);
+                    entries.add(ModItems.T3_UPGRADE);
+                    entries.add(ModItems.T4_UPGRADE);
+                    entries.add(ModItems.DOWNGRADE);
+                    entries.add(ModItems.CREATIVE_UPGRADE);
+                    entries.add(ModItems.UPGRADE_FRAME);
+                    entries.add(ModItems.LOCK);
+                })
+                .build();
     }
 }
