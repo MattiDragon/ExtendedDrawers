@@ -4,7 +4,7 @@ import io.github.mattidragon.extendeddrawers.ExtendedDrawers;
 import io.github.mattidragon.extendeddrawers.block.DrawerBlock;
 import io.github.mattidragon.extendeddrawers.block.entity.DrawerBlockEntity;
 import io.github.mattidragon.extendeddrawers.config.ClientConfig;
-import io.github.mattidragon.extendeddrawers.drawer.DrawerSlot;
+import io.github.mattidragon.extendeddrawers.storage.DrawerSlot;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.VertexConsumerProvider;

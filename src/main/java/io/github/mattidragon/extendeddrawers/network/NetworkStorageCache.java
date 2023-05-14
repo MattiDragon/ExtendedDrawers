@@ -6,7 +6,7 @@ import com.kneelawk.graphlib.graph.BlockNodeHolder;
 import com.kneelawk.graphlib.graph.struct.Node;
 import io.github.mattidragon.extendeddrawers.ExtendedDrawers;
 import io.github.mattidragon.extendeddrawers.block.entity.StorageDrawerBlockEntity;
-import io.github.mattidragon.extendeddrawers.drawer.DrawerStorage;
+import io.github.mattidragon.extendeddrawers.storage.DrawerStorage;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;

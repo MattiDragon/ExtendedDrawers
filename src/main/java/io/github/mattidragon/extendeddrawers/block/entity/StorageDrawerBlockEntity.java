@@ -1,6 +1,6 @@
 package io.github.mattidragon.extendeddrawers.block.entity;
 
-import io.github.mattidragon.extendeddrawers.drawer.DrawerStorage;
+import io.github.mattidragon.extendeddrawers.storage.DrawerStorage;
 import io.github.mattidragon.extendeddrawers.network.UpdateHandler;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
