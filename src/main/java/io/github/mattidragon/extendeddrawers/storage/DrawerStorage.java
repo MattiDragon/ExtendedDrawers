@@ -43,6 +43,8 @@ public sealed interface DrawerStorage extends Comparable<DrawerStorage>, Storage
         return 0;
     }
 
+    void dumpExcess(World world, BlockPos pos, @Nullable Direction side, @Nullable PlayerEntity player);
+
     default void readNbt(NbtCompound nbt) {
         settings().locked = nbt.getBoolean("locked");
         settings().voiding = nbt.getBoolean("voiding");

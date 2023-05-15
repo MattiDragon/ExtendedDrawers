@@ -141,7 +141,8 @@ public final class DrawerSlot extends SnapshotParticipant<DrawerSlot.Snapshot> i
         update();
     }
 
-    private void dumpExcess(World world, BlockPos pos, Direction side, @Nullable PlayerEntity player) {
+    @Override
+    public void dumpExcess(World world, BlockPos pos, @Nullable Direction side, @Nullable PlayerEntity player) {
         if (amount > getCapacity()) {
             ItemUtils.offerOrDropStacks(world, pos, side, player, item, amount - getCapacity());
             amount = getCapacity();
