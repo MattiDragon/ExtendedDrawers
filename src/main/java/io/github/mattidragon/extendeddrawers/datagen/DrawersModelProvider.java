@@ -27,10 +27,10 @@ class DrawersModelProvider extends FabricModelProvider {
 
         generator.registerNorthDefaultHorizontalRotatable(ModBlocks.SHADOW_DRAWER,
                 TextureMap.sideEnd(id("block/shadow_drawer_side"), id("block/shadow_drawer_side")));
-        generator.registerNorthDefaultHorizontalRotatable(ModBlocks.COMPACTING_DRAWER,
-                TextureMap.sideEnd(id("block/compacting_drawer_side"), id("block/compacting_drawer_side")));
+
+        generateCompactingDrawerModel(generator);
     }
-    
+
     @Override
     public void generateItemModels(ItemModelGenerator generator) {
         generator.register(ModItems.T1_UPGRADE, Models.GENERATED);
@@ -41,6 +41,10 @@ class DrawersModelProvider extends FabricModelProvider {
         generator.register(ModItems.CREATIVE_UPGRADE, Models.GENERATED);
         generator.register(ModItems.LOCK, Models.GENERATED);
         generator.register(ModItems.UPGRADE_FRAME, Models.GENERATED);
+    }
+
+    private void generateCompactingDrawerModel(BlockStateModelGenerator generator) {
+        generator.blockStateCollector.accept(VariantsBlockStateSupplier.create(ModBlocks.COMPACTING_DRAWER, BlockStateVariant.create().put(VariantSettings.MODEL, id("block/compacting_drawer"))).coordinate(BlockStateModelGenerator.createNorthDefaultHorizontalRotationStates()));
     }
 
     private void registerDrawerModel(Block block, BlockStateModelGenerator generator) {
