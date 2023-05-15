@@ -32,11 +32,6 @@
       "io.github.mattidragon.extendeddrawers.datagen.ExtendedDrawersDatagen"
     ]
   },
-  "custom": {
-    "loom:injected_interfaces": {
-      "net/minecraft/class_1863": ["io/github/mattidragon/extendeddrawers/compacting/CompressionRecipeManager\u0024Provider"]
-    }
-  },
   "mixins": [
     "extended_drawers.mixins.json"
   ],

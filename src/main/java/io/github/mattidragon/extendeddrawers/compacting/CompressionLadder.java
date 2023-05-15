@@ -2,7 +2,6 @@ package io.github.mattidragon.extendeddrawers.compacting;
 
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 
-import java.util.Collections;
 import java.util.List;
 
 /**
