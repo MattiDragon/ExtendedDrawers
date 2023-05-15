@@ -76,9 +76,9 @@ public class ExtendedDrawers implements ModInitializer {
                     entries.add(ModBlocks.DOUBLE_DRAWER);
                     entries.add(ModBlocks.QUAD_DRAWER);
                     entries.add(ModBlocks.CONNECTOR);
-                    entries.add(ModBlocks.ACCESS_POINT);
                     entries.add(ModBlocks.SHADOW_DRAWER);
                     entries.add(ModBlocks.COMPACTING_DRAWER);
+                    entries.add(ModBlocks.ACCESS_POINT);
 
                     entries.add(ModItems.T1_UPGRADE);
                     entries.add(ModItems.T2_UPGRADE);
