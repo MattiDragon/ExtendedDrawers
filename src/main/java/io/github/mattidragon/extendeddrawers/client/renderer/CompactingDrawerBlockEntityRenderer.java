@@ -63,11 +63,11 @@ public class CompactingDrawerBlockEntityRenderer extends AbstractDrawerBlockEnti
             renderSlot(drawer.storage.getSlot(CompactingDrawerBlock.getSlot(new Vec2f(0.5f, 0.25f), slots.length)), light, matrices, vertexConsumers, (int) drawer.getPos().asLong(), drawerPos);
         }
         if (slots.length >= 2) { // Bottom right
-            matrices.translate(1, 0, 0);
+            matrices.translate(0.5, -1, 0);
             renderSlot(drawer.storage.getSlot(CompactingDrawerBlock.getSlot(new Vec2f(0.75f, 0.75f), slots.length)), light, matrices, vertexConsumers, (int) drawer.getPos().asLong(), drawerPos);
         }
         if (slots.length >= 3) { // Bottom left
-            matrices.translate(-0.5, -1, 0);
+            matrices.translate(-1, 0, 0);
             renderSlot(drawer.storage.getSlot(CompactingDrawerBlock.getSlot(new Vec2f(0.25f, 0.75f), slots.length)), light, matrices, vertexConsumers, (int) drawer.getPos().asLong(), drawerPos);
         }
 
