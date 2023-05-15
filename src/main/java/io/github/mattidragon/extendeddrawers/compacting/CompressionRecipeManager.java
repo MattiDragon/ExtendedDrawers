@@ -1,4 +1,4 @@
-package io.github.mattidragon.extendeddrawers.misc;
+package io.github.mattidragon.extendeddrawers.compacting;
 
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.minecraft.entity.player.PlayerEntity;
@@ -16,13 +16,27 @@ import java.util.*;
 public final class CompressionRecipeManager {
     private final RecipeManager recipeManager;
     private final Map<ItemVariant, CompressionLadder> ladders = new HashMap<>();
+    private final List<CompressionLadder> overrides = new ArrayList<>();
 
     public CompressionRecipeManager(RecipeManager recipeManager) {
         this.recipeManager = recipeManager;
     }
 
+    public static CompressionRecipeManager of(RecipeManager recipeManager) {
+        return ((CompressionRecipeManager.Provider) recipeManager).extended_drawers$getCompactingManager();
+    }
+
+    public void setOverrides(List<CompressionLadder> overrides) {
+        this.overrides.clear();
+        this.overrides.addAll(overrides);
+        reload();
+    }
+
     public void reload() {
         ladders.clear();
+        for (var override : overrides) {
+            addLadder(override);
+        }
     }
 
     public CompressionLadder getLadder(ItemVariant item, World world) {
@@ -30,8 +44,12 @@ public final class CompressionRecipeManager {
             return ladders.get(item);
         var ladder = buildLadder(item, world);
         // Put ladder in map for all items
-        ladder.steps.forEach(step -> ladders.put(step.item, ladder));
+        addLadder(ladder);
         return ladder;
+    }
+
+    private void addLadder(CompressionLadder ladder) {
+        ladder.steps().forEach(step -> ladders.put(step.item(), ladder));
     }
 
     private CompressionLadder buildLadder(ItemVariant item, World world) {
@@ -144,28 +162,6 @@ public final class CompressionRecipeManager {
             inventory.setStack(i, stack);
         }
         return inventory;
-    }
-
-    /**
-     * Represents a bidirectional ladder of compression recipes.
-     * First step has the base item (e.g. nuggets) and a size of 1.
-     * Each step after that has a new item (ingots, blocks) and a size that counts how many of the first tier is necessary (9, 81).
-     */
-    public record CompressionLadder(List<Step> steps) {
-        /**
-         * @param item The item at this step.
-         * @param size The amount of the first step required to craft this one.
-         */
-        public record Step(ItemVariant item, int size) {
-        }
-
-        public int getPosition(ItemVariant item) {
-            for (int i = 0; i < steps.size(); i++) {
-                if (steps.get(i).item.equals(item))
-                    return i;
-            }
-            return -1;
-        }
     }
 
     private record RecipePair(ItemVariant compressed, ItemVariant decompressed, int scale) {

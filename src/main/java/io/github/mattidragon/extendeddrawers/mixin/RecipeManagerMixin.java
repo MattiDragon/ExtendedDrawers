@@ -1,7 +1,7 @@
 package io.github.mattidragon.extendeddrawers.mixin;
 
 import com.google.gson.JsonElement;
-import io.github.mattidragon.extendeddrawers.misc.CompressionRecipeManager;
+import io.github.mattidragon.extendeddrawers.compacting.CompressionRecipeManager;
 import net.minecraft.recipe.RecipeManager;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;

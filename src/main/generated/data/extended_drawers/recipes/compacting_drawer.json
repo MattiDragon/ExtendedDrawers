@@ -5,6 +5,9 @@
     "C": {
       "item": "minecraft:chest"
     },
+    "I": {
+      "item": "minecraft:iron_block"
+    },
     "P": {
       "item": "minecraft:piston"
     },
@@ -14,7 +17,7 @@
   },
   "pattern": [
     "SPS",
-    "CCC",
+    "CIC",
     "SPS"
   ],
   "result": {

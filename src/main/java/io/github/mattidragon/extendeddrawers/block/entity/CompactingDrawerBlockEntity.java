@@ -41,7 +41,7 @@ public class CompactingDrawerBlockEntity extends StorageDrawerBlockEntity {
 
     @Override
     public Stream<? extends DrawerStorage> streamStorages() {
-        return null;
+        return Stream.of(storage);
     }
 
     @Override
