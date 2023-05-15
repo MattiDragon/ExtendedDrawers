@@ -3,6 +3,7 @@
   "block.extended_drawers.quad_drawer": "Quad Drawer",
   "block.extended_drawers.single_drawer": "Drawer",
   "block.extended_drawers.shadow_drawer": "Shadow Drawer",
+  "block.extended_drawers.compacting_drawer": "Compacting Drawer",
   "block.extended_drawers.access_point": "Drawer Access Point",
   "block.extended_drawers.connector": "Drawer Connector",
 
