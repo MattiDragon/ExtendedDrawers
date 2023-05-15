@@ -1,0 +1,33 @@
+{
+	"credit": "Made with Blockbench by Sea_Kerman",
+	"parent": "block/cube",
+	"textures": {
+		"particle": "extended_drawers:block/compacting_drawer_side",
+		"side": "extended_drawers:block/compacting_drawer_side",
+		"top": "extended_drawers:block/compacting_drawer_top",
+		"bottom": "extended_drawers:block/compacting_drawer_bottom",
+		"back": "extended_drawers:block/compacting_drawer_base",
+		"front": "extended_drawers:block/compacting_drawer"
+	},
+	"elements": [
+		{
+			"from": [0, 0, 0],
+			"to": [16, 16, 16],
+			"faces": {
+				"north": {"uv": [0, 0, 16, 16], "texture": "#front", "cullface": "north"},
+				"east": {"uv": [0, 0, 16, 16], "texture": "#side", "cullface": "east"},
+				"south": {"uv": [0, 0, 16, 16], "texture": "#back", "cullface": "south"},
+				"west": {"uv": [16, 0, 0, 16], "texture": "#side", "cullface": "west"},
+				"up": {"uv": [0, 0, 16, 16], "texture": "#top", "cullface": "up"},
+				"down": {"uv": [0, 0, 16, 16], "texture": "#bottom", "cullface": "down"}
+			}
+		}
+	],
+	"display": {
+		"firstperson_righthand": {
+			"rotation": [0, 135, 0],
+			"translation": [0, 0, 0],
+			"scale": [0.40, 0.40, 0.40]
+		}
+	}
+}

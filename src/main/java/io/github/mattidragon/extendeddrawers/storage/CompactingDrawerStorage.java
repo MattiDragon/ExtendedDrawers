@@ -1,9 +1,10 @@
 package io.github.mattidragon.extendeddrawers.storage;
 
 import io.github.mattidragon.extendeddrawers.block.entity.CompactingDrawerBlockEntity;
+import io.github.mattidragon.extendeddrawers.compacting.CompressionLadder;
 import io.github.mattidragon.extendeddrawers.config.CommonConfig;
 import io.github.mattidragon.extendeddrawers.item.UpgradeItem;
-import io.github.mattidragon.extendeddrawers.misc.CompressionRecipeManager;
+import io.github.mattidragon.extendeddrawers.compacting.CompressionRecipeManager;
 import io.github.mattidragon.extendeddrawers.misc.ItemUtils;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.StoragePreconditions;
@@ -22,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Iterator;
+import java.util.List;
 
 @SuppressWarnings("UnstableApiUsage")
 public final class CompactingDrawerStorage extends SnapshotParticipant<CompactingDrawerStorage.Snapshot> implements DrawerStorage {
@@ -209,9 +211,9 @@ public final class CompactingDrawerStorage extends SnapshotParticipant<Compactin
             slot.reset(true);
         }
 
-        // Intellij shows error even with II
-//        noinspection DataFlowIssue
-        var ladder = ((CompressionRecipeManager.Provider) owner.getWorld().getRecipeManager()).extended_drawers$getCompactingManager().getLadder(item, owner.getWorld());
+        var ladder = owner.getWorld() == null
+                ? new CompressionLadder(List.of(new CompressionLadder.Step(item, 1)))
+                : CompressionRecipeManager.of(owner.getWorld().getRecipeManager()).getLadder(item, owner.getWorld());
         var ladderSize = ladder.steps().size();
         var initialPosition = ladder.getPosition(item);
         if (initialPosition == -1) throw new IllegalStateException("Item is not on it's own recipe ladder. Did we lookup mid-reload?");

@@ -7,6 +7,9 @@
   "authors": [
     "MattiDragon"
   ],
+  "contributors": [
+    "Sea_Kerman"
+  ],
   "contact": {
     "sources": "https://github.com/MattiDragon/ExtendedDrawers",
     "website": "https://modrinth.com/mod/extended-drawers",
@@ -31,7 +34,7 @@
   },
   "custom": {
     "loom:injected_interfaces": {
-      "net/minecraft/class_1863": ["io/github/mattidragon/extendeddrawers/misc/CompressionRecipeManager\u0024Provider"]
+      "net/minecraft/class_1863": ["io/github/mattidragon/extendeddrawers/compacting/CompressionRecipeManager\u0024Provider"]
     }
   },
   "mixins": [

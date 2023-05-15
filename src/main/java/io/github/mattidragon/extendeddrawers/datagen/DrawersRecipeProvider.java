@@ -48,9 +48,10 @@ class DrawersRecipeProvider extends FabricRecipeProvider {
         ShapedRecipeJsonBuilder.create(RecipeCategory.DECORATIONS, ModItems.COMPACTING_DRAWER)
                 .input('C', Items.CHEST)
                 .input('S', ItemTags.STONE_CRAFTING_MATERIALS)
+                .input('I', Items.IRON_BLOCK)
                 .input('P', Items.PISTON)
                 .pattern("SPS")
-                .pattern("CCC")
+                .pattern("CIC")
                 .pattern("SPS")
                 .criterion(RecipeProvider.hasItem(ModItems.COMPACTING_DRAWER), RecipeProvider.conditionsFromItem(ModItems.COMPACTING_DRAWER))
                 .offerTo(exporter);
