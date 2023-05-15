@@ -23,13 +23,17 @@ public final class CompressionRecipeManager {
     }
 
     public static CompressionRecipeManager of(RecipeManager recipeManager) {
-        return ((CompressionRecipeManager.Provider) recipeManager).extended_drawers$getCompactingManager();
+        return ((Provider) recipeManager).extended_drawers$getCompactingManager();
     }
 
     public void setOverrides(List<CompressionLadder> overrides) {
         this.overrides.clear();
         this.overrides.addAll(overrides);
         reload();
+    }
+
+    public List<CompressionLadder> getOverrides() {
+        return overrides;
     }
 
     public void reload() {

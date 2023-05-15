@@ -2,9 +2,9 @@ package io.github.mattidragon.extendeddrawers.storage;
 
 import io.github.mattidragon.extendeddrawers.block.entity.CompactingDrawerBlockEntity;
 import io.github.mattidragon.extendeddrawers.compacting.CompressionLadder;
+import io.github.mattidragon.extendeddrawers.compacting.CompressionRecipeManager;
 import io.github.mattidragon.extendeddrawers.config.CommonConfig;
 import io.github.mattidragon.extendeddrawers.item.UpgradeItem;
-import io.github.mattidragon.extendeddrawers.compacting.CompressionRecipeManager;
 import io.github.mattidragon.extendeddrawers.misc.ItemUtils;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.StoragePreconditions;

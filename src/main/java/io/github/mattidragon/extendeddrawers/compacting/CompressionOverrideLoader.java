@@ -7,13 +7,14 @@ import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import io.github.mattidragon.extendeddrawers.ExtendedDrawers;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
+import net.minecraft.command.CommandRegistryWrapper;
 import net.minecraft.command.argument.ItemStringReader;
-import net.minecraft.registry.Registries;
 import net.minecraft.resource.JsonDataLoader;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
 import net.minecraft.util.profiler.Profiler;
+import net.minecraft.util.registry.Registry;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -41,7 +42,7 @@ public class CompressionOverrideLoader extends JsonDataLoader {
                 var steps = new LinkedHashMap<ItemVariant, Integer>();
                 var currentCompression = 0;
 
-                for (var stepEntry : values.asMap().entrySet()) {
+                for (var stepEntry : values.entrySet()) {
                     var item = parseItem(stepEntry.getKey());
                     var compressionAmount = JsonHelper.asInt(stepEntry.getValue(), "compression amount for " + stepEntry.getKey());
                     if (compressionAmount == 0) throw new JsonParseException("Illegal compression amount for " + stepEntry.getKey() + ": 0");
@@ -69,7 +70,7 @@ public class CompressionOverrideLoader extends JsonDataLoader {
     private ItemVariant parseItem(String data) {
         try {
             var reader = new StringReader(data);
-            var result = ItemStringReader.item(Registries.ITEM.getReadOnlyWrapper(), reader);
+            var result = ItemStringReader.item(CommandRegistryWrapper.of(Registry.ITEM), reader);
             if (reader.getRemainingLength() != 0) {
                 throw new JsonParseException("Failed to parse item, found trailing data: '%s'".formatted(reader.getRemaining()));
             }
