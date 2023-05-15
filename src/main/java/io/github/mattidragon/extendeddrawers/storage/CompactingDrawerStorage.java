@@ -55,7 +55,8 @@ public final class CompactingDrawerStorage extends SnapshotParticipant<Compactin
         return true;
     }
 
-    public void dumpExcess(World world, BlockPos pos, Direction side, @Nullable PlayerEntity player) {
+    @Override
+    public void dumpExcess(World world, BlockPos pos, @Nullable Direction side, @Nullable PlayerEntity player) {
         if (amount > getCapacity()) {
             var slots = getSlots();
             // Iterate slots in reverse order
@@ -185,7 +186,7 @@ public final class CompactingDrawerStorage extends SnapshotParticipant<Compactin
         return size;
     }
 
-    private Slot[] getSlots() {
+    public Slot[] getSlots() {
         if (updatePending) updateSlots();
         return slots;
     }
@@ -255,6 +256,10 @@ public final class CompactingDrawerStorage extends SnapshotParticipant<Compactin
     @Override
     protected void onFinalCommit() {
         update();
+    }
+
+    public long getAmount() {
+        return amount;
     }
 
     record Snapshot(ItemVariant item, long amount) {
@@ -368,6 +373,10 @@ public final class CompactingDrawerStorage extends SnapshotParticipant<Compactin
 
         public boolean isBlocked() {
             return blocked;
+        }
+
+        public long getCompression() {
+            return compression;
         }
     }
 }

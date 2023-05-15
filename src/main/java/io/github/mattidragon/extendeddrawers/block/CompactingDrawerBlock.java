@@ -6,9 +6,11 @@ import io.github.mattidragon.extendeddrawers.block.base.CreativeBreakBlocker;
 import io.github.mattidragon.extendeddrawers.block.base.DrawerInteractionHandler;
 import io.github.mattidragon.extendeddrawers.block.base.NetworkBlockWithEntity;
 import io.github.mattidragon.extendeddrawers.block.entity.CompactingDrawerBlockEntity;
+import io.github.mattidragon.extendeddrawers.config.CommonConfig;
 import io.github.mattidragon.extendeddrawers.item.UpgradeItem;
 import io.github.mattidragon.extendeddrawers.misc.DrawerInteractionStatusManager;
 import io.github.mattidragon.extendeddrawers.misc.DrawerRaycastUtil;
+import io.github.mattidragon.extendeddrawers.misc.ItemUtils;
 import io.github.mattidragon.extendeddrawers.network.node.DrawerBlockNode;
 import io.github.mattidragon.extendeddrawers.registry.ModBlocks;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
@@ -74,6 +76,27 @@ public class CompactingDrawerBlock extends NetworkBlockWithEntity<CompactingDraw
                     .append(slot.resource().toStack().getName())
                     .formatted(Formatting.GRAY));
         }
+    }
+
+    @Override
+    public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
+        if (!state.isOf(newState.getBlock())) {
+            var drawer = getBlockEntity(world, pos);
+            if (drawer != null && CommonConfig.HANDLE.get().drawersDropContentsOnBreak()) {
+                var slots = drawer.storage.getSlots();
+                var amount = drawer.storage.getAmount();
+                // Iterate slots in reverse order
+                for (int i = slots.length - 1; i >= 0; i--) {
+                    var slot = slots[i];
+                    if (slot.isBlocked()) continue;
+
+                    var toDrop = amount / slot.getCompression();
+                    ItemUtils.offerOrDropStacks(world, pos, null, null, slot.getResource(), toDrop);
+                    amount -= toDrop * slot.getCompression();
+                }
+            }
+        }
+        super.onStateReplaced(state, world, pos, newState, moved);
     }
 
     @Override

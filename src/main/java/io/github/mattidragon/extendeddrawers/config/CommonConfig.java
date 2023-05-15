@@ -30,6 +30,8 @@ public record CommonConfig(
         boolean blockUpgradeRemovalsWithOverflow,
         @Comment("Allows you to place drawers insider shulker boxes and other drawers. Deeply nested storage can lead to chunk and player data corruption.")
         boolean allowRecursion,
+        @Comment("If enabled drawer drop their contents instead of retaining them. Can cause lag.")
+        boolean drawersDropContentsOnBreak,
         @Comment("The multiplier the T1 upgrade applies to the capacity of drawers")
         int t1UpgradeMultiplier,
         @Comment("The multiplier the T2 upgrade applies to the capacity of drawers")
@@ -48,6 +50,7 @@ public record CommonConfig(
                     CreativeExtractionBehaviour.FRONT_NO_BREAK,
                     true,
                     true,
+                    false,
                     false,
                     2,
                     4,
