@@ -6,6 +6,7 @@
   "mixins": [
     "ItemStackMixin",
     "ServerPlayerInteractionManagerMixin",
+    "ShulkerBoxBlockEntityMixin",
     "patchouli.BookRegistryMixin",
     "patchouli.FabricXplatModContainerAccess"
   ],
