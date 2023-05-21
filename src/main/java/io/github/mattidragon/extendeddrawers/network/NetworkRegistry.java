@@ -1,7 +1,6 @@
 package io.github.mattidragon.extendeddrawers.network;
 
 
-import com.kneelawk.graphlib.api.GraphLib;
 import com.kneelawk.graphlib.api.graph.GraphUniverse;
 import com.kneelawk.graphlib.api.node.BlockNode;
 import com.kneelawk.graphlib.api.node.BlockNodeDecoder;
@@ -15,7 +14,6 @@ import io.github.mattidragon.extendeddrawers.network.node.*;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.nbt.NbtElement;
-import net.minecraft.registry.Registry;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -30,7 +28,7 @@ public class NetworkRegistry {
         UNIVERSE.register();
         UNIVERSE.addDiscoverer((world, pos) -> {
             if (world.getBlockState(pos).getBlock() instanceof NetworkComponent component) {
-                DrawerNetworkBlockNode node = component.getNode();
+                var node = component.getNode();
                 return List.of(new BlockNodeDiscovery(node, () -> node));
             }
             return List.of();
@@ -57,7 +55,7 @@ public class NetworkRegistry {
 
         @Override
         public @Nullable NodeKeyExtra createKeyExtraFromTag(@Nullable NbtElement tag) {
-            return null;
+            return instance;
         }
     }
 }

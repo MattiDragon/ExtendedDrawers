@@ -30,7 +30,11 @@
     ]
   },
   "mixins": [
-    "extended_drawers.mixins.json"
+    "extended_drawers.mixins.json",
+    {
+      "config": "extended_drawers.client.mixins.json",
+      "environment": "client"
+    }
   ],
   "depends": {
     "fabricloader": ">=0.14.9",

@@ -1,6 +1,5 @@
 package io.github.mattidragon.extendeddrawers;
 
-import io.github.mattidragon.extendeddrawers.block.base.NetworkComponent;
 import io.github.mattidragon.extendeddrawers.config.ClientConfig;
 import io.github.mattidragon.extendeddrawers.config.CommonConfig;
 import io.github.mattidragon.extendeddrawers.misc.DrawerContentsLootFunction;
@@ -9,7 +8,6 @@ import io.github.mattidragon.extendeddrawers.networking.CompressionOverrideSyncP
 import io.github.mattidragon.extendeddrawers.registry.ModBlocks;
 import io.github.mattidragon.extendeddrawers.registry.ModItems;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerChunkEvents;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.ResourcePackActivationType;
@@ -19,7 +17,6 @@ import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockPos;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,29 +41,6 @@ public class ExtendedDrawers implements ModInitializer {
         CommonConfig.HANDLE.load();
         ResourceManagerHelper.registerBuiltinResourcePack(id("alt"), MOD_CONTAINER, Text.translatable("resourcepack.extended_drawers.alt"), ResourcePackActivationType.NORMAL);
         ResourceManagerHelper.registerBuiltinResourcePack(id("dev"), MOD_CONTAINER, Text.translatable("resourcepack.extended_drawers.programmer_art"), ResourcePackActivationType.NORMAL);
-
-        //TODO: move to better place
-        ServerChunkEvents.CHUNK_LOAD.register((world, chunk) -> {
-            if (!CommonConfig.HANDLE.get().automaticNetworkHealing()) return;
-            
-            var profiler = world.getProfiler();
-            profiler.push("extended_drawers:update_chunks");
-            var chunkPos = chunk.getPos();
-            var controller = NetworkRegistry.UNIVERSE.getGraphWorld(world);
-            //LOGGER.info("Healing graphs for chunk at " + chunkPos.x + ", " + chunkPos.z);
-            var area = BlockPos.iterate(chunkPos.getStartX(), chunk.getBottomY(), chunkPos.getStartZ(), chunkPos.getEndX(), chunk.getTopY(), chunkPos.getEndZ());
-            for (var pos : area) {
-                var state = chunk.getBlockState(pos);
-                if (state.getBlock() instanceof NetworkComponent) {
-                    if (controller.getGraphsAt(pos).findAny().isEmpty()) {
-                        LOGGER.info("Scheduling graph refresh at " + pos.getX() + ", " + pos.getY() + ", " + pos.getZ());
-                        BlockPos pos1 = pos.toImmutable();
-                        NetworkRegistry.UNIVERSE.getGraphWorld(world).updateNodes(pos1);
-                    }
-                }
-            }
-            profiler.pop();
-        });
     }
 
     private void registerItemGroup() {

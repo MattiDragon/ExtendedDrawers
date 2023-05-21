@@ -37,6 +37,17 @@ dependencies {
 }
 
 loom {
+    splitEnvironmentSourceSets()
+
+    // Apply datagen at runtime
+    mods {
+        extended_drawers {
+            sourceSet sourceSets.main
+            sourceSet sourceSets.client
+            modFiles.from file("src/main/generated")
+        }
+    }
+
     runs {
         datagen {
             inherit server
@@ -48,14 +59,6 @@ loom {
             ideConfigGenerated = true
 
             runDir "build/datagen/"
-        }
-    }
-
-    // Apply datagen at runtime
-    mods {
-        extended_drawers {
-            sourceSet sourceSets.main
-            modFiles.from file("src/main/generated")
         }
     }
 }

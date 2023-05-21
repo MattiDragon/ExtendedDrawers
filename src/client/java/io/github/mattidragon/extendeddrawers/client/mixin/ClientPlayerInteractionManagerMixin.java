@@ -1,4 +1,4 @@
-package io.github.mattidragon.extendeddrawers.mixin;
+package io.github.mattidragon.extendeddrawers.client.mixin;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import io.github.mattidragon.extendeddrawers.block.base.CreativeBreakBlocker;
@@ -9,7 +9,6 @@ import net.minecraft.client.network.ClientPlayerInteractionManager;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import org.objectweb.asm.Opcodes;
-import org.spongepowered.asm.mixin.Debug;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -17,7 +16,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Slice;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Debug(export = true)
 @Mixin(ClientPlayerInteractionManager.class)
 public class ClientPlayerInteractionManagerMixin {
     @Shadow private float currentBreakingProgress;
