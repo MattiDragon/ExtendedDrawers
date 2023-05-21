@@ -1,6 +1,5 @@
 package io.github.mattidragon.extendeddrawers;
 
-import com.kneelawk.graphlib.GraphLib;
 import io.github.mattidragon.extendeddrawers.block.base.NetworkComponent;
 import io.github.mattidragon.extendeddrawers.config.ClientConfig;
 import io.github.mattidragon.extendeddrawers.config.CommonConfig;
@@ -16,6 +15,8 @@ import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.ResourcePackActivationType;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
@@ -51,7 +52,7 @@ public class ExtendedDrawers implements ModInitializer {
             var profiler = world.getProfiler();
             profiler.push("extended_drawers:update_chunks");
             var chunkPos = chunk.getPos();
-            var controller = GraphLib.getController(world);
+            var controller = NetworkRegistry.UNIVERSE.getGraphWorld(world);
             //LOGGER.info("Healing graphs for chunk at " + chunkPos.x + ", " + chunkPos.z);
             var area = BlockPos.iterate(chunkPos.getStartX(), chunk.getBottomY(), chunkPos.getStartZ(), chunkPos.getEndX(), chunk.getTopY(), chunkPos.getEndZ());
             for (var pos : area) {
@@ -60,7 +61,7 @@ public class ExtendedDrawers implements ModInitializer {
                     if (controller.getGraphsAt(pos).findAny().isEmpty()) {
                         LOGGER.info("Scheduling graph refresh at " + pos.getX() + ", " + pos.getY() + ", " + pos.getZ());
                         BlockPos pos1 = pos.toImmutable();
-                        GraphLib.getController(world).updateNodes(pos1);
+                        NetworkRegistry.UNIVERSE.getGraphWorld(world).updateNodes(pos1);
                     }
                 }
             }
@@ -69,8 +70,9 @@ public class ExtendedDrawers implements ModInitializer {
     }
 
     private void registerItemGroup() {
-        FabricItemGroup.builder(id("main"))
+        Registry.register(Registries.ITEM_GROUP, id("main"), FabricItemGroup.builder()
                 .icon(ModItems.SHADOW_DRAWER::getDefaultStack)
+                .displayName(Text.translatable("itemGroup.extended_drawers.main"))
                 .entries((context, entries) -> {
                     entries.add(ModBlocks.SINGLE_DRAWER);
                     entries.add(ModBlocks.DOUBLE_DRAWER);
@@ -89,6 +91,6 @@ public class ExtendedDrawers implements ModInitializer {
                     entries.add(ModItems.UPGRADE_FRAME);
                     entries.add(ModItems.LOCK);
                 })
-                .build();
+                .build());
     }
 }

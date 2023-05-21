@@ -1,11 +1,8 @@
 package io.github.mattidragon.extendeddrawers.block;
 
-import com.kneelawk.graphlib.graph.BlockNode;
 import io.github.mattidragon.extendeddrawers.block.base.NetworkBlock;
 import io.github.mattidragon.extendeddrawers.network.node.ConnectorBlockNode;
-
-import java.util.Collection;
-import java.util.List;
+import io.github.mattidragon.extendeddrawers.network.node.DrawerNetworkBlockNode;
 
 public class ConnectorBlock extends NetworkBlock {
     public ConnectorBlock(Settings settings) {
@@ -13,7 +10,7 @@ public class ConnectorBlock extends NetworkBlock {
     }
     
     @Override
-    public Collection<BlockNode> createNodes() {
-        return List.of(ConnectorBlockNode.INSTANCE);
+    public DrawerNetworkBlockNode getNode() {
+        return ConnectorBlockNode.INSTANCE;
     }
 }

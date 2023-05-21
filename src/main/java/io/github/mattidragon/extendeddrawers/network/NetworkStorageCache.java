@@ -1,9 +1,7 @@
 package io.github.mattidragon.extendeddrawers.network;
 
-import com.kneelawk.graphlib.GraphLib;
-import com.kneelawk.graphlib.graph.BlockGraph;
-import com.kneelawk.graphlib.graph.BlockNodeHolder;
-import com.kneelawk.graphlib.graph.struct.Node;
+import com.kneelawk.graphlib.api.graph.BlockGraph;
+import com.kneelawk.graphlib.api.graph.NodeHolder;
 import io.github.mattidragon.extendeddrawers.ExtendedDrawers;
 import io.github.mattidragon.extendeddrawers.block.entity.StorageDrawerBlockEntity;
 import io.github.mattidragon.extendeddrawers.storage.DrawerStorage;
@@ -19,6 +17,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.function.LongFunction;
+
+import static io.github.mattidragon.extendeddrawers.network.NetworkRegistry.UNIVERSE;
 
 /**
  * Caches storages of all slots in networks to make lookup less expensive.
@@ -39,27 +39,25 @@ public class NetworkStorageCache {
     }
     
     public static CombinedStorage<ItemVariant, DrawerStorage> get(ServerWorld world, BlockPos pos) {
-        var optionalId = GraphLib.getController(world).getGraphsAt(pos).findFirst();
+        var optionalId = UNIVERSE.getGraphWorld(world).getGraphsAt(pos).findFirst();
         if (optionalId.isEmpty()) {
             ExtendedDrawers.LOGGER.warn("Missing graph at " + pos);
-            
             return new CombinedStorage<>(List.of());
         }
         var id = optionalId.getAsLong();
         return CACHE.computeIfAbsent(world.getRegistryKey(), key -> new Long2ObjectOpenHashMap<>())
                 .computeIfAbsent(id, (LongFunction<CombinedStorage<ItemVariant, DrawerStorage>>) id_ ->
-                    new CombinedStorage<>(getDrawerSlots(world, pos)));
+                    new CombinedStorage<>(getStorages(world, pos)));
     }
     
     @NotNull
-    private static ArrayList<DrawerStorage> getDrawerSlots(ServerWorld world, BlockPos pos) {
+    private static ArrayList<DrawerStorage> getStorages(ServerWorld world, BlockPos pos) {
         return new ArrayList<>(
-                GraphLib.getController(world).getGraphsAt(pos)
-                        .mapToObj(GraphLib.getController(world)::getGraph)
+                UNIVERSE.getGraphWorld(world).getGraphsAt(pos)
+                        .mapToObj(UNIVERSE.getGraphWorld(world)::getGraph)
                         .filter(Objects::nonNull)
                         .flatMap(BlockGraph::getNodes)
-                        .map(Node::data)
-                        .map(BlockNodeHolder::getPos)
+                        .map(NodeHolder::getPos)
                         .map(world::getBlockEntity)
                         .filter(StorageDrawerBlockEntity.class::isInstance)
                         .map(StorageDrawerBlockEntity.class::cast)

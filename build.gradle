@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '0.12-SNAPSHOT'
+    id 'fabric-loom' version '1.2-SNAPSHOT'
     id 'io.github.juuxel.loom-quiltflower' version '1.7.1'
     id 'maven-publish'
 }
@@ -30,8 +30,7 @@ dependencies {
     //modImplementation "vazkii.patchouli:Patchouli:$patchouli_version"
 
     // Mixin Extras
-    include implementation("com.github.LlamaLad7:MixinExtras:$mixinextras_version")
-    annotationProcessor("com.github.LlamaLad7:MixinExtras:$mixinextras_version")
+    annotationProcessor(include(modImplementation("com.github.LlamaLad7:MixinExtras:$mixinextras_version")))
 
     // Add generated data to runtime classpath (slightly hacky)
     runtimeOnly files("src/main/generated")

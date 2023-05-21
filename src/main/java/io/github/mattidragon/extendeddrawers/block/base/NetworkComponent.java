@@ -1,9 +1,7 @@
 package io.github.mattidragon.extendeddrawers.block.base;
 
-import com.kneelawk.graphlib.graph.BlockNode;
-
-import java.util.Collection;
+import io.github.mattidragon.extendeddrawers.network.node.DrawerNetworkBlockNode;
 
 public interface NetworkComponent {
-    Collection<BlockNode> createNodes();
+    DrawerNetworkBlockNode getNode();
 }

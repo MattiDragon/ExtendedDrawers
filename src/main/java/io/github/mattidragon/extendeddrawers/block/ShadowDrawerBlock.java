@@ -1,12 +1,12 @@
 package io.github.mattidragon.extendeddrawers.block;
 
-import com.kneelawk.graphlib.graph.BlockNode;
 import io.github.mattidragon.extendeddrawers.block.base.CreativeBreakBlocker;
 import io.github.mattidragon.extendeddrawers.block.base.DrawerInteractionHandler;
 import io.github.mattidragon.extendeddrawers.block.base.NetworkBlockWithEntity;
 import io.github.mattidragon.extendeddrawers.block.entity.ShadowDrawerBlockEntity;
 import io.github.mattidragon.extendeddrawers.misc.DrawerRaycastUtil;
 import io.github.mattidragon.extendeddrawers.network.NetworkStorageCache;
+import io.github.mattidragon.extendeddrawers.network.node.DrawerNetworkBlockNode;
 import io.github.mattidragon.extendeddrawers.network.node.ShadowDrawerBlockNode;
 import io.github.mattidragon.extendeddrawers.registry.ModBlocks;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
@@ -36,9 +36,6 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Collection;
-import java.util.List;
 
 import static io.github.mattidragon.extendeddrawers.misc.DrawerInteractionStatusManager.getAndResetInsertStatus;
 
@@ -155,8 +152,8 @@ public class ShadowDrawerBlock extends NetworkBlockWithEntity<ShadowDrawerBlockE
     }
 
     @Override
-    public Collection<BlockNode> createNodes() {
-        return List.of(ShadowDrawerBlockNode.INSTANCE);
+    public DrawerNetworkBlockNode getNode() {
+        return ShadowDrawerBlockNode.INSTANCE;
     }
 
     @Override

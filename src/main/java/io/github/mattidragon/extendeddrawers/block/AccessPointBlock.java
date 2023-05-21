@@ -1,16 +1,14 @@
 package io.github.mattidragon.extendeddrawers.block;
 
-import com.kneelawk.graphlib.GraphLib;
-import com.kneelawk.graphlib.graph.BlockGraph;
-import com.kneelawk.graphlib.graph.BlockGraphController;
-import com.kneelawk.graphlib.graph.BlockNode;
-import com.kneelawk.graphlib.graph.BlockNodeHolder;
-import com.kneelawk.graphlib.graph.struct.Node;
+import com.kneelawk.graphlib.api.graph.BlockGraph;
+import com.kneelawk.graphlib.api.graph.NodeHolder;
 import io.github.mattidragon.extendeddrawers.block.base.DrawerInteractionHandler;
 import io.github.mattidragon.extendeddrawers.block.base.NetworkBlock;
 import io.github.mattidragon.extendeddrawers.block.entity.ShadowDrawerBlockEntity;
+import io.github.mattidragon.extendeddrawers.network.NetworkRegistry;
 import io.github.mattidragon.extendeddrawers.network.NetworkStorageCache;
 import io.github.mattidragon.extendeddrawers.network.node.AccessPointBlockNode;
+import io.github.mattidragon.extendeddrawers.network.node.DrawerNetworkBlockNode;
 import io.github.mattidragon.extendeddrawers.storage.DrawerStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
@@ -29,8 +27,6 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
-import java.util.Collection;
-import java.util.List;
 import java.util.Objects;
 
 import static io.github.mattidragon.extendeddrawers.misc.DrawerInteractionStatusManager.getAndResetInsertStatus;
@@ -120,13 +116,12 @@ public class AccessPointBlock extends NetworkBlock implements DrawerInteractionH
         storages.forEach(storage -> storage.setHidden(newState));
 
         //TODO: find better way to do this, integrate shadow drawers into math
-        BlockGraphController controller = GraphLib.getController(serverWorld);
+        var controller = NetworkRegistry.UNIVERSE.getGraphWorld(serverWorld);
         controller.getGraphsAt(pos)
                 .mapToObj(controller::getGraph)
                 .filter(Objects::nonNull)
                 .flatMap(BlockGraph::getNodes)
-                .map(Node::data)
-                .map(BlockNodeHolder::getPos)
+                .map(NodeHolder::getPos)
                 .map(serverWorld::getBlockEntity)
                 .filter(ShadowDrawerBlockEntity.class::isInstance)
                 .map(ShadowDrawerBlockEntity.class::cast)
@@ -136,7 +131,7 @@ public class AccessPointBlock extends NetworkBlock implements DrawerInteractionH
     }
 
     @Override
-    public Collection<BlockNode> createNodes() {
-        return List.of(AccessPointBlockNode.INSTANCE);
+    public DrawerNetworkBlockNode getNode() {
+        return AccessPointBlockNode.INSTANCE;
     }
 }

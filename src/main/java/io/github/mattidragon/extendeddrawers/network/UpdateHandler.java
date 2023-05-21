@@ -1,8 +1,7 @@
 package io.github.mattidragon.extendeddrawers.network;
 
-import com.kneelawk.graphlib.GraphLib;
-import com.kneelawk.graphlib.graph.BlockNodeHolder;
-import com.kneelawk.graphlib.graph.struct.Node;
+import com.kneelawk.graphlib.api.graph.NodeHolder;
+import com.kneelawk.graphlib.api.node.BlockNode;
 import io.github.mattidragon.extendeddrawers.network.node.DrawerNetworkBlockNode;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
@@ -20,7 +19,7 @@ public class UpdateHandler {
     private static final Map<RegistryKey<World>, Long2ObjectMap<ChangeType>> UPDATES = new HashMap<>();
 
     public static void scheduleUpdate(ServerWorld world, BlockPos pos, ChangeType type) {
-        GraphLib.getController(world).getGraphsAt(pos).forEach(graph -> scheduleUpdate(world, graph, type));
+        NetworkRegistry.UNIVERSE.getGraphWorld(world).getGraphsAt(pos).forEach(graph -> scheduleUpdate(world, graph, type));
     }
     
     public static void scheduleUpdate(ServerWorld world, long id, ChangeType type) {
@@ -29,7 +28,7 @@ public class UpdateHandler {
     }
     
     public static void flushUpdates(ServerWorld world) {
-        var controller = GraphLib.getController(world);
+        var controller = NetworkRegistry.UNIVERSE.getGraphWorld(world);
         var profiler = world.getProfiler();
         profiler.push("extended_drawers:network_updates");
         var updates = UPDATES.remove(world.getRegistryKey());
@@ -48,9 +47,9 @@ public class UpdateHandler {
         UPDATES.clear();
     }
 
-    private static void updateGraph(ServerWorld world, Stream<Node<BlockNodeHolder>> nodes) {
+    private static void updateGraph(ServerWorld world, Stream<NodeHolder<BlockNode>> nodes) {
         nodes.forEach(node -> {
-            if (node.data().getNode() instanceof DrawerNetworkBlockNode drawerNode) {
+            if (node.getNode() instanceof DrawerNetworkBlockNode drawerNode) {
                 drawerNode.update(world, node);
             }
         });

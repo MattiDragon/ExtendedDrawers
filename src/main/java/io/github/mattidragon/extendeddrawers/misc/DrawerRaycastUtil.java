@@ -29,6 +29,6 @@ public class DrawerRaycastUtil {
         var length = Vec3d.ofCenter(target).subtract(from).length() + 1; //Add a bit of extra length for consistency
         var looking = player.getRotationVector();
         var to = from.add(looking.multiply(length));
-        return player.world.raycast(new RaycastContext(from, to, RaycastContext.ShapeType.OUTLINE, RaycastContext.FluidHandling.NONE, player));
+        return player.getWorld().raycast(new RaycastContext(from, to, RaycastContext.ShapeType.OUTLINE, RaycastContext.FluidHandling.NONE, player));
     }
 }

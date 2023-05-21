@@ -1,6 +1,5 @@
 package io.github.mattidragon.extendeddrawers.block;
 
-import com.kneelawk.graphlib.graph.BlockNode;
 import io.github.mattidragon.extendeddrawers.ExtendedDrawers;
 import io.github.mattidragon.extendeddrawers.block.base.CreativeBreakBlocker;
 import io.github.mattidragon.extendeddrawers.block.base.DrawerInteractionHandler;
@@ -12,6 +11,7 @@ import io.github.mattidragon.extendeddrawers.misc.DrawerInteractionStatusManager
 import io.github.mattidragon.extendeddrawers.misc.DrawerRaycastUtil;
 import io.github.mattidragon.extendeddrawers.misc.ItemUtils;
 import io.github.mattidragon.extendeddrawers.network.node.DrawerBlockNode;
+import io.github.mattidragon.extendeddrawers.network.node.DrawerNetworkBlockNode;
 import io.github.mattidragon.extendeddrawers.registry.ModBlocks;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.item.PlayerInventoryStorage;
@@ -44,7 +44,6 @@ import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
 import java.util.List;
 
 @SuppressWarnings({"UnstableApiUsage", "deprecation"}) // transfer api and mojank block method deprecation
@@ -290,7 +289,7 @@ public class CompactingDrawerBlock extends NetworkBlockWithEntity<CompactingDraw
     }
     
     @Override
-    public Collection<BlockNode> createNodes() {
-        return List.of(DrawerBlockNode.INSTANCE);
+    public DrawerNetworkBlockNode getNode() {
+        return DrawerBlockNode.INSTANCE;
     }
 }

@@ -1,7 +1,7 @@
 package io.github.mattidragon.extendeddrawers.network.node;
 
-import com.kneelawk.graphlib.graph.BlockNodeHolder;
-import com.kneelawk.graphlib.graph.struct.Node;
+import com.kneelawk.graphlib.api.graph.NodeHolder;
+import com.kneelawk.graphlib.api.node.BlockNode;
 import io.github.mattidragon.extendeddrawers.block.entity.ShadowDrawerBlockEntity;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.server.world.ServerWorld;
@@ -29,8 +29,8 @@ public class ShadowDrawerBlockNode implements DrawerNetworkBlockNode {
     }
     
     @Override
-    public void update(ServerWorld world, Node<BlockNodeHolder> node) {
-        var pos = node.data().getPos();
+    public void update(ServerWorld world, NodeHolder<BlockNode> node) {
+        var pos = node.getPos();
 
         if (world.getBlockEntity(pos) instanceof ShadowDrawerBlockEntity drawer)
             drawer.recalculateContents();

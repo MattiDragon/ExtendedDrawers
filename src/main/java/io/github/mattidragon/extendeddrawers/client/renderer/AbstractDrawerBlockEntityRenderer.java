@@ -78,8 +78,8 @@ public abstract class AbstractDrawerBlockEntityRenderer<T extends BlockEntity> i
         matrices.scale(0.25f, 0.25f, 0.25f);
         var emitter = Objects.requireNonNull(RendererAccess.INSTANCE.getRenderer()).meshBuilder().getEmitter();
         emitter.square(Direction.UP, 0, 0, 1, 1, 0);
-        emitter.spriteBake(0, sprite, MutableQuadView.BAKE_LOCK_UV);
-        vertexConsumers.getBuffer(RenderLayer.getCutout()).quad(matrices.peek(), emitter.toBakedQuad(0, sprite, false), 1, 1, 1, light, overlay);
+        emitter.spriteBake(sprite, MutableQuadView.BAKE_LOCK_UV);
+        vertexConsumers.getBuffer(RenderLayer.getCutout()).quad(matrices.peek(), emitter.toBakedQuad(sprite), 1, 1, 1, light, overlay);
         matrices.pop();
     }
 
