@@ -1,6 +1,6 @@
 package io.github.mattidragon.extendeddrawers.misc;
 
-import io.github.mattidragon.extendeddrawers.config.CommonConfig;
+import io.github.mattidragon.extendeddrawers.config.ExtendedDrawersConfig;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
 
@@ -22,7 +22,7 @@ public final class DrawerInteractionStatusManager {
     public static boolean getAndResetInsertStatus(PlayerEntity player, BlockPos pos, int slot) {
         var timestamp = player.getWorld().getTime();
         var interaction = INSERTIONS.get().remove(player);
-        if (interaction != null && interaction.pos.equals(pos) && timestamp - interaction.timestamp < CommonConfig.HANDLE.get().insertAllTime() && interaction.slot == slot)
+        if (interaction != null && interaction.pos.equals(pos) && timestamp - interaction.timestamp < ExtendedDrawersConfig.get().misc().insertAllTime() && interaction.slot == slot)
             return true;
             
         INSERTIONS.get().put(player, new Interaction(timestamp, pos.toImmutable(), slot));

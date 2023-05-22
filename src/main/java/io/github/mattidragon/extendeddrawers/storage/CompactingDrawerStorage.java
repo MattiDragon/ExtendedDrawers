@@ -3,7 +3,7 @@ package io.github.mattidragon.extendeddrawers.storage;
 import io.github.mattidragon.extendeddrawers.block.entity.CompactingDrawerBlockEntity;
 import io.github.mattidragon.extendeddrawers.compacting.CompressionLadder;
 import io.github.mattidragon.extendeddrawers.compacting.CompressionRecipeManager;
-import io.github.mattidragon.extendeddrawers.config.CommonConfig;
+import io.github.mattidragon.extendeddrawers.config.ExtendedDrawersConfig;
 import io.github.mattidragon.extendeddrawers.item.UpgradeItem;
 import io.github.mattidragon.extendeddrawers.misc.ItemUtils;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
@@ -43,7 +43,7 @@ public final class CompactingDrawerStorage extends SnapshotParticipant<Compactin
     public boolean changeUpgrade(@Nullable UpgradeItem newUpgrade, World world, BlockPos pos, Direction side, @Nullable PlayerEntity player) {
         var oldUpgrade = settings.upgrade;
         settings.upgrade = newUpgrade;
-        if (amount > getCapacity() && CommonConfig.HANDLE.get().blockUpgradeRemovalsWithOverflow()) {
+        if (amount > getCapacity() && ExtendedDrawersConfig.get().misc().blockUpgradeRemovalsWithOverflow()) {
             settings.upgrade = oldUpgrade;
             if (player != null)
                 player.sendMessage(Text.translatable("extended_drawer.drawer.upgrade_fail"), true);
@@ -78,7 +78,7 @@ public final class CompactingDrawerStorage extends SnapshotParticipant<Compactin
     }
 
     public long getCapacity() {
-        var config = CommonConfig.HANDLE.get();
+        var config = ExtendedDrawersConfig.get().storage();
         long capacity = config.compactingCapacity();
         if (config.stackSizeAffectsCapacity())
             capacity /= 64.0 / item.getItem().getMaxCount();
@@ -299,7 +299,7 @@ public final class CompactingDrawerStorage extends SnapshotParticipant<Compactin
             StoragePreconditions.notBlankNotNegative(item, maxAmount);
             if (blocked) return 0;
             if (!this.item.equals(item) && !this.item.isBlank()) return 0;
-            if (!CommonConfig.HANDLE.get().allowRecursion() && !item.getItem().canBeNested()) return 0;
+            if (!ExtendedDrawersConfig.get().misc().allowRecursion() && !item.getItem().canBeNested()) return 0;
             if (this.item.isBlank() && settings.locked && !settings.lockOverridden) return 0;
 
             if (this.item.isBlank()) { // Special case for when drawer doesn't have item

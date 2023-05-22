@@ -1,7 +1,7 @@
 package io.github.mattidragon.extendeddrawers;
 
-import io.github.mattidragon.extendeddrawers.config.ClientConfig;
-import io.github.mattidragon.extendeddrawers.config.CommonConfig;
+import io.github.mattidragon.extendeddrawers.config.old.ClientConfig;
+import io.github.mattidragon.extendeddrawers.config.old.CommonConfig;
 import io.github.mattidragon.extendeddrawers.misc.DrawerContentsLootFunction;
 import io.github.mattidragon.extendeddrawers.network.NetworkRegistry;
 import io.github.mattidragon.extendeddrawers.networking.CompressionOverrideSyncPacket;

@@ -1,6 +1,7 @@
 package io.github.mattidragon.extendeddrawers.client.renderer;
 
-import io.github.mattidragon.extendeddrawers.config.ClientConfig;
+import io.github.mattidragon.extendeddrawers.config.ExtendedDrawersConfig;
+import io.github.mattidragon.extendeddrawers.config.old.ClientConfig;
 import net.fabricmc.fabric.api.renderer.v1.RendererAccess;
 import net.fabricmc.fabric.api.renderer.v1.mesh.MutableQuadView;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
@@ -41,7 +42,7 @@ public abstract class AbstractDrawerBlockEntityRenderer<T extends BlockEntity> i
     public void renderSlot(ItemVariant item, @Nullable Long amount, List<Sprite> icons, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay, int seed, BlockPos pos, World world) {
         var player = MinecraftClient.getInstance().player;
         var playerPos = player == null ? Vec3d.ofCenter(pos) : player.getPos();
-        var config = ClientConfig.HANDLE.get();
+        var config = ExtendedDrawersConfig.get().client();
     
         if (pos.isWithinDistance(playerPos, config.textRenderDistance()) && amount != null)
             renderText(amount, light, matrices, vertexConsumers);
@@ -84,7 +85,7 @@ public abstract class AbstractDrawerBlockEntityRenderer<T extends BlockEntity> i
     }
 
     protected void renderItem(ItemVariant item, int light, MatrixStack matrices, VertexConsumerProvider vertexConsumers, World world, int seed) {
-        var itemScale = ClientConfig.HANDLE.get().itemScale();
+        var itemScale = ExtendedDrawersConfig.get().client().itemScale();
 
         matrices.push();
         matrices.scale(itemScale, itemScale, 1);
@@ -95,7 +96,7 @@ public abstract class AbstractDrawerBlockEntityRenderer<T extends BlockEntity> i
     }
     
     protected void renderText(long amount, int light, MatrixStack matrices, VertexConsumerProvider vertexConsumers) {
-        var itemScale = ClientConfig.HANDLE.get().itemScale();
+        var itemScale = ExtendedDrawersConfig.get().client().itemScale();
 
         matrices.push();
         matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(180));

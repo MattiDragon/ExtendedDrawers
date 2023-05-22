@@ -14,6 +14,8 @@ repositories {
     maven { url "https://kneelawk.com/maven/" }
     maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
     maven { url "https://maven.blamejared.com" }
+    maven { url "https://maven.isxander.dev/releases" }
+    maven { url "https://maven.terraformersmc.com" }
     maven { url "https://jitpack.io" }
 }
 
@@ -28,6 +30,9 @@ dependencies {
     include modImplementation("com.github.mattidragon:mconfig:$mconfig_version")
     include modImplementation("com.kneelawk:graphlib:$graphlib_version")
     //modImplementation "vazkii.patchouli:Patchouli:$patchouli_version"
+
+    modImplementation include("dev.isxander.yacl:yet-another-config-lib-fabric:$yacl_version")
+    modImplementation "com.terraformersmc:modmenu:$modmenu_version"
 
     // Mixin Extras
     annotationProcessor(include(modImplementation("com.github.LlamaLad7:MixinExtras:$mixinextras_version")))

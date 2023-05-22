@@ -5,7 +5,7 @@ import io.github.mattidragon.extendeddrawers.block.base.CreativeBreakBlocker;
 import io.github.mattidragon.extendeddrawers.block.base.DrawerInteractionHandler;
 import io.github.mattidragon.extendeddrawers.block.base.NetworkBlockWithEntity;
 import io.github.mattidragon.extendeddrawers.block.entity.CompactingDrawerBlockEntity;
-import io.github.mattidragon.extendeddrawers.config.CommonConfig;
+import io.github.mattidragon.extendeddrawers.config.ExtendedDrawersConfig;
 import io.github.mattidragon.extendeddrawers.item.UpgradeItem;
 import io.github.mattidragon.extendeddrawers.misc.DrawerInteractionStatusManager;
 import io.github.mattidragon.extendeddrawers.misc.DrawerRaycastUtil;
@@ -81,7 +81,7 @@ public class CompactingDrawerBlock extends NetworkBlockWithEntity<CompactingDraw
     public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
         if (!state.isOf(newState.getBlock())) {
             var drawer = getBlockEntity(world, pos);
-            if (drawer != null && CommonConfig.HANDLE.get().drawersDropContentsOnBreak()) {
+            if (drawer != null && ExtendedDrawersConfig.get().misc().drawersDropContentsOnBreak()) {
                 var slots = drawer.storage.getSlots();
                 var amount = drawer.storage.getAmount();
                 // Iterate slots in reverse order

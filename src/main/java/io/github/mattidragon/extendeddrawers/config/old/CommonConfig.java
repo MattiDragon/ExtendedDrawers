@@ -1,4 +1,4 @@
-package io.github.mattidragon.extendeddrawers.config;
+package io.github.mattidragon.extendeddrawers.config.old;
 
 import io.github.mattidragon.extendeddrawers.misc.CreativeExtractionBehaviour;
 import io.github.mattidragon.mconfig.config.*;
@@ -40,6 +40,7 @@ public record CommonConfig(
         int t3UpgradeMultiplier,
         @Comment("The multiplier the T4 upgrade applies to the capacity of drawers")
         int t4UpgradeMultiplier) {
+
     public static final Config<CommonConfig> HANDLE = ConfigManager.register(ConfigType.COMMON,
             "extended_drawers",
             new CommonConfig(10,

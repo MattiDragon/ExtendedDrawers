@@ -1,7 +1,7 @@
 package io.github.mattidragon.extendeddrawers.item;
 
 import io.github.mattidragon.extendeddrawers.block.base.DrawerInteractionHandler;
-import io.github.mattidragon.extendeddrawers.config.CommonConfig;
+import io.github.mattidragon.extendeddrawers.config.ExtendedDrawersConfig;
 import it.unimi.dsi.fastutil.longs.Long2LongFunction;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemUsageContext;
@@ -25,7 +25,7 @@ public class UpgradeItem extends Item {
     }
 
     private static int getMultiplier(int tier) {
-        var config = CommonConfig.HANDLE.get();
+        var config = ExtendedDrawersConfig.get().storage();
         return switch (tier) {
             case 1 -> config.t1UpgradeMultiplier();
             case 2 -> config.t2UpgradeMultiplier();

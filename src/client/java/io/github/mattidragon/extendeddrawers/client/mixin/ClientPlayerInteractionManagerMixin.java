@@ -2,7 +2,8 @@ package io.github.mattidragon.extendeddrawers.client.mixin;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import io.github.mattidragon.extendeddrawers.block.base.CreativeBreakBlocker;
-import io.github.mattidragon.extendeddrawers.config.CommonConfig;
+import io.github.mattidragon.extendeddrawers.config.ExtendedDrawersConfig;
+import io.github.mattidragon.extendeddrawers.config.old.CommonConfig;
 import io.github.mattidragon.extendeddrawers.misc.CreativeExtractionBehaviour;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerInteractionManager;
@@ -23,12 +24,12 @@ public class ClientPlayerInteractionManagerMixin {
     // Makes creative block breaking behave like survival if we are blocking breaking of a drawer. The other injection handles complete blocking
     @ModifyExpressionValue(method = {"attackBlock", "updateBlockBreakingProgress"}, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/GameMode;isCreative()Z"))
     private boolean extended_drawers$stopCreativeBreaking(boolean original, BlockPos pos, Direction direction) {
-        if (CommonConfig.HANDLE.get().creativeExtractionMode() == CreativeExtractionBehaviour.NORMAL) return original;
+        if (ExtendedDrawersConfig.get().misc().creativeExtractionMode() == CreativeExtractionBehaviour.NORMAL) return original;
 
         var world = MinecraftClient.getInstance().world;
         if (world == null) return original;
         if (world.getBlockState(pos).getBlock() instanceof CreativeBreakBlocker blocker) {
-            if (!CommonConfig.HANDLE.get().creativeExtractionMode().isFrontOnly() || blocker.shouldBlock(world, pos, direction)) {
+            if (!ExtendedDrawersConfig.get().misc().creativeExtractionMode().isFrontOnly() || blocker.shouldBlock(world, pos, direction)) {
                 return false;
             }
         }
@@ -45,7 +46,7 @@ public class ClientPlayerInteractionManagerMixin {
             slice = @Slice(from = @At(value = "INVOKE",
                     target = "Lnet/minecraft/block/BlockState;calcBlockBreakingDelta(Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/world/BlockView;Lnet/minecraft/util/math/BlockPos;)F")))
     private void extended_drawers$stopCreativeBreaking(BlockPos pos, Direction direction, CallbackInfoReturnable<Boolean> cir) {
-        if (CommonConfig.HANDLE.get().creativeExtractionMode().isAllowMine()) return;
+        if (ExtendedDrawersConfig.get().misc().creativeExtractionMode().isAllowMine()) return;
 
         var client = MinecraftClient.getInstance();
         if (client.world == null) return;
@@ -56,7 +57,7 @@ public class ClientPlayerInteractionManagerMixin {
         var block = client.world.getBlockState(pos).getBlock();
         if (!(block instanceof CreativeBreakBlocker blocker)) return;
 
-        if (!CommonConfig.HANDLE.get().creativeExtractionMode().isFrontOnly() || blocker.shouldBlock(client.world, pos, direction)) {
+        if (!ExtendedDrawersConfig.get().misc().creativeExtractionMode().isFrontOnly() || blocker.shouldBlock(client.world, pos, direction)) {
             currentBreakingProgress = 0;
         }
     }

@@ -1,6 +1,6 @@
 package io.github.mattidragon.extendeddrawers.item;
 
-import io.github.mattidragon.extendeddrawers.config.CommonConfig;
+import io.github.mattidragon.extendeddrawers.config.ExtendedDrawersConfig;
 import net.minecraft.block.Block;
 import net.minecraft.item.BlockItem;
 
@@ -11,6 +11,6 @@ public class DrawerItem extends BlockItem {
 
     @Override
     public boolean canBeNested() {
-        return CommonConfig.HANDLE.get().allowRecursion();
+        return ExtendedDrawersConfig.get().misc().allowRecursion();
     }
 }

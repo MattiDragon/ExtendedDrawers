@@ -3,7 +3,8 @@ package io.github.mattidragon.extendeddrawers.client.renderer;
 import io.github.mattidragon.extendeddrawers.block.CompactingDrawerBlock;
 import io.github.mattidragon.extendeddrawers.block.DrawerBlock;
 import io.github.mattidragon.extendeddrawers.block.entity.CompactingDrawerBlockEntity;
-import io.github.mattidragon.extendeddrawers.config.ClientConfig;
+import io.github.mattidragon.extendeddrawers.config.ExtendedDrawersConfig;
+import io.github.mattidragon.extendeddrawers.config.old.ClientConfig;
 import io.github.mattidragon.extendeddrawers.storage.CompactingDrawerStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.minecraft.client.MinecraftClient;
@@ -34,7 +35,7 @@ public class CompactingDrawerBlockEntityRenderer extends AbstractDrawerBlockEnti
     
     @Override
     public int getRenderDistance() {
-        var config = ClientConfig.HANDLE.get();
+        var config = ExtendedDrawersConfig.get().client();
         return Math.max(config.iconRenderDistance(), Math.max(config.textRenderDistance(), config.itemRenderDistance()));
     }
     
@@ -89,7 +90,7 @@ public class CompactingDrawerBlockEntityRenderer extends AbstractDrawerBlockEnti
         var player = MinecraftClient.getInstance().player;
         var playerPos = player == null ? Vec3d.ofCenter(drawer.getPos()) : player.getPos();
 
-        if (drawer.getPos().isWithinDistance(playerPos, ClientConfig.HANDLE.get().iconRenderDistance())) {
+        if (drawer.getPos().isWithinDistance(playerPos, ExtendedDrawersConfig.get().client().iconRenderDistance())) {
             renderIcons(icons, light, matrices, vertexConsumers, overlay);
         }
     }
@@ -99,10 +100,10 @@ public class CompactingDrawerBlockEntityRenderer extends AbstractDrawerBlockEnti
 
         var item = slot.getStorage().isHidden() ? ItemVariant.blank() : slot.getResource();
         @Nullable
-        var amount = ((slot.getAmount() == 0) || ClientConfig.HANDLE.get().displayEmptyCount()) ? null : slot.getAmount();
+        var amount = ((slot.getAmount() == 0) || ExtendedDrawersConfig.get().client().displayEmptyCount()) ? null : slot.getAmount();
         //noinspection ConstantConditions
         var playerPos = MinecraftClient.getInstance().player.getPos();
-        var config = ClientConfig.HANDLE.get();
+        var config = ExtendedDrawersConfig.get().client();
 
         if (pos.isWithinDistance(playerPos, config.textRenderDistance()) && amount != null)
             renderText(amount, light, matrices, vertexConsumers);

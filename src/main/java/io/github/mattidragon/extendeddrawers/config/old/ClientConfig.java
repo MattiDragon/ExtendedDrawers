@@ -1,4 +1,4 @@
-package io.github.mattidragon.extendeddrawers.config;
+package io.github.mattidragon.extendeddrawers.config.old;
 
 import io.github.mattidragon.mconfig.config.Comment;
 import io.github.mattidragon.mconfig.config.Config;

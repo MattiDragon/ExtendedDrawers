@@ -1,7 +1,7 @@
 package io.github.mattidragon.extendeddrawers.block.entity;
 
 import io.github.mattidragon.extendeddrawers.block.DrawerBlock;
-import io.github.mattidragon.extendeddrawers.config.CommonConfig;
+import io.github.mattidragon.extendeddrawers.config.ExtendedDrawersConfig;
 import io.github.mattidragon.extendeddrawers.registry.ModBlocks;
 import io.github.mattidragon.extendeddrawers.storage.DrawerSlot;
 import io.github.mattidragon.extendeddrawers.storage.DrawerStorage;
@@ -34,7 +34,7 @@ public class DrawerBlockEntity extends StorageDrawerBlockEntity {
     
     public DrawerBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlocks.DRAWER_BLOCK_ENTITY, pos, state);
-        var capacityMultiplier = CommonConfig.HANDLE.get().slotCountAffectsCapacity() ? 1.0 / slots : 1;
+        var capacityMultiplier = ExtendedDrawersConfig.get().storage().slotCountAffectsCapacity() ? 1.0 / slots : 1;
         for (int i = 0; i < storages.length; i++) {
             storages[i] = new DrawerSlot(this, capacityMultiplier);
         }
