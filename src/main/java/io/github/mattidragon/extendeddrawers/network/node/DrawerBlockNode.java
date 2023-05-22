@@ -1,7 +1,10 @@
 package io.github.mattidragon.extendeddrawers.network.node;
 
+import com.kneelawk.graphlib.api.graph.NodeContext;
 import com.kneelawk.graphlib.api.graph.NodeHolder;
 import com.kneelawk.graphlib.api.node.BlockNode;
+import com.kneelawk.graphlib.api.node.NodeKey;
+import com.kneelawk.graphlib.api.util.SimpleNodeKey;
 import net.minecraft.block.Block;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.server.world.ServerWorld;
@@ -11,23 +14,14 @@ import org.jetbrains.annotations.Nullable;
 
 import static io.github.mattidragon.extendeddrawers.ExtendedDrawers.id;
 
-public class DrawerBlockNode implements DrawerNetworkBlockNode {
+public record DrawerBlockNode(NodeContext context) implements DrawerNetworkBlockNode {
     public static final Identifier ID = id("drawer");
-    public static final DrawerBlockNode INSTANCE = new DrawerBlockNode();
-
-    private DrawerBlockNode() {
-    }
 
     @Override
     public @NotNull Identifier getTypeId() {
         return ID;
     }
-    
-    @Override
-    public @Nullable NbtElement toTag() {
-        return null;
-    }
-    
+
     @Override
     public void update(ServerWorld world, NodeHolder<BlockNode> node) {
         var pos = node.getPos();

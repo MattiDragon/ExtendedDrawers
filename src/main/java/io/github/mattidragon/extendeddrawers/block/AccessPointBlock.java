@@ -1,6 +1,7 @@
 package io.github.mattidragon.extendeddrawers.block;
 
 import com.kneelawk.graphlib.api.graph.BlockGraph;
+import com.kneelawk.graphlib.api.graph.NodeContext;
 import com.kneelawk.graphlib.api.graph.NodeHolder;
 import io.github.mattidragon.extendeddrawers.block.base.DrawerInteractionHandler;
 import io.github.mattidragon.extendeddrawers.block.base.NetworkBlock;
@@ -131,7 +132,7 @@ public class AccessPointBlock extends NetworkBlock implements DrawerInteractionH
     }
 
     @Override
-    public DrawerNetworkBlockNode getNode() {
-        return AccessPointBlockNode.INSTANCE;
+    public DrawerNetworkBlockNode getNode(NodeContext context) {
+        return new AccessPointBlockNode(context);
     }
 }

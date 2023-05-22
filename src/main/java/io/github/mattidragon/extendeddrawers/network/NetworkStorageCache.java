@@ -69,5 +69,9 @@ public class NetworkStorageCache {
     public static void clear() {
         CACHE.clear();
     }
+
+    public static void remove(ServerWorld world, long graphId) {
+        CACHE.get(world.getRegistryKey()).remove(graphId);
+    }
 }
 

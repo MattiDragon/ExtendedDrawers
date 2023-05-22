@@ -1,5 +1,6 @@
 package io.github.mattidragon.extendeddrawers.block;
 
+import com.kneelawk.graphlib.api.graph.NodeContext;
 import io.github.mattidragon.extendeddrawers.ExtendedDrawers;
 import io.github.mattidragon.extendeddrawers.block.base.CreativeBreakBlocker;
 import io.github.mattidragon.extendeddrawers.block.base.DrawerInteractionHandler;
@@ -10,7 +11,7 @@ import io.github.mattidragon.extendeddrawers.item.UpgradeItem;
 import io.github.mattidragon.extendeddrawers.misc.DrawerInteractionStatusManager;
 import io.github.mattidragon.extendeddrawers.misc.DrawerRaycastUtil;
 import io.github.mattidragon.extendeddrawers.misc.ItemUtils;
-import io.github.mattidragon.extendeddrawers.network.node.DrawerBlockNode;
+import io.github.mattidragon.extendeddrawers.network.node.CompactingDrawerBlockNode;
 import io.github.mattidragon.extendeddrawers.network.node.DrawerNetworkBlockNode;
 import io.github.mattidragon.extendeddrawers.registry.ModBlocks;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
@@ -289,7 +290,7 @@ public class CompactingDrawerBlock extends NetworkBlockWithEntity<CompactingDraw
     }
     
     @Override
-    public DrawerNetworkBlockNode getNode() {
-        return DrawerBlockNode.INSTANCE;
+    public DrawerNetworkBlockNode getNode(NodeContext context) {
+        return new CompactingDrawerBlockNode(context);
     }
 }

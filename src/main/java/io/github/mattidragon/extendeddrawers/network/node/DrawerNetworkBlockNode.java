@@ -1,40 +1,56 @@
 package io.github.mattidragon.extendeddrawers.network.node;
 
-import com.kneelawk.graphlib.api.graph.GraphView;
+import com.kneelawk.graphlib.api.graph.NodeContext;
 import com.kneelawk.graphlib.api.graph.NodeHolder;
-import com.kneelawk.graphlib.api.node.BlockNode;
-import com.kneelawk.graphlib.api.node.NodeKeyExtra;
+import com.kneelawk.graphlib.api.node.*;
 import com.kneelawk.graphlib.api.wire.FullWireBlockNode;
 import com.kneelawk.graphlib.api.wire.WireConnectionDiscoverers;
 import io.github.mattidragon.extendeddrawers.network.NetworkRegistry;
+import io.github.mattidragon.extendeddrawers.network.NetworkStorageCache;
 import io.github.mattidragon.extendeddrawers.network.UpdateHandler;
+import net.minecraft.nbt.NbtElement;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 
-public interface DrawerNetworkBlockNode extends FullWireBlockNode, NodeKeyExtra {
-    @Override
-    @NotNull
-    default NodeKeyExtra getKeyExtra() {
-        return this;
-    }
-
-    @Override
-    default boolean canConnect(@NotNull NodeHolder<BlockNode> self, @NotNull ServerWorld world, @NotNull GraphView graphView, @NotNull NodeHolder<BlockNode> other) {
-        return WireConnectionDiscoverers.fullBlockCanConnect(this, self, world, other, NetworkRegistry.CONNECTION_FILTER);
-    }
+public interface DrawerNetworkBlockNode extends FullWireBlockNode {
+    NodeContext context();
 
     @Override
     @NotNull
-    default Collection<NodeHolder<BlockNode>> findConnections(@NotNull NodeHolder<BlockNode> self, @NotNull ServerWorld world, @NotNull GraphView graphView) {
-        return WireConnectionDiscoverers.fullBlockFindConnections(this, self, world, graphView, NetworkRegistry.CONNECTION_FILTER);
+    default Collection<NodeHolder<BlockNode>> findConnections() {
+        return WireConnectionDiscoverers.fullBlockFindConnections(this, context(), NetworkRegistry.CONNECTION_FILTER);
     }
 
     @Override
-    default void onConnectionsChanged(@NotNull NodeHolder<BlockNode> self, @NotNull ServerWorld world, @NotNull GraphView graphView) {
-        UpdateHandler.scheduleUpdate(world, self.getGraphId(), UpdateHandler.ChangeType.STRUCTURE);
+    default boolean canConnect(@NotNull NodeHolder<BlockNode> other) {
+        return WireConnectionDiscoverers.fullBlockCanConnect(this, context(), other, NetworkRegistry.CONNECTION_FILTER);
     }
-    
+
+    @Override
+    default void onConnectionsChanged() {
+        UpdateHandler.scheduleUpdate(context().getBlockWorld(), context().getGraphId(), UpdateHandler.ChangeType.STRUCTURE);
+    }
+
+    @Override
+    @NotNull
+    default NodeKey getKey() {
+        return NetworkRegistry.KEY;
+    }
+
+    @Override
+    @Nullable
+    default NbtElement toTag() {
+        return null;
+    }
+
+    @Override
+    default void onUnload() {
+        NetworkStorageCache.remove(context().getBlockWorld(), context().getGraphId());
+    }
+
     void update(ServerWorld world, NodeHolder<BlockNode> node);
 }

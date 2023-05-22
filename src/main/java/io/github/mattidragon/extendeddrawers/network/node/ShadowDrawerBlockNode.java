@@ -1,7 +1,10 @@
 package io.github.mattidragon.extendeddrawers.network.node;
 
+import com.kneelawk.graphlib.api.graph.NodeContext;
 import com.kneelawk.graphlib.api.graph.NodeHolder;
 import com.kneelawk.graphlib.api.node.BlockNode;
+import com.kneelawk.graphlib.api.node.NodeKey;
+import com.kneelawk.graphlib.api.util.SimpleNodeKey;
 import io.github.mattidragon.extendeddrawers.block.entity.ShadowDrawerBlockEntity;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.server.world.ServerWorld;
@@ -11,21 +14,12 @@ import org.jetbrains.annotations.Nullable;
 
 import static io.github.mattidragon.extendeddrawers.ExtendedDrawers.id;
 
-public class ShadowDrawerBlockNode implements DrawerNetworkBlockNode {
+public record ShadowDrawerBlockNode(NodeContext context) implements DrawerNetworkBlockNode {
     public static final Identifier ID = id("shadow_drawers");
-    public static final ShadowDrawerBlockNode INSTANCE = new ShadowDrawerBlockNode();
 
-    private ShadowDrawerBlockNode() {
-    }
-    
     @Override
     public @NotNull Identifier getTypeId() {
         return ID;
-    }
-    
-    @Override
-    public @Nullable NbtElement toTag() {
-        return null;
     }
     
     @Override
