@@ -22,13 +22,18 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.RotationAxis;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Matrix3f;
 import org.joml.Matrix4f;
+import org.joml.Quaternionf;
 
 import java.util.List;
 import java.util.Objects;
 
 @SuppressWarnings("UnstableApiUsage")
 public abstract class AbstractDrawerBlockEntityRenderer<T extends BlockEntity> implements BlockEntityRenderer<T> {
+    private static final Quaternionf ITEM_LIGHT_ROTATION_3D = RotationAxis.POSITIVE_X.rotationDegrees(-15).mul(RotationAxis.POSITIVE_Y.rotationDegrees(15));
+    private static final Quaternionf ITEM_LIGHT_ROTATION_FLAT = RotationAxis.POSITIVE_X.rotationDegrees(-45);
+
     private final ItemRenderer itemRenderer;
     private final TextRenderer textRenderer;
 
@@ -83,13 +88,26 @@ public abstract class AbstractDrawerBlockEntityRenderer<T extends BlockEntity> i
     }
 
     protected void renderItem(ItemVariant item, int light, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int seed) {
+        if (item.isBlank()) return;
         var itemScale = ClientConfig.HANDLE.get().itemScale();
 
         matrices.push();
         matrices.scale(itemScale, itemScale, 1);
         matrices.scale(0.75f, 0.75f, 1);
         matrices.multiplyPositionMatrix(new Matrix4f().scale(1, 1, 0.01f));
-        itemRenderer.renderItem(item.toStack(), ModelTransformation.Mode.GUI, light, OverlayTexture.DEFAULT_UV, matrices, vertexConsumers, seed);
+
+        var stack = item.toStack();
+        var model = itemRenderer.getModel(stack, null, null, seed);
+
+        // Stolen from storage drawers
+        if (model.isSideLit()) {
+            matrices.peek().getNormalMatrix().mul(new Matrix3f().set(ITEM_LIGHT_ROTATION_3D));
+        } else {
+            matrices.peek().getNormalMatrix().mul(new Matrix3f().set(ITEM_LIGHT_ROTATION_FLAT));
+        }
+
+        itemRenderer.renderItem(stack, ModelTransformation.Mode.GUI, false, matrices, vertexConsumers, light, OverlayTexture.DEFAULT_UV, model);
+
         matrices.pop();
     }
     
