@@ -4,7 +4,6 @@ import io.github.mattidragon.extendeddrawers.block.CompactingDrawerBlock;
 import io.github.mattidragon.extendeddrawers.block.DrawerBlock;
 import io.github.mattidragon.extendeddrawers.block.entity.CompactingDrawerBlockEntity;
 import io.github.mattidragon.extendeddrawers.config.ExtendedDrawersConfig;
-import io.github.mattidragon.extendeddrawers.config.old.ClientConfig;
 import io.github.mattidragon.extendeddrawers.storage.CompactingDrawerStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.minecraft.client.MinecraftClient;
@@ -15,7 +14,9 @@ import net.minecraft.client.texture.Sprite;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.screen.PlayerScreenHandler;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.*;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec2f;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 

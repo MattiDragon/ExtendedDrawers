@@ -27,7 +27,6 @@ dependencies {
     modImplementation "net.fabricmc.fabric-api:fabric-api:$fabric_version"
 
     // Dependencies
-    include modImplementation("com.github.mattidragon:mconfig:$mconfig_version")
     include modImplementation("com.kneelawk:graphlib:$graphlib_version")
     //modImplementation "vazkii.patchouli:Patchouli:$patchouli_version"
 

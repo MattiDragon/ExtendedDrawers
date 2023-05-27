@@ -2,26 +2,16 @@ package io.github.mattidragon.extendeddrawers.config.category;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import io.github.mattidragon.mconfig.config.Comment;
 
 import static io.github.mattidragon.extendeddrawers.config.ConfigData.defaultingFieldOf;
 
-public record StorageCategory(
-                              @Comment("How many items drawers are able to hold")
-                              long defaultCapacity,
-                              @Comment("How many items compacting drawers are able to hold")
+public record StorageCategory(long drawerCapacity,
                               long compactingCapacity,
-                              @Comment("Whether the stack size of the item should affect capacity")
                               boolean stackSizeAffectsCapacity,
-                              @Comment("Whether the amount of slots on a drawers should affect capacity")
                               boolean slotCountAffectsCapacity,
-                              @Comment("The multiplier the T1 upgrade applies to the capacity of drawers")
                               int t1UpgradeMultiplier,
-                              @Comment("The multiplier the T2 upgrade applies to the capacity of drawers")
                               int t2UpgradeMultiplier,
-                              @Comment("The multiplier the T3 upgrade applies to the capacity of drawers")
                               int t3UpgradeMultiplier,
-                              @Comment("The multiplier the T4 upgrade applies to the capacity of drawers")
                               int t4UpgradeMultiplier) {
     public static final StorageCategory DEFAULT = new StorageCategory(
             16 * 64,
@@ -34,7 +24,7 @@ public record StorageCategory(
             16);
 
     public static final Codec<StorageCategory> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            defaultingFieldOf(Codec.LONG, "defaultCapacity", DEFAULT.defaultCapacity).forGetter(StorageCategory::defaultCapacity),
+            defaultingFieldOf(Codec.LONG, "drawerCapacity", DEFAULT.drawerCapacity).forGetter(StorageCategory::drawerCapacity),
             defaultingFieldOf(Codec.LONG, "compactingCapacity", DEFAULT.compactingCapacity).forGetter(StorageCategory::compactingCapacity),
             defaultingFieldOf(Codec.BOOL, "stackSizeAffectsCapacity", DEFAULT.stackSizeAffectsCapacity).forGetter(StorageCategory::stackSizeAffectsCapacity),
             defaultingFieldOf(Codec.BOOL, "slotCountAffectsCapacity", DEFAULT.slotCountAffectsCapacity).forGetter(StorageCategory::slotCountAffectsCapacity),
@@ -59,7 +49,7 @@ public record StorageCategory(
         public int t4UpgradeMultiplier;
 
         private Mutable(StorageCategory values) {
-            this.defaultCapacity = values.defaultCapacity;
+            this.defaultCapacity = values.drawerCapacity;
             this.compactingCapacity = values.compactingCapacity;
             this.stackSizeAffectsCapacity = values.stackSizeAffectsCapacity;
             this.slotCountAffectsCapacity = values.slotCountAffectsCapacity;

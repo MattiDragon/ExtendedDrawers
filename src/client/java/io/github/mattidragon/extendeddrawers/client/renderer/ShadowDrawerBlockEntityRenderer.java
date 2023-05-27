@@ -3,7 +3,6 @@ package io.github.mattidragon.extendeddrawers.client.renderer;
 import io.github.mattidragon.extendeddrawers.block.ShadowDrawerBlock;
 import io.github.mattidragon.extendeddrawers.block.entity.ShadowDrawerBlockEntity;
 import io.github.mattidragon.extendeddrawers.config.ExtendedDrawersConfig;
-import io.github.mattidragon.extendeddrawers.config.old.ClientConfig;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.VertexConsumerProvider;

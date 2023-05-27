@@ -284,8 +284,8 @@ public class CompactingDrawerBlock extends NetworkBlockWithEntity<CompactingDraw
     }
     
     @Override
-    public boolean shouldBlock(World world, BlockPos pos, Direction direction) {
-        return world.getBlockState(pos).get(FACING) == direction;
+    public boolean isFront(BlockState state, Direction direction) {
+        return state.get(FACING) == direction;
     }
     
     @Override

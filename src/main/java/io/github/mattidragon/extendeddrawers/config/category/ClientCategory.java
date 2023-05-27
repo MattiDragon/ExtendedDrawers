@@ -2,27 +2,17 @@ package io.github.mattidragon.extendeddrawers.config.category;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import io.github.mattidragon.mconfig.config.Comment;
 
 import static io.github.mattidragon.extendeddrawers.config.ConfigData.defaultingFieldOf;
 
-public record ClientCategory(@Comment("The render distance of the item icon on drawers")
-                             int itemRenderDistance,
-                             @Comment("The render distance of the lock and upgrade icons on drawers")
+public record ClientCategory(int itemRenderDistance,
                              int iconRenderDistance,
-                             @Comment("The render distance of the number of items on the drawers")
                              int textRenderDistance,
-                             @Comment("Whether to display the amount of items on empty drawers")
                              boolean displayEmptyCount,
-                             @Comment("The scale at which to render the items for small slots")
                              float smallItemScale,
-                             @Comment("The scale at which to render the items for large slots")
                              float largeItemScale,
-                             @Comment("The scale at which to render the text for small slots")
                              float smallTextScale,
-                             @Comment("The scale at which to render the text for large slots")
                              float largeTextScale,
-                             @Comment("Offset from the bottom of the slot to move the text by")
                              float textOffset) {
     public static final ClientCategory DEFAULT = new ClientCategory(64, 16, 32, false, 0.4f, 1f, 0.5f, 1f, 0.2f);
 

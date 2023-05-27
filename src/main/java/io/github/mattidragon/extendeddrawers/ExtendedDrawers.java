@@ -1,7 +1,5 @@
 package io.github.mattidragon.extendeddrawers;
 
-import io.github.mattidragon.extendeddrawers.config.old.ClientConfig;
-import io.github.mattidragon.extendeddrawers.config.old.CommonConfig;
 import io.github.mattidragon.extendeddrawers.misc.DrawerContentsLootFunction;
 import io.github.mattidragon.extendeddrawers.network.NetworkRegistry;
 import io.github.mattidragon.extendeddrawers.networking.CompressionOverrideSyncPacket;
@@ -37,8 +35,6 @@ public class ExtendedDrawers implements ModInitializer {
         registerItemGroup();
         NetworkRegistry.register();
         CompressionOverrideSyncPacket.register();
-        ClientConfig.HANDLE.load();
-        CommonConfig.HANDLE.load();
         ResourceManagerHelper.registerBuiltinResourcePack(id("alt"), MOD_CONTAINER, Text.translatable("resourcepack.extended_drawers.alt"), ResourcePackActivationType.NORMAL);
         ResourceManagerHelper.registerBuiltinResourcePack(id("dev"), MOD_CONTAINER, Text.translatable("resourcepack.extended_drawers.programmer_art"), ResourcePackActivationType.NORMAL);
     }
