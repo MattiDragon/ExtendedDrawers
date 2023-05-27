@@ -52,17 +52,16 @@ public class CompactingDrawerBlockEntityRenderer extends AbstractDrawerBlockEnti
 
         var slots = drawer.storage.getActiveSlots();
 
-        matrices.scale(0.5f, 0.5f, 1);
         if (slots.length >= 1) { // Top slot
-            matrices.translate(0, 0.5, 0);
+            matrices.translate(0, 0.25, 0);
             renderSlot(drawer.storage.getSlot(CompactingDrawerBlock.getSlot(new Vec2f(0.5f, 0.25f), slots.length)), light, matrices, vertexConsumers, (int) drawer.getPos().asLong(), drawerPos, world);
         }
         if (slots.length >= 2) { // Bottom right
-            matrices.translate(0.5, -1, 0);
+            matrices.translate(0.25, -0.5, 0);
             renderSlot(drawer.storage.getSlot(CompactingDrawerBlock.getSlot(new Vec2f(0.75f, 0.75f), slots.length)), light, matrices, vertexConsumers, (int) drawer.getPos().asLong(), drawerPos, world);
         }
         if (slots.length >= 3) { // Bottom left
-            matrices.translate(-1, 0, 0);
+            matrices.translate(-0.5, 0, 0);
             renderSlot(drawer.storage.getSlot(CompactingDrawerBlock.getSlot(new Vec2f(0.25f, 0.75f), slots.length)), light, matrices, vertexConsumers, (int) drawer.getPos().asLong(), drawerPos, world);
         }
 
@@ -84,9 +83,8 @@ public class CompactingDrawerBlockEntityRenderer extends AbstractDrawerBlockEnti
 
         if (drawer.getPos().isWithinDistance(playerPos, ClientConfig.HANDLE.get().iconRenderDistance())) {
             matrices.push(); // Render icons like the top slot
-            matrices.scale(0.5f, 0.5f, 1);
-            matrices.translate(0, 0.5, 0);
-            renderIcons(icons, light, matrices, vertexConsumers, overlay);
+            matrices.translate(0, 0.25, 0);
+            renderIcons(icons, true, light, matrices, vertexConsumers, overlay);
             matrices.pop();
         }
     }
@@ -102,8 +100,8 @@ public class CompactingDrawerBlockEntityRenderer extends AbstractDrawerBlockEnti
         var config = ClientConfig.HANDLE.get();
 
         if (pos.isWithinDistance(playerPos, config.textRenderDistance()) && amount != null)
-            renderText(amount, light, matrices, vertexConsumers);
+            renderText(amount, true, light, matrices, vertexConsumers);
         if (pos.isWithinDistance(playerPos, config.itemRenderDistance()))
-            renderItem(item, light, matrices, vertexConsumers, world, seed);
+            renderItem(item, true, light, matrices, vertexConsumers, world, seed);
     }
 }

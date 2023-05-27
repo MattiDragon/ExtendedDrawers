@@ -49,24 +49,22 @@ public class DrawerBlockEntityRenderer extends AbstractDrawerBlockEntityRenderer
         var blockPos = drawer.getPos();
         
         switch (slots) {
-            case 1 -> renderSlot(drawer.storages[0], light, matrices, vertexConsumers, (int) drawer.getPos().asLong(), overlay, blockPos, world);
+            case 1 -> renderSlot(drawer.storages[0], false, light, matrices, vertexConsumers, (int) drawer.getPos().asLong(), overlay, blockPos, world);
             case 2 -> {
-                matrices.scale(0.5f, 0.5f, 1);
-                matrices.translate(-0.5, 0, 0);
-                renderSlot(drawer.storages[0], light, matrices, vertexConsumers, (int) drawer.getPos().asLong(), overlay, blockPos, world);
-                matrices.translate(1, 0, 0);
-                renderSlot(drawer.storages[1], light, matrices, vertexConsumers, (int) drawer.getPos().asLong(), overlay, blockPos, world);
+                matrices.translate(-0.25, 0, 0);
+                renderSlot(drawer.storages[0], true, light, matrices, vertexConsumers, (int) drawer.getPos().asLong(), overlay, blockPos, world);
+                matrices.translate(0.5, 0, 0);
+                renderSlot(drawer.storages[1], true, light, matrices, vertexConsumers, (int) drawer.getPos().asLong(), overlay, blockPos, world);
             }
             case 4 -> {
-                matrices.scale(0.5f, 0.5f, 1);
-                matrices.translate(-0.5, 0.5, 0);
-                renderSlot(drawer.storages[0], light, matrices, vertexConsumers, (int) drawer.getPos().asLong(), overlay, blockPos, world);
-                matrices.translate(1, 0, 0);
-                renderSlot(drawer.storages[1], light, matrices, vertexConsumers, (int) drawer.getPos().asLong(), overlay, blockPos, world);
-                matrices.translate(-1, -1, 0);
-                renderSlot(drawer.storages[2], light, matrices, vertexConsumers, (int) drawer.getPos().asLong(), overlay, blockPos, world);
-                matrices.translate(1, 0, 0);
-                renderSlot(drawer.storages[3], light, matrices, vertexConsumers, (int) drawer.getPos().asLong(), overlay, blockPos, world);
+                matrices.translate(-0.25, 0.25, 0);
+                renderSlot(drawer.storages[0], true, light, matrices, vertexConsumers, (int) drawer.getPos().asLong(), overlay, blockPos, world);
+                matrices.translate(0.5, 0, 0);
+                renderSlot(drawer.storages[1], true, light, matrices, vertexConsumers, (int) drawer.getPos().asLong(), overlay, blockPos, world);
+                matrices.translate(-0.5, -0.5, 0);
+                renderSlot(drawer.storages[2], true, light, matrices, vertexConsumers, (int) drawer.getPos().asLong(), overlay, blockPos, world);
+                matrices.translate(0.5, 0, 0);
+                renderSlot(drawer.storages[3], true, light, matrices, vertexConsumers, (int) drawer.getPos().asLong(), overlay, blockPos, world);
             }
             default -> ExtendedDrawers.LOGGER.error("Unexpected drawer slot count, skipping rendering. Are you an addon dev adding more configurations? If so please mixin into DrawerBlockEntityRenderer and add your layout.");
         }
@@ -74,7 +72,7 @@ public class DrawerBlockEntityRenderer extends AbstractDrawerBlockEntityRenderer
         matrices.pop();
     }
     
-    private void renderSlot(DrawerSlot storage, int light, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int seed, int overlay, BlockPos pos, World world) {
+    private void renderSlot(DrawerSlot storage, boolean small, int light, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int seed, int overlay, BlockPos pos, World world) {
         var icons = new ArrayList<Sprite>();
         var blockAtlas = MinecraftClient.getInstance().getSpriteAtlas(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE);
         
@@ -83,6 +81,6 @@ public class DrawerBlockEntityRenderer extends AbstractDrawerBlockEntityRenderer
         if (storage.isHidden()) icons.add(blockAtlas.apply(new Identifier("minecraft", "item/black_dye")));
         if (storage.getUpgrade() != null) icons.add(blockAtlas.apply(storage.getUpgrade().sprite));
         
-        renderSlot(storage.isHidden() ? ItemVariant.blank() : storage.getItem(), ((storage.getAmount() == 0) || ClientConfig.HANDLE.get().displayEmptyCount()) ? null : storage.getAmount(), icons, matrices, vertexConsumers, light, overlay, seed, pos, world);
+        renderSlot(storage.isHidden() ? ItemVariant.blank() : storage.getItem(), ((storage.getAmount() == 0) || ClientConfig.HANDLE.get().displayEmptyCount()) ? null : storage.getAmount(), small, icons, matrices, vertexConsumers, light, overlay, seed, pos, world);
     }
 }
