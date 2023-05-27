@@ -41,15 +41,11 @@ public class CompactingDrawerBlockEntityRenderer extends AbstractDrawerBlockEnti
     public void render(CompactingDrawerBlockEntity drawer, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
         var drawerPos = drawer.getPos();
         var dir = drawer.getCachedState().get(DrawerBlock.FACING);
-        var pos = dir.getUnitVector();
 
         if (!shouldRender(drawer, dir)) return;
 
         matrices.push();
-        matrices.translate(pos.getX() / 2 + 0.5, pos.getY() / 2 + 0.5, pos.getZ() / 2 + 0.5);
-        matrices.multiply(dir.getRotationQuaternion());
-        matrices.multiply(Vec3f.POSITIVE_X.getDegreesQuaternion(-90));
-        matrices.translate(0, 0, 0.01);
+        alignMatrices(matrices, dir);
 
         light = WorldRenderer.getLightmapCoordinates(Objects.requireNonNull(drawer.getWorld()), drawer.getPos().offset(dir));
 
@@ -88,7 +84,11 @@ public class CompactingDrawerBlockEntityRenderer extends AbstractDrawerBlockEnti
         var playerPos = player == null ? Vec3d.ofCenter(drawer.getPos()) : player.getPos();
 
         if (drawer.getPos().isWithinDistance(playerPos, ClientConfig.HANDLE.get().iconRenderDistance())) {
+            matrices.push(); // Render icons like the top slot
+            matrices.scale(0.5f, 0.5f, 1);
+            matrices.translate(0, 0.5, 0);
             renderIcons(icons, light, matrices, vertexConsumers, overlay);
+            matrices.pop();
         }
     }
 

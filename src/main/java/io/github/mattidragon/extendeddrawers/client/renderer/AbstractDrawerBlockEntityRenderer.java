@@ -123,4 +123,12 @@ public abstract class AbstractDrawerBlockEntityRenderer<T extends BlockEntity> i
         textRenderer.draw(text, -textRenderer.getWidth(text) / 2f, 0, 0xffffff, false, matrices.peek().getPositionMatrix(), vertexConsumers, false, 0x000000, light);
         matrices.pop();
     }
+
+    protected void alignMatrices(MatrixStack matrices, Direction dir) {
+        var pos = dir.getUnitVector();
+        matrices.translate(pos.getX() / 2 + 0.5, pos.getY() / 2 + 0.5, pos.getZ() / 2 + 0.5);
+        matrices.multiply(dir.getRotationQuaternion());
+        matrices.multiply(Vec3f.POSITIVE_X.getDegreesQuaternion(-90));
+        matrices.translate(0, 0, 0.01);
+    }
 }

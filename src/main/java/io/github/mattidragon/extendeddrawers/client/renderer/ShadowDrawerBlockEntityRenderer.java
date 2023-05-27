@@ -12,7 +12,6 @@ import net.minecraft.client.texture.Sprite;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.screen.PlayerScreenHandler;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.Vec3f;
 
 import java.util.List;
 import java.util.Objects;
@@ -32,15 +31,11 @@ public class ShadowDrawerBlockEntityRenderer extends AbstractDrawerBlockEntityRe
     @Override
     public void render(ShadowDrawerBlockEntity drawer, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
         var dir = drawer.getCachedState().get(ShadowDrawerBlock.FACING);
-        var pos = dir.getUnitVector();
         if (!shouldRender(drawer, dir)) return;
         
         matrices.push();
-        matrices.translate(pos.getX() / 2 + 0.5, pos.getY() / 2 + 0.5, pos.getZ() / 2 + 0.5);
-        matrices.multiply(dir.getRotationQuaternion());
-        matrices.multiply(Vec3f.POSITIVE_X.getDegreesQuaternion(-90));
-        matrices.translate(0, 0, 0.01);
-    
+        alignMatrices(matrices, dir);
+
         light = WorldRenderer.getLightmapCoordinates(Objects.requireNonNull(drawer.getWorld()), drawer.getPos().offset(dir));
 
         List<Sprite> icons = drawer.isHidden() ? List.of(MinecraftClient.getInstance()
