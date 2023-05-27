@@ -27,7 +27,6 @@ import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
-import org.joml.Vector3f;
 
 import java.util.List;
 import java.util.Objects;
@@ -45,17 +44,17 @@ public abstract class AbstractDrawerBlockEntityRenderer<T extends BlockEntity> i
         this.textRenderer = context.getTextRenderer();
     }
     
-    public void renderSlot(ItemVariant item, @Nullable Long amount, List<Sprite> icons, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay, int seed, BlockPos pos, World world) {
+    public void renderSlot(ItemVariant item, @Nullable Long amount, boolean small, List<Sprite> icons, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay, int seed, BlockPos pos, World world) {
         var player = MinecraftClient.getInstance().player;
         var playerPos = player == null ? Vec3d.ofCenter(pos) : player.getPos();
         var config = ExtendedDrawersConfig.get().client();
     
         if (pos.isWithinDistance(playerPos, config.textRenderDistance()) && amount != null)
-            renderText(amount, light, matrices, vertexConsumers);
+            renderText(amount, small, light, matrices, vertexConsumers);
         if (pos.isWithinDistance(playerPos, config.iconRenderDistance()))
-            renderIcons(icons, light, matrices, vertexConsumers, overlay);
+            renderIcons(icons, small, light, matrices, vertexConsumers, overlay);
         if (pos.isWithinDistance(playerPos, config.itemRenderDistance()))
-            renderItem(item, light, matrices, vertexConsumers, world, seed);
+            renderItem(item, small, light, matrices, vertexConsumers, world, seed);
     }
     
     protected final boolean shouldRender(T drawer, Direction facing) {
@@ -67,10 +66,12 @@ public abstract class AbstractDrawerBlockEntityRenderer<T extends BlockEntity> i
         return Block.shouldDrawSide(state, world, pos, facing, pos.offset(facing));
     }
     
-    protected void renderIcons(List<Sprite> icons, int light, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int overlay) {
+    protected void renderIcons(List<Sprite> icons, boolean small, int light, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int overlay) {
         var increment = 1.0 / (icons.size() + 1.0);
         matrices.push();
+        if (small) matrices.scale(0.5f, 0.5f, 1);
         matrices.translate(-0.5, 0, 0);
+
         for (var icon : icons) {
             matrices.translate(increment, 0, 0);
             renderIcon(icon, light, matrices, vertexConsumers, overlay);
@@ -90,9 +91,9 @@ public abstract class AbstractDrawerBlockEntityRenderer<T extends BlockEntity> i
         matrices.pop();
     }
 
-    protected void renderItem(ItemVariant item, int light, MatrixStack matrices, VertexConsumerProvider vertexConsumers, World world, int seed) {
+    protected void renderItem(ItemVariant item, boolean small, int light, MatrixStack matrices, VertexConsumerProvider vertexConsumers, World world, int seed) {
         if (item.isBlank()) return;
-        var itemScale = ExtendedDrawersConfig.get().client().itemScale();
+        var itemScale = ExtendedDrawersConfig.get().client().itemScale(small);
 
         matrices.push();
         matrices.scale(itemScale, itemScale, 1);
@@ -114,13 +115,19 @@ public abstract class AbstractDrawerBlockEntityRenderer<T extends BlockEntity> i
         matrices.pop();
     }
     
-    protected void renderText(long amount, int light, MatrixStack matrices, VertexConsumerProvider vertexConsumers) {
-        var itemScale = ExtendedDrawersConfig.get().client().itemScale();
+    protected void renderText(long amount, boolean small, int light, MatrixStack matrices, VertexConsumerProvider vertexConsumers) {
+        var config = ExtendedDrawersConfig.get().client();
 
         matrices.push();
         matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(180));
-        matrices.translate(0, 0.3, -0.01);
-        matrices.scale(itemScale, itemScale, 1);
+        if (small) {
+            matrices.translate(0, 0.25, -0.01);
+        } else {
+            matrices.translate(0, 0.5, -0.01);
+        }
+        matrices.scale(config.textScale(small), config.textScale(small), 1);
+        matrices.translate(0, -config.textOffset(), -0.01);
+
         matrices.scale(0.02f, 0.02f, 0.02f);
         var text = Long.toString(amount);
         textRenderer.draw(text, -textRenderer.getWidth(text) / 2f, 0, 0xffffff, false, matrices.peek().getPositionMatrix(), vertexConsumers, TextRenderer.TextLayerType.NORMAL, 0x000000, light);

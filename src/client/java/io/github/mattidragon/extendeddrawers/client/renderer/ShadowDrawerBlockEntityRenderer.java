@@ -42,7 +42,7 @@ public class ShadowDrawerBlockEntityRenderer extends AbstractDrawerBlockEntityRe
         List<Sprite> icons = drawer.isHidden() ? List.of(MinecraftClient.getInstance()
                 .getSpriteAtlas(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE)
                 .apply(new Identifier("minecraft", "item/black_dye"))) : List.of();
-        renderSlot(drawer.isHidden() ? ItemVariant.blank() : drawer.item, drawer.item.isBlank() || ExtendedDrawersConfig.get().client().displayEmptyCount() ? null : drawer.countCache, icons, matrices, vertexConsumers, light, overlay, (int) drawer.getPos().asLong(), drawer.getPos(), drawer.getWorld());
+        renderSlot(drawer.isHidden() ? ItemVariant.blank() : drawer.item, drawer.item.isBlank() || ExtendedDrawersConfig.get().client().displayEmptyCount() ? null : drawer.countCache, false, icons, matrices, vertexConsumers, light, overlay, (int) drawer.getPos().asLong(), drawer.getPos(), drawer.getWorld());
         matrices.pop();
     }
 }
