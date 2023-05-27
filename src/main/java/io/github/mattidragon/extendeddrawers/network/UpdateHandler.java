@@ -1,7 +1,7 @@
 package io.github.mattidragon.extendeddrawers.network;
 
 import com.kneelawk.graphlib.api.graph.NodeHolder;
-import com.kneelawk.graphlib.api.node.BlockNode;
+import com.kneelawk.graphlib.api.graph.user.BlockNode;
 import io.github.mattidragon.extendeddrawers.network.node.DrawerNetworkBlockNode;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;

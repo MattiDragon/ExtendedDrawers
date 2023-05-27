@@ -1,18 +1,19 @@
 package io.github.mattidragon.extendeddrawers.network.node;
 
-import com.kneelawk.graphlib.api.graph.NodeContext;
 import com.kneelawk.graphlib.api.graph.NodeHolder;
-import com.kneelawk.graphlib.api.node.BlockNode;
-import com.kneelawk.graphlib.api.node.NodeKey;
-import com.kneelawk.graphlib.api.util.SimpleNodeKey;
+import com.kneelawk.graphlib.api.graph.user.BlockNode;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 import static io.github.mattidragon.extendeddrawers.ExtendedDrawers.id;
 
-public record AccessPointBlockNode(NodeContext context) implements DrawerNetworkBlockNode {
+public class AccessPointBlockNode implements DrawerNetworkBlockNode {
     public static final Identifier ID = id("access_point");
+    public static final AccessPointBlockNode INSTANCE = new AccessPointBlockNode();
+
+    private AccessPointBlockNode() {
+    }
 
     @Override
     public @NotNull Identifier getTypeId() {
@@ -21,5 +22,6 @@ public record AccessPointBlockNode(NodeContext context) implements DrawerNetwork
 
     @Override
     public void update(ServerWorld world, NodeHolder<BlockNode> node) {
+
     }
 }

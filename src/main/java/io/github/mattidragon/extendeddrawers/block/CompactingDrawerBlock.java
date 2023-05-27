@@ -1,6 +1,5 @@
 package io.github.mattidragon.extendeddrawers.block;
 
-import com.kneelawk.graphlib.api.graph.NodeContext;
 import io.github.mattidragon.extendeddrawers.ExtendedDrawers;
 import io.github.mattidragon.extendeddrawers.block.base.CreativeBreakBlocker;
 import io.github.mattidragon.extendeddrawers.block.base.DrawerInteractionHandler;
@@ -290,7 +289,7 @@ public class CompactingDrawerBlock extends NetworkBlockWithEntity<CompactingDraw
     }
     
     @Override
-    public DrawerNetworkBlockNode getNode(NodeContext context) {
-        return new CompactingDrawerBlockNode(context);
+    public DrawerNetworkBlockNode getNode() {
+        return CompactingDrawerBlockNode.INSTANCE;
     }
 }
