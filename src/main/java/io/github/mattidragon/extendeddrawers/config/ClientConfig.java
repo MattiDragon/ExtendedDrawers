@@ -18,5 +18,5 @@ public record ClientConfig(
         @Comment("The scale at which to render the items")
         float itemScale
 ) {
-    public static final Config<ClientConfig> HANDLE = ConfigManager.register(ConfigType.CLIENT, "extended_drawers", new ClientConfig(64, 16, 32, false, 1.0f));
+    public static final Config<ClientConfig> HANDLE = ConfigManager.register(ConfigType.CLIENT, "extended_drawers", new ClientConfig(64, 16, 32, false, 0.8f));
 }

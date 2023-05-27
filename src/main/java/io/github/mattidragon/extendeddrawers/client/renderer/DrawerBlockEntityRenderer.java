@@ -15,7 +15,6 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.screen.PlayerScreenHandler;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.RotationAxis;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -37,16 +36,12 @@ public class DrawerBlockEntityRenderer extends AbstractDrawerBlockEntityRenderer
     @Override
     public void render(DrawerBlockEntity drawer, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
         var dir = drawer.getCachedState().get(DrawerBlock.FACING);
-        var pos = dir.getUnitVector();
         
         if (!shouldRender(drawer, dir)) return;
         
         matrices.push();
-        matrices.translate(pos.x / 2 + 0.5, pos.y / 2 + 0.5, pos.z / 2 + 0.5);
-        matrices.multiply(dir.getRotationQuaternion());
-        matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(-90));
-        matrices.translate(0, 0, 0.01);
-    
+        alignMatrices(matrices, dir);
+
         light = WorldRenderer.getLightmapCoordinates(Objects.requireNonNull(drawer.getWorld()), drawer.getPos().offset(dir));
         var slots = ((DrawerBlock)drawer.getCachedState().getBlock()).slots;
         var blockPos = drawer.getPos();
