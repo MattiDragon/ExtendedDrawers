@@ -17,11 +17,7 @@ import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.render.model.json.ModelTransformation;
 import net.minecraft.client.texture.Sprite;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Matrix4f;
-import net.minecraft.util.math.Vec3f;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.*;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -29,8 +25,18 @@ import java.util.Objects;
 
 @SuppressWarnings("UnstableApiUsage")
 public abstract class AbstractDrawerBlockEntityRenderer<T extends BlockEntity> implements BlockEntityRenderer<T> {
+    private static final Quaternion ITEM_LIGHT_ROTATION_3D;
+    private static final Quaternion ITEM_LIGHT_ROTATION_FLAT;
+
     private final ItemRenderer itemRenderer;
     private final TextRenderer textRenderer;
+
+    static {
+        ITEM_LIGHT_ROTATION_3D = Vec3f.POSITIVE_X.getDegreesQuaternion(-15);
+        ITEM_LIGHT_ROTATION_3D.hamiltonProduct(Vec3f.POSITIVE_Y.getDegreesQuaternion(15));
+        ITEM_LIGHT_ROTATION_FLAT = Vec3f.POSITIVE_X.getDegreesQuaternion(-45);
+
+    }
 
     public AbstractDrawerBlockEntityRenderer(BlockEntityRendererFactory.Context context) {
         this.itemRenderer = context.getItemRenderer();
@@ -83,13 +89,25 @@ public abstract class AbstractDrawerBlockEntityRenderer<T extends BlockEntity> i
     }
 
     protected void renderItem(ItemVariant item, int light, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int seed) {
+        if (item.isBlank()) return;
         var itemScale = ClientConfig.HANDLE.get().itemScale();
 
         matrices.push();
         matrices.scale(itemScale, itemScale, 1);
         matrices.scale(0.75f, 0.75f, 1);
         matrices.multiplyPositionMatrix(Matrix4f.scale(1, 1, 0.01f));
-        itemRenderer.renderItem(item.toStack(), ModelTransformation.Mode.GUI, light, OverlayTexture.DEFAULT_UV, matrices, vertexConsumers, seed);
+
+        var stack = item.toStack();
+        var model = itemRenderer.getModel(stack, null, null, seed);
+
+        // Stolen from storage drawers
+        if (model.isSideLit()) {
+            matrices.peek().getNormalMatrix().multiply(ITEM_LIGHT_ROTATION_3D);
+        } else {
+            matrices.peek().getNormalMatrix().multiply(ITEM_LIGHT_ROTATION_FLAT);
+        }
+
+        itemRenderer.renderItem(stack, ModelTransformation.Mode.GUI, false, matrices, vertexConsumers, light, OverlayTexture.DEFAULT_UV, model);
         matrices.pop();
     }
     
