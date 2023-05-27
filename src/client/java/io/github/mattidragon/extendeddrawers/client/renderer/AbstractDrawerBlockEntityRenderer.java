@@ -27,6 +27,7 @@ import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
+import org.joml.Vector3f;
 
 import java.util.List;
 import java.util.Objects;
@@ -124,5 +125,13 @@ public abstract class AbstractDrawerBlockEntityRenderer<T extends BlockEntity> i
         var text = Long.toString(amount);
         textRenderer.draw(text, -textRenderer.getWidth(text) / 2f, 0, 0xffffff, false, matrices.peek().getPositionMatrix(), vertexConsumers, TextRenderer.TextLayerType.NORMAL, 0x000000, light);
         matrices.pop();
+    }
+
+    protected void alignMatrices(MatrixStack matrices, Direction dir) {
+        var pos = dir.getUnitVector();
+        matrices.translate(pos.x / 2 + 0.5, pos.y / 2 + 0.5, pos.z / 2 + 0.5);
+        matrices.multiply(dir.getRotationQuaternion());
+        matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(-90));
+        matrices.translate(0, 0, 0.01);
     }
 }

@@ -15,10 +15,7 @@ import net.minecraft.client.texture.Sprite;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.screen.PlayerScreenHandler;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.RotationAxis;
-import net.minecraft.util.math.Vec2f;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.*;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
@@ -43,16 +40,12 @@ public class CompactingDrawerBlockEntityRenderer extends AbstractDrawerBlockEnti
     public void render(CompactingDrawerBlockEntity drawer, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
         var drawerPos = drawer.getPos();
         var dir = drawer.getCachedState().get(DrawerBlock.FACING);
-        var pos = dir.getUnitVector();
         var world = drawer.getWorld();
 
         if (!shouldRender(drawer, dir)) return;
 
         matrices.push();
-        matrices.translate(pos.x / 2 + 0.5, pos.y / 2 + 0.5, pos.z / 2 + 0.5);
-        matrices.multiply(dir.getRotationQuaternion());
-        matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(-90));
-        matrices.translate(0, 0, 0.01);
+        alignMatrices(matrices, dir);
 
         light = WorldRenderer.getLightmapCoordinates(Objects.requireNonNull(drawer.getWorld()), drawer.getPos().offset(dir));
 
@@ -91,7 +84,11 @@ public class CompactingDrawerBlockEntityRenderer extends AbstractDrawerBlockEnti
         var playerPos = player == null ? Vec3d.ofCenter(drawer.getPos()) : player.getPos();
 
         if (drawer.getPos().isWithinDistance(playerPos, ExtendedDrawersConfig.get().client().iconRenderDistance())) {
+            matrices.push(); // Render icons like the top slot
+            matrices.scale(0.5f, 0.5f, 1);
+            matrices.translate(0, 0.5, 0);
             renderIcons(icons, light, matrices, vertexConsumers, overlay);
+            matrices.pop();
         }
     }
 
