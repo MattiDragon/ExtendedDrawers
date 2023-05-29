@@ -1,25 +1,39 @@
 package io.github.mattidragon.extendeddrawers.client.config;
 
 import dev.isxander.yacl.api.*;
-import dev.isxander.yacl.gui.controllers.TickBoxController;
-import dev.isxander.yacl.gui.controllers.cycling.EnumController;
-import dev.isxander.yacl.gui.controllers.string.number.FloatFieldController;
-import dev.isxander.yacl.gui.controllers.string.number.IntegerFieldController;
-import dev.isxander.yacl.gui.controllers.string.number.LongFieldController;
+import dev.isxander.yacl.api.controller.*;
+import dev.isxander.yacl.gui.ImageRenderer;
+import io.github.mattidragon.extendeddrawers.client.renderer.AbstractDrawerBlockEntityRenderer;
 import io.github.mattidragon.extendeddrawers.config.ConfigData;
+import io.github.mattidragon.extendeddrawers.config.ExtendedDrawersConfig;
 import io.github.mattidragon.extendeddrawers.config.category.ClientCategory;
 import io.github.mattidragon.extendeddrawers.config.category.MiscCategory;
 import io.github.mattidragon.extendeddrawers.config.category.StorageCategory;
 import io.github.mattidragon.extendeddrawers.misc.CreativeBreakingBehaviour;
+import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.render.LightmapTextureManager;
+import net.minecraft.client.render.OverlayTexture;
+import net.minecraft.client.texture.Sprite;
+import net.minecraft.item.Items;
+import net.minecraft.screen.PlayerScreenHandler;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RotationAxis;
 
 import java.text.NumberFormat;
+import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import static io.github.mattidragon.extendeddrawers.ExtendedDrawers.id;
 import static io.github.mattidragon.extendeddrawers.config.ConfigData.DEFAULT;
 
 public class ConfigScreenFactory {
@@ -49,99 +63,103 @@ public class ConfigScreenFactory {
     private static ConfigCategory createStorageCategory(StorageCategory.Mutable instance) {
         return ConfigCategory.createBuilder()
                 .name(Text.translatable("config.extended_drawers.storage"))
-                .option(Option.createBuilder(long.class)
+                .option(Option.<Long>createBuilder()
                         .name(Text.translatable("config.extended_drawers.storage.drawerCapacity"))
                         .binding(DEFAULT.storage().drawerCapacity(), () -> instance.defaultCapacity, value -> instance.defaultCapacity = value)
-                        .controller(option -> new LongFieldController(option, 1, Long.MAX_VALUE))
-                        .description(description(Text.translatable("config.extended_drawers.storage.drawerCapacity"), Text.translatable("config.extended_drawers.storage.drawerCapacity.description")))
+                        .controller(option -> LongFieldControllerBuilder.create(option).min(1L))
+                        .description(OptionDescription.of(Text.translatable("config.extended_drawers.storage.drawerCapacity.description")))
                         .build())
-                .option(Option.createBuilder(long.class)
+                .option(Option.<Long>createBuilder()
                         .name(Text.translatable("config.extended_drawers.storage.compactingCapacity"))
                         .binding(DEFAULT.storage().compactingCapacity(), () -> instance.compactingCapacity, value -> instance.compactingCapacity = value)
-                        .controller(option -> new LongFieldController(option, 1, Long.MAX_VALUE))
-                        .description(description(Text.translatable("config.extended_drawers.storage.compactingCapacity"), Text.translatable("config.extended_drawers.storage.compactingCapacity.description")))
+                        .controller(option -> LongFieldControllerBuilder.create(option).min(1L))
+                        .description(OptionDescription.of(Text.translatable("config.extended_drawers.storage.compactingCapacity.description")))
                         .build())
-                .option(Option.createBuilder(boolean.class)
+                .option(Option.<Boolean>createBuilder()
                         .name(Text.translatable("config.extended_drawers.storage.stackSizeAffectsCapacity"))
                         .binding(DEFAULT.storage().stackSizeAffectsCapacity(), () -> instance.stackSizeAffectsCapacity, value -> instance.stackSizeAffectsCapacity = value)
-                        .controller(TickBoxController::new)
-                        .description(description(Text.translatable("config.extended_drawers.storage.stackSizeAffectsCapacity"), Text.translatable("config.extended_drawers.storage.stackSizeAffectsCapacity.description")))
+                        .controller(TickBoxControllerBuilder::create)
+                        .description(OptionDescription.of(Text.translatable("config.extended_drawers.storage.stackSizeAffectsCapacity.description")))
                         .build())
-                .option(Option.createBuilder(boolean.class)
+                .option(Option.<Boolean>createBuilder()
                         .name(Text.translatable("config.extended_drawers.storage.slotCountAffectsCapacity"))
                         .binding(DEFAULT.storage().slotCountAffectsCapacity(), () -> instance.slotCountAffectsCapacity, value -> instance.slotCountAffectsCapacity = value)
-                        .controller(TickBoxController::new)
-                        .description(description(Text.translatable("config.extended_drawers.storage.slotCountAffectsCapacity"), Text.translatable("config.extended_drawers.storage.slotCountAffectsCapacity.description")))
+                        .controller(TickBoxControllerBuilder::create)
+                        .description(OptionDescription.of(Text.translatable("config.extended_drawers.storage.slotCountAffectsCapacity.description")))
                         .build())
                 .group(OptionGroup.createBuilder()
                         .name(Text.translatable("config.extended_drawers.storage.upgradeMultipliers"))
-                        .description(description(Text.translatable("config.extended_drawers.storage.upgradeMultipliers"), Text.translatable("config.extended_drawers.storage.upgradeMultipliers.description")))
-                        .option(Option.createBuilder(int.class)
+                        .description(OptionDescription.of(Text.translatable("config.extended_drawers.storage.upgradeMultipliers.description")))
+                        .option(Option.<Integer>createBuilder()
                                 .name(Text.translatable("config.extended_drawers.storage.upgradeMultipliers.1"))
                                 .binding(DEFAULT.storage().t1UpgradeMultiplier(), () -> instance.t1UpgradeMultiplier, value -> instance.t1UpgradeMultiplier = value)
-                                .controller(option -> new IntegerFieldController(option, 1, Integer.MAX_VALUE))
-                                .description(description(Text.translatable("config.extended_drawers.storage.upgradeMultipliers.1"), Text.translatable("config.extended_drawers.storage.upgradeMultipliers.n.description", 1)))
+                                .controller(option -> IntegerFieldControllerBuilder.create(option).min(1))
+                                .description(OptionDescription.of(Text.translatable("config.extended_drawers.storage.upgradeMultipliers.n.description", 1)))
                                 .build())
-                        .option(Option.createBuilder(int.class)
+                        .option(Option.<Integer>createBuilder()
                                 .name(Text.translatable("config.extended_drawers.storage.upgradeMultipliers.2"))
                                 .binding(DEFAULT.storage().t2UpgradeMultiplier(), () -> instance.t2UpgradeMultiplier, value -> instance.t2UpgradeMultiplier = value)
-                                .controller(option -> new IntegerFieldController(option, 1, Integer.MAX_VALUE))
-                                .description(description(Text.translatable("config.extended_drawers.storage.upgradeMultipliers.2"), Text.translatable("config.extended_drawers.storage.upgradeMultipliers.n.description", 2)))
+                                .controller(option -> IntegerFieldControllerBuilder.create(option).min(1))
+                                .description(OptionDescription.of(Text.translatable("config.extended_drawers.storage.upgradeMultipliers.n.description", 2)))
                                 .build())
-                        .option(Option.createBuilder(int.class)
+                        .option(Option.<Integer>createBuilder()
                                 .name(Text.translatable("config.extended_drawers.storage.upgradeMultipliers.3"))
                                 .binding(DEFAULT.storage().t3UpgradeMultiplier(), () -> instance.t3UpgradeMultiplier, value -> instance.t3UpgradeMultiplier = value)
-                                .description(description(Text.translatable("config.extended_drawers.storage.upgradeMultipliers.3"), Text.translatable("config.extended_drawers.storage.upgradeMultipliers.n.description", 3)))
-                                .controller(option -> new IntegerFieldController(option, 1, Integer.MAX_VALUE))
+                                .description(OptionDescription.of(Text.translatable("config.extended_drawers.storage.upgradeMultipliers.n.description", 3)))
+                                .controller(option -> IntegerFieldControllerBuilder.create(option).min(1))
                                 .build())
-                        .option(Option.createBuilder(int.class)
+                        .option(Option.<Integer>createBuilder()
                                 .name(Text.translatable("config.extended_drawers.storage.upgradeMultipliers.4"))
                                 .binding(DEFAULT.storage().t4UpgradeMultiplier(), () -> instance.t4UpgradeMultiplier, value -> instance.t4UpgradeMultiplier = value)
-                                .description(description(Text.translatable("config.extended_drawers.storage.upgradeMultipliers.4"), Text.translatable("config.extended_drawers.storage.upgradeMultipliers.n.description", 4)))
-                                .controller(option -> new IntegerFieldController(option, 1, Integer.MAX_VALUE))
+                                .description(OptionDescription.of(Text.translatable("config.extended_drawers.storage.upgradeMultipliers.n.description", 4)))
+                                .controller(option -> IntegerFieldControllerBuilder.create(option).min(1))
                                 .build())
                         .build())
                 .build();
     }
 
     private static ConfigCategory createMiscCategory(MiscCategory.Mutable instance) {
+        var text = new Text[]{Text.translatable("config.extended_drawers.misc.drawersDropContentsOnBreak.description").append(Text.translatable("config.extended_drawers.misc.drawersDropContentsOnBreak.warning").formatted(Formatting.YELLOW))};
+        var text1 = new Text[]{Text.translatable("config.extended_drawers.misc.allowRecursion.description").append(Text.translatable("config.extended_drawers.misc.allowRecursion.warning").formatted(Formatting.YELLOW))};
         return ConfigCategory.createBuilder()
                 .name(Text.translatable("config.extended_drawers.misc"))
-                .option(Option.createBuilder(int.class)
+                .option(Option.<Integer>createBuilder()
                         .name(Text.translatable("config.extended_drawers.misc.insertAllTime"))
                         .binding(DEFAULT.misc().insertAllTime(), () -> instance.insertAllTime, value -> instance.insertAllTime = value)
-                        .controller(option -> new IntegerFieldController(option, 1, 20))
-                        .description(description(Text.translatable("config.extended_drawers.misc.insertAllTime"), Text.translatable("config.extended_drawers.misc.insertAllTime.description")))
+                        .controller(option -> IntegerFieldControllerBuilder.create(option)
+                                .min(1)
+                                .max(20))
+                        .description(OptionDescription.of(Text.translatable("config.extended_drawers.misc.insertAllTime.description")))
                         .build())
-                .option(Option.createBuilder(CreativeBreakingBehaviour.class)
+                .option(Option.<CreativeBreakingBehaviour>createBuilder()
                         .name(Text.translatable("config.extended_drawers.misc.frontBreakingBehaviour"))
                         .binding(DEFAULT.misc().frontBreakingBehaviour(), () -> instance.frontBreakingBehaviour, value -> instance.frontBreakingBehaviour = value)
-                        .controller(option -> new EnumController<>(option, CreativeBreakingBehaviour::getDisplayName))
-                        .description(value -> creativeBreakingBehaviourDescription(Text.translatable("config.extended_drawers.misc.frontBreakingBehaviour"), Text.translatable("config.extended_drawers.misc.frontBreakingBehaviour.description"), value))
+                        .controller(option -> EnumControllerBuilder.create(option).enumClass(CreativeBreakingBehaviour.class).valueFormatter(CreativeBreakingBehaviour::getDisplayName))
+                        .description(value -> creativeBreakingBehaviourDescription(Text.translatable("config.extended_drawers.misc.frontBreakingBehaviour.description"), value))
                         .build())
-                .option(Option.createBuilder(CreativeBreakingBehaviour.class)
+                .option(Option.<CreativeBreakingBehaviour>createBuilder()
                         .name(Text.translatable("config.extended_drawers.misc.sideBreakingBehaviour"))
                         .binding(DEFAULT.misc().sideBreakingBehaviour(), () -> instance.sideBreakingBehaviour, value -> instance.sideBreakingBehaviour = value)
-                        .controller(option -> new EnumController<>(option, CreativeBreakingBehaviour::getDisplayName))
-                        .description(value -> creativeBreakingBehaviourDescription(Text.translatable("config.extended_drawers.misc.sideBreakingBehaviour"), Text.translatable("config.extended_drawers.misc.sideBreakingBehaviour.description"), value))
+                        .controller(option -> EnumControllerBuilder.create(option).enumClass(CreativeBreakingBehaviour.class).valueFormatter(CreativeBreakingBehaviour::getDisplayName))
+                        .description(value -> creativeBreakingBehaviourDescription(Text.translatable("config.extended_drawers.misc.sideBreakingBehaviour.description"), value))
                         .build())
-                .option(Option.createBuilder(boolean.class)
+                .option(Option.<Boolean>createBuilder()
                         .name(Text.translatable("config.extended_drawers.misc.blockUpgradeRemovalsWithOverflow"))
                         .binding(DEFAULT.misc().blockUpgradeRemovalsWithOverflow(), () -> instance.blockUpgradeRemovalsWithOverflow, value -> instance.blockUpgradeRemovalsWithOverflow = value)
-                        .controller(TickBoxController::new)
-                        .description(description(Text.translatable("config.extended_drawers.misc.blockUpgradeRemovalsWithOverflow"), Text.translatable("config.extended_drawers.misc.blockUpgradeRemovalsWithOverflow.description")))
+                        .controller(TickBoxControllerBuilder::create)
+                        .description(OptionDescription.of(Text.translatable("config.extended_drawers.misc.blockUpgradeRemovalsWithOverflow.description")))
                         .build())
-                .option(Option.createBuilder(boolean.class)
+                .option(Option.<Boolean>createBuilder()
                         .name(Text.translatable("config.extended_drawers.misc.allowRecursion"))
                         .binding(DEFAULT.misc().allowRecursion(), () -> instance.allowRecursion, value -> instance.allowRecursion = value)
-                        .controller(TickBoxController::new)
-                        .description(description(Text.translatable("config.extended_drawers.misc.allowRecursion"), Text.translatable("config.extended_drawers.misc.allowRecursion.description").append(Text.translatable("config.extended_drawers.misc.allowRecursion.warning").formatted(Formatting.YELLOW))))
+                        .controller(TickBoxControllerBuilder::create)
+                        .description(OptionDescription.of(text1))
                         .build())
-                .option(Option.createBuilder(boolean.class)
+                .option(Option.<Boolean>createBuilder()
                         .name(Text.translatable("config.extended_drawers.misc.drawersDropContentsOnBreak"))
                         .binding(DEFAULT.misc().drawersDropContentsOnBreak(), () -> instance.drawersDropContentsOnBreak, value -> instance.drawersDropContentsOnBreak = value)
-                        .controller(TickBoxController::new)
-                        .description(description(Text.translatable("config.extended_drawers.misc.drawersDropContentsOnBreak"), Text.translatable("config.extended_drawers.misc.drawersDropContentsOnBreak.description").append(Text.translatable("config.extended_drawers.misc.drawersDropContentsOnBreak.warning").formatted(Formatting.YELLOW))))
+                        .controller(TickBoxControllerBuilder::create)
+                        .description(OptionDescription.of(text))
                         .build())
                 .build();
     }
@@ -149,77 +167,171 @@ public class ConfigScreenFactory {
     private static ConfigCategory createClientCategory(ClientCategory.Mutable instance) {
         return ConfigCategory.createBuilder()
                 .name(Text.translatable("config.extended_drawers.client"))
-                .option(Option.createBuilder(int.class)
+                .option(Option.<Integer>createBuilder()
                         .name(Text.translatable("config.extended_drawers.client.itemRenderDistance"))
                         .binding(DEFAULT.client().itemRenderDistance(), () -> instance.itemRenderDistance, value -> instance.itemRenderDistance = value)
-                        .controller(option -> new IntegerFieldController(option, 16, 256))
-                        .description(description(Text.translatable("config.extended_drawers.client.itemRenderDistance"), Text.translatable("config.extended_drawers.client.itemRenderDistance.description")))
+                        .controller(option -> IntegerFieldControllerBuilder.create(option).min(16).max(256))
+                        .description(OptionDescription.of(Text.translatable("config.extended_drawers.client.itemRenderDistance.description")))
                         .build())
-                .option(Option.createBuilder(int.class)
+                .option(Option.<Integer>createBuilder()
                         .name(Text.translatable("config.extended_drawers.client.iconRenderDistance"))
                         .binding(DEFAULT.client().iconRenderDistance(), () -> instance.iconRenderDistance, value -> instance.iconRenderDistance = value)
-                        .controller(option -> new IntegerFieldController(option, 16, 256))
-                        .description(description(Text.translatable("config.extended_drawers.client.iconRenderDistance"), Text.translatable("config.extended_drawers.client.iconRenderDistance.description")))
+                        .controller(option -> IntegerFieldControllerBuilder.create(option).min(16).max(256))
+                        .description(OptionDescription.of(Text.translatable("config.extended_drawers.client.iconRenderDistance.description")))
                         .build())
-                .option(Option.createBuilder(int.class)
+                .option(Option.<Integer>createBuilder()
                         .name(Text.translatable("config.extended_drawers.client.textRenderDistance"))
                         .binding(DEFAULT.client().textRenderDistance(), () -> instance.textRenderDistance, value -> instance.textRenderDistance = value)
-                        .controller(option -> new IntegerFieldController(option, 16, 256))
-                        .description(description(Text.translatable("config.extended_drawers.client.textRenderDistance"), Text.translatable("config.extended_drawers.client.textRenderDistance.description")))
+                        .controller(option -> IntegerFieldControllerBuilder.create(option).min(16).max(256))
+                        .description(OptionDescription.of(Text.translatable("config.extended_drawers.client.textRenderDistance.description")))
                         .build())
-                .option(Option.createBuilder(boolean.class)
+                .option(Option.<Boolean>createBuilder()
                         .name(Text.translatable("config.extended_drawers.client.displayEmptyCount"))
                         .binding(DEFAULT.client().displayEmptyCount(), () -> instance.displayEmptyCount, value -> instance.displayEmptyCount = value)
-                        .controller(TickBoxController::new)
-                        .description(description(Text.translatable("config.extended_drawers.client.displayEmptyCount"), Text.translatable("config.extended_drawers.client.displayEmptyCount.description")))
+                        .controller(TickBoxControllerBuilder::create)
+                        .description(OptionDescription.of(Text.translatable("config.extended_drawers.client.displayEmptyCount.description")))
                         .build())
-                .group(OptionGroup.createBuilder()
-                        .name(Text.translatable("config.extended_drawers.client.layout"))
-                        .option(Option.createBuilder(float.class)
-                                .name(Text.translatable("config.extended_drawers.client.smallItemScale"))
-                                .binding(DEFAULT.client().smallItemScale(), () -> instance.smallItemScale, value -> instance.smallItemScale = value)
-                                .controller(option -> new FloatFieldController(option, 0, 2, FLOAT_FORMATTER))
-                                .description(description(Text.translatable("config.extended_drawers.client.smallItemScale"), Text.translatable("config.extended_drawers.client.smallItemScale.description")))
-                                .build())
-                        .option(Option.createBuilder(float.class)
-                                .name(Text.translatable("config.extended_drawers.client.largeItemScale"))
-                                .binding(DEFAULT.client().largeItemScale(), () -> instance.largeItemScale, value -> instance.largeItemScale = value)
-                                .controller(option -> new FloatFieldController(option, 0, 2, FLOAT_FORMATTER))
-                                .description(description(Text.translatable("config.extended_drawers.client.largeItemScale"), Text.translatable("config.extended_drawers.client.largeItemScale.description")))
-                                .build())
-                        .option(Option.createBuilder(float.class)
-                                .name(Text.translatable("config.extended_drawers.client.smallTextScale"))
-                                .binding(DEFAULT.client().smallTextScale(), () -> instance.smallTextScale, value -> instance.smallTextScale = value)
-                                .controller(option -> new FloatFieldController(option, 0, 2, FLOAT_FORMATTER))
-                                .description(description(Text.translatable("config.extended_drawers.client.smallTextScale"), Text.translatable("config.extended_drawers.client.smallTextScale.description")))
-                                .build())
-                        .option(Option.createBuilder(float.class)
-                                .name(Text.translatable("config.extended_drawers.client.largeTextScale"))
-                                .binding(DEFAULT.client().largeTextScale(), () -> instance.largeTextScale, value -> instance.largeTextScale = value)
-                                .controller(option -> new FloatFieldController(option, 0, 2, FLOAT_FORMATTER))
-                                .description(description(Text.translatable("config.extended_drawers.client.largeTextScale"), Text.translatable("config.extended_drawers.client.largeTextScale.description")))
-                                .build())
-                        .option(Option.createBuilder(float.class)
-                                .name(Text.translatable("config.extended_drawers.client.textOffset"))
-                                .binding(DEFAULT.client().textOffset(), () -> instance.textOffset, value -> instance.textOffset = value)
-                                .controller(option -> new FloatFieldController(option, 0, 2, FLOAT_FORMATTER))
-                                .description(description(Text.translatable("config.extended_drawers.client.textOffset"), Text.translatable("config.extended_drawers.client.textOffset.description")))
-                                .build())
-                        .build())
+                .group(createLayoutGroup(instance.layout))
                 .build();
     }
 
-    private static OptionDescription creativeBreakingBehaviourDescription(Text name, Text text, CreativeBreakingBehaviour value) {
-        return OptionDescription.createBuilder()
-                .name(name)
-                .description(text, Text.translatable("config.extended_drawers.creativeBreakingBehaviour." + value.asString() + ".description"))
+    private static OptionGroup createLayoutGroup(ClientCategory.LayoutGroup.Mutable instance) {
+        var layoutRenderer = new LayoutRenderer();
+
+        var smallItemScale = Option.<Float>createBuilder()
+                .name(Text.translatable("config.extended_drawers.client.smallItemScale"))
+                .binding(DEFAULT.client().layout().smallItemScale(), () -> instance.smallItemScale, value -> instance.smallItemScale = value)
+                .controller(option -> FloatSliderControllerBuilder.create(option).range(0f, 2f).step(0.05f).valueFormatter(FLOAT_FORMATTER))
+                .description(OptionDescription.createBuilder().customImage(CompletableFuture.completedFuture(Optional.of(layoutRenderer))).description(Text.translatable("config.extended_drawers.client.smallItemScale.description")).build())
+                .build();
+        var largeItemScale = Option.<Float>createBuilder()
+                .name(Text.translatable("config.extended_drawers.client.largeItemScale"))
+                .binding(DEFAULT.client().layout().largeItemScale(), () -> instance.largeItemScale, value -> instance.largeItemScale = value)
+                .controller(option -> FloatSliderControllerBuilder.create(option).range(0f, 2f).step(0.05f).valueFormatter(FLOAT_FORMATTER))
+                .description(OptionDescription.createBuilder().customImage(CompletableFuture.completedFuture(Optional.of(layoutRenderer))).description(Text.translatable("config.extended_drawers.client.largeItemScale.description")).build())
+                .build();
+        var smallTextScale = Option.<Float>createBuilder()
+                .name(Text.translatable("config.extended_drawers.client.smallTextScale"))
+                .binding(DEFAULT.client().layout().smallTextScale(), () -> instance.smallTextScale, value -> instance.smallTextScale = value)
+                .controller(option -> FloatSliderControllerBuilder.create(option).range(0f, 2f).step(0.05f).valueFormatter(FLOAT_FORMATTER))
+                .description(OptionDescription.createBuilder().customImage(CompletableFuture.completedFuture(Optional.of(layoutRenderer))).description(Text.translatable("config.extended_drawers.client.smallTextScale.description")).build())
+                .build();
+        var largeTextScale = Option.<Float>createBuilder()
+                .name(Text.translatable("config.extended_drawers.client.largeTextScale"))
+                .binding(DEFAULT.client().layout().largeTextScale(), () -> instance.largeTextScale, value -> instance.largeTextScale = value)
+                .controller(option -> FloatSliderControllerBuilder.create(option).range(0f, 2f).step(0.05f).valueFormatter(FLOAT_FORMATTER))
+                .description(OptionDescription.createBuilder().customImage(CompletableFuture.completedFuture(Optional.of(layoutRenderer))).description(Text.translatable("config.extended_drawers.client.largeTextScale.description")).build())
+                .build();
+        var textOffset = Option.<Float>createBuilder()
+                .name(Text.translatable("config.extended_drawers.client.textOffset"))
+                .binding(DEFAULT.client().layout().textOffset(), () -> instance.textOffset, value -> instance.textOffset = value)
+                .controller(option -> FloatSliderControllerBuilder.create(option).range(0f, 1f).step(0.05f).valueFormatter(FLOAT_FORMATTER))
+                .description(OptionDescription.createBuilder().customImage(CompletableFuture.completedFuture(Optional.of(layoutRenderer))).description(Text.translatable("config.extended_drawers.client.textOffset.description")).build())
+                .build();
+
+        layoutRenderer.init(smallItemScale, largeItemScale, smallTextScale, largeTextScale, textOffset);
+
+        return OptionGroup.createBuilder()
+                .name(Text.translatable("config.extended_drawers.client.layout"))
+                .option(smallItemScale)
+                .option(largeItemScale)
+                .option(smallTextScale)
+                .option(largeTextScale)
+                .option(textOffset)
                 .build();
     }
 
-    private static OptionDescription description(Text name, Text... text) {
-        return OptionDescription.createBuilder()
-                .name(name)
-                .description(text)
-                .build();
+    private static OptionDescription creativeBreakingBehaviourDescription(Text text, CreativeBreakingBehaviour value) {
+        return OptionDescription.of(text, Text.translatable("config.extended_drawers.creativeBreakingBehaviour." + value.asString() + ".description"));
+    }
+
+    @SuppressWarnings("UnstableApiUsage")
+    private static class LayoutRenderer implements ImageRenderer {
+        private Option<Float> smallItemScale = null;
+        private Option<Float> largeItemScale = null;
+        private Option<Float> smallTextScale = null;
+        private Option<Float> largeTextScale = null;
+        private Option<Float> textOffset = null;
+        private boolean initialized = false;
+
+        public void init(Option<Float> smallItemScale, Option<Float> largeItemScale, Option<Float> smallTextScale, Option<Float> largeTextScale, Option<Float> textOffset) {
+            this.smallItemScale = smallItemScale;
+            this.largeItemScale = largeItemScale;
+            this.smallTextScale = smallTextScale;
+            this.largeTextScale = largeTextScale;
+            this.textOffset = textOffset;
+            this.initialized = true;
+        }
+
+        @Override
+        public int render(DrawContext context, int x, int y, int renderWidth) {
+            if (!initialized) return 0;
+
+            var atlas = MinecraftClient.getInstance().getSpriteAtlas(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE);
+            var size = renderWidth / 3;
+            var config = ExtendedDrawersConfig.get();
+            var client = config.client();
+            var newConfig = new ConfigData(new ClientCategory(client.itemRenderDistance(),
+                    client.iconRenderDistance(),
+                    client.textRenderDistance(),
+                    client.displayEmptyCount(),
+                    new ClientCategory.LayoutGroup(smallItemScale.pendingValue(),
+                    largeItemScale.pendingValue(),
+                    smallTextScale.pendingValue(),
+                    largeTextScale.pendingValue(),
+                    textOffset.pendingValue())), config.storage(), config.misc());
+
+            var renderer = AbstractDrawerBlockEntityRenderer.createRendererTool();
+            var matrices = context.getMatrices();
+
+            var player = MinecraftClient.getInstance().player;
+            var playerPos = player == null ? BlockPos.ORIGIN : player.getBlockPos();
+
+            try (var ignored = ExtendedDrawersConfig.override(newConfig)) {
+                context.drawSprite(x, y, 0, size, size, atlas.apply(id("block/single_drawer")));
+                context.drawSprite(x + size, y, 0, size, size, atlas.apply(id("block/quad_drawer")));
+                context.drawSprite(x + 2 * size, y, 0, size, size, atlas.apply(id("block/compacting_drawer")));
+
+                matrices.push();
+                matrices.translate(x, y, 1);
+                matrices.scale(size, size, -size);
+                matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(180));
+                matrices.translate(0.5, -0.5, 0);
+
+                var voidingSprite = atlas.apply(new Identifier("minecraft", "item/lava_bucket"));
+                var lockSprite = atlas.apply(id("item/lock"));
+                var upgrade2Sprite = atlas.apply(id("item/t2_upgrade"));
+                var upgrade4Sprite = atlas.apply(id("item/t4_upgrade"));
+
+                renderer.renderSlot(ItemVariant.of(Items.COBBLESTONE), 128L, false, List.of(lockSprite), matrices, context.getVertexConsumers(), LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 0, playerPos, null);
+
+                matrices.translate(0.75, 0.25, 0);
+                renderer.renderSlot(ItemVariant.of(Items.REDSTONE), 16L, true, List.of(lockSprite), matrices, context.getVertexConsumers(), LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 0, playerPos, null);
+                matrices.translate(0.5, 0, 0);
+                renderer.renderSlot(ItemVariant.of(Items.GUNPOWDER), 32L, true, List.of(voidingSprite), matrices, context.getVertexConsumers(), LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 0, playerPos, null);
+                matrices.translate(-0.5, -0.5, 0);
+                renderer.renderSlot(ItemVariant.of(Items.SUGAR), 64L, true, List.of(lockSprite, voidingSprite, upgrade2Sprite), matrices, context.getVertexConsumers(), LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 0, playerPos, null);
+                matrices.translate(0.5, 0, 0);
+                renderer.renderSlot(ItemVariant.of(Items.GLOWSTONE_DUST), 128L, true, List.of(upgrade4Sprite), matrices, context.getVertexConsumers(), LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 0, playerPos, null);
+
+                matrices.translate(0.75, 0.5, 0);
+                renderer.renderIcons(List.of(lockSprite, voidingSprite, upgrade4Sprite), true, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, matrices, context.getVertexConsumers());
+                renderer.renderSlot(ItemVariant.of(Items.IRON_INGOT), 9L, true, List.of(), matrices, context.getVertexConsumers(), LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 0, playerPos, null);
+                matrices.translate(0.25, -0.5, 0);
+                renderer.renderSlot(ItemVariant.of(Items.IRON_NUGGET), 81L, true, List.of(), matrices, context.getVertexConsumers(), LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 0, playerPos, null);
+                matrices.translate(-0.5, 0, 0);
+                renderer.renderSlot(ItemVariant.of(Items.IRON_BLOCK), 1L, true, List.of(), matrices, context.getVertexConsumers(), LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 0, playerPos, null);
+
+                matrices.pop();
+            }
+
+            return size;
+        }
+
+        @Override
+        public void close() {
+
+        }
+
     }
 }

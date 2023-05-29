@@ -8,11 +8,11 @@ import net.minecraft.block.Block;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.render.DiffuseLighting;
 import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.block.entity.BlockEntityRenderer;
-import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
 import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.render.model.json.ModelTransformationMode;
 import net.minecraft.client.texture.Sprite;
@@ -37,10 +37,25 @@ public abstract class AbstractDrawerBlockEntityRenderer<T extends BlockEntity> i
 
     private final ItemRenderer itemRenderer;
     private final TextRenderer textRenderer;
+    private boolean isGui = false;
 
-    public AbstractDrawerBlockEntityRenderer(BlockEntityRendererFactory.Context context) {
-        this.itemRenderer = context.getItemRenderer();
-        this.textRenderer = context.getTextRenderer();
+    public AbstractDrawerBlockEntityRenderer(ItemRenderer itemRenderer, TextRenderer textRenderer) {
+        this.itemRenderer = itemRenderer;
+        this.textRenderer = textRenderer;
+    }
+
+    /**
+     * Creates an instance for rendering slots in guis for layout preview.
+     */
+    public static AbstractDrawerBlockEntityRenderer<BlockEntity> createRendererTool() {
+        var client = MinecraftClient.getInstance();
+        AbstractDrawerBlockEntityRenderer<BlockEntity> renderer = new AbstractDrawerBlockEntityRenderer<>(client.getItemRenderer(), client.textRenderer) {
+            @Override
+            public void render(BlockEntity entity, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
+            }
+        };
+        renderer.isGui = true;
+        return renderer;
     }
     
     public void renderSlot(ItemVariant item, @Nullable Long amount, boolean small, List<Sprite> icons, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay, int seed, BlockPos pos, World world) {
@@ -51,12 +66,12 @@ public abstract class AbstractDrawerBlockEntityRenderer<T extends BlockEntity> i
         if (pos.isWithinDistance(playerPos, config.textRenderDistance()) && amount != null)
             renderText(amount, small, light, matrices, vertexConsumers);
         if (pos.isWithinDistance(playerPos, config.iconRenderDistance()))
-            renderIcons(icons, small, light, matrices, vertexConsumers, overlay);
+            renderIcons(icons, small, light, overlay, matrices, vertexConsumers);
         if (pos.isWithinDistance(playerPos, config.itemRenderDistance()))
             renderItem(item, small, light, matrices, vertexConsumers, world, seed);
     }
-    
-    protected final boolean shouldRender(T drawer, Direction facing) {
+
+    public final boolean shouldRender(T drawer, Direction facing) {
         var world = drawer.getWorld();
         if (world == null) return false;
         var pos = drawer.getPos();
@@ -64,8 +79,8 @@ public abstract class AbstractDrawerBlockEntityRenderer<T extends BlockEntity> i
         
         return Block.shouldDrawSide(state, world, pos, facing, pos.offset(facing));
     }
-    
-    protected void renderIcons(List<Sprite> icons, boolean small, int light, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int overlay) {
+
+    public void renderIcons(List<Sprite> icons, boolean small, int light, int overlay, MatrixStack matrices, VertexConsumerProvider vertexConsumers) {
         var increment = 1.0 / (icons.size() + 1.0);
         matrices.push();
         if (small) matrices.scale(0.5f, 0.5f, 1);
@@ -73,12 +88,12 @@ public abstract class AbstractDrawerBlockEntityRenderer<T extends BlockEntity> i
 
         for (var icon : icons) {
             matrices.translate(increment, 0, 0);
-            renderIcon(icon, light, matrices, vertexConsumers, overlay);
+            renderIcon(icon, light, overlay, matrices, vertexConsumers);
         }
         matrices.pop();
     }
 
-    private void renderIcon(Sprite sprite, int light, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int overlay) {
+    private void renderIcon(Sprite sprite, int light, int overlay, MatrixStack matrices, VertexConsumerProvider vertexConsumers) {
         matrices.push();
         matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(90));
         matrices.translate(-0.125, -0.24, -0.5);
@@ -90,9 +105,9 @@ public abstract class AbstractDrawerBlockEntityRenderer<T extends BlockEntity> i
         matrices.pop();
     }
 
-    protected void renderItem(ItemVariant item, boolean small, int light, MatrixStack matrices, VertexConsumerProvider vertexConsumers, World world, int seed) {
+    public void renderItem(ItemVariant item, boolean small, int light, MatrixStack matrices, VertexConsumerProvider vertexConsumers, World world, int seed) {
         if (item.isBlank()) return;
-        var itemScale = ExtendedDrawersConfig.get().client().itemScale(small);
+        var itemScale = ExtendedDrawersConfig.get().client().layout().itemScale(small);
 
         matrices.push();
         matrices.scale(itemScale, itemScale, 1);
@@ -102,19 +117,25 @@ public abstract class AbstractDrawerBlockEntityRenderer<T extends BlockEntity> i
         var stack = item.toStack();
         var model = itemRenderer.getModel(stack, world, null, seed);
 
-        // Stolen from storage drawers
-        if (model.isSideLit()) {
-            matrices.peek().getNormalMatrix().mul(new Matrix3f().set(ITEM_LIGHT_ROTATION_3D));
+        if (isGui) {
+            DiffuseLighting.disableGuiDepthLighting();
         } else {
-            matrices.peek().getNormalMatrix().mul(new Matrix3f().set(ITEM_LIGHT_ROTATION_FLAT));
+            // Stolen from storage drawers
+            if (model.isSideLit()) {
+                matrices.peek().getNormalMatrix().mul(new Matrix3f().set(ITEM_LIGHT_ROTATION_3D));
+            } else {
+                matrices.peek().getNormalMatrix().mul(new Matrix3f().set(ITEM_LIGHT_ROTATION_FLAT));
+            }
         }
 
         itemRenderer.renderItem(stack, ModelTransformationMode.GUI, false, matrices, vertexConsumers, light, OverlayTexture.DEFAULT_UV, model);
 
+        if (isGui) DiffuseLighting.disableGuiDepthLighting();
+
         matrices.pop();
     }
-    
-    protected void renderText(long amount, boolean small, int light, MatrixStack matrices, VertexConsumerProvider vertexConsumers) {
+
+    public void renderText(long amount, boolean small, int light, MatrixStack matrices, VertexConsumerProvider vertexConsumers) {
         var config = ExtendedDrawersConfig.get().client();
 
         matrices.push();
@@ -124,8 +145,8 @@ public abstract class AbstractDrawerBlockEntityRenderer<T extends BlockEntity> i
         } else {
             matrices.translate(0, 0.5, -0.01);
         }
-        matrices.scale(config.textScale(small), config.textScale(small), 1);
-        matrices.translate(0, -config.textOffset(), -0.01);
+        matrices.scale(config.layout().textScale(small), config.layout().textScale(small), 1);
+        matrices.translate(0, config.layout().textOffset() / -4, -0.01);
 
         matrices.scale(0.02f, 0.02f, 0.02f);
         var text = Long.toString(amount);

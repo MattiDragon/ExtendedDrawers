@@ -12,6 +12,7 @@ import net.minecraft.text.HoverEvent;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
@@ -34,6 +35,7 @@ public class ExtendedDrawersConfig {
 
     private static boolean prepared = false;
     private static ConfigData instance = ConfigData.DEFAULT;
+    private static boolean overridden = false;
 
     private ExtendedDrawersConfig() {}
 
@@ -47,7 +49,24 @@ public class ExtendedDrawersConfig {
         return instance;
     }
 
+    public static OverrideCloseCallback override(ConfigData config) {
+        if (overridden) throw new IllegalStateException("Only singe config override allowed");
+        overridden = true;
+        var previous = instance;
+        instance = config;
+        return new OverrideCloseCallback(previous);
+    }
+
+    public record OverrideCloseCallback(ConfigData previous) implements AutoCloseable {
+        @Override
+        public void close() {
+            instance = previous;
+            overridden = false;
+        }
+    }
+
     public static void set(ConfigData config) {
+        if (overridden) throw new IllegalStateException("Config set while overriden");
         instance = config;
         ON_CHANGE.invoker().onChange(config);
         save();

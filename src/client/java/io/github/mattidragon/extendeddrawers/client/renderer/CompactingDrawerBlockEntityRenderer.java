@@ -21,6 +21,7 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import static io.github.mattidragon.extendeddrawers.ExtendedDrawers.id;
@@ -28,7 +29,7 @@ import static io.github.mattidragon.extendeddrawers.ExtendedDrawers.id;
 @SuppressWarnings("UnstableApiUsage")
 public class CompactingDrawerBlockEntityRenderer extends AbstractDrawerBlockEntityRenderer<CompactingDrawerBlockEntity> {
     public CompactingDrawerBlockEntityRenderer(BlockEntityRendererFactory.Context context) {
-        super(context);
+        super(context.getItemRenderer(), context.getTextRenderer());
     }
     
     @Override
@@ -56,15 +57,15 @@ public class CompactingDrawerBlockEntityRenderer extends AbstractDrawerBlockEnti
 
         if (slots.length >= 1) { // Top slot
             matrices.translate(0, 0.25, 0);
-            renderSlot(drawer.storage.getSlot(CompactingDrawerBlock.getSlot(new Vec2f(0.5f, 0.25f), slots.length)), light, matrices, vertexConsumers, (int) drawer.getPos().asLong(), drawerPos, world);
+            renderSlot(drawer.storage.getSlot(CompactingDrawerBlock.getSlot(new Vec2f(0.5f, 0.25f), slots.length)), light, overlay, matrices, vertexConsumers, (int) drawer.getPos().asLong(), drawerPos, world);
         }
         if (slots.length >= 2) { // Bottom right
             matrices.translate(0.25, -0.5, 0);
-            renderSlot(drawer.storage.getSlot(CompactingDrawerBlock.getSlot(new Vec2f(0.75f, 0.75f), slots.length)), light, matrices, vertexConsumers, (int) drawer.getPos().asLong(), drawerPos, world);
+            renderSlot(drawer.storage.getSlot(CompactingDrawerBlock.getSlot(new Vec2f(0.75f, 0.75f), slots.length)), light, overlay, matrices, vertexConsumers, (int) drawer.getPos().asLong(), drawerPos, world);
         }
         if (slots.length >= 3) { // Bottom left
             matrices.translate(-0.5, 0, 0);
-            renderSlot(drawer.storage.getSlot(CompactingDrawerBlock.getSlot(new Vec2f(0.25f, 0.75f), slots.length)), light, matrices, vertexConsumers, (int) drawer.getPos().asLong(), drawerPos, world);
+            renderSlot(drawer.storage.getSlot(CompactingDrawerBlock.getSlot(new Vec2f(0.25f, 0.75f), slots.length)), light, overlay, matrices, vertexConsumers, (int) drawer.getPos().asLong(), drawerPos, world);
         }
 
         
@@ -86,24 +87,18 @@ public class CompactingDrawerBlockEntityRenderer extends AbstractDrawerBlockEnti
         if (drawer.getPos().isWithinDistance(playerPos, ExtendedDrawersConfig.get().client().iconRenderDistance())) {
             matrices.push(); // Render icons like the top slot
             matrices.translate(0, 0.25, 0);
-            renderIcons(icons, true, light, matrices, vertexConsumers, overlay);
+            renderIcons(icons, true, light, overlay, matrices, vertexConsumers);
             matrices.pop();
         }
     }
 
-    private void renderSlot(CompactingDrawerStorage.Slot slot, int light, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int seed, BlockPos pos, World world) {
+    private void renderSlot(CompactingDrawerStorage.Slot slot, int light, int overlay, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int seed, BlockPos pos, World world) {
         if (slot.isBlocked()) return;
 
         var item = slot.getStorage().isHidden() ? ItemVariant.blank() : slot.getResource();
         @Nullable
         var amount = ((slot.getAmount() == 0) || ExtendedDrawersConfig.get().client().displayEmptyCount()) ? null : slot.getAmount();
-        //noinspection ConstantConditions
-        var playerPos = MinecraftClient.getInstance().player.getPos();
-        var config = ExtendedDrawersConfig.get().client();
 
-        if (pos.isWithinDistance(playerPos, config.textRenderDistance()) && amount != null)
-            renderText(amount, true, light, matrices, vertexConsumers);
-        if (pos.isWithinDistance(playerPos, config.itemRenderDistance()))
-            renderItem(item, true, light, matrices, vertexConsumers, world, seed);
+        renderSlot(item, amount, true, List.of(), matrices, vertexConsumers, light, overlay, seed, pos, world);
     }
 }

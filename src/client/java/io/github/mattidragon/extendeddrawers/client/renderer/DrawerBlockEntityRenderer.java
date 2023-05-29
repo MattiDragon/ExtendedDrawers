@@ -25,7 +25,7 @@ import static io.github.mattidragon.extendeddrawers.ExtendedDrawers.id;
 @SuppressWarnings("UnstableApiUsage")
 public class DrawerBlockEntityRenderer extends AbstractDrawerBlockEntityRenderer<DrawerBlockEntity> {
     public DrawerBlockEntityRenderer(BlockEntityRendererFactory.Context context) {
-        super(context);
+        super(context.getItemRenderer(), context.getTextRenderer());
     }
     
     @Override

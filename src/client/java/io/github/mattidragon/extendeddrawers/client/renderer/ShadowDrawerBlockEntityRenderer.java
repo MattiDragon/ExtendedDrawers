@@ -18,7 +18,7 @@ import java.util.Objects;
 
 public class ShadowDrawerBlockEntityRenderer extends AbstractDrawerBlockEntityRenderer<ShadowDrawerBlockEntity> {
     public ShadowDrawerBlockEntityRenderer(BlockEntityRendererFactory.Context context) {
-        super(context);
+        super(context.getItemRenderer(), context.getTextRenderer());
     }
     
     @Override
