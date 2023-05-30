@@ -1,64 +1,55 @@
 package io.github.mattidragon.extendeddrawers.network;
 
-import com.kneelawk.graphlib.api.graph.BlockGraph;
+import com.kneelawk.graphlib.api.graph.GraphEntityContext;
 import com.kneelawk.graphlib.api.graph.NodeHolder;
-import io.github.mattidragon.extendeddrawers.ExtendedDrawers;
+import com.kneelawk.graphlib.api.graph.user.BlockNode;
+import com.kneelawk.graphlib.api.graph.user.GraphEntity;
+import com.kneelawk.graphlib.api.graph.user.GraphEntityType;
+import com.kneelawk.graphlib.api.graph.user.NodeEntity;
 import io.github.mattidragon.extendeddrawers.block.entity.StorageDrawerBlockEntity;
 import io.github.mattidragon.extendeddrawers.storage.DrawerStorage;
-import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
-import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.base.CombinedStorage;
-import net.minecraft.registry.RegistryKey;
+import net.minecraft.nbt.NbtElement;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-import java.util.function.LongFunction;
-
-import static io.github.mattidragon.extendeddrawers.network.NetworkRegistry.UNIVERSE;
 
 /**
  * Caches storages of all slots in networks to make lookup less expensive.
  */
-//FIXME: small mem leak due to caching of removed graphs (not important)
 @SuppressWarnings("UnstableApiUsage")
-public class NetworkStorageCache {
-    private static final Map<RegistryKey<World>, Long2ObjectMap<CombinedStorage<ItemVariant, DrawerStorage>>> CACHE = new HashMap<>();
-    
-    public static void update(ServerWorld world, long id, UpdateHandler.ChangeType type) {
-        var worldCache = CACHE.get(world.getRegistryKey());
-        if (worldCache == null || !worldCache.containsKey(id)) return;
-        switch (type) {
-            case STRUCTURE -> worldCache.remove(id);
-            case CONTENT -> worldCache.get(id).parts.sort(null);
-            case COUNT -> {}
-        }
+public class NetworkStorageCache implements GraphEntity<NetworkStorageCache> {
+    private final GraphEntityContext context;
+    @Nullable
+    private CombinedStorage<ItemVariant, DrawerStorage> cachedStorage = null;
+
+    public NetworkStorageCache(GraphEntityContext context) {
+        this.context = context;
     }
-    
+
+    /**
+     * Helper to easily get the cached storage from a world and pos.
+     */
     public static CombinedStorage<ItemVariant, DrawerStorage> get(ServerWorld world, BlockPos pos) {
-        var optionalId = UNIVERSE.getGraphWorld(world).getGraphsAt(pos).findFirst();
-        if (optionalId.isEmpty()) {
-            ExtendedDrawers.LOGGER.warn("Missing graph at " + pos);
-            return new CombinedStorage<>(List.of());
-        }
-        var id = optionalId.getAsLong();
-        return CACHE.computeIfAbsent(world.getRegistryKey(), key -> new Long2ObjectOpenHashMap<>())
-                .computeIfAbsent(id, (LongFunction<CombinedStorage<ItemVariant, DrawerStorage>>) id_ ->
-                    new CombinedStorage<>(getStorages(world, pos)));
+        return NetworkRegistry.UNIVERSE.getGraphWorld(world)
+                .getLoadedGraphsAt(pos)
+                .map(graph -> graph.getGraphEntity(NetworkRegistry.STORAGE_CACHE_TYPE))
+                .map(NetworkStorageCache::get)
+                .findFirst()
+                .orElseGet(() -> new CombinedStorage<>(List.of()));
     }
-    
+
     @NotNull
-    private static ArrayList<DrawerStorage> getStorages(ServerWorld world, BlockPos pos) {
+    private List<DrawerStorage> getStorages() {
         return new ArrayList<>(
-                UNIVERSE.getGraphWorld(world).getGraphsAt(pos)
-                        .mapToObj(UNIVERSE.getGraphWorld(world)::getGraph)
-                        .filter(Objects::nonNull)
-                        .flatMap(BlockGraph::getNodes)
+                context.getGraph()
+                        .getNodes()
                         .map(NodeHolder::getPos)
-                        .map(world::getBlockEntity)
+                        .map(context.getBlockWorld()::getBlockEntity)
                         .filter(StorageDrawerBlockEntity.class::isInstance)
                         .map(StorageDrawerBlockEntity.class::cast)
                         .flatMap(StorageDrawerBlockEntity::streamStorages)
@@ -66,12 +57,37 @@ public class NetworkStorageCache {
                         .toList());
     }
 
-    public static void clear() {
-        CACHE.clear();
+    public void update(UpdateHandler.ChangeType changeType) {
+        switch (changeType) {
+            case STRUCTURE -> cachedStorage = null;
+            case CONTENT -> {
+                if (cachedStorage != null) {
+                    cachedStorage.parts.sort(null);
+                }
+            }
+            case COUNT -> {}
+        }
     }
 
-    public static void remove(ServerWorld world, long graphId) {
-        CACHE.get(world.getRegistryKey()).remove(graphId);
+    public CombinedStorage<ItemVariant, DrawerStorage> get() {
+        if (cachedStorage == null) {
+            cachedStorage = new CombinedStorage<>(getStorages());
+        }
+        return cachedStorage;
+    }
+
+    @Override
+    public @NotNull GraphEntityType<?> getType() {
+        return NetworkRegistry.STORAGE_CACHE_TYPE;
+    }
+
+    @Override
+    public @Nullable NbtElement toTag() {
+        return null;
+    }
+
+    @Override
+    public void merge(@NotNull NetworkStorageCache other) {
     }
 }
 

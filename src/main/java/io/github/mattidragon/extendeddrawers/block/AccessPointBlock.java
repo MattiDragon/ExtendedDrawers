@@ -27,6 +27,7 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
+import java.util.List;
 import java.util.Objects;
 
 import static io.github.mattidragon.extendeddrawers.misc.DrawerInteractionStatusManager.getAndResetInsertStatus;
@@ -109,25 +110,30 @@ public class AccessPointBlock extends NetworkBlock implements DrawerInteractionH
     public ActionResult toggleHide(BlockState state, World world, BlockPos pos, Vec3d hitPos, Direction side) {
         if (!(world instanceof ServerWorld serverWorld)) return ActionResult.PASS;
         var storages = NetworkStorageCache.get(serverWorld, pos).parts;
-        var newState = storages.stream()
-                .map(DrawerStorage::isHidden)
-                .mapToInt(value -> value ? 1 : -1)
-                .sum() <= 0;
-        storages.forEach(storage -> storage.setHidden(newState));
-
-        //TODO: find better way to do this, integrate shadow drawers into math
-        var controller = NetworkRegistry.UNIVERSE.getGraphWorld(serverWorld);
-        controller.getGraphsAt(pos)
-                .mapToObj(controller::getGraph)
-                .filter(Objects::nonNull)
+        var shadowDrawers = NetworkRegistry.UNIVERSE.getGraphWorld(serverWorld)
+                .getLoadedGraphsAt(pos)
                 .flatMap(BlockGraph::getNodes)
                 .map(NodeHolder::getPos)
                 .map(serverWorld::getBlockEntity)
                 .filter(ShadowDrawerBlockEntity.class::isInstance)
                 .map(ShadowDrawerBlockEntity.class::cast)
-                .forEach(drawer -> drawer.setHidden(newState));
+                .toList();
 
-        return storages.size() == 0 ? ActionResult.PASS : ActionResult.SUCCESS;
+        var sum = storages.stream()
+                .map(DrawerStorage::isHidden)
+                .mapToInt(value -> value ? 1 : -1)
+                .sum();
+        sum += shadowDrawers.stream()
+                .map(ShadowDrawerBlockEntity::isHidden)
+                .mapToInt(value -> value ? 1 : -1)
+                .sum();
+
+
+        var newState = sum <= 0;
+        storages.forEach(storage -> storage.setHidden(newState));
+        shadowDrawers.forEach(drawer -> drawer.setHidden(newState));
+
+        return storages.size() + shadowDrawers.size() == 0 ? ActionResult.PASS : ActionResult.SUCCESS;
     }
 
     @Override

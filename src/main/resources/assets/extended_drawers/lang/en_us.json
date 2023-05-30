@@ -27,6 +27,9 @@
   "book.extended_drawers.guide.landing_text": "This guide will take you through all the steps of setting up great storage systems using drawers, as well as how each item and block in the mod work.",
   "book.extended_drawers.guide.subtitle": "Version ${version}",
 
+  "command.extended_drawers.reload.fail": "Failed to reload config. Check logs",
+  "command.extended_drawers.reload.success": "Successfully reloaded config!",
+
   "config.extended_drawers": "Extended Drawers",
   "config.extended_drawers.storage": "Storage",
   "config.extended_drawers.storage.drawerCapacity": "Drawer capacity",

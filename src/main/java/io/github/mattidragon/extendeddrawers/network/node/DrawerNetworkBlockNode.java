@@ -5,6 +5,7 @@ import com.kneelawk.graphlib.api.graph.NodeEntityContext;
 import com.kneelawk.graphlib.api.graph.NodeHolder;
 import com.kneelawk.graphlib.api.graph.user.BlockNode;
 import com.kneelawk.graphlib.api.graph.user.NodeEntity;
+import com.kneelawk.graphlib.api.util.HalfLink;
 import com.kneelawk.graphlib.api.wire.FullWireBlockNode;
 import com.kneelawk.graphlib.api.wire.WireConnectionDiscoverers;
 import io.github.mattidragon.extendeddrawers.network.NetworkRegistry;
@@ -19,18 +20,21 @@ import java.util.Collection;
 public interface DrawerNetworkBlockNode extends FullWireBlockNode {
     @Override
     @NotNull
-    default Collection<NodeHolder<BlockNode>> findConnections(@NotNull NodeContext ctx) {
+    default Collection<HalfLink> findConnections(@NotNull NodeContext ctx) {
         return WireConnectionDiscoverers.fullBlockFindConnections(this, ctx, NetworkRegistry.CONNECTION_FILTER);
     }
 
     @Override
-    default boolean canConnect(@NotNull NodeContext ctx, @NotNull NodeHolder<BlockNode> other) {
+    default boolean canConnect(@NotNull NodeContext ctx, @NotNull HalfLink other) {
         return WireConnectionDiscoverers.fullBlockCanConnect(this, ctx, other, NetworkRegistry.CONNECTION_FILTER);
     }
 
     @Override
     default void onConnectionsChanged(@NotNull NodeContext ctx) {
-        UpdateHandler.scheduleUpdate(ctx.blockWorld(), ctx.self().getGraphId(), UpdateHandler.ChangeType.STRUCTURE);
+        var graph = ctx.graphWorld().getGraph(ctx.self().getGraphId());
+        if (graph != null) {
+            graph.getGraphEntity(NetworkRegistry.UPDATE_HANDLER_TYPE).scheduleUpdate(UpdateHandler.ChangeType.CONTENT);
+        }
     }
 
     @Override

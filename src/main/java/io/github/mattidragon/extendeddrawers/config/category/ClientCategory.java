@@ -10,7 +10,7 @@ public record ClientCategory(int itemRenderDistance,
                              int textRenderDistance,
                              boolean displayEmptyCount,
                              LayoutGroup layout) {
-    public static final ClientCategory DEFAULT = new ClientCategory(64, 16, 32, false, new LayoutGroup(0.4f, 1f, 0.5f, 1f, 0.8f));
+    public static final ClientCategory DEFAULT = new ClientCategory(64, 16, 32, false, LayoutGroup.DEFAULT);
 
     public static final Codec<ClientCategory> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             defaultingFieldOf(Codec.INT, "itemRenderDistance", DEFAULT.itemRenderDistance).forGetter(ClientCategory::itemRenderDistance),
@@ -29,12 +29,14 @@ public record ClientCategory(int itemRenderDistance,
                               float smallTextScale,
                               float largeTextScale,
                               float textOffset) {
+        private static final LayoutGroup DEFAULT = new LayoutGroup(0.4f, 1f, 0.5f, 1f, 0.8f);
+
         public static final Codec<LayoutGroup> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-                defaultingFieldOf(Codec.FLOAT, "smallItemScale", DEFAULT.layout.smallItemScale).forGetter(LayoutGroup::smallItemScale),
-                defaultingFieldOf(Codec.FLOAT, "largeItemScale", DEFAULT.layout.largeItemScale).forGetter(LayoutGroup::largeItemScale),
-                defaultingFieldOf(Codec.FLOAT, "smallTextScale", DEFAULT.layout.smallTextScale).forGetter(LayoutGroup::smallTextScale),
-                defaultingFieldOf(Codec.FLOAT, "largeTextScale", DEFAULT.layout.largeTextScale).forGetter(LayoutGroup::largeTextScale),
-                defaultingFieldOf(Codec.FLOAT, "textOffset", DEFAULT.layout.textOffset).forGetter(LayoutGroup::textOffset)
+                defaultingFieldOf(Codec.FLOAT, "smallItemScale", DEFAULT.smallItemScale).forGetter(LayoutGroup::smallItemScale),
+                defaultingFieldOf(Codec.FLOAT, "largeItemScale", DEFAULT.largeItemScale).forGetter(LayoutGroup::largeItemScale),
+                defaultingFieldOf(Codec.FLOAT, "smallTextScale", DEFAULT.smallTextScale).forGetter(LayoutGroup::smallTextScale),
+                defaultingFieldOf(Codec.FLOAT, "largeTextScale", DEFAULT.largeTextScale).forGetter(LayoutGroup::largeTextScale),
+                defaultingFieldOf(Codec.FLOAT, "textOffset", DEFAULT.textOffset).forGetter(LayoutGroup::textOffset)
         ).apply(instance, LayoutGroup::new));
 
         public float itemScale(boolean small) {
