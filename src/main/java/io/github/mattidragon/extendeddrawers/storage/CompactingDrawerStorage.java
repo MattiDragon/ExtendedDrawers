@@ -107,6 +107,7 @@ public final class CompactingDrawerStorage extends SnapshotParticipant<Compactin
     protected void readSnapshot(Snapshot snapshot) {
         item = snapshot.item;
         amount = snapshot.amount;
+        updatePending = true;
     }
 
     @Override
