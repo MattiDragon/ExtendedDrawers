@@ -120,7 +120,7 @@ public final class CompactingDrawerStorage extends SnapshotParticipant<Compactin
             if (amount == maxAmount) break;
         }
 
-        return amount;
+        return settings.voiding ? maxAmount : amount;
     }
 
     @Override
