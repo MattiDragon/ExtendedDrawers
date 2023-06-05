@@ -1,6 +1,6 @@
 package io.github.mattidragon.extendeddrawers.client.renderer;
 
-import io.github.mattidragon.extendeddrawers.config.ExtendedDrawersConfig;
+import io.github.mattidragon.extendeddrawers.ExtendedDrawers;
 import net.fabricmc.fabric.api.renderer.v1.RendererAccess;
 import net.fabricmc.fabric.api.renderer.v1.mesh.MutableQuadView;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
@@ -61,7 +61,7 @@ public abstract class AbstractDrawerBlockEntityRenderer<T extends BlockEntity> i
     public void renderSlot(ItemVariant item, @Nullable Long amount, boolean small, List<Sprite> icons, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay, int seed, BlockPos pos, World world) {
         var player = MinecraftClient.getInstance().player;
         var playerPos = player == null ? Vec3d.ofCenter(pos) : player.getPos();
-        var config = ExtendedDrawersConfig.get().client();
+        var config = ExtendedDrawers.CONFIG.get().client();
     
         if (pos.isWithinDistance(playerPos, config.textRenderDistance()) && amount != null)
             renderText(amount, small, light, matrices, vertexConsumers);
@@ -107,7 +107,7 @@ public abstract class AbstractDrawerBlockEntityRenderer<T extends BlockEntity> i
 
     public void renderItem(ItemVariant item, boolean small, int light, MatrixStack matrices, VertexConsumerProvider vertexConsumers, World world, int seed) {
         if (item.isBlank()) return;
-        var itemScale = ExtendedDrawersConfig.get().client().layout().itemScale(small);
+        var itemScale = ExtendedDrawers.CONFIG.get().client().layout().itemScale(small);
 
         matrices.push();
         matrices.scale(itemScale, itemScale, 1);
@@ -136,7 +136,7 @@ public abstract class AbstractDrawerBlockEntityRenderer<T extends BlockEntity> i
     }
 
     public void renderText(long amount, boolean small, int light, MatrixStack matrices, VertexConsumerProvider vertexConsumers) {
-        var config = ExtendedDrawersConfig.get().client();
+        var config = ExtendedDrawers.CONFIG.get().client();
 
         matrices.push();
         matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(180));

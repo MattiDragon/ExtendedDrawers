@@ -1,11 +1,14 @@
 package io.github.mattidragon.extendeddrawers;
 
+import io.github.mattidragon.configloader.api.ConfigManager;
+import io.github.mattidragon.extendeddrawers.config.ConfigData;
 import io.github.mattidragon.extendeddrawers.misc.DrawerContentsLootFunction;
 import io.github.mattidragon.extendeddrawers.network.NetworkRegistry;
 import io.github.mattidragon.extendeddrawers.networking.CompressionOverrideSyncPacket;
 import io.github.mattidragon.extendeddrawers.registry.ModBlocks;
 import io.github.mattidragon.extendeddrawers.registry.ModItems;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.ResourcePackActivationType;
@@ -13,6 +16,9 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
+import net.minecraft.server.command.CommandManager;
+import net.minecraft.text.HoverEvent;
+import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
@@ -22,21 +28,46 @@ public class ExtendedDrawers implements ModInitializer {
     public static final String MOD_ID = "extended_drawers";
     public static final ModContainer MOD_CONTAINER = FabricLoader.getInstance().getModContainer(MOD_ID).orElseThrow();
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
-    
+    public static final ConfigManager<ConfigData> CONFIG = ConfigManager.create(ConfigData.CODEC, ConfigData.DEFAULT, MOD_ID);
+
     public static Identifier id(String path) {
         return new Identifier(MOD_ID, path);
     }
-    
+
     @Override
     public void onInitialize() {
         ModBlocks.register();
         ModItems.register();
         DrawerContentsLootFunction.register();
         registerItemGroup();
+        registerCommand();
         NetworkRegistry.register();
         CompressionOverrideSyncPacket.register();
         ResourceManagerHelper.registerBuiltinResourcePack(id("alt"), MOD_CONTAINER, Text.translatable("resourcepack.extended_drawers.alt"), ResourcePackActivationType.NORMAL);
         ResourceManagerHelper.registerBuiltinResourcePack(id("dev"), MOD_CONTAINER, Text.translatable("resourcepack.extended_drawers.programmer_art"), ResourcePackActivationType.NORMAL);
+    }
+
+    private static void registerCommand() {
+        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
+            var root = CommandManager.literal("extended_drawers")
+                    .requires(source -> source.hasPermissionLevel(2));
+
+            root.then(CommandManager.literal("reload")
+                    .executes(context -> {
+                        var error = CONFIG.reload();
+                        if (error.isEmpty()) {
+                            context.getSource().sendFeedback(() -> Text.translatable("command.extended_drawers.reload.success"), true);
+                            return 1;
+                        }
+                        var message = Text.translatable("command.extended_drawers.reload.fail")
+                                .fillStyle(Style.EMPTY.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.literal(error.get().toString()))));
+                        context.getSource().sendError(message);
+                        LOGGER.error("Failed to reload config", error.get());
+                        return 0;
+                    }));
+
+            dispatcher.register(root);
+        });
     }
 
     private void registerItemGroup() {

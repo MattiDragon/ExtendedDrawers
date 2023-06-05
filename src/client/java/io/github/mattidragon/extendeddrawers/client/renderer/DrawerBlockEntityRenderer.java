@@ -3,7 +3,6 @@ package io.github.mattidragon.extendeddrawers.client.renderer;
 import io.github.mattidragon.extendeddrawers.ExtendedDrawers;
 import io.github.mattidragon.extendeddrawers.block.DrawerBlock;
 import io.github.mattidragon.extendeddrawers.block.entity.DrawerBlockEntity;
-import io.github.mattidragon.extendeddrawers.config.ExtendedDrawersConfig;
 import io.github.mattidragon.extendeddrawers.storage.DrawerSlot;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.minecraft.client.MinecraftClient;
@@ -30,7 +29,7 @@ public class DrawerBlockEntityRenderer extends AbstractDrawerBlockEntityRenderer
     
     @Override
     public int getRenderDistance() {
-        var config = ExtendedDrawersConfig.get().client();
+        var config = ExtendedDrawers.CONFIG.get().client();
         return Math.max(config.iconRenderDistance(), Math.max(config.textRenderDistance(), config.itemRenderDistance()));
     }
     
@@ -80,7 +79,7 @@ public class DrawerBlockEntityRenderer extends AbstractDrawerBlockEntityRenderer
         if (storage.isVoiding()) icons.add(blockAtlas.apply(new Identifier("minecraft", "item/lava_bucket")));
         if (storage.isHidden()) icons.add(blockAtlas.apply(new Identifier("minecraft", "item/black_dye")));
         if (storage.getUpgrade() != null) icons.add(blockAtlas.apply(storage.getUpgrade().sprite));
-        
-        renderSlot(storage.isHidden() ? ItemVariant.blank() : storage.getItem(), ((storage.getAmount() == 0) || ExtendedDrawersConfig.get().client().displayEmptyCount()) ? null : storage.getAmount(), small, icons, matrices, vertexConsumers, light, overlay, seed, pos, world);
+
+        renderSlot(storage.isHidden() ? ItemVariant.blank() : storage.getItem(), ((storage.getAmount() == 0) || ExtendedDrawers.CONFIG.get().client().displayEmptyCount()) ? null : storage.getAmount(), small, icons, matrices, vertexConsumers, light, overlay, seed, pos, world);
     }
 }

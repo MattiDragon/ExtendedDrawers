@@ -1,8 +1,8 @@
 package io.github.mattidragon.extendeddrawers.mixin;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import io.github.mattidragon.extendeddrawers.ExtendedDrawers;
 import io.github.mattidragon.extendeddrawers.block.base.CreativeBreakBlocker;
-import io.github.mattidragon.extendeddrawers.config.ExtendedDrawersConfig;
 import net.minecraft.network.packet.c2s.play.PlayerActionC2SPacket;
 import net.minecraft.server.network.ServerPlayerInteractionManager;
 import net.minecraft.server.world.ServerWorld;
@@ -22,7 +22,7 @@ public class ServerPlayerInteractionManagerMixin {
         var state = world.getBlockState(pos);
         if (!(state.getBlock() instanceof CreativeBreakBlocker blocker)) return original;
 
-        var config = ExtendedDrawersConfig.get().misc();
+        var config = ExtendedDrawers.CONFIG.get().misc();
         var behaviour = blocker.isFront(state, direction) ? config.frontBreakingBehaviour() : config.sideBreakingBehaviour();
 
         return switch (behaviour) {

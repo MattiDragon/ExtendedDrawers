@@ -1,9 +1,9 @@
 package io.github.mattidragon.extendeddrawers.client.renderer;
 
+import io.github.mattidragon.extendeddrawers.ExtendedDrawers;
 import io.github.mattidragon.extendeddrawers.block.CompactingDrawerBlock;
 import io.github.mattidragon.extendeddrawers.block.DrawerBlock;
 import io.github.mattidragon.extendeddrawers.block.entity.CompactingDrawerBlockEntity;
-import io.github.mattidragon.extendeddrawers.config.ExtendedDrawersConfig;
 import io.github.mattidragon.extendeddrawers.storage.CompactingDrawerStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.minecraft.client.MinecraftClient;
@@ -34,7 +34,7 @@ public class CompactingDrawerBlockEntityRenderer extends AbstractDrawerBlockEnti
     
     @Override
     public int getRenderDistance() {
-        var config = ExtendedDrawersConfig.get().client();
+        var config = ExtendedDrawers.CONFIG.get().client();
         return Math.max(config.iconRenderDistance(), Math.max(config.textRenderDistance(), config.itemRenderDistance()));
     }
     
@@ -84,7 +84,7 @@ public class CompactingDrawerBlockEntityRenderer extends AbstractDrawerBlockEnti
         var player = MinecraftClient.getInstance().player;
         var playerPos = player == null ? Vec3d.ofCenter(drawer.getPos()) : player.getPos();
 
-        if (drawer.getPos().isWithinDistance(playerPos, ExtendedDrawersConfig.get().client().iconRenderDistance())) {
+        if (drawer.getPos().isWithinDistance(playerPos, ExtendedDrawers.CONFIG.get().client().iconRenderDistance())) {
             matrices.push(); // Render icons like the top slot
             matrices.translate(0, 0.25, 0);
             renderIcons(icons, true, light, overlay, matrices, vertexConsumers);
@@ -97,7 +97,7 @@ public class CompactingDrawerBlockEntityRenderer extends AbstractDrawerBlockEnti
 
         var item = slot.getStorage().isHidden() ? ItemVariant.blank() : slot.getResource();
         @Nullable
-        var amount = ((slot.getAmount() == 0) || ExtendedDrawersConfig.get().client().displayEmptyCount()) ? null : slot.getAmount();
+        var amount = ((slot.getAmount() == 0) || ExtendedDrawers.CONFIG.get().client().displayEmptyCount()) ? null : slot.getAmount();
 
         renderSlot(item, amount, true, List.of(), matrices, vertexConsumers, light, overlay, seed, pos, world);
     }

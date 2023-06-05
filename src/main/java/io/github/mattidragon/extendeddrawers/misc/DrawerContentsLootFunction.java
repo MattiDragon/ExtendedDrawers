@@ -2,8 +2,8 @@ package io.github.mattidragon.extendeddrawers.misc;
 
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
+import io.github.mattidragon.extendeddrawers.ExtendedDrawers;
 import io.github.mattidragon.extendeddrawers.block.entity.StorageDrawerBlockEntity;
-import io.github.mattidragon.extendeddrawers.config.ExtendedDrawersConfig;
 import io.github.mattidragon.extendeddrawers.registry.ModBlocks;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
@@ -36,7 +36,7 @@ public class DrawerContentsLootFunction extends ConditionalLootFunction {
     
     @Override
     protected ItemStack process(ItemStack stack, LootContext context) {
-        if (stack.isEmpty() || ExtendedDrawersConfig.get().misc().drawersDropContentsOnBreak()) return stack;
+        if (stack.isEmpty() || ExtendedDrawers.CONFIG.get().misc().drawersDropContentsOnBreak()) return stack;
         var blockEntity = context.get(LootContextParameters.BLOCK_ENTITY);
         if (blockEntity instanceof StorageDrawerBlockEntity drawer && !drawer.isEmpty()) {
             var nbt = new NbtCompound();

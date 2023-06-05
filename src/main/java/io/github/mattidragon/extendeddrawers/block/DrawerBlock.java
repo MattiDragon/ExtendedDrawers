@@ -5,7 +5,6 @@ import io.github.mattidragon.extendeddrawers.block.base.CreativeBreakBlocker;
 import io.github.mattidragon.extendeddrawers.block.base.DrawerInteractionHandler;
 import io.github.mattidragon.extendeddrawers.block.base.NetworkBlockWithEntity;
 import io.github.mattidragon.extendeddrawers.block.entity.DrawerBlockEntity;
-import io.github.mattidragon.extendeddrawers.config.ExtendedDrawersConfig;
 import io.github.mattidragon.extendeddrawers.item.UpgradeItem;
 import io.github.mattidragon.extendeddrawers.misc.DrawerInteractionStatusManager;
 import io.github.mattidragon.extendeddrawers.misc.DrawerRaycastUtil;
@@ -88,7 +87,7 @@ public class DrawerBlock extends NetworkBlockWithEntity<DrawerBlockEntity> imple
     public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
         if (!state.isOf(newState.getBlock())) {
             var drawer = getBlockEntity(world, pos);
-            if (drawer != null && ExtendedDrawersConfig.get().misc().drawersDropContentsOnBreak()) {
+            if (drawer != null && ExtendedDrawers.CONFIG.get().misc().drawersDropContentsOnBreak()) {
                 for (var slot : drawer.storages) {
                     ItemUtils.offerOrDropStacks(world, pos, null, null, slot.getItem(), slot.getAmount());
                 }

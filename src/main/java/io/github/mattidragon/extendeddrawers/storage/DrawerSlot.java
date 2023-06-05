@@ -1,7 +1,7 @@
 package io.github.mattidragon.extendeddrawers.storage;
 
+import io.github.mattidragon.extendeddrawers.ExtendedDrawers;
 import io.github.mattidragon.extendeddrawers.block.entity.DrawerBlockEntity;
-import io.github.mattidragon.extendeddrawers.config.ExtendedDrawersConfig;
 import io.github.mattidragon.extendeddrawers.item.UpgradeItem;
 import io.github.mattidragon.extendeddrawers.misc.ItemUtils;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
@@ -49,7 +49,7 @@ public final class DrawerSlot extends SnapshotParticipant<DrawerSlot.Snapshot> i
     public boolean changeUpgrade(@Nullable UpgradeItem newUpgrade, World world, BlockPos pos, Direction side, @Nullable PlayerEntity player) {
         var oldUpgrade = settings.upgrade;
         settings.upgrade = newUpgrade;
-        if (getAmount() > getCapacity() && ExtendedDrawersConfig.get().misc().blockUpgradeRemovalsWithOverflow()) {
+        if (getAmount() > getCapacity() && ExtendedDrawers.CONFIG.get().misc().blockUpgradeRemovalsWithOverflow()) {
             settings.upgrade = oldUpgrade;
             if (player != null)
                 player.sendMessage(Text.translatable("extended_drawer.drawer.upgrade_fail"), true);
@@ -69,7 +69,7 @@ public final class DrawerSlot extends SnapshotParticipant<DrawerSlot.Snapshot> i
     @Override
     public long insert(ItemVariant resource, long maxAmount, TransactionContext transaction) {
         if (!resource.equals(item) && !item.isBlank()) return 0;
-        if (!ExtendedDrawersConfig.get().misc().allowRecursion() && !resource.getItem().canBeNested()) return 0;
+        if (!ExtendedDrawers.CONFIG.get().misc().allowRecursion() && !resource.getItem().canBeNested()) return 0;
         if (item.isBlank() && settings.locked && !settings.lockOverridden) return 0;
 
         updateSnapshots(transaction);
@@ -114,7 +114,7 @@ public final class DrawerSlot extends SnapshotParticipant<DrawerSlot.Snapshot> i
 
     @Override
     public long getCapacity() {
-        var config = ExtendedDrawersConfig.get().storage();
+        var config = ExtendedDrawers.CONFIG.get().storage();
         var capacity = (long) (config.drawerCapacity() * this.capacityMultiplier);
         if (config.stackSizeAffectsCapacity())
             capacity /= 64.0 / item.getItem().getMaxCount();

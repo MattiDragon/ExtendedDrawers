@@ -1,8 +1,8 @@
 package io.github.mattidragon.extendeddrawers.client.renderer;
 
+import io.github.mattidragon.extendeddrawers.ExtendedDrawers;
 import io.github.mattidragon.extendeddrawers.block.ShadowDrawerBlock;
 import io.github.mattidragon.extendeddrawers.block.entity.ShadowDrawerBlockEntity;
-import io.github.mattidragon.extendeddrawers.config.ExtendedDrawersConfig;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.VertexConsumerProvider;
@@ -23,7 +23,7 @@ public class ShadowDrawerBlockEntityRenderer extends AbstractDrawerBlockEntityRe
     
     @Override
     public int getRenderDistance() {
-        var config = ExtendedDrawersConfig.get().client();
+        var config = ExtendedDrawers.CONFIG.get().client();
         return Math.max(config.textRenderDistance(), config.itemRenderDistance());
     }
     
@@ -41,7 +41,7 @@ public class ShadowDrawerBlockEntityRenderer extends AbstractDrawerBlockEntityRe
         List<Sprite> icons = drawer.isHidden() ? List.of(MinecraftClient.getInstance()
                 .getSpriteAtlas(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE)
                 .apply(new Identifier("minecraft", "item/black_dye"))) : List.of();
-        renderSlot(drawer.isHidden() ? ItemVariant.blank() : drawer.item, drawer.item.isBlank() || ExtendedDrawersConfig.get().client().displayEmptyCount() ? null : drawer.countCache, false, icons, matrices, vertexConsumers, light, overlay, (int) drawer.getPos().asLong(), drawer.getPos(), drawer.getWorld());
+        renderSlot(drawer.isHidden() ? ItemVariant.blank() : drawer.item, drawer.item.isBlank() || ExtendedDrawers.CONFIG.get().client().displayEmptyCount() ? null : drawer.countCache, false, icons, matrices, vertexConsumers, light, overlay, (int) drawer.getPos().asLong(), drawer.getPos(), drawer.getWorld());
         matrices.pop();
     }
 }

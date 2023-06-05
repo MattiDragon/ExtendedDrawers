@@ -1,6 +1,5 @@
 package io.github.mattidragon.extendeddrawers.network.node;
 
-import com.kneelawk.graphlib.api.graph.NodeContext;
 import com.kneelawk.graphlib.api.graph.NodeEntityContext;
 import com.kneelawk.graphlib.api.graph.NodeHolder;
 import com.kneelawk.graphlib.api.graph.user.BlockNode;
@@ -20,26 +19,26 @@ import java.util.Collection;
 public interface DrawerNetworkBlockNode extends FullWireBlockNode {
     @Override
     @NotNull
-    default Collection<HalfLink> findConnections(@NotNull NodeContext ctx) {
-        return WireConnectionDiscoverers.fullBlockFindConnections(this, ctx, NetworkRegistry.CONNECTION_FILTER);
+    default Collection<HalfLink> findConnections(@NotNull NodeHolder<BlockNode> self) {
+        return WireConnectionDiscoverers.fullBlockFindConnections(this, self, NetworkRegistry.CONNECTION_FILTER);
     }
 
     @Override
-    default boolean canConnect(@NotNull NodeContext ctx, @NotNull HalfLink other) {
-        return WireConnectionDiscoverers.fullBlockCanConnect(this, ctx, other, NetworkRegistry.CONNECTION_FILTER);
+    default boolean canConnect(@NotNull NodeHolder<BlockNode> self, @NotNull HalfLink other) {
+        return WireConnectionDiscoverers.fullBlockCanConnect(this, self, other, NetworkRegistry.CONNECTION_FILTER);
     }
 
     @Override
-    default void onConnectionsChanged(@NotNull NodeContext ctx) {
-        var graph = ctx.graphWorld().getGraph(ctx.self().getGraphId());
+    default void onConnectionsChanged(@NotNull NodeHolder<BlockNode> self) {
+        var graph = self.getGraphWorld().getGraph(self.getGraphId());
         if (graph != null) {
             graph.getGraphEntity(NetworkRegistry.UPDATE_HANDLER_TYPE).scheduleUpdate(UpdateHandler.ChangeType.CONTENT);
         }
     }
 
     @Override
-    default boolean shouldHaveNodeEntity(@NotNull NodeContext ctx) {
-        return FullWireBlockNode.super.shouldHaveNodeEntity(ctx);
+    default boolean shouldHaveNodeEntity(@NotNull NodeHolder<BlockNode> self) {
+        return FullWireBlockNode.super.shouldHaveNodeEntity(self);
     }
 
     @Override

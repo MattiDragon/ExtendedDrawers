@@ -1,14 +1,12 @@
 package io.github.mattidragon.extendeddrawers.client.config;
 
-import dev.isxander.yacl.api.*;
-import dev.isxander.yacl.api.controller.*;
-import dev.isxander.yacl.gui.ImageRenderer;
+import dev.isxander.yacl3.api.*;
+import dev.isxander.yacl3.api.controller.*;
+import dev.isxander.yacl3.gui.ImageRenderer;
+import io.github.mattidragon.extendeddrawers.ExtendedDrawers;
 import io.github.mattidragon.extendeddrawers.client.renderer.AbstractDrawerBlockEntityRenderer;
 import io.github.mattidragon.extendeddrawers.config.ConfigData;
-import io.github.mattidragon.extendeddrawers.config.ExtendedDrawersConfig;
-import io.github.mattidragon.extendeddrawers.config.category.ClientCategory;
-import io.github.mattidragon.extendeddrawers.config.category.MiscCategory;
-import io.github.mattidragon.extendeddrawers.config.category.StorageCategory;
+import io.github.mattidragon.extendeddrawers.config.category.*;
 import io.github.mattidragon.extendeddrawers.misc.CreativeBreakingBehaviour;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.minecraft.client.MinecraftClient;
@@ -16,7 +14,6 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.render.LightmapTextureManager;
 import net.minecraft.client.render.OverlayTexture;
-import net.minecraft.client.texture.Sprite;
 import net.minecraft.item.Items;
 import net.minecraft.screen.PlayerScreenHandler;
 import net.minecraft.text.Text;
@@ -60,12 +57,12 @@ public class ConfigScreenFactory {
                 .generateScreen(parent);
     }
 
-    private static ConfigCategory createStorageCategory(StorageCategory.Mutable instance) {
+    private static ConfigCategory createStorageCategory(MutableStorageCategory instance) {
         return ConfigCategory.createBuilder()
                 .name(Text.translatable("config.extended_drawers.storage"))
                 .option(Option.<Long>createBuilder()
                         .name(Text.translatable("config.extended_drawers.storage.drawerCapacity"))
-                        .binding(DEFAULT.storage().drawerCapacity(), () -> instance.defaultCapacity, value -> instance.defaultCapacity = value)
+                        .binding(DEFAULT.storage().drawerCapacity(), () -> instance.drawerCapacity, value -> instance.drawerCapacity = value)
                         .controller(option -> LongFieldControllerBuilder.create(option).min(1L))
                         .description(OptionDescription.of(Text.translatable("config.extended_drawers.storage.drawerCapacity.description")))
                         .build())
@@ -118,7 +115,7 @@ public class ConfigScreenFactory {
                 .build();
     }
 
-    private static ConfigCategory createMiscCategory(MiscCategory.Mutable instance) {
+    private static ConfigCategory createMiscCategory(MutableMiscCategory instance) {
         var text = new Text[]{Text.translatable("config.extended_drawers.misc.drawersDropContentsOnBreak.description").append(Text.translatable("config.extended_drawers.misc.drawersDropContentsOnBreak.warning").formatted(Formatting.YELLOW))};
         var text1 = new Text[]{Text.translatable("config.extended_drawers.misc.allowRecursion.description").append(Text.translatable("config.extended_drawers.misc.allowRecursion.warning").formatted(Formatting.YELLOW))};
         return ConfigCategory.createBuilder()
@@ -164,7 +161,7 @@ public class ConfigScreenFactory {
                 .build();
     }
 
-    private static ConfigCategory createClientCategory(ClientCategory.Mutable instance) {
+    private static ConfigCategory createClientCategory(MutableClientCategory instance) {
         return ConfigCategory.createBuilder()
                 .name(Text.translatable("config.extended_drawers.client"))
                 .option(Option.<Integer>createBuilder()
@@ -195,38 +192,38 @@ public class ConfigScreenFactory {
                 .build();
     }
 
-    private static OptionGroup createLayoutGroup(ClientCategory.LayoutGroup.Mutable instance) {
+    private static OptionGroup createLayoutGroup(MutableLayoutGroup instance) {
         var layoutRenderer = new LayoutRenderer();
 
         var smallItemScale = Option.<Float>createBuilder()
                 .name(Text.translatable("config.extended_drawers.client.smallItemScale"))
                 .binding(DEFAULT.client().layout().smallItemScale(), () -> instance.smallItemScale, value -> instance.smallItemScale = value)
                 .controller(option -> FloatSliderControllerBuilder.create(option).range(0f, 2f).step(0.05f).valueFormatter(FLOAT_FORMATTER))
-                .description(OptionDescription.createBuilder().customImage(CompletableFuture.completedFuture(Optional.of(layoutRenderer))).description(Text.translatable("config.extended_drawers.client.smallItemScale.description")).build())
+                .description(OptionDescription.createBuilder().customImage(CompletableFuture.completedFuture(Optional.of(layoutRenderer))).text(Text.translatable("config.extended_drawers.client.smallItemScale.description")).build())
                 .build();
         var largeItemScale = Option.<Float>createBuilder()
                 .name(Text.translatable("config.extended_drawers.client.largeItemScale"))
                 .binding(DEFAULT.client().layout().largeItemScale(), () -> instance.largeItemScale, value -> instance.largeItemScale = value)
                 .controller(option -> FloatSliderControllerBuilder.create(option).range(0f, 2f).step(0.05f).valueFormatter(FLOAT_FORMATTER))
-                .description(OptionDescription.createBuilder().customImage(CompletableFuture.completedFuture(Optional.of(layoutRenderer))).description(Text.translatable("config.extended_drawers.client.largeItemScale.description")).build())
+                .description(OptionDescription.createBuilder().customImage(CompletableFuture.completedFuture(Optional.of(layoutRenderer))).text(Text.translatable("config.extended_drawers.client.largeItemScale.description")).build())
                 .build();
         var smallTextScale = Option.<Float>createBuilder()
                 .name(Text.translatable("config.extended_drawers.client.smallTextScale"))
                 .binding(DEFAULT.client().layout().smallTextScale(), () -> instance.smallTextScale, value -> instance.smallTextScale = value)
                 .controller(option -> FloatSliderControllerBuilder.create(option).range(0f, 2f).step(0.05f).valueFormatter(FLOAT_FORMATTER))
-                .description(OptionDescription.createBuilder().customImage(CompletableFuture.completedFuture(Optional.of(layoutRenderer))).description(Text.translatable("config.extended_drawers.client.smallTextScale.description")).build())
+                .description(OptionDescription.createBuilder().customImage(CompletableFuture.completedFuture(Optional.of(layoutRenderer))).text(Text.translatable("config.extended_drawers.client.smallTextScale.description")).build())
                 .build();
         var largeTextScale = Option.<Float>createBuilder()
                 .name(Text.translatable("config.extended_drawers.client.largeTextScale"))
                 .binding(DEFAULT.client().layout().largeTextScale(), () -> instance.largeTextScale, value -> instance.largeTextScale = value)
                 .controller(option -> FloatSliderControllerBuilder.create(option).range(0f, 2f).step(0.05f).valueFormatter(FLOAT_FORMATTER))
-                .description(OptionDescription.createBuilder().customImage(CompletableFuture.completedFuture(Optional.of(layoutRenderer))).description(Text.translatable("config.extended_drawers.client.largeTextScale.description")).build())
+                .description(OptionDescription.createBuilder().customImage(CompletableFuture.completedFuture(Optional.of(layoutRenderer))).text(Text.translatable("config.extended_drawers.client.largeTextScale.description")).build())
                 .build();
         var textOffset = Option.<Float>createBuilder()
                 .name(Text.translatable("config.extended_drawers.client.textOffset"))
                 .binding(DEFAULT.client().layout().textOffset(), () -> instance.textOffset, value -> instance.textOffset = value)
                 .controller(option -> FloatSliderControllerBuilder.create(option).range(0f, 1f).step(0.05f).valueFormatter(FLOAT_FORMATTER))
-                .description(OptionDescription.createBuilder().customImage(CompletableFuture.completedFuture(Optional.of(layoutRenderer))).description(Text.translatable("config.extended_drawers.client.textOffset.description")).build())
+                .description(OptionDescription.createBuilder().customImage(CompletableFuture.completedFuture(Optional.of(layoutRenderer))).text(Text.translatable("config.extended_drawers.client.textOffset.description")).build())
                 .build();
 
         layoutRenderer.init(smallItemScale, largeItemScale, smallTextScale, largeTextScale, textOffset);
@@ -269,7 +266,7 @@ public class ConfigScreenFactory {
 
             var atlas = MinecraftClient.getInstance().getSpriteAtlas(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE);
             var size = renderWidth / 3;
-            var config = ExtendedDrawersConfig.get();
+            var config = ExtendedDrawers.CONFIG.get();
             var client = config.client();
             var newConfig = new ConfigData(new ClientCategory(client.itemRenderDistance(),
                     client.iconRenderDistance(),
@@ -287,7 +284,7 @@ public class ConfigScreenFactory {
             var player = MinecraftClient.getInstance().player;
             var playerPos = player == null ? BlockPos.ORIGIN : player.getBlockPos();
 
-            try (var ignored = ExtendedDrawersConfig.override(newConfig)) {
+            try (var ignored = ExtendedDrawers.CONFIG.override(newConfig)) {
                 context.drawSprite(x, y, 0, size, size, atlas.apply(id("block/single_drawer")));
                 context.drawSprite(x + size, y, 0, size, size, atlas.apply(id("block/quad_drawer")));
                 context.drawSprite(x + 2 * size, y, 0, size, size, atlas.apply(id("block/compacting_drawer")));
