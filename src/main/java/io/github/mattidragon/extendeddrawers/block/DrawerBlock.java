@@ -12,10 +12,10 @@ import io.github.mattidragon.extendeddrawers.misc.ItemUtils;
 import io.github.mattidragon.extendeddrawers.network.node.DrawerBlockNode;
 import io.github.mattidragon.extendeddrawers.network.node.DrawerNetworkBlockNode;
 import io.github.mattidragon.extendeddrawers.registry.ModBlocks;
+import io.github.mattidragon.extendeddrawers.storage.DrawerSlot;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.item.PlayerInventoryStorage;
 import net.fabricmc.fabric.api.transfer.v1.storage.StorageUtil;
-import net.fabricmc.fabric.api.transfer.v1.storage.base.ResourceAmount;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -31,6 +31,7 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.DirectionProperty;
 import net.minecraft.state.property.Properties;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.*;
 import net.minecraft.util.hit.BlockHitResult;
@@ -57,24 +58,46 @@ public class DrawerBlock extends NetworkBlockWithEntity<DrawerBlockEntity> imple
     }
 
     @Override
-    public void appendTooltip(ItemStack stack, @Nullable BlockView world, List<Text> tooltip, TooltipContext options) {
+    public void appendTooltip(ItemStack stack, @Nullable BlockView blockView, List<Text> tooltip, TooltipContext context) {
         var nbt = BlockItem.getBlockEntityNbt(stack);
         if (nbt == null) return;
 
         var list = nbt.getList("items", NbtElement.COMPOUND_TYPE).stream()
                 .map(NbtCompound.class::cast)
-                .map(slot -> new ResourceAmount<>(ItemVariant.fromNbt(slot.getCompound("item")), slot.getLong("amount")))
-                .filter(resource -> !resource.resource().isBlank())
+                .map(data -> {
+                    var slot = new DrawerSlot(null, 1);
+                    slot.readNbt(data);
+                    return slot;
+                })
+                .filter(slot -> !slot.isBlank() || slot.getUpgrade() != null || slot.isHidden() || slot.isLocked() || slot.isVoiding())
                 .toList();
         if (list.isEmpty()) return;
+        boolean shift = ExtendedDrawers.CLIENT_ACCESS.isShiftPressed();
 
-        tooltip.add(Text.translatable("tooltip.extended_drawers.drawer_contents").formatted(Formatting.GRAY));
+        tooltip.add(Text.translatable("tooltip.extended_drawers.shift_for_modifiers").formatted(Formatting.GRAY));
+
+        if (!list.stream().allMatch(DrawerSlot::isBlank) || shift)
+            tooltip.add(Text.translatable("tooltip.extended_drawers.drawer_contents").formatted(Formatting.GRAY));
         for (var slot : list) {
-            tooltip.add(Text.literal(" - ")
-                    .append(Text.literal(String.valueOf(slot.amount())))
-                    .append(" ")
-                    .append(slot.resource().toStack().getName())
-                    .formatted(Formatting.GRAY));
+            MutableText text;
+            if (!slot.isBlank()) {
+                text = Text.literal(" - ");
+                text.append(Text.literal(String.valueOf(slot.getAmount())))
+                        .append(" ")
+                        .append(slot.getResource().toStack().getName());
+            } else if (shift) {
+                text = Text.literal(" - ");
+                text.append(Text.translatable("tooltip.extended_drawers.empty").formatted(Formatting.ITALIC));
+            } else continue;
+
+            // Seems like client code is safe here. If this breaks then other mods are broken too.
+            if (shift) {
+                text.append("  ")
+                        .append(Text.literal("V").formatted(slot.isVoiding() ? Formatting.WHITE : Formatting.DARK_GRAY))
+                        .append(Text.literal("L").formatted(slot.isLocked() ? Formatting.WHITE : Formatting.DARK_GRAY))
+                        .append(Text.literal("H").formatted(slot.isHidden() ? Formatting.WHITE : Formatting.DARK_GRAY));
+            }
+            tooltip.add(text.formatted(Formatting.GRAY));
         }
     }
 

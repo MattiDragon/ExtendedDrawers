@@ -2,6 +2,7 @@ package io.github.mattidragon.extendeddrawers;
 
 import io.github.mattidragon.configloader.api.ConfigManager;
 import io.github.mattidragon.extendeddrawers.config.ConfigData;
+import io.github.mattidragon.extendeddrawers.misc.ClientAccess;
 import io.github.mattidragon.extendeddrawers.misc.DrawerContentsLootFunction;
 import io.github.mattidragon.extendeddrawers.network.NetworkRegistry;
 import io.github.mattidragon.extendeddrawers.networking.CompressionOverrideSyncPacket;
@@ -29,6 +30,12 @@ public class ExtendedDrawers implements ModInitializer {
     public static final ModContainer MOD_CONTAINER = FabricLoader.getInstance().getModContainer(MOD_ID).orElseThrow();
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
     public static final ConfigManager<ConfigData> CONFIG = ConfigManager.create(ConfigData.CODEC, ConfigData.DEFAULT, MOD_ID);
+    public static ClientAccess CLIENT_ACCESS = new ClientAccess() {
+        @Override
+        public boolean isShiftPressed() {
+            return false;
+        }
+    };
 
     public static Identifier id(String path) {
         return new Identifier(MOD_ID, path);
