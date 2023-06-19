@@ -46,7 +46,7 @@ public class CompressionOverrideLoader extends JsonDataLoader {
                     var item = parseItem(stepEntry.getKey());
                     var compressionAmount = JsonHelper.asInt(stepEntry.getValue(), "compression amount for " + stepEntry.getKey());
                     if (compressionAmount == 0) throw new JsonParseException("Illegal compression amount for " + stepEntry.getKey() + ": 0");
-                    if (compressionAmount <= currentCompression) throw new JsonParseException("Illegal compression amount for %s: %d, amounts should always rise".formatted(stepEntry.getKey(), compressionAmount));
+                    if (compressionAmount < currentCompression) throw new JsonParseException("Illegal compression amount for %s: %d, amounts should always rise or stay equal".formatted(stepEntry.getKey(), compressionAmount));
                     currentCompression = compressionAmount;
 
                     steps.put(item, compressionAmount);

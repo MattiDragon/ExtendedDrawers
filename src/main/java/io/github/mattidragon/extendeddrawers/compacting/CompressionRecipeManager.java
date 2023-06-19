@@ -11,6 +11,9 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.function.Function;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 @SuppressWarnings("UnstableApiUsage")
 public final class CompressionRecipeManager {
@@ -59,22 +62,24 @@ public final class CompressionRecipeManager {
     private CompressionLadder buildLadder(ItemVariant item, World world) {
         var bottom = findBottom(item, world);
         var ladder = new ArrayList<CompressionLadder.Step>();
+        var visited = new HashSet<ItemVariant>();
         var currentItem = bottom;
         var currentSize = 1;
+        visited.add(currentItem);
         ladder.add(new CompressionLadder.Step(currentItem, currentSize));
 
         while (true) {
             var pair = findCompressionRecipe(currentItem, world);
-            if (pair == null) break;
+            if (pair == null) break; // Reached top of ladder
             currentItem = pair.compressed;
             currentSize *= pair.scale;
+            if (!visited.add(currentItem)) break; // Ladder is cyclic, all items accounted for
             ladder.add(new CompressionLadder.Step(currentItem, currentSize));
         }
         return new CompressionLadder(List.copyOf(ladder));
     }
 
     private ItemVariant findBottom(ItemVariant item, World world) {
-        // Detect cycles just in case
         var visited = new HashSet<ItemVariant>();
         var candidate = item;
         while (true) {
@@ -88,59 +93,36 @@ public final class CompressionRecipeManager {
     }
 
     private RecipePair findCompressionRecipe(ItemVariant decompressed, World world) {
-        var largeCompressionRecipe = findCompressionRecipeForSize(decompressed, world, true);
-        if (largeCompressionRecipe != null) return largeCompressionRecipe;
-
-        return findCompressionRecipeForSize(decompressed, world, false);
+        return IntStream.of(3, 2, 1)
+                .mapToObj(size -> findCompressionRecipeForSize(decompressed, world, size))
+                .flatMap(Function.identity())
+                .findFirst()
+                .orElse(null);
     }
 
-    @Nullable
-    private RecipePair findCompressionRecipeForSize(ItemVariant decompressed, World world, boolean isLarge) {
-        var largeCompressionInventory = createInventory(decompressed.toStack(), isLarge ? 3 : 2);
-        var largeCompressionRecipe = recipeManager.getFirstMatch(RecipeType.CRAFTING, largeCompressionInventory, world);
-        if (largeCompressionRecipe.isEmpty()) return null;
-        var largeCompressionResult = largeCompressionRecipe.get().craft(largeCompressionInventory);
-        var decompressionInventory = createInventory(largeCompressionResult, 1);
-
-        var decompressionRecipe = recipeManager.getFirstMatch(RecipeType.CRAFTING, decompressionInventory, world);
-        if (decompressionRecipe.isEmpty()) return null; // compression can't be decompressed, abort
-
-        var decompressionResult = decompressionRecipe.get().craft(decompressionInventory);
-        if (decompressionResult.isEmpty()) return null; // compression can't be decompressed, abort
-
-        if (!decompressed.matches(decompressionResult)) return null;
-
-        return new RecipePair(ItemVariant.of(largeCompressionResult), decompressed, isLarge ? 9 : 4);
+    private Stream<RecipePair> findCompressionRecipeForSize(ItemVariant decompressed, World world, int size) {
+        return findRecipes(decompressed.toStack(), size, world) // Find compression recipes
+                .filter(compressed -> findRecipes(compressed, 1, world).anyMatch(decompressed::matches))// Find matching decompression recipe
+                .map(compressed -> new RecipePair(ItemVariant.of(compressed), decompressed, size));
     }
 
     @Nullable
     private RecipePair findDecompressionRecipe(ItemVariant compressed, World world) {
-        var stack = compressed.toStack();
-        var decompressionInventory = createInventory(stack, 1);
+        return findRecipes(compressed.toStack(), 1, world) // Find decompression recipe
+                .flatMap(result -> IntStream.of(3, 2, 1) // Check each size from largest to smallest for matching compression recipes
+                        .filter(size -> findRecipes(result, size, world).anyMatch(compressed::matches))
+                        .mapToObj(size -> new RecipePair(compressed, ItemVariant.of(result), size * size)))
+                .findFirst()
+                .orElse(null);
+    }
 
-        var decompressionRecipe = recipeManager.getFirstMatch(RecipeType.CRAFTING, decompressionInventory, world);
-        if (decompressionRecipe.isEmpty()) return null;
-
-        var decompressionResult = decompressionRecipe.get().craft(decompressionInventory);
-        if (decompressionResult.isEmpty()) return null; // Some recipes might match, but not craft
-
-        var largeCompressionInventory = createInventory(decompressionResult, 3);
-        var largeCompressionRecipe = recipeManager.getFirstMatch(RecipeType.CRAFTING, largeCompressionInventory, world);
-        if (largeCompressionRecipe.isPresent()) {
-            var largeCompressionResult = largeCompressionRecipe.get().craft(largeCompressionInventory);
-            if (compressed.matches(largeCompressionResult))
-                return new RecipePair(compressed, ItemVariant.of(decompressionResult), 9);
-        }
-
-        var smallCompressionInventory = createInventory(decompressionResult, 2);
-        var smallCompressionRecipe = recipeManager.getFirstMatch(RecipeType.CRAFTING, smallCompressionInventory, world);
-        if (smallCompressionRecipe.isPresent()) {
-            var smallCompressionResult = smallCompressionRecipe.get().craft(smallCompressionInventory);
-            if (compressed.matches(smallCompressionResult))
-                return new RecipePair(compressed, ItemVariant.of(decompressionResult), 4);
-        }
-
-        return null;
+    private Stream<ItemStack> findRecipes(ItemStack stack, int size, World world) {
+        var inventory = createInventory(stack, size);
+        return recipeManager.getAllMatches(RecipeType.CRAFTING, inventory, world)
+                .stream()
+                .filter(recipe -> recipe.getRemainder(inventory).stream().allMatch(ItemStack::isEmpty)) // We can't deal with remainders, so we just prevent recipe with them from being used
+                .map(recipe -> recipe.craft(inventory))
+                .filter(result -> !result.isEmpty());
     }
 
     /**
