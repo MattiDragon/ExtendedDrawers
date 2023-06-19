@@ -22,8 +22,10 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Stream;
 
 @SuppressWarnings("UnstableApiUsage")
 public final class CompactingDrawerStorage extends SnapshotParticipant<CompactingDrawerStorage.Snapshot> implements DrawerStorage {
@@ -113,27 +115,28 @@ public final class CompactingDrawerStorage extends SnapshotParticipant<Compactin
     @Override
     public long insert(ItemVariant resource, long maxAmount, TransactionContext transaction) {
         StoragePreconditions.notBlankNotNegative(resource, maxAmount);
-        long amount = 0;
+        long inserted = 0;
 
         for (var slot : getSlots()) {
-            amount += slot.insert(resource, maxAmount - amount, transaction);
-            if (amount == maxAmount) break;
+            inserted += slot.insert(resource, maxAmount - inserted, transaction);
+            if (inserted == maxAmount) break;
         }
-
-        return settings.voiding ? maxAmount : amount;
+        if (Arrays.stream(getActiveSlots()).anyMatch(slot -> slot.item.equals(resource)) && settings.voiding)
+            return maxAmount;
+        return inserted;
     }
 
     @Override
     public long extract(ItemVariant resource, long maxAmount, TransactionContext transaction) {
         StoragePreconditions.notNegative(maxAmount);
-        long amount = 0;
+        long extraced = 0;
 
         for (var slot : getSlots()) {
-            amount += slot.extract(resource, maxAmount - amount, transaction);
-            if (amount == maxAmount) break;
+            extraced += slot.extract(resource, maxAmount - extraced, transaction);
+            if (extraced == maxAmount) break;
         }
 
-        return amount;
+        return extraced;
     }
 
     @Override
@@ -220,14 +223,18 @@ public final class CompactingDrawerStorage extends SnapshotParticipant<Compactin
         var initialPosition = ladder.getPosition(item);
         if (initialPosition == -1) throw new IllegalStateException("Item is not on it's own recipe ladder. Did we lookup mid-reload?");
 
-        int[] positions = chooseLadderPositions(ladderSize, initialPosition);
+        var positions = chooseLadderPositions(ladderSize, initialPosition);
+        var globalCompression = ladder.steps().get(positions[0]).size(); // Compression level of base item, divide other compression levels by this
         for (int i = 0; i < positions.length; i++) {
             var position = positions[i];
             var step = ladder.steps().get(position);
-            slots[i].compression = step.size();
+            slots[i].compression = step.size() / globalCompression;
             slots[i].item = step.item();
             slots[i].blocked = false;
         }
+        var initalSlot = Stream.of(slots).filter(slot -> slot.item.equals(item)).findFirst().orElseThrow();
+        item = slots[0].item; // Set the base item to the lowest item we use. We store the count as this item.
+        amount *= initalSlot.compression; // If the item has moved this corrects the amount. Multiplier should be 1 when no move has happened
         updatePending = false;
     }
 
@@ -241,17 +248,21 @@ public final class CompactingDrawerStorage extends SnapshotParticipant<Compactin
     private static int[] chooseLadderPositions(int size, int start) {
         if (size == 1) { // Small ladders: always same entries (size 3 handled by other cases)
             return new int[]{ 0 };
-        } else if (size == 2) {
+        }
+        if (size == 2) {
             return new int[]{ 0, 1 };
         }
 
-        if (start == 0) { // Our item is at the bottom of the ladder: take as many entries above as possible
-            return new int[]{ 0, 1, 2 };
-        } else if (start == size - 1) { // Our item is at the top of the ladder: take as many entries down as possible, ensure lower ones come first
+        // If we are at the top of one bellow, we grab entries bellow to fill the array
+        if (start == size - 1) {
             return new int[]{start - 2, start - 1, start};
-        } else { // We are in the middle of the ladder: pick one from both sides
-            return new int[]{ start - 1, start, start + 1 };
         }
+        if (start == size - 2) {
+            return new int[]{start - 1, start, start + 1};
+        }
+
+        // By default, only use entries above to avoid shifting, because the lowest item becomes the new base item
+        return new int[]{ start, start + 1, start + 2 };
     }
 
     @Override
