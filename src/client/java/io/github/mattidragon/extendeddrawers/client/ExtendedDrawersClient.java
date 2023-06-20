@@ -5,7 +5,7 @@ import io.github.mattidragon.extendeddrawers.client.renderer.CompactingDrawerBlo
 import io.github.mattidragon.extendeddrawers.client.renderer.DrawerBlockEntityRenderer;
 import io.github.mattidragon.extendeddrawers.client.renderer.ShadowDrawerBlockEntityRenderer;
 import io.github.mattidragon.extendeddrawers.compacting.CompressionRecipeManager;
-import io.github.mattidragon.extendeddrawers.misc.ClientAccess;
+import io.github.mattidragon.extendeddrawers.misc.ShiftAccess;
 import io.github.mattidragon.extendeddrawers.networking.CompressionOverrideSyncPacket;
 import io.github.mattidragon.extendeddrawers.registry.ModBlocks;
 import net.fabricmc.api.ClientModInitializer;
@@ -25,11 +25,6 @@ public class ExtendedDrawersClient implements ClientModInitializer {
             client.execute(() -> CompressionRecipeManager.of(handler.getRecipeManager()).setOverrides(overrides));
         });
 
-        ExtendedDrawers.CLIENT_ACCESS = new ClientAccess() {
-            @Override
-            public boolean isShiftPressed() {
-                return Screen.hasShiftDown();
-            }
-        };
+        ExtendedDrawers.SHIFT_ACCESS = Screen::hasShiftDown;
     }
 }

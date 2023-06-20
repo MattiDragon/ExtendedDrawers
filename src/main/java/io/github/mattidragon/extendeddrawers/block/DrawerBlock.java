@@ -72,7 +72,7 @@ public class DrawerBlock extends NetworkBlockWithEntity<DrawerBlockEntity> imple
                 .filter(slot -> !slot.isBlank() || slot.getUpgrade() != null || slot.isHidden() || slot.isLocked() || slot.isVoiding())
                 .toList();
         if (list.isEmpty()) return;
-        boolean shift = ExtendedDrawers.CLIENT_ACCESS.isShiftPressed();
+        boolean shift = ExtendedDrawers.SHIFT_ACCESS.isShiftPressed();
 
         tooltip.add(Text.translatable("tooltip.extended_drawers.shift_for_modifiers").formatted(Formatting.GRAY));
 
