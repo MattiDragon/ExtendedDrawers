@@ -1,5 +1,6 @@
 package io.github.mattidragon.extendeddrawers.storage;
 
+import io.github.mattidragon.extendeddrawers.ExtendedDrawers;
 import io.github.mattidragon.extendeddrawers.block.entity.CompactingDrawerBlockEntity;
 import io.github.mattidragon.extendeddrawers.compacting.CompressionLadder;
 import io.github.mattidragon.extendeddrawers.compacting.CompressionRecipeManager;
@@ -117,7 +118,7 @@ public final class CompactingDrawerStorage extends SnapshotParticipant<Compactin
         StoragePreconditions.notBlankNotNegative(resource, maxAmount);
         long inserted = 0;
 
-        for (var slot : getSlots()) {
+        for (var slot : getActiveSlots()) {
             inserted += slot.insert(resource, maxAmount - inserted, transaction);
             if (inserted == maxAmount) break;
         }
@@ -131,7 +132,7 @@ public final class CompactingDrawerStorage extends SnapshotParticipant<Compactin
         StoragePreconditions.notNegative(maxAmount);
         long extraced = 0;
 
-        for (var slot : getSlots()) {
+        for (var slot : getActiveSlots()) {
             extraced += slot.extract(resource, maxAmount - extraced, transaction);
             if (extraced == maxAmount) break;
         }
@@ -326,6 +327,9 @@ public final class CompactingDrawerStorage extends SnapshotParticipant<Compactin
             if (inserted > 0) {
                 updateSnapshots(transaction);
                 amount += inserted * compression;
+            } else if (inserted < 0) {
+                ExtendedDrawers.LOGGER.warn("Somehow inserted negative amount of items ({}) into compacting drawer, aborting. Arguments: item={} maxAmount={}. Status: compression={} item={} capacity={} amount={}", inserted, item, maxAmount, compression, this.item, getCapacity(), getAmount());
+                return 0;
             }
 
             return inserted;
@@ -340,6 +344,9 @@ public final class CompactingDrawerStorage extends SnapshotParticipant<Compactin
             if (extracted > 0) {
                 updateSnapshots(transaction);
                 amount -= extracted * compression;
+            } else if (extracted < 0) {
+                ExtendedDrawers.LOGGER.warn("Somehow extracted negative amount of items ({}) from compacting drawer, aborting. Arguments: item={} maxAmount={}. Status: compression={} item={} capacity={} amount={}", extracted, item, maxAmount, compression, this.item, getCapacity(), getAmount());
+                return 0;
             }
 
             if (amount == 0 && !settings.locked) {
