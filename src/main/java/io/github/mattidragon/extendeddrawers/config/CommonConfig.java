@@ -32,8 +32,6 @@ public record CommonConfig(
         boolean allowRecursion,
         @Comment("If enabled drawer drop their contents instead of retaining them. Can cause lag.")
         boolean drawersDropContentsOnBreak,
-        @Comment("If enabled compacting drawers will consider 1x1 \"compression\" recipes.")
-        boolean loadConversionRecipes,
         @Comment("The multiplier the T1 upgrade applies to the capacity of drawers")
         int t1UpgradeMultiplier,
         @Comment("The multiplier the T2 upgrade applies to the capacity of drawers")
@@ -54,7 +52,6 @@ public record CommonConfig(
                     true,
                     false,
                     false,
-                    true,
                     2,
                     4,
                     8,
