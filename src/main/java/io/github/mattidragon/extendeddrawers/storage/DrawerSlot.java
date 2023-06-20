@@ -72,12 +72,17 @@ public final class DrawerSlot extends SnapshotParticipant<DrawerSlot.Snapshot> i
         if (!ExtendedDrawers.CONFIG.get().misc().allowRecursion() && !resource.getItem().canBeNested()) return 0;
         if (item.isBlank() && settings.locked && !settings.lockOverridden) return 0;
 
-        updateSnapshots(transaction);
         var inserted = Math.min(getCapacity() - amount, maxAmount);
-        amount += inserted;
-        if (item.isBlank()) {
-            item = resource;
-            settings.sortingDirty = true;
+        if (inserted > 0) {
+            updateSnapshots(transaction);
+            amount += inserted;
+            if (item.isBlank()) {
+                item = resource;
+                settings.sortingDirty = true;
+            }
+        } else if (inserted < 0) {
+            ExtendedDrawers.LOGGER.warn("Somehow inserted negative amount of items ({}) into drawer, aborting. Arguments: item={} maxAmount={}. Status: item={} capacity={} amount={}", inserted, item, maxAmount, this.item, getCapacity(), amount);
+            return 0;
         }
         // In voiding mode we return the max even if it doesn't fit. We just delete it this way
         return settings.voiding ? maxAmount : inserted;
@@ -87,12 +92,17 @@ public final class DrawerSlot extends SnapshotParticipant<DrawerSlot.Snapshot> i
     public long extract(ItemVariant resource, long maxAmount, TransactionContext transaction) {
         if (!resource.equals(item)) return 0;
 
-        updateSnapshots(transaction);
         var extracted = Math.min(amount, maxAmount);
-        amount -= extracted;
-        if (amount == 0 && !settings.locked) {
-            item = ItemVariant.blank();
-            settings.sortingDirty = true;
+        if (extracted > 0) {
+            updateSnapshots(transaction);
+            amount -= extracted;
+            if (amount == 0 && !settings.locked) {
+                item = ItemVariant.blank();
+                settings.sortingDirty = true;
+            }
+        } else if (extracted < 0) {
+            ExtendedDrawers.LOGGER.warn("Somehow extract negative amount of items ({}) from drawer, aborting. Arguments: item={} maxAmount={}. Status: item={} capacity={} amount={}", extracted, item, maxAmount, this.item, getCapacity(), amount);
+            return 0;
         }
         return extracted;
     }
