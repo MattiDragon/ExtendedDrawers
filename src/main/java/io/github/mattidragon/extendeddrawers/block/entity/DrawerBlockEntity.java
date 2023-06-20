@@ -3,11 +3,10 @@ package io.github.mattidragon.extendeddrawers.block.entity;
 import io.github.mattidragon.extendeddrawers.block.DrawerBlock;
 import io.github.mattidragon.extendeddrawers.config.CommonConfig;
 import io.github.mattidragon.extendeddrawers.registry.ModBlocks;
+import io.github.mattidragon.extendeddrawers.storage.CombinedDrawerStorage;
 import io.github.mattidragon.extendeddrawers.storage.DrawerSlot;
 import io.github.mattidragon.extendeddrawers.storage.DrawerStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
-import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
-import net.fabricmc.fabric.api.transfer.v1.storage.base.CombinedStorage;
 import net.minecraft.block.BlockState;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
@@ -17,16 +16,14 @@ import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.util.math.BlockPos;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.stream.Stream;
 
 @SuppressWarnings("UnstableApiUsage")
 public class DrawerBlockEntity extends StorageDrawerBlockEntity {
     public final int slots = ((DrawerBlock)this.getCachedState().getBlock()).slots;
     public final DrawerSlot[] storages = new DrawerSlot[((DrawerBlock)this.getCachedState().getBlock()).slots];
-    public final CombinedStorage<ItemVariant, DrawerSlot> combinedStorage;
+    public final CombinedDrawerStorage combinedStorage;
     
     static {
         ItemStorage.SIDED.registerForBlockEntity((drawer, dir) -> drawer.combinedStorage, ModBlocks.DRAWER_BLOCK_ENTITY);
@@ -38,12 +35,12 @@ public class DrawerBlockEntity extends StorageDrawerBlockEntity {
         for (int i = 0; i < storages.length; i++) {
             storages[i] = new DrawerSlot(this, capacityMultiplier);
         }
-        combinedStorage = new CombinedStorage<>(new ArrayList<>(List.of(storages)));
+        combinedStorage = new CombinedDrawerStorage(storages);
         sortSlots();
     }
 
     private void sortSlots() {
-        combinedStorage.parts.sort(null);
+        combinedStorage.sort();
     }
 
     public void onSlotChanged(boolean sortingChanged) {
