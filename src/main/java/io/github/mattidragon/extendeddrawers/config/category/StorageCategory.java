@@ -13,7 +13,7 @@ public record StorageCategory(long drawerCapacity,
                               int t1UpgradeMultiplier,
                               int t2UpgradeMultiplier,
                               int t3UpgradeMultiplier,
-                              int t4UpgradeMultiplier) {
+                              int t4UpgradeMultiplier) implements MutableStorageCategory.Source {
     public static final StorageCategory DEFAULT = new StorageCategory(
             16 * 64,
             16 * 64,
@@ -34,8 +34,4 @@ public record StorageCategory(long drawerCapacity,
             DefaultedFieldCodec.of(Codec.INT, "t3UpgradeMultiplier", DEFAULT.t3UpgradeMultiplier).forGetter(StorageCategory::t3UpgradeMultiplier),
             DefaultedFieldCodec.of(Codec.INT, "t4UpgradeMultiplier", DEFAULT.t4UpgradeMultiplier).forGetter(StorageCategory::t4UpgradeMultiplier)
     ).apply(instance, StorageCategory::new));
-
-    public MutableStorageCategory toMutable() {
-        return new MutableStorageCategory(this);
-    }
 }

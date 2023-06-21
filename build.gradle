@@ -31,7 +31,7 @@ dependencies {
     include modImplementation("com.kneelawk:graphlib:$graphlib_version")
     //modImplementation "vazkii.patchouli:Patchouli:$patchouli_version"
 
-    modImplementation annotationProcessor(include("io.github.mattidragon.configtoolkit:configtoolkit:1.0.0-alpha.4"))
+    modImplementation annotationProcessor(include("io.github.mattidragon.configtoolkit:ConfigToolkit:1.0.0-alpha.8"))
     modImplementation include("dev.isxander.yacl:yet-another-config-lib-fabric:$yacl_version")
     modImplementation "com.terraformersmc:modmenu:$modmenu_version"
 

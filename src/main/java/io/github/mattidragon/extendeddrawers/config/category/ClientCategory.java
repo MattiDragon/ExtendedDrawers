@@ -10,7 +10,7 @@ public record ClientCategory(int itemRenderDistance,
                              int iconRenderDistance,
                              int textRenderDistance,
                              boolean displayEmptyCount,
-                             LayoutGroup layout) {
+                             LayoutGroup layout) implements MutableClientCategory.Source {
     public static final ClientCategory DEFAULT = new ClientCategory(64, 16, 32, false, LayoutGroup.DEFAULT);
 
     public static final Codec<ClientCategory> CODEC = RecordCodecBuilder.create(instance -> instance.group(
@@ -21,16 +21,12 @@ public record ClientCategory(int itemRenderDistance,
             DefaultedFieldCodec.of(LayoutGroup.CODEC, "layout", DEFAULT.layout).forGetter(ClientCategory::layout)
     ).apply(instance, ClientCategory::new));
 
-    public MutableClientCategory toMutable() {
-        return new MutableClientCategory(this);
-    }
-
     @GenerateMutable
     public record LayoutGroup(float smallItemScale,
                               float largeItemScale,
                               float smallTextScale,
                               float largeTextScale,
-                              float textOffset) {
+                              float textOffset) implements MutableClientCategory.MutableLayoutGroup.Source {
         private static final LayoutGroup DEFAULT = new LayoutGroup(0.4f, 1f, 0.5f, 1f, 0.8f);
 
         public static final Codec<LayoutGroup> CODEC = RecordCodecBuilder.create(instance -> instance.group(

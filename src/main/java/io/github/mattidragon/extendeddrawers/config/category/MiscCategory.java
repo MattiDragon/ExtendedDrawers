@@ -12,7 +12,7 @@ public record MiscCategory(int insertAllTime,
                            CreativeBreakingBehaviour sideBreakingBehaviour,
                            boolean blockUpgradeRemovalsWithOverflow,
                            boolean allowRecursion,
-                           boolean drawersDropContentsOnBreak) {
+                           boolean drawersDropContentsOnBreak) implements MutableMiscCategory.Source {
     public static final MiscCategory DEFAULT = new MiscCategory(10, CreativeBreakingBehaviour.MINE, CreativeBreakingBehaviour.BREAK, true, false, false);
 
     public static final Codec<MiscCategory> CODEC = RecordCodecBuilder.create(instance -> instance.group(
@@ -23,8 +23,4 @@ public record MiscCategory(int insertAllTime,
             DefaultedFieldCodec.of(Codec.BOOL, "allowRecursion", DEFAULT.allowRecursion).forGetter(MiscCategory::allowRecursion),
             DefaultedFieldCodec.of(Codec.BOOL, "drawersDropContentsOnBreak", DEFAULT.drawersDropContentsOnBreak).forGetter(MiscCategory::drawersDropContentsOnBreak)
     ).apply(instance, MiscCategory::new));
-
-    public MutableMiscCategory toMutable() {
-        return new MutableMiscCategory(this);
-    }
 }
