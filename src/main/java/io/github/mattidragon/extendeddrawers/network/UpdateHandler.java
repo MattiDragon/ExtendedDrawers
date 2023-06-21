@@ -21,26 +21,20 @@ public class UpdateHandler implements GraphEntity<UpdateHandler> {
     }
 
     public static void scheduleUpdate(ServerWorld world, BlockPos pos, ChangeType type) {
-        NetworkRegistry.UNIVERSE.getGraphWorld(world)
+        NetworkRegistry.UNIVERSE.getServerGraphWorld(world)
                 .getLoadedGraphsAt(pos)
                 .map(graph -> graph.getGraphEntity(NetworkRegistry.UPDATE_HANDLER_TYPE))
                 .forEach(updateHandler -> updateHandler.scheduleUpdate(type));
-    }
-
-    public static void flushUpdates(ServerWorld world) {
-        var graphWorld = NetworkRegistry.UNIVERSE.getGraphWorld(world);
-
-        graphWorld.getLoadedGraphs()
-                .map(graph -> graph.getGraphEntity(NetworkRegistry.UPDATE_HANDLER_TYPE))
-                .forEach(UpdateHandler::apply);
     }
 
     public void scheduleUpdate(ChangeType type) {
         queuedUpdate = ObjectUtils.max(queuedUpdate, type);
     }
 
-    private void apply() {
+    @Override
+    public void onTick() {
         if (queuedUpdate == null) return;
+        if (!(context.getBlockWorld() instanceof ServerWorld world)) return;
 
         context.getGraph().getGraphEntity(NetworkRegistry.STORAGE_CACHE_TYPE).update(queuedUpdate);
 
@@ -48,9 +42,14 @@ public class UpdateHandler implements GraphEntity<UpdateHandler> {
                 .getNodes()
                 .forEach(node -> {
                     if (node.getNode() instanceof DrawerNetworkBlockNode drawerNode) {
-                        drawerNode.update(context.getBlockWorld(), node);
+                        drawerNode.update(world, node);
                     }
                 });
+    }
+
+    @Override
+    public @NotNull GraphEntityContext getContext() {
+        return context;
     }
 
     @Override

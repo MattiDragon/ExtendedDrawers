@@ -1,5 +1,7 @@
 package io.github.mattidragon.extendeddrawers.network;
 
+import alexiil.mc.lib.net.IMsgWriteCtx;
+import alexiil.mc.lib.net.NetByteBuf;
 import com.kneelawk.graphlib.api.graph.GraphEntityContext;
 import com.kneelawk.graphlib.api.graph.NodeHolder;
 import com.kneelawk.graphlib.api.graph.user.GraphEntity;
@@ -34,7 +36,7 @@ public class NetworkStorageCache implements GraphEntity<NetworkStorageCache> {
      * Helper to easily get the cached storage from a world and pos.
      */
     public static CombinedStorage<ItemVariant, DrawerStorage> get(ServerWorld world, BlockPos pos) {
-        return NetworkRegistry.UNIVERSE.getGraphWorld(world)
+        return NetworkRegistry.UNIVERSE.getServerGraphWorld(world)
                 .getLoadedGraphsAt(pos)
                 .map(graph -> graph.getGraphEntity(NetworkRegistry.STORAGE_CACHE_TYPE))
                 .map(NetworkStorageCache::get)
@@ -47,7 +49,7 @@ public class NetworkStorageCache implements GraphEntity<NetworkStorageCache> {
         return new ArrayList<>(
                 context.getGraph()
                         .getNodes()
-                        .map(NodeHolder::getPos)
+                        .map(NodeHolder::getBlockPos)
                         .map(context.getBlockWorld()::getBlockEntity)
                         .filter(StorageDrawerBlockEntity.class::isInstance)
                         .map(StorageDrawerBlockEntity.class::cast)
@@ -73,6 +75,11 @@ public class NetworkStorageCache implements GraphEntity<NetworkStorageCache> {
             cachedStorage = new CombinedStorage<>(getStorages());
         }
         return cachedStorage;
+    }
+
+    @Override
+    public @NotNull GraphEntityContext getContext() {
+        return context;
     }
 
     @Override

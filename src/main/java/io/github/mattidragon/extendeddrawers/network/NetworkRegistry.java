@@ -18,11 +18,11 @@ public class NetworkRegistry {
     public static final GraphUniverse UNIVERSE = GraphUniverse.builder()
             .saveMode(SaveMode.INCREMENTAL)
             .build(id("drawers"));
-    public static final GraphEntityType<NetworkStorageCache> STORAGE_CACHE_TYPE = new GraphEntityType<>(id("storage_cache"),
+    public static final GraphEntityType<NetworkStorageCache> STORAGE_CACHE_TYPE = GraphEntityType.of(id("storage_cache"),
             NetworkStorageCache::new,
             (nbt, context) -> new NetworkStorageCache(context),
             (original, originalGraph, ctx) -> new NetworkStorageCache(ctx)); // No need to actually split as it's only a cache.
-    public static final GraphEntityType<UpdateHandler> UPDATE_HANDLER_TYPE = new GraphEntityType<>(id("update_handler"),
+    public static final GraphEntityType<UpdateHandler> UPDATE_HANDLER_TYPE = GraphEntityType.of(id("update_handler"),
             UpdateHandler::new,
             (nbt, context) -> new UpdateHandler(context),
             (original, originalGraph, ctx) -> new UpdateHandler(ctx)); // No need to actually split as it's only a cache.
@@ -37,13 +37,6 @@ public class NetworkRegistry {
         });
 
         UNIVERSE.addGraphEntityTypes(STORAGE_CACHE_TYPE, UPDATE_HANDLER_TYPE);
-        
-        UNIVERSE.addNodeDecoder(DrawerBlockNode.ID, (tag) -> DrawerBlockNode.INSTANCE);
-        UNIVERSE.addNodeDecoder(ShadowDrawerBlockNode.ID, (tag) -> ShadowDrawerBlockNode.INSTANCE);
-        UNIVERSE.addNodeDecoder(AccessPointBlockNode.ID, (tag) -> AccessPointBlockNode.INSTANCE);
-        UNIVERSE.addNodeDecoder(ConnectorBlockNode.ID, (tag) -> ConnectorBlockNode.INSTANCE);
-        UNIVERSE.addNodeDecoder(CompactingDrawerBlockNode.ID, (tag) -> CompactingDrawerBlockNode.INSTANCE);
-
-        ServerTickEvents.END_WORLD_TICK.register(UpdateHandler::flushUpdates);
+        UNIVERSE.addNodeTypes(DrawerBlockNode.TYPE, ShadowDrawerBlockNode.TYPE, AccessPointBlockNode.TYPE, ConnectorBlockNode.TYPE, CompactingDrawerBlockNode.TYPE);
     }
 }

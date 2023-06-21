@@ -107,10 +107,10 @@ public class AccessPointBlock extends NetworkBlock implements DrawerInteractionH
     public ActionResult toggleHide(BlockState state, World world, BlockPos pos, Vec3d hitPos, Direction side) {
         if (!(world instanceof ServerWorld serverWorld)) return ActionResult.PASS;
         var storages = NetworkStorageCache.get(serverWorld, pos).parts;
-        var shadowDrawers = NetworkRegistry.UNIVERSE.getGraphWorld(serverWorld)
+        var shadowDrawers = NetworkRegistry.UNIVERSE.getServerGraphWorld(serverWorld)
                 .getLoadedGraphsAt(pos)
                 .flatMap(BlockGraph::getNodes)
-                .map(NodeHolder::getPos)
+                .map(NodeHolder::getBlockPos)
                 .map(serverWorld::getBlockEntity)
                 .filter(ShadowDrawerBlockEntity.class::isInstance)
                 .map(ShadowDrawerBlockEntity.class::cast)
