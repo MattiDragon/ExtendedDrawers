@@ -2,10 +2,8 @@ package io.github.mattidragon.extendeddrawers.network;
 
 import com.kneelawk.graphlib.api.graph.GraphEntityContext;
 import com.kneelawk.graphlib.api.graph.NodeHolder;
-import com.kneelawk.graphlib.api.graph.user.BlockNode;
 import com.kneelawk.graphlib.api.graph.user.GraphEntity;
 import com.kneelawk.graphlib.api.graph.user.GraphEntityType;
-import com.kneelawk.graphlib.api.graph.user.NodeEntity;
 import io.github.mattidragon.extendeddrawers.block.entity.StorageDrawerBlockEntity;
 import io.github.mattidragon.extendeddrawers.storage.DrawerStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
@@ -16,7 +14,8 @@ import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Caches storages of all slots in networks to make lookup less expensive.

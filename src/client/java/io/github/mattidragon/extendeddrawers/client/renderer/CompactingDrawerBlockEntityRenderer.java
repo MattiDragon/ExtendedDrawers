@@ -13,7 +13,6 @@ import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
 import net.minecraft.client.texture.Sprite;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.screen.PlayerScreenHandler;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec2f;
 import net.minecraft.util.math.Vec3d;
@@ -23,8 +22,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-
-import static io.github.mattidragon.extendeddrawers.ExtendedDrawers.id;
 
 @SuppressWarnings("UnstableApiUsage")
 public class CompactingDrawerBlockEntityRenderer extends AbstractDrawerBlockEntityRenderer<CompactingDrawerBlockEntity> {
@@ -74,11 +71,12 @@ public class CompactingDrawerBlockEntityRenderer extends AbstractDrawerBlockEnti
 
     private void renderIcons(CompactingDrawerBlockEntity drawer, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
         var icons = new ArrayList<Sprite>();
+        var config = ExtendedDrawers.CONFIG.get().client().icons();
         var blockAtlas = MinecraftClient.getInstance().getSpriteAtlas(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE);
 
-        if (drawer.storage.isLocked()) icons.add(blockAtlas.apply(id("item/lock")));
-        if (drawer.storage.isVoiding()) icons.add(blockAtlas.apply(new Identifier("minecraft", "item/lava_bucket")));
-        if (drawer.storage.isHidden()) icons.add(blockAtlas.apply(new Identifier("minecraft", "item/black_dye")));
+        if (drawer.storage.isLocked()) icons.add(blockAtlas.apply(config.lockedIcon()));
+        if (drawer.storage.isVoiding()) icons.add(blockAtlas.apply(config.voidingIcon()));
+        if (drawer.storage.isHidden()) icons.add(blockAtlas.apply(config.hiddenIcon()));
         if (drawer.storage.getUpgrade() != null) icons.add(blockAtlas.apply(drawer.storage.getUpgrade().sprite));
 
         var player = MinecraftClient.getInstance().player;

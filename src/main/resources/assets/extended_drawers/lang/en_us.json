@@ -84,6 +84,12 @@
   "config.extended_drawers.client.largeTextScale.description": "The scale at which to render the text on drawers for large slots",
   "config.extended_drawers.client.textOffset": "Text offset",
   "config.extended_drawers.client.textOffset.description": "Offset from the bottom of the slot to move the text by on drawers",
+  "config.extended_drawers.client.lockedIcon": "Locked mode icon",
+  "config.extended_drawers.client.lockedIcon.description": "The id of icon to be displayed on locked drawers. This texture must be available on the block texture atlas (all block and item textures reside here) to work properly.",
+  "config.extended_drawers.client.voidingIcon": "Voiding mode icon",
+  "config.extended_drawers.client.voidingIcon.description": "The id of icon to be displayed on voiding drawers. This texture must be available on the block texture atlas (all block and item textures reside here) to work properly.",
+  "config.extended_drawers.client.hiddenIcon": "Hidden mode icon",
+  "config.extended_drawers.client.hiddenIcon.description": "The id of icon to be displayed on hidden drawers. This texture must be available on the block texture atlas (all block and item textures reside here) to work properly.",
 
   "config.extended_drawers.creativeBreakingBehaviour.break": "Break",
   "config.extended_drawers.creativeBreakingBehaviour.break.description": "Break: Breaking is instant as normal.",

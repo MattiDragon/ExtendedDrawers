@@ -2,8 +2,8 @@ package io.github.mattidragon.extendeddrawers;
 
 import io.github.mattidragon.configloader.api.ConfigManager;
 import io.github.mattidragon.extendeddrawers.config.ConfigData;
-import io.github.mattidragon.extendeddrawers.misc.ShiftAccess;
 import io.github.mattidragon.extendeddrawers.misc.DrawerContentsLootFunction;
+import io.github.mattidragon.extendeddrawers.misc.ShiftAccess;
 import io.github.mattidragon.extendeddrawers.network.NetworkRegistry;
 import io.github.mattidragon.extendeddrawers.networking.CompressionOverrideSyncPacket;
 import io.github.mattidragon.extendeddrawers.registry.ModBlocks;

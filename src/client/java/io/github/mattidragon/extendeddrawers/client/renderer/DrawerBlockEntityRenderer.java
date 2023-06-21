@@ -12,14 +12,11 @@ import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
 import net.minecraft.client.texture.Sprite;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.screen.PlayerScreenHandler;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import java.util.ArrayList;
 import java.util.Objects;
-
-import static io.github.mattidragon.extendeddrawers.ExtendedDrawers.id;
 
 @SuppressWarnings("UnstableApiUsage")
 public class DrawerBlockEntityRenderer extends AbstractDrawerBlockEntityRenderer<DrawerBlockEntity> {
@@ -73,11 +70,12 @@ public class DrawerBlockEntityRenderer extends AbstractDrawerBlockEntityRenderer
     
     private void renderSlot(DrawerSlot storage, boolean small, int light, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int seed, int overlay, BlockPos pos, World world) {
         var icons = new ArrayList<Sprite>();
+        var config = ExtendedDrawers.CONFIG.get().client().icons();
         var blockAtlas = MinecraftClient.getInstance().getSpriteAtlas(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE);
         
-        if (storage.isLocked()) icons.add(blockAtlas.apply(id("item/lock")));
-        if (storage.isVoiding()) icons.add(blockAtlas.apply(new Identifier("minecraft", "item/lava_bucket")));
-        if (storage.isHidden()) icons.add(blockAtlas.apply(new Identifier("minecraft", "item/black_dye")));
+        if (storage.isLocked()) icons.add(blockAtlas.apply(config.lockedIcon()));
+        if (storage.isVoiding()) icons.add(blockAtlas.apply(config.voidingIcon()));
+        if (storage.isHidden()) icons.add(blockAtlas.apply(config.hiddenIcon()));
         if (storage.getUpgrade() != null) icons.add(blockAtlas.apply(storage.getUpgrade().sprite));
 
         renderSlot(storage.isHidden() ? ItemVariant.blank() : storage.getItem(), ((storage.getAmount() == 0) || ExtendedDrawers.CONFIG.get().client().displayEmptyCount()) ? null : storage.getAmount(), small, icons, matrices, vertexConsumers, light, overlay, seed, pos, world);

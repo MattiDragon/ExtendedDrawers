@@ -1,25 +1,15 @@
 package io.github.mattidragon.extendeddrawers.network;
 
 import com.kneelawk.graphlib.api.graph.GraphEntityContext;
-import com.kneelawk.graphlib.api.graph.NodeHolder;
-import com.kneelawk.graphlib.api.graph.user.BlockNode;
 import com.kneelawk.graphlib.api.graph.user.GraphEntity;
 import com.kneelawk.graphlib.api.graph.user.GraphEntityType;
-import com.kneelawk.graphlib.api.graph.user.NodeEntity;
 import io.github.mattidragon.extendeddrawers.network.node.DrawerNetworkBlockNode;
-import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import net.minecraft.nbt.NbtElement;
-import net.minecraft.registry.RegistryKey;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 import org.apache.commons.lang3.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
 
 public class UpdateHandler implements GraphEntity<UpdateHandler> {
     private final GraphEntityContext context;

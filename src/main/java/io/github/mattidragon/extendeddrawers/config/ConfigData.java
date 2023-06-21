@@ -1,6 +1,6 @@
 package io.github.mattidragon.extendeddrawers.config;
 
-import com.mojang.serialization.*;
+import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.github.mattidragon.configloader.api.DefaultedFieldCodec;
 import io.github.mattidragon.extendeddrawers.config.category.ClientCategory;

@@ -5,7 +5,6 @@ import io.github.mattidragon.extendeddrawers.client.renderer.CompactingDrawerBlo
 import io.github.mattidragon.extendeddrawers.client.renderer.DrawerBlockEntityRenderer;
 import io.github.mattidragon.extendeddrawers.client.renderer.ShadowDrawerBlockEntityRenderer;
 import io.github.mattidragon.extendeddrawers.compacting.CompressionRecipeManager;
-import io.github.mattidragon.extendeddrawers.misc.ShiftAccess;
 import io.github.mattidragon.extendeddrawers.networking.CompressionOverrideSyncPacket;
 import io.github.mattidragon.extendeddrawers.registry.ModBlocks;
 import net.fabricmc.api.ClientModInitializer;

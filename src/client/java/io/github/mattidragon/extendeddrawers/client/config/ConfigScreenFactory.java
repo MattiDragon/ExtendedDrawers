@@ -6,7 +6,10 @@ import dev.isxander.yacl3.gui.ImageRenderer;
 import io.github.mattidragon.extendeddrawers.ExtendedDrawers;
 import io.github.mattidragon.extendeddrawers.client.renderer.AbstractDrawerBlockEntityRenderer;
 import io.github.mattidragon.extendeddrawers.config.ConfigData;
-import io.github.mattidragon.extendeddrawers.config.category.*;
+import io.github.mattidragon.extendeddrawers.config.category.ClientCategory;
+import io.github.mattidragon.extendeddrawers.config.category.MutableClientCategory;
+import io.github.mattidragon.extendeddrawers.config.category.MutableMiscCategory;
+import io.github.mattidragon.extendeddrawers.config.category.MutableStorageCategory;
 import io.github.mattidragon.extendeddrawers.misc.CreativeBreakingBehaviour;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.minecraft.client.MinecraftClient;
@@ -189,6 +192,30 @@ public class ConfigScreenFactory {
                         .description(OptionDescription.of(Text.translatable("config.extended_drawers.client.displayEmptyCount.description")))
                         .build())
                 .group(createLayoutGroup(instance.layout()))
+                .group(createIconGroup(instance.icons()))
+                .build();
+    }
+
+    private static OptionGroup createIconGroup(MutableClientCategory.MutableIconGroup icons) {
+        return OptionGroup.createBuilder()
+                .option(Option.<Identifier>createBuilder()
+                        .name(Text.translatable("config.extended_drawers.client.lockedIcon"))
+                        .binding(DEFAULT.client().icons().lockedIcon(), icons::lockedIcon, icons::lockedIcon)
+                        .customController(IdentifierController::new)
+                        .description(id -> OptionDescription.createBuilder().customImage(ImageRenderer.getOrMakeSync(id, () -> Optional.of(new IconRenderer(id)))).text(Text.translatable("config.extended_drawers.client.lockedIcon.description")).build())
+                        .build())
+                .option(Option.<Identifier>createBuilder()
+                        .name(Text.translatable("config.extended_drawers.client.voidingIcon"))
+                        .binding(DEFAULT.client().icons().voidingIcon(), icons::voidingIcon, icons::voidingIcon)
+                        .customController(IdentifierController::new)
+                        .description(id -> OptionDescription.createBuilder().customImage(ImageRenderer.getOrMakeSync(id, () -> Optional.of(new IconRenderer(id)))).text(Text.translatable("config.extended_drawers.client.voidingIcon.description")).build())
+                        .build())
+                .option(Option.<Identifier>createBuilder()
+                        .name(Text.translatable("config.extended_drawers.client.hiddenIcon"))
+                        .binding(DEFAULT.client().icons().hiddenIcon(), icons::hiddenIcon, icons::hiddenIcon)
+                        .customController(IdentifierController::new)
+                        .description(id -> OptionDescription.createBuilder().customImage(ImageRenderer.getOrMakeSync(id, () -> Optional.of(new IconRenderer(id)))).text(Text.translatable("config.extended_drawers.client.hiddenIcon.description")).build())
+                        .build())
                 .build();
     }
 
@@ -268,15 +295,19 @@ public class ConfigScreenFactory {
             var size = renderWidth / 3;
             var config = ExtendedDrawers.CONFIG.get();
             var client = config.client();
-            var newConfig = new ConfigData(new ClientCategory(client.itemRenderDistance(),
-                    client.iconRenderDistance(),
-                    client.textRenderDistance(),
-                    client.displayEmptyCount(),
-                    new ClientCategory.LayoutGroup(smallItemScale.pendingValue(),
-                    largeItemScale.pendingValue(),
-                    smallTextScale.pendingValue(),
-                    largeTextScale.pendingValue(),
-                    textOffset.pendingValue())), config.storage(), config.misc());
+            var newConfig = new ConfigData(
+                    new ClientCategory(client.itemRenderDistance(),
+                            client.iconRenderDistance(),
+                            client.textRenderDistance(),
+                            client.displayEmptyCount(),
+                            new ClientCategory.LayoutGroup(smallItemScale.pendingValue(),
+                                    largeItemScale.pendingValue(),
+                                    smallTextScale.pendingValue(),
+                                    largeTextScale.pendingValue(),
+                                    textOffset.pendingValue()),
+                            client.icons()),
+                    config.storage(),
+                    config.misc());
 
             var renderer = AbstractDrawerBlockEntityRenderer.createRendererTool();
             var matrices = context.getMatrices();
@@ -329,6 +360,22 @@ public class ConfigScreenFactory {
         public void close() {
 
         }
+    }
 
+    private record IconRenderer(Identifier id) implements ImageRenderer {
+        @Override
+        public int render(DrawContext graphics, int x, int y, int renderWidth) {
+            var blockAtlas = MinecraftClient.getInstance().getSpriteAtlas(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE);
+            var sprite = blockAtlas.apply(id);
+
+            graphics.drawSprite(x + renderWidth / 3, y, 0, renderWidth / 3, renderWidth / 3, sprite);
+
+            return renderWidth / 3;
+        }
+
+        @Override
+        public void close() {
+
+        }
     }
 }

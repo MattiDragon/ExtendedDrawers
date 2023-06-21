@@ -11,7 +11,6 @@ import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
 import net.minecraft.client.texture.Sprite;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.screen.PlayerScreenHandler;
-import net.minecraft.util.Identifier;
 
 import java.util.List;
 import java.util.Objects;
@@ -40,7 +39,7 @@ public class ShadowDrawerBlockEntityRenderer extends AbstractDrawerBlockEntityRe
 
         List<Sprite> icons = drawer.isHidden() ? List.of(MinecraftClient.getInstance()
                 .getSpriteAtlas(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE)
-                .apply(new Identifier("minecraft", "item/black_dye"))) : List.of();
+                .apply(ExtendedDrawers.CONFIG.get().client().icons().hiddenIcon())) : List.of();
         renderSlot(drawer.isHidden() ? ItemVariant.blank() : drawer.item, drawer.item.isBlank() || ExtendedDrawers.CONFIG.get().client().displayEmptyCount() ? null : drawer.countCache, false, icons, matrices, vertexConsumers, light, overlay, (int) drawer.getPos().asLong(), drawer.getPos(), drawer.getWorld());
         matrices.pop();
     }
