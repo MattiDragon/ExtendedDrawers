@@ -30,5 +30,6 @@
     "recipes": [
       "extended_drawers:lock"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

@@ -30,5 +30,6 @@
     "recipes": [
       "extended_drawers:downgrade"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

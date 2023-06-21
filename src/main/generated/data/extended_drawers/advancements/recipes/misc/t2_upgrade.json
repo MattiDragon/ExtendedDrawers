@@ -30,5 +30,6 @@
     "recipes": [
       "extended_drawers:t2_upgrade"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

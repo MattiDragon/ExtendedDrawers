@@ -30,5 +30,6 @@
     "recipes": [
       "extended_drawers:access_point"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

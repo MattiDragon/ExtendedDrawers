@@ -1,7 +1,6 @@
 package io.github.mattidragon.extendeddrawers.registry;
 
 import io.github.mattidragon.extendeddrawers.item.DrawerItem;
-import io.github.mattidragon.extendeddrawers.item.LockItem;
 import io.github.mattidragon.extendeddrawers.item.UpgradeItem;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.minecraft.item.BlockItem;
@@ -28,7 +27,7 @@ public class ModItems {
     public static final UpgradeItem DOWNGRADE = new UpgradeItem(new FabricItemSettings(), id("item/downgrade"), value -> 64);
     public static final UpgradeItem CREATIVE_UPGRADE = new UpgradeItem(new FabricItemSettings(), id("item/creative_upgrade"), value -> Long.MAX_VALUE);
     
-    public static final Item LOCK = new LockItem(new FabricItemSettings());
+    public static final Item LOCK = new Item(new FabricItemSettings());
     
     public static void register() {
         Registry.register(Registries.ITEM, id("single_drawer"), SINGLE_DRAWER);

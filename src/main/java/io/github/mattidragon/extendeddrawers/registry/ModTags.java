@@ -11,6 +11,9 @@ public class ModTags {
     public static class ItemTags {
         public static final TagKey<Item> DRAWERS = TagKey.of(RegistryKeys.ITEM, id("drawers"));
         public static final TagKey<Item> UPGRADES = TagKey.of(RegistryKeys.ITEM, id("upgrade"));
+        public static final TagKey<Item> TOGGLE_LOCK = TagKey.of(RegistryKeys.ITEM, id("toggle/lock"));
+        public static final TagKey<Item> TOGGLE_VOIDING = TagKey.of(RegistryKeys.ITEM, id("toggle/voiding"));
+        public static final TagKey<Item> TOGGLE_HIDDEN = TagKey.of(RegistryKeys.ITEM, id("toggle/hidden"));
     }
     
     public static class BlockTags {

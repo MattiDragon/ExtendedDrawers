@@ -7,7 +7,6 @@ import com.kneelawk.graphlib.api.wire.WireConnectionFilter;
 import com.kneelawk.graphlib.api.world.SaveMode;
 import io.github.mattidragon.extendeddrawers.block.base.NetworkComponent;
 import io.github.mattidragon.extendeddrawers.network.node.*;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 
 import java.util.List;
 

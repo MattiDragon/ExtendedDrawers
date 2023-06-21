@@ -30,5 +30,6 @@
     "recipes": [
       "extended_drawers:shadow_drawer"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }
