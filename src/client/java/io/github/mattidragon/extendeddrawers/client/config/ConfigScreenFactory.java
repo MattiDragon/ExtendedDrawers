@@ -198,6 +198,8 @@ public class ConfigScreenFactory {
 
     private static OptionGroup createIconGroup(MutableClientCategory.MutableIconGroup icons) {
         return OptionGroup.createBuilder()
+                .name(Text.translatable("config.extended_drawers.client.icons"))
+                .collapsed(true)
                 .option(Option.<Identifier>createBuilder()
                         .name(Text.translatable("config.extended_drawers.client.lockedIcon"))
                         .binding(DEFAULT.client().icons().lockedIcon(), icons::lockedIcon, icons::lockedIcon)
@@ -257,6 +259,7 @@ public class ConfigScreenFactory {
 
         return OptionGroup.createBuilder()
                 .name(Text.translatable("config.extended_drawers.client.layout"))
+                .collapsed(true)
                 .option(smallItemScale)
                 .option(largeItemScale)
                 .option(smallTextScale)
