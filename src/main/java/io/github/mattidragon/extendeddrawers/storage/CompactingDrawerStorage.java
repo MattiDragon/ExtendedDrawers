@@ -322,7 +322,7 @@ public final class CompactingDrawerStorage extends SnapshotParticipant<Compactin
                 return CompactingDrawerStorage.this.insert(item, maxAmount, transaction);
             }
 
-            var inserted = Math.min(maxAmount, getCapacity() - getAmount());
+            var inserted = Math.min(maxAmount, getSpace());
             if (inserted > 0) {
                 updateSnapshots(transaction);
                 amount += inserted * compression;
@@ -373,6 +373,10 @@ public final class CompactingDrawerStorage extends SnapshotParticipant<Compactin
         @Override
         public ItemVariant getResource() {
             return item;
+        }
+
+        public long getSpace() {
+            return (CompactingDrawerStorage.this.getCapacity() - CompactingDrawerStorage.this.amount) / compression;
         }
 
         @Override
