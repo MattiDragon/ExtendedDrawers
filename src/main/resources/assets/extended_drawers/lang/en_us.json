@@ -18,6 +18,7 @@
 
   "tooltip.extended_drawers.shift_for_modifiers": "Press SHIFT for modifiers",
   "tooltip.extended_drawers.drawer_contents": "Contains:",
+  "tooltip.extended_drawers.modifiers": "Modifiers: %s",
   "tooltip.extended_drawers.empty": "Empty",
   "itemGroup.extended_drawers.main": "Extended Drawers",
   "extended_drawer.drawer.upgrade_fail": "Can't change upgrade; too many items.",

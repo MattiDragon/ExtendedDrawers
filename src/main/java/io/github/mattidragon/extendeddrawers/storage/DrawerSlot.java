@@ -164,6 +164,7 @@ public final class DrawerSlot extends SnapshotParticipant<DrawerSlot.Snapshot> i
         DrawerStorage.super.readNbt(nbt);
         item = ItemVariant.fromNbt(nbt.getCompound("item"));
         amount = nbt.getLong("amount");
+        if (item.isBlank()) amount = 0; // Avoids dupes with drawers of removed items
     }
 
     @Override

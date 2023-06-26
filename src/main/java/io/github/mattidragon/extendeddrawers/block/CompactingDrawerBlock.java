@@ -25,8 +25,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
+import net.minecraft.registry.Registries;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.DirectionProperty;
@@ -43,6 +42,7 @@ import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
 import java.util.List;
 
 @SuppressWarnings({"UnstableApiUsage", "deprecation"}) // transfer api and mojank block method deprecation
@@ -57,11 +57,32 @@ public class CompactingDrawerBlock extends NetworkBlockWithEntity<CompactingDraw
     @Override
     public void appendTooltip(ItemStack stack, @Nullable BlockView world, List<Text> tooltip, TooltipContext options) {
         var nbt = BlockItem.getBlockEntityNbt(stack);
-        if (nbt == null) return;
+        if (nbt == null || !(world instanceof World realWorld)) return;
 
-        var list = nbt.getList("items", NbtElement.COMPOUND_TYPE).stream()
-                .map(NbtCompound.class::cast)
-                .map(slot -> new ResourceAmount<>(ItemVariant.fromNbt(slot.getCompound("item")), slot.getLong("amount")))
+        var storageNbt = nbt.getCompound("storage");
+
+        if (ExtendedDrawers.SHIFT_ACCESS.isShiftPressed()) {
+            if (Registries.ITEM.get(Identifier.tryParse(storageNbt.getString("upgrade"))) instanceof UpgradeItem upgrade) {
+                tooltip.add(upgrade.getName().copy().formatted(Formatting.AQUA));
+            }
+
+            var modifierText = Text.empty()
+                    .append(Text.literal("V").formatted(storageNbt.getBoolean("voiding") ? Formatting.WHITE : Formatting.DARK_GRAY))
+                    .append(Text.literal("L").formatted(storageNbt.getBoolean("locked") ? Formatting.WHITE : Formatting.DARK_GRAY))
+                    .append(Text.literal("H").formatted(storageNbt.getBoolean("hidden") ? Formatting.WHITE : Formatting.DARK_GRAY));
+            tooltip.add(Text.translatable("tooltip.extended_drawers.modifiers", modifierText).formatted(Formatting.GRAY));
+        } else {
+            tooltip.add(Text.translatable("tooltip.extended_drawers.shift_for_modifiers").formatted(Formatting.GRAY));
+        }
+        tooltip.add(Text.empty());
+
+        var drawer = new CompactingDrawerBlockEntity(BlockPos.ORIGIN, ModBlocks.COMPACTING_DRAWER.getDefaultState());
+        drawer.setWorld(realWorld);
+        drawer.readNbt(nbt);
+        var storage = drawer.storage;
+
+        var list = Arrays.stream(storage.getActiveSlots())
+                .map(slot -> new ResourceAmount<>(slot.getResource(), slot.getAmount()))
                 .filter(resource -> !resource.resource().isBlank())
                 .toList();
         if (list.isEmpty()) return;
