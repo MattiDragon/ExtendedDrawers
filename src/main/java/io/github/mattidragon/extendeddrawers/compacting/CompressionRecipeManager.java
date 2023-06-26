@@ -103,7 +103,7 @@ public final class CompressionRecipeManager {
     private Stream<RecipePair> findCompressionRecipeForSize(ItemVariant decompressed, World world, int size) {
         return findRecipes(decompressed.toStack(), size, world) // Find compression recipes
                 .filter(compressed -> findRecipes(compressed, 1, world).anyMatch(decompressed::matches))// Find matching decompression recipe
-                .map(compressed -> new RecipePair(ItemVariant.of(compressed), decompressed, size));
+                .map(compressed -> new RecipePair(ItemVariant.of(compressed), decompressed, size * size));
     }
 
     @Nullable
