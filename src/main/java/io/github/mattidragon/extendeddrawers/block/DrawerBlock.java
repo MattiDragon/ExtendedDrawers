@@ -77,7 +77,10 @@ public class DrawerBlock extends NetworkBlockWithEntity<DrawerBlockEntity> imple
         if (list.isEmpty()) return;
         boolean shift = Screen.hasShiftDown();
 
-        tooltip.add(Text.translatable("tooltip.extended_drawers.shift_for_modifiers").formatted(Formatting.GRAY));
+        if (!shift) {
+            tooltip.add(Text.translatable("tooltip.extended_drawers.shift_for_modifiers").formatted(Formatting.GRAY));
+            tooltip.add(Text.empty());
+        }
 
         if (!list.stream().allMatch(DrawerSlot::isBlank) || shift)
             tooltip.add(Text.translatable("tooltip.extended_drawers.drawer_contents").formatted(Formatting.GRAY));
@@ -99,6 +102,9 @@ public class DrawerBlock extends NetworkBlockWithEntity<DrawerBlockEntity> imple
                         .append(Text.literal("V").formatted(slot.isVoiding() ? Formatting.WHITE : Formatting.DARK_GRAY))
                         .append(Text.literal("L").formatted(slot.isLocked() ? Formatting.WHITE : Formatting.DARK_GRAY))
                         .append(Text.literal("H").formatted(slot.isHidden() ? Formatting.WHITE : Formatting.DARK_GRAY));
+                if (slot.getUpgrade() != null) {
+                    text.append(" ").append(slot.getUpgrade().getName().copy().formatted(Formatting.AQUA));
+                }
             }
             tooltip.add(text.formatted(Formatting.GRAY));
         }
