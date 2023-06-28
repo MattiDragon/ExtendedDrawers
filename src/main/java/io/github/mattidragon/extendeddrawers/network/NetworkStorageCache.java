@@ -22,13 +22,9 @@ import java.util.List;
  */
 @SuppressWarnings("UnstableApiUsage")
 public class NetworkStorageCache implements GraphEntity<NetworkStorageCache> {
-    private final GraphEntityContext context;
+    private GraphEntityContext context;
     @Nullable
     private CombinedStorage<ItemVariant, DrawerStorage> cachedStorage = null;
-
-    public NetworkStorageCache(GraphEntityContext context) {
-        this.context = context;
-    }
 
     /**
      * Helper to easily get the cached storage from a world and pos.
@@ -73,6 +69,11 @@ public class NetworkStorageCache implements GraphEntity<NetworkStorageCache> {
             cachedStorage = new CombinedStorage<>(getStorages());
         }
         return cachedStorage;
+    }
+
+    @Override
+    public void onInit(@NotNull GraphEntityContext context) {
+        this.context = context;
     }
 
     @Override

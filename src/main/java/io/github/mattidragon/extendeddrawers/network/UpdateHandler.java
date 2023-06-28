@@ -12,13 +12,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class UpdateHandler implements GraphEntity<UpdateHandler> {
-    private final GraphEntityContext context;
+    private GraphEntityContext context;
     @Nullable
     private ChangeType queuedUpdate;
-
-    public UpdateHandler(GraphEntityContext context) {
-        this.context = context;
-    }
 
     public static void scheduleUpdate(ServerWorld world, BlockPos pos, ChangeType type) {
         NetworkRegistry.UNIVERSE.getServerGraphWorld(world)
@@ -45,6 +41,11 @@ public class UpdateHandler implements GraphEntity<UpdateHandler> {
                         drawerNode.update(world, node);
                     }
                 });
+    }
+
+    @Override
+    public void onInit(@NotNull GraphEntityContext context) {
+        this.context = context;
     }
 
     @Override
