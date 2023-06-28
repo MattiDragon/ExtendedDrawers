@@ -4,7 +4,6 @@ import io.github.mattidragon.extendeddrawers.ExtendedDrawers;
 import io.github.mattidragon.extendeddrawers.block.DrawerBlock;
 import io.github.mattidragon.extendeddrawers.block.entity.DrawerBlockEntity;
 import io.github.mattidragon.extendeddrawers.storage.DrawerSlot;
-import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.WorldRenderer;
@@ -18,7 +17,6 @@ import net.minecraft.world.World;
 import java.util.ArrayList;
 import java.util.Objects;
 
-@SuppressWarnings("UnstableApiUsage")
 public class DrawerBlockEntityRenderer extends AbstractDrawerBlockEntityRenderer<DrawerBlockEntity> {
     public DrawerBlockEntityRenderer(BlockEntityRendererFactory.Context context) {
         super(context.getItemRenderer(), context.getTextRenderer());
@@ -76,8 +74,16 @@ public class DrawerBlockEntityRenderer extends AbstractDrawerBlockEntityRenderer
         if (storage.isLocked()) icons.add(blockAtlas.apply(config.lockedIcon()));
         if (storage.isVoiding()) icons.add(blockAtlas.apply(config.voidingIcon()));
         if (storage.isHidden()) icons.add(blockAtlas.apply(config.hiddenIcon()));
+        if (storage.isDuping()) icons.add(blockAtlas.apply(config.dupingIcon()));
         if (storage.getUpgrade() != null) icons.add(blockAtlas.apply(storage.getUpgrade().sprite));
+        if (storage.hasLimiter()) icons.add(blockAtlas.apply(ExtendedDrawers.id("item/limiter")));
 
-        renderSlot(storage.isHidden() ? ItemVariant.blank() : storage.getItem(), ((storage.getAmount() == 0) || ExtendedDrawers.CONFIG.get().client().displayEmptyCount()) ? null : storage.getAmount(), small, icons, matrices, vertexConsumers, light, overlay, seed, pos, world);
+        String amount = String.valueOf(storage.getAmount());
+        if ((storage.getAmount() == 0) && !ExtendedDrawers.CONFIG.get().client().displayEmptyCount())
+            amount = null;
+        if (storage.isDuping())
+            amount = "∞";
+
+        renderSlot(storage.getItem(), amount, small, storage.isHidden(), icons, matrices, vertexConsumers, light, overlay, seed, pos, world);
     }
 }

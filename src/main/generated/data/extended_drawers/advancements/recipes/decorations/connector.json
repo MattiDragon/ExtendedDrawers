@@ -1,13 +1,11 @@
 {
   "parent": "minecraft:recipes/root",
   "criteria": {
-    "has_connector": {
+    "has_drawer": {
       "conditions": {
         "items": [
           {
-            "items": [
-              "extended_drawers:connector"
-            ]
+            "tag": "extended_drawers:drawers"
           }
         ]
       },
@@ -22,7 +20,7 @@
   },
   "requirements": [
     [
-      "has_connector",
+      "has_drawer",
       "has_the_recipe"
     ]
   ],

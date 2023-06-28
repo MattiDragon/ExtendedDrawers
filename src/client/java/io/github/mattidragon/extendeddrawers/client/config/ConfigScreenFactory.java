@@ -218,6 +218,12 @@ public class ConfigScreenFactory {
                         .customController(IdentifierController::new)
                         .description(id -> OptionDescription.createBuilder().customImage(ImageRenderer.getOrMakeSync(id, () -> Optional.of(new IconRenderer(id)))).text(Text.translatable("config.extended_drawers.client.hiddenIcon.description")).build())
                         .build())
+                .option(Option.<Identifier>createBuilder()
+                        .name(Text.translatable("config.extended_drawers.client.dupingIcon"))
+                        .binding(DEFAULT.client().icons().dupingIcon(), icons::dupingIcon, icons::dupingIcon)
+                        .customController(IdentifierController::new)
+                        .description(id -> OptionDescription.createBuilder().customImage(ImageRenderer.getOrMakeSync(id, () -> Optional.of(new IconRenderer(id)))).text(Text.translatable("config.extended_drawers.client.dupingIcon.description")).build())
+                        .build())
                 .build();
     }
 
@@ -334,24 +340,24 @@ public class ConfigScreenFactory {
                 var upgrade2Sprite = atlas.apply(id("item/t2_upgrade"));
                 var upgrade4Sprite = atlas.apply(id("item/t4_upgrade"));
 
-                renderer.renderSlot(ItemVariant.of(Items.COBBLESTONE), 128L, false, List.of(lockSprite), matrices, context.getVertexConsumers(), LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 0, playerPos, null);
+                renderer.renderSlot(ItemVariant.of(Items.COBBLESTONE), String.valueOf((Long) 128L), false, false, List.of(lockSprite), matrices, context.getVertexConsumers(), LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 0, playerPos, null);
 
                 matrices.translate(0.75, 0.25, 0);
-                renderer.renderSlot(ItemVariant.of(Items.REDSTONE), 16L, true, List.of(lockSprite), matrices, context.getVertexConsumers(), LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 0, playerPos, null);
+                renderer.renderSlot(ItemVariant.of(Items.REDSTONE), String.valueOf((Long) 16L), true, false, List.of(lockSprite), matrices, context.getVertexConsumers(), LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 0, playerPos, null);
                 matrices.translate(0.5, 0, 0);
-                renderer.renderSlot(ItemVariant.of(Items.GUNPOWDER), 32L, true, List.of(voidingSprite), matrices, context.getVertexConsumers(), LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 0, playerPos, null);
+                renderer.renderSlot(ItemVariant.of(Items.GUNPOWDER), String.valueOf((Long) 32L), true, false, List.of(voidingSprite), matrices, context.getVertexConsumers(), LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 0, playerPos, null);
                 matrices.translate(-0.5, -0.5, 0);
-                renderer.renderSlot(ItemVariant.of(Items.SUGAR), 64L, true, List.of(lockSprite, voidingSprite, upgrade2Sprite), matrices, context.getVertexConsumers(), LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 0, playerPos, null);
+                renderer.renderSlot(ItemVariant.of(Items.SUGAR), String.valueOf((Long) 64L), true, false, List.of(lockSprite, voidingSprite, upgrade2Sprite), matrices, context.getVertexConsumers(), LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 0, playerPos, null);
                 matrices.translate(0.5, 0, 0);
-                renderer.renderSlot(ItemVariant.of(Items.GLOWSTONE_DUST), 128L, true, List.of(upgrade4Sprite), matrices, context.getVertexConsumers(), LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 0, playerPos, null);
+                renderer.renderSlot(ItemVariant.of(Items.GLOWSTONE_DUST), String.valueOf((Long) 128L), true, false, List.of(upgrade4Sprite), matrices, context.getVertexConsumers(), LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 0, playerPos, null);
 
                 matrices.translate(0.75, 0.5, 0);
                 renderer.renderIcons(List.of(lockSprite, voidingSprite, upgrade4Sprite), true, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, matrices, context.getVertexConsumers());
-                renderer.renderSlot(ItemVariant.of(Items.IRON_INGOT), 9L, true, List.of(), matrices, context.getVertexConsumers(), LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 0, playerPos, null);
+                renderer.renderSlot(ItemVariant.of(Items.IRON_INGOT), String.valueOf((Long) 9L), true, false, List.of(), matrices, context.getVertexConsumers(), LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 0, playerPos, null);
                 matrices.translate(0.25, -0.5, 0);
-                renderer.renderSlot(ItemVariant.of(Items.IRON_NUGGET), 81L, true, List.of(), matrices, context.getVertexConsumers(), LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 0, playerPos, null);
+                renderer.renderSlot(ItemVariant.of(Items.IRON_NUGGET), String.valueOf((Long) 81L), true, false, List.of(), matrices, context.getVertexConsumers(), LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 0, playerPos, null);
                 matrices.translate(-0.5, 0, 0);
-                renderer.renderSlot(ItemVariant.of(Items.IRON_BLOCK), 1L, true, List.of(), matrices, context.getVertexConsumers(), LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 0, playerPos, null);
+                renderer.renderSlot(ItemVariant.of(Items.IRON_BLOCK), String.valueOf((Long) 1L), true, false, List.of(), matrices, context.getVertexConsumers(), LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 0, playerPos, null);
 
                 matrices.pop();
             }

@@ -1,12 +1,12 @@
 {
   "parent": "minecraft:recipes/root",
   "criteria": {
-    "has_shadow_drawer": {
+    "has_end_stone_bricks": {
       "conditions": {
         "items": [
           {
             "items": [
-              "extended_drawers:shadow_drawer"
+              "minecraft:end_stone_bricks"
             ]
           }
         ]
@@ -22,7 +22,7 @@
   },
   "requirements": [
     [
-      "has_shadow_drawer",
+      "has_end_stone_bricks",
       "has_the_recipe"
     ]
   ],

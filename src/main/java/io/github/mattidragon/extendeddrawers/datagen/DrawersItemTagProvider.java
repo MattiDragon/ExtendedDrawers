@@ -18,10 +18,11 @@ class DrawersItemTagProvider extends FabricTagProvider.ItemTagProvider {
     @Override
     protected void configure(RegistryWrapper.WrapperLookup arg) {
         copy(ModTags.BlockTags.DRAWERS, ModTags.ItemTags.DRAWERS);
-        getOrCreateTagBuilder(ModTags.ItemTags.UPGRADES).add(ModItems.T1_UPGRADE, ModItems.T2_UPGRADE, ModItems.T3_UPGRADE, ModItems.T4_UPGRADE, ModItems.CREATIVE_UPGRADE, ModItems.DOWNGRADE);
 
+        getOrCreateTagBuilder(ModTags.ItemTags.UPGRADES).add(ModItems.T1_UPGRADE, ModItems.T2_UPGRADE, ModItems.T3_UPGRADE, ModItems.T4_UPGRADE, ModItems.CREATIVE_UPGRADE);
         getOrCreateTagBuilder(ModTags.ItemTags.TOGGLE_HIDDEN).add(Items.INK_SAC, Items.BLACK_DYE);
         getOrCreateTagBuilder(ModTags.ItemTags.TOGGLE_LOCK).add(ModItems.LOCK);
         getOrCreateTagBuilder(ModTags.ItemTags.TOGGLE_VOIDING).add(Items.LAVA_BUCKET);
+        getOrCreateTagBuilder(ModTags.ItemTags.TOGGLE_DUPING).add(ModItems.DUPE_WAND);
     }
 }

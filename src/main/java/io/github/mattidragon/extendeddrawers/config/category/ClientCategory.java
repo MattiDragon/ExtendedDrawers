@@ -29,13 +29,15 @@ public record ClientCategory(int itemRenderDistance,
     @GenerateMutable
     public record IconGroup(Identifier lockedIcon,
                             Identifier voidingIcon,
-                            Identifier hiddenIcon) implements MutableClientCategory.MutableIconGroup.Source {
-        private static final IconGroup DEFAULT = new IconGroup(id("item/lock"), new Identifier("minecraft", "item/lava_bucket"), new Identifier("minecraft", "item/black_dye"));
+                            Identifier hiddenIcon,
+                            Identifier dupingIcon) implements MutableClientCategory.MutableIconGroup.Source {
+        private static final IconGroup DEFAULT = new IconGroup(id("item/lock"), new Identifier("minecraft", "item/lava_bucket"), new Identifier("minecraft", "item/black_dye"), id("item/dupe_wand"));
 
         public static final Codec<IconGroup> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 DefaultedFieldCodec.of(Identifier.CODEC, "lockedIcon", DEFAULT.lockedIcon).forGetter(IconGroup::lockedIcon),
                 DefaultedFieldCodec.of(Identifier.CODEC, "voidingIcon", DEFAULT.voidingIcon).forGetter(IconGroup::voidingIcon),
-                DefaultedFieldCodec.of(Identifier.CODEC, "hiddenIcon", DEFAULT.hiddenIcon).forGetter(IconGroup::hiddenIcon)
+                DefaultedFieldCodec.of(Identifier.CODEC, "hiddenIcon", DEFAULT.hiddenIcon).forGetter(IconGroup::hiddenIcon),
+                DefaultedFieldCodec.of(Identifier.CODEC, "dupingIcon", DEFAULT.dupingIcon).forGetter(IconGroup::dupingIcon)
         ).apply(instance, IconGroup::new));
     }
 

@@ -1,10 +1,13 @@
 package io.github.mattidragon.extendeddrawers.datagen;
 
+import io.github.mattidragon.extendeddrawers.ExtendedDrawers;
 import io.github.mattidragon.extendeddrawers.registry.ModItems;
+import io.github.mattidragon.extendeddrawers.registry.ModRecipes;
 import io.github.mattidragon.extendeddrawers.registry.ModTags;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
 import net.fabricmc.fabric.api.tag.convention.v1.ConventionalItemTags;
+import net.minecraft.data.server.recipe.ComplexRecipeJsonBuilder;
 import net.minecraft.data.server.recipe.RecipeJsonProvider;
 import net.minecraft.data.server.recipe.RecipeProvider;
 import net.minecraft.data.server.recipe.ShapedRecipeJsonBuilder;
@@ -23,7 +26,6 @@ class DrawersRecipeProvider extends FabricRecipeProvider {
     
     @Override
     public void generate(Consumer<RecipeJsonProvider> exporter) {
-        offerUpgradeRecipe(exporter, ModItems.DOWNGRADE, Ingredient.ofItems(Items.DIRT), ModItems.UPGRADE_FRAME, Items.STICK);
         offerUpgradeRecipe(exporter, ModItems.T1_UPGRADE, Ingredient.ofItems(Items.BARREL), ModItems.UPGRADE_FRAME, Items.STICK);
         offerUpgradeRecipe(exporter, ModItems.T2_UPGRADE, Ingredient.ofItems(Items.IRON_BLOCK), ModItems.T1_UPGRADE, Items.STICK);
         offerUpgradeRecipe(exporter, ModItems.T3_UPGRADE, Ingredient.ofItems(Items.DIAMOND_BLOCK), ModItems.T2_UPGRADE, Items.BLAZE_ROD);
@@ -31,9 +33,13 @@ class DrawersRecipeProvider extends FabricRecipeProvider {
     
         offerDrawerRecipes(exporter);
         offerLockRecipe(exporter);
+        offerLimiterRecipe(exporter);
         offerUpgradeFrameRecipe(exporter);
-        offerControllerRecipe(exporter);
+        offerAccessPointRecipe(exporter);
         offerConnectorRecipe(exporter);
+
+        ComplexRecipeJsonBuilder.create(ModRecipes.COPY_LIMITER_SERIALIZER)
+                .offerTo(exporter, ExtendedDrawers.id("copy_limiter").toString());
     }
     
     private void offerDrawerRecipes(Consumer<RecipeJsonProvider> exporter) {
@@ -43,7 +49,7 @@ class DrawersRecipeProvider extends FabricRecipeProvider {
                 .pattern("EEE")
                 .pattern("ECE")
                 .pattern("EEE")
-                .criterion(RecipeProvider.hasItem(ModItems.SHADOW_DRAWER), RecipeProvider.conditionsFromItem(ModItems.SHADOW_DRAWER))
+                .criterion(RecipeProvider.hasItem(Items.END_STONE_BRICKS), RecipeProvider.conditionsFromItem(Items.END_STONE_BRICKS))
                 .offerTo(exporter);
         ShapedRecipeJsonBuilder.create(RecipeCategory.DECORATIONS, ModItems.COMPACTING_DRAWER)
                 .input('C', Items.CHEST)
@@ -53,7 +59,7 @@ class DrawersRecipeProvider extends FabricRecipeProvider {
                 .pattern("SPS")
                 .pattern("CIC")
                 .pattern("SPS")
-                .criterion(RecipeProvider.hasItem(ModItems.COMPACTING_DRAWER), RecipeProvider.conditionsFromItem(ModItems.COMPACTING_DRAWER))
+                .criterion(RecipeProvider.hasItem(Items.CHEST), RecipeProvider.conditionsFromItem(Items.CHEST))
                 .offerTo(exporter);
         ShapedRecipeJsonBuilder.create(RecipeCategory.DECORATIONS, ModItems.SINGLE_DRAWER)
                 .input('C', Items.CHEST)
@@ -62,7 +68,7 @@ class DrawersRecipeProvider extends FabricRecipeProvider {
                 .pattern("LPL")
                 .pattern("PCP")
                 .pattern("LPL")
-                .criterion(RecipeProvider.hasItem(ModItems.SINGLE_DRAWER), RecipeProvider.conditionsFromItem(ModItems.SINGLE_DRAWER))
+                .criterion(RecipeProvider.hasItem(Items.CHEST), RecipeProvider.conditionsFromItem(Items.CHEST))
                 .offerTo(exporter);
     ShapedRecipeJsonBuilder.create(RecipeCategory.DECORATIONS, ModItems.DOUBLE_DRAWER)
                 .input('C', Items.CHEST)
@@ -71,7 +77,7 @@ class DrawersRecipeProvider extends FabricRecipeProvider {
                 .pattern("LPL")
                 .pattern("CPC")
                 .pattern("LPL")
-                .criterion(RecipeProvider.hasItem(ModItems.SINGLE_DRAWER), RecipeProvider.conditionsFromItem(ModItems.SINGLE_DRAWER))
+                .criterion(RecipeProvider.hasItem(Items.CHEST), RecipeProvider.conditionsFromItem(Items.CHEST))
                 .offerTo(exporter);
     ShapedRecipeJsonBuilder.create(RecipeCategory.DECORATIONS, ModItems.QUAD_DRAWER)
                 .input('C', Items.CHEST)
@@ -80,7 +86,7 @@ class DrawersRecipeProvider extends FabricRecipeProvider {
                 .pattern("LCL")
                 .pattern("CPC")
                 .pattern("LCL")
-                .criterion(RecipeProvider.hasItem(ModItems.SINGLE_DRAWER), RecipeProvider.conditionsFromItem(ModItems.SINGLE_DRAWER))
+                .criterion(RecipeProvider.hasItem(Items.CHEST), RecipeProvider.conditionsFromItem(Items.CHEST))
                 .offerTo(exporter);
     }
     
@@ -91,11 +97,23 @@ class DrawersRecipeProvider extends FabricRecipeProvider {
                 .pattern(" g ")
                 .pattern("g g")
                 .pattern("GGG")
-                .criterion(RecipeProvider.hasItem(ModItems.LOCK), RecipeProvider.conditionsFromItem(ModItems.LOCK))
+                .criterion(RecipeProvider.hasItem(Items.GOLD_INGOT), RecipeProvider.conditionsFromItem(Items.GOLD_INGOT))
+                .offerTo(exporter);
+    }
+
+    private void offerLimiterRecipe(Consumer<RecipeJsonProvider> exporter) {
+        ShapedRecipeJsonBuilder.create(RecipeCategory.REDSTONE, ModItems.LIMITER)
+                .input('C', Items.COPPER_INGOT)
+                .input('R', Items.REDSTONE)
+                .input('E', Items.ENDER_PEARL)
+                .pattern("RCR")
+                .pattern("CEC")
+                .pattern("RCR")
+                .criterion("has_drawer", RecipeProvider.conditionsFromTag(ModTags.ItemTags.DRAWERS))
                 .offerTo(exporter);
     }
     
-    private void offerControllerRecipe(Consumer<RecipeJsonProvider> exporter) {
+    private void offerAccessPointRecipe(Consumer<RecipeJsonProvider> exporter) {
         ShapedRecipeJsonBuilder.create(RecipeCategory.DECORATIONS, ModItems.ACCESS_POINT)
                 .input('I', Items.IRON_INGOT)
                 .input('C', Items.COBBLESTONE)
@@ -103,7 +121,7 @@ class DrawersRecipeProvider extends FabricRecipeProvider {
                 .pattern("CIC")
                 .pattern("IDI")
                 .pattern("CIC")
-                .criterion(RecipeProvider.hasItem(ModItems.ACCESS_POINT), RecipeProvider.conditionsFromItem(ModItems.ACCESS_POINT))
+                .criterion("has_drawer", RecipeProvider.conditionsFromTag(ModTags.ItemTags.DRAWERS))
                 .offerTo(exporter);
     }
     
@@ -114,7 +132,7 @@ class DrawersRecipeProvider extends FabricRecipeProvider {
                 .pattern("LPL")
                 .pattern("PPP")
                 .pattern("LPL")
-                .criterion(RecipeProvider.hasItem(ModItems.CONNECTOR), RecipeProvider.conditionsFromItem(ModItems.CONNECTOR))
+                .criterion("has_drawer", RecipeProvider.conditionsFromTag(ModTags.ItemTags.DRAWERS))
                 .offerTo(exporter);
     }
     
@@ -125,7 +143,7 @@ class DrawersRecipeProvider extends FabricRecipeProvider {
                 .pattern("SCS")
                 .pattern("C C")
                 .pattern("SCS")
-                .criterion(RecipeProvider.hasItem(ModItems.UPGRADE_FRAME), RecipeProvider.conditionsFromItem(ModItems.UPGRADE_FRAME))
+                .criterion("has_drawer", RecipeProvider.conditionsFromTag(ModTags.ItemTags.DRAWERS))
                 .offerTo(exporter);
     }
     
@@ -137,7 +155,7 @@ class DrawersRecipeProvider extends FabricRecipeProvider {
                 .pattern("SSS")
                 .pattern("BMB")
                 .pattern("SSS")
-                .criterion(RecipeProvider.hasItem(result), RecipeProvider.conditionsFromItem(result))
+                .criterion(RecipeProvider.hasItem(ModItems.UPGRADE_FRAME), RecipeProvider.conditionsFromItem(ModItems.UPGRADE_FRAME))
                 .offerTo(exporter);
     }
 }

@@ -17,6 +17,7 @@ import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.render.model.json.ModelTransformationMode;
 import net.minecraft.client.texture.Sprite;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.screen.PlayerScreenHandler;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.RotationAxis;
@@ -57,11 +58,16 @@ public abstract class AbstractDrawerBlockEntityRenderer<T extends BlockEntity> i
         renderer.isGui = true;
         return renderer;
     }
-    
-    public void renderSlot(ItemVariant item, @Nullable Long amount, boolean small, List<Sprite> icons, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay, int seed, BlockPos pos, World world) {
+
+    public void renderSlot(ItemVariant item, @Nullable String amount, boolean small, boolean hidden, List<Sprite> icons, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay, int seed, BlockPos pos, World world) {
         var player = MinecraftClient.getInstance().player;
         var playerPos = player == null ? Vec3d.ofCenter(pos) : player.getPos();
         var config = ExtendedDrawers.CONFIG.get().client();
+
+        if (hidden) {
+            renderHiddenOverlay(small, light, overlay, matrices, vertexConsumers);
+            return;
+        }
     
         if (pos.isWithinDistance(playerPos, config.textRenderDistance()) && amount != null)
             renderText(amount, small, light, matrices, vertexConsumers);
@@ -71,6 +77,23 @@ public abstract class AbstractDrawerBlockEntityRenderer<T extends BlockEntity> i
             renderItem(item, small, light, matrices, vertexConsumers, world, seed);
     }
 
+    protected void renderHiddenOverlay(boolean small, int light, int overlay, MatrixStack matrices, VertexConsumerProvider vertexConsumers) {
+        matrices.push();
+        if (small) matrices.scale(0.5f, 0.5f, 1);
+        matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(90));
+        matrices.translate(-0.5, 0, -0.5);
+
+        var sprite = MinecraftClient.getInstance().getSpriteAtlas(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE).apply(ExtendedDrawers.id("block/drawer_hidden_overlay"));
+
+        var emitter = Objects.requireNonNull(RendererAccess.INSTANCE.getRenderer()).meshBuilder().getEmitter();
+        emitter.square(Direction.UP, 0, 0, 1, 1, 1);
+        emitter.spriteBake(sprite, MutableQuadView.BAKE_LOCK_UV);
+        vertexConsumers.getBuffer(RenderLayer.getCutout()).quad(matrices.peek(), emitter.toBakedQuad(sprite), 1, 1, 1, light, overlay);
+
+        matrices.pop();
+    }
+
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public final boolean shouldRender(T drawer, Direction facing) {
         var world = drawer.getWorld();
         if (world == null) return false;
@@ -87,7 +110,7 @@ public abstract class AbstractDrawerBlockEntityRenderer<T extends BlockEntity> i
         matrices.translate(-0.5, 0, 0);
 
         for (var icon : icons) {
-            matrices.translate(increment, 0, 0);
+            matrices.translate(increment, 0, 0.001);
             renderIcon(icon, light, overlay, matrices, vertexConsumers);
         }
         matrices.pop();
@@ -135,7 +158,7 @@ public abstract class AbstractDrawerBlockEntityRenderer<T extends BlockEntity> i
         matrices.pop();
     }
 
-    public void renderText(long amount, boolean small, int light, MatrixStack matrices, VertexConsumerProvider vertexConsumers) {
+    public void renderText(String amount, boolean small, int light, MatrixStack matrices, VertexConsumerProvider vertexConsumers) {
         var config = ExtendedDrawers.CONFIG.get().client();
 
         matrices.push();
@@ -149,8 +172,7 @@ public abstract class AbstractDrawerBlockEntityRenderer<T extends BlockEntity> i
         matrices.translate(0, config.layout().textOffset() / -4, -0.01);
 
         matrices.scale(0.02f, 0.02f, 0.02f);
-        var text = Long.toString(amount);
-        textRenderer.draw(text, -textRenderer.getWidth(text) / 2f, 0, 0xffffff, false, matrices.peek().getPositionMatrix(), vertexConsumers, TextRenderer.TextLayerType.NORMAL, 0x000000, light);
+        textRenderer.draw(amount, -textRenderer.getWidth(amount) / 2f, 0, 0xffffff, false, matrices.peek().getPositionMatrix(), vertexConsumers, TextRenderer.TextLayerType.NORMAL, 0x000000, light);
         matrices.pop();
     }
 

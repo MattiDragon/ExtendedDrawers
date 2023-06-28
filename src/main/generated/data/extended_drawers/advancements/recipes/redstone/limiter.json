@@ -1,13 +1,11 @@
 {
   "parent": "minecraft:recipes/root",
   "criteria": {
-    "has_downgrade": {
+    "has_drawer": {
       "conditions": {
         "items": [
           {
-            "items": [
-              "extended_drawers:downgrade"
-            ]
+            "tag": "extended_drawers:drawers"
           }
         ]
       },
@@ -15,20 +13,20 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "extended_drawers:downgrade"
+        "recipe": "extended_drawers:limiter"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
   },
   "requirements": [
     [
-      "has_downgrade",
+      "has_drawer",
       "has_the_recipe"
     ]
   ],
   "rewards": {
     "recipes": [
-      "extended_drawers:downgrade"
+      "extended_drawers:limiter"
     ]
   },
   "sends_telemetry_event": false

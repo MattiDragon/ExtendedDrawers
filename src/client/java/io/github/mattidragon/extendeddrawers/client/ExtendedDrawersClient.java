@@ -19,10 +19,8 @@ public class ExtendedDrawersClient implements ClientModInitializer {
         BlockEntityRendererFactories.register(ModBlocks.SHADOW_DRAWER_BLOCK_ENTITY, ShadowDrawerBlockEntityRenderer::new);
         BlockEntityRendererFactories.register(ModBlocks.COMPACTING_DRAWER_BLOCK_ENTITY, CompactingDrawerBlockEntityRenderer::new);
 
-        ClientPlayNetworking.registerGlobalReceiver(CompressionOverrideSyncPacket.ID, (client, handler, buf, responseSender) -> {
-            var overrides = CompressionOverrideSyncPacket.read(buf);
-            client.execute(() -> CompressionRecipeManager.of(handler.getRecipeManager()).setOverrides(overrides));
-        });
+        ClientPlayNetworking.registerGlobalReceiver(CompressionOverrideSyncPacket.TYPE, (packet, player, responseSender) ->
+                CompressionRecipeManager.of(player.networkHandler.getRecipeManager()).setOverrides(packet.overrides()));
 
         ExtendedDrawers.SHIFT_ACCESS = Screen::hasShiftDown;
     }

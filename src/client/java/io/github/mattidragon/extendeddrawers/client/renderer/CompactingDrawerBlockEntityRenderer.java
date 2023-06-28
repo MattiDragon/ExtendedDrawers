@@ -48,6 +48,12 @@ public class CompactingDrawerBlockEntityRenderer extends AbstractDrawerBlockEnti
 
         light = WorldRenderer.getLightmapCoordinates(Objects.requireNonNull(drawer.getWorld()), drawer.getPos().offset(dir));
 
+        if (drawer.storage.isHidden()) {
+            renderHiddenOverlay(false, light, overlay, matrices, vertexConsumers);
+            matrices.pop();
+            return;
+        }
+
         renderIcons(drawer, matrices, vertexConsumers, light, overlay);
 
         var slots = drawer.storage.getActiveSlots();
@@ -77,7 +83,9 @@ public class CompactingDrawerBlockEntityRenderer extends AbstractDrawerBlockEnti
         if (drawer.storage.isLocked()) icons.add(blockAtlas.apply(config.lockedIcon()));
         if (drawer.storage.isVoiding()) icons.add(blockAtlas.apply(config.voidingIcon()));
         if (drawer.storage.isHidden()) icons.add(blockAtlas.apply(config.hiddenIcon()));
+        if (drawer.storage.isDuping()) icons.add(blockAtlas.apply(config.dupingIcon()));
         if (drawer.storage.getUpgrade() != null) icons.add(blockAtlas.apply(drawer.storage.getUpgrade().sprite));
+        if (drawer.storage.hasLimiter()) icons.add(blockAtlas.apply(ExtendedDrawers.id("item/limiter")));
 
         var player = MinecraftClient.getInstance().player;
         var playerPos = player == null ? Vec3d.ofCenter(drawer.getPos()) : player.getPos();
@@ -93,10 +101,14 @@ public class CompactingDrawerBlockEntityRenderer extends AbstractDrawerBlockEnti
     private void renderSlot(CompactingDrawerStorage.Slot slot, int light, int overlay, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int seed, BlockPos pos, World world) {
         if (slot.isBlocked()) return;
 
-        var item = slot.getStorage().isHidden() ? ItemVariant.blank() : slot.getResource();
         @Nullable
-        var amount = ((slot.getAmount() == 0) || ExtendedDrawers.CONFIG.get().client().displayEmptyCount()) ? null : slot.getAmount();
+        String amount = String.valueOf(slot.getAmount());
+        if ((slot.getAmount() == 0) && !ExtendedDrawers.CONFIG.get().client().displayEmptyCount())
+            amount = null;
+        if (slot.getStorage().isDuping())
+            amount = "∞";
 
-        renderSlot(item, amount, true, List.of(), matrices, vertexConsumers, light, overlay, seed, pos, world);
+        var item = slot.getStorage().isHidden() ? ItemVariant.blank() : slot.getResource();
+        renderSlot(item, amount, true, false, List.of(), matrices, vertexConsumers, light, overlay, seed, pos, world);
     }
 }

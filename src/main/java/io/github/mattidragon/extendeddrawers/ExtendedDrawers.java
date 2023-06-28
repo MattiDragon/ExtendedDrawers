@@ -6,8 +6,10 @@ import io.github.mattidragon.extendeddrawers.misc.DrawerContentsLootFunction;
 import io.github.mattidragon.extendeddrawers.misc.ShiftAccess;
 import io.github.mattidragon.extendeddrawers.network.NetworkRegistry;
 import io.github.mattidragon.extendeddrawers.networking.CompressionOverrideSyncPacket;
+import io.github.mattidragon.extendeddrawers.networking.SetLimiterLimitPacket;
 import io.github.mattidragon.extendeddrawers.registry.ModBlocks;
 import io.github.mattidragon.extendeddrawers.registry.ModItems;
+import io.github.mattidragon.extendeddrawers.registry.ModRecipes;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
@@ -40,11 +42,13 @@ public class ExtendedDrawers implements ModInitializer {
     public void onInitialize() {
         ModBlocks.register();
         ModItems.register();
+        ModRecipes.register();
         DrawerContentsLootFunction.register();
         registerItemGroup();
         registerCommand();
         NetworkRegistry.register();
         CompressionOverrideSyncPacket.register();
+        SetLimiterLimitPacket.register();
         ResourceManagerHelper.registerBuiltinResourcePack(id("alt"), MOD_CONTAINER, Text.translatable("resourcepack.extended_drawers.alt"), ResourcePackActivationType.NORMAL);
         ResourceManagerHelper.registerBuiltinResourcePack(id("dev"), MOD_CONTAINER, Text.translatable("resourcepack.extended_drawers.programmer_art"), ResourcePackActivationType.NORMAL);
     }
@@ -89,10 +93,11 @@ public class ExtendedDrawers implements ModInitializer {
                     entries.add(ModItems.T2_UPGRADE);
                     entries.add(ModItems.T3_UPGRADE);
                     entries.add(ModItems.T4_UPGRADE);
-                    entries.add(ModItems.DOWNGRADE);
                     entries.add(ModItems.CREATIVE_UPGRADE);
                     entries.add(ModItems.UPGRADE_FRAME);
                     entries.add(ModItems.LOCK);
+                    entries.add(ModItems.LIMITER);
+                    entries.add(ModItems.DUPE_WAND);
                 })
                 .build());
     }

@@ -18,7 +18,7 @@ public class DrawerRaycastUtil {
         return switch (blockDirection) {
             case NORTH -> new Vec2f((float) (1 - internalPos.x), (float) (1 - internalPos.y));
             case SOUTH -> new Vec2f((float) (internalPos.x), (float) (1 - internalPos.y));
-            case EAST -> new Vec2f((float) (1 - internalPos.z), (float) (1 -internalPos.y));
+            case EAST -> new Vec2f((float) (1 - internalPos.z), (float) (1 - internalPos.y));
             case WEST -> new Vec2f((float) (internalPos.z), (float) (1 - internalPos.y));
             default -> null;
         };

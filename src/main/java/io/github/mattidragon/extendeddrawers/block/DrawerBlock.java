@@ -12,6 +12,7 @@ import io.github.mattidragon.extendeddrawers.misc.ItemUtils;
 import io.github.mattidragon.extendeddrawers.network.node.DrawerBlockNode;
 import io.github.mattidragon.extendeddrawers.network.node.DrawerNetworkBlockNode;
 import io.github.mattidragon.extendeddrawers.registry.ModBlocks;
+import io.github.mattidragon.extendeddrawers.registry.ModItems;
 import io.github.mattidragon.extendeddrawers.storage.DrawerSlot;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.item.PlayerInventoryStorage;
@@ -85,7 +86,7 @@ public class DrawerBlock extends NetworkBlockWithEntity<DrawerBlockEntity> imple
             MutableText text;
             if (!slot.isBlank()) {
                 text = Text.literal(" - ");
-                text.append(Text.literal(String.valueOf(slot.getAmount())))
+                text.append(Text.literal(String.valueOf(slot.getTrueAmount())))
                         .append(" ")
                         .append(slot.getResource().toStack().getName());
             } else if (shift) {
@@ -99,6 +100,9 @@ public class DrawerBlock extends NetworkBlockWithEntity<DrawerBlockEntity> imple
                         .append(Text.literal("V").formatted(slot.isVoiding() ? Formatting.WHITE : Formatting.DARK_GRAY))
                         .append(Text.literal("L").formatted(slot.isLocked() ? Formatting.WHITE : Formatting.DARK_GRAY))
                         .append(Text.literal("H").formatted(slot.isHidden() ? Formatting.WHITE : Formatting.DARK_GRAY));
+                if (slot.isDuping())
+                    text.append(Text.literal("D").formatted(Formatting.WHITE));
+
                 if (slot.getUpgrade() != null) {
                     text.append(" ").append(slot.getUpgrade().getName().copy().formatted(Formatting.AQUA));
                 }
@@ -158,10 +162,12 @@ public class DrawerBlock extends NetworkBlockWithEntity<DrawerBlockEntity> imple
         var drawer = getBlockEntity(world, pos);
         var playerStack = player.getStackInHand(hand);
         var storage = drawer.storages[slot];
-    
-        // Upgrade removal
+
+        // Upgrade & limiter removal
         if (playerStack.isEmpty() && player.isSneaking()) {
-            var changeResult = storage.changeUpgrade(null, world, pos, hit.getSide(), player);
+            // remove limiter first, if that fails, remove upgrade
+            var changeResult = storage.changeLimiter(ItemVariant.blank(), world, pos, hit.getSide(), player)
+                               || storage.changeUpgrade(ItemVariant.blank(), world, pos, hit.getSide(), player);
             return changeResult ? ActionResult.SUCCESS : ActionResult.FAIL;
         }
     
@@ -261,23 +267,54 @@ public class DrawerBlock extends NetworkBlockWithEntity<DrawerBlockEntity> imple
     }
 
     @Override
-    public ActionResult upgrade(BlockState state, World world, BlockPos pos, Vec3d hitPos, Direction side, PlayerEntity player, ItemStack stack) {
+    public ActionResult toggleDuping(BlockState state, World world, BlockPos pos, Vec3d hitPos, Direction side) {
+        var facePos = DrawerRaycastUtil.calculateFaceLocation(pos, hitPos, side, state.get(FACING));
+        if (facePos == null) return ActionResult.PASS;
+        var storage = getBlockEntity(world, pos).storages[getSlot(facePos)];
+        storage.setDuping(!storage.isDuping());
+        return ActionResult.SUCCESS;
+    }
+
+    @Override
+    public ActionResult changeUpgrade(BlockState state, World world, BlockPos pos, Vec3d hitPos, Direction side, PlayerEntity player, ItemStack stack) {
         if (world.isClient) return ActionResult.SUCCESS;
        
         var facePos = DrawerRaycastUtil.calculateFaceLocation(pos, hitPos, side, state.get(FACING));
         if (facePos == null) return ActionResult.PASS;
         var storage = getBlockEntity(world, pos).storages[getSlot(facePos)];
     
-        if (!(stack.getItem() instanceof UpgradeItem upgrade)) {
+        if (!(stack.getItem() instanceof UpgradeItem)) {
             ExtendedDrawers.LOGGER.warn("Expected drawer upgrade to be UpgradeItem but found " + stack.getItem().getClass().getSimpleName() + " instead");
             return ActionResult.FAIL;
         }
 
-        var changed = storage.changeUpgrade(upgrade, world, pos, side, player);
+        var changed = storage.changeUpgrade(ItemVariant.of(stack), world, pos, side, player);
         if (changed)
             stack.decrement(1);
 
         return changed ? ActionResult.SUCCESS : ActionResult.FAIL;
+    }
+
+    @Override
+    public ActionResult changeLimiter(BlockState state, World world, BlockPos pos, Vec3d hitPos, Direction side, PlayerEntity player, ItemStack stack) {
+        if (world.isClient) return ActionResult.SUCCESS;
+
+        var facePos = DrawerRaycastUtil.calculateFaceLocation(pos, hitPos, side, state.get(FACING));
+        if (facePos == null) return ActionResult.PASS;
+        var storage = getBlockEntity(world, pos).storages[getSlot(facePos)];
+
+        if (!stack.isOf(ModItems.LIMITER)) {
+            ExtendedDrawers.LOGGER.warn("Expected limiter to be limiter but found " + stack + " instead");
+            return ActionResult.FAIL;
+        }
+
+        var changed = storage.changeLimiter(ItemVariant.of(stack), world, pos, side, player);
+        if (changed) {
+            stack.decrement(1);
+            return ActionResult.SUCCESS;
+        }
+
+        return ActionResult.FAIL;
     }
     
     @Override

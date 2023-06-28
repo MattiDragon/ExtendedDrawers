@@ -18,6 +18,7 @@ import net.minecraft.util.math.BlockPos;
 
 @SuppressWarnings("UnstableApiUsage")
 public class ShadowDrawerBlockEntity extends BlockEntity {
+    public static final long INFINITE_COUNT_MARKER = -2;
     public ItemVariant item = ItemVariant.blank();
     /**
      * Stores the amount of items currently available. On the server this is a cache and on the client it stores the number synced from the server.
@@ -45,8 +46,13 @@ public class ShadowDrawerBlockEntity extends BlockEntity {
         if (this.world instanceof ServerWorld world && !item.isBlank()) {
             var storage = NetworkStorageCache.get(world, pos);
             long amount = 0L;
+            outer:
             for (var slot : storage.parts) {
                 for (var view : slot) {
+                    if (slot.isDuping()) {
+                        amount = INFINITE_COUNT_MARKER;
+                        break outer;
+                    }
                     if (view.getResource().equals(item)) {
                         amount += view.getAmount();
                     }

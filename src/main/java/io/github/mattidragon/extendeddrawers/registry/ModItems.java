@@ -1,6 +1,7 @@
 package io.github.mattidragon.extendeddrawers.registry;
 
 import io.github.mattidragon.extendeddrawers.item.DrawerItem;
+import io.github.mattidragon.extendeddrawers.item.LimiterItem;
 import io.github.mattidragon.extendeddrawers.item.UpgradeItem;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.minecraft.item.BlockItem;
@@ -24,11 +25,11 @@ public class ModItems {
     public static final UpgradeItem T2_UPGRADE = new UpgradeItem(new FabricItemSettings(), id("item/t2_upgrade"), 2);
     public static final UpgradeItem T3_UPGRADE = new UpgradeItem(new FabricItemSettings(), id("item/t3_upgrade"), 3);
     public static final UpgradeItem T4_UPGRADE = new UpgradeItem(new FabricItemSettings(), id("item/t4_upgrade"), 4);
-    public static final UpgradeItem DOWNGRADE = new UpgradeItem(new FabricItemSettings(), id("item/downgrade"), value -> 64);
     public static final UpgradeItem CREATIVE_UPGRADE = new UpgradeItem(new FabricItemSettings(), id("item/creative_upgrade"), value -> Long.MAX_VALUE);
-    
+    public static final LimiterItem LIMITER = new LimiterItem(new FabricItemSettings());
     public static final Item LOCK = new Item(new FabricItemSettings());
-    
+    public static final Item DUPE_WAND = new Item(new FabricItemSettings());
+
     public static void register() {
         Registry.register(Registries.ITEM, id("single_drawer"), SINGLE_DRAWER);
         Registry.register(Registries.ITEM, id("double_drawer"), DOUBLE_DRAWER);
@@ -43,9 +44,9 @@ public class ModItems {
         Registry.register(Registries.ITEM, id("t2_upgrade"), T2_UPGRADE);
         Registry.register(Registries.ITEM, id("t3_upgrade"), T3_UPGRADE);
         Registry.register(Registries.ITEM, id("t4_upgrade"), T4_UPGRADE);
-        Registry.register(Registries.ITEM, id("downgrade"), DOWNGRADE);
         Registry.register(Registries.ITEM, id("creative_upgrade"), CREATIVE_UPGRADE);
-        
+        Registry.register(Registries.ITEM, id("limiter"), LIMITER);
         Registry.register(Registries.ITEM, id("lock"), LOCK);
+        Registry.register(Registries.ITEM, id("dupe_wand"), DUPE_WAND);
     }
 }

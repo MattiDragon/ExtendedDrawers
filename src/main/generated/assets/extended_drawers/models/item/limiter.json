@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "extended_drawers:item/downgrade"
+    "layer0": "extended_drawers:item/limiter"
   }
 }

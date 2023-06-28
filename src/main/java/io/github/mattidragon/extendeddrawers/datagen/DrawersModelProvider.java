@@ -37,10 +37,11 @@ class DrawersModelProvider extends FabricModelProvider {
         generator.register(ModItems.T2_UPGRADE, Models.GENERATED);
         generator.register(ModItems.T3_UPGRADE, Models.GENERATED);
         generator.register(ModItems.T4_UPGRADE, Models.GENERATED);
-        generator.register(ModItems.DOWNGRADE, Models.GENERATED);
         generator.register(ModItems.CREATIVE_UPGRADE, Models.GENERATED);
         generator.register(ModItems.LOCK, Models.GENERATED);
         generator.register(ModItems.UPGRADE_FRAME, Models.GENERATED);
+        generator.register(ModItems.LIMITER, Models.GENERATED);
+        generator.register(ModItems.DUPE_WAND, Models.GENERATED);
     }
 
     private void generateCompactingDrawerModel(BlockStateModelGenerator generator) {

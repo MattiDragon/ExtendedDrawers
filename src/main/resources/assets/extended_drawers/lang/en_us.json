@@ -11,17 +11,25 @@
   "item.extended_drawers.t2_upgrade": "Drawer Upgrade II",
   "item.extended_drawers.t3_upgrade": "Drawer Upgrade III",
   "item.extended_drawers.t4_upgrade": "Drawer Upgrade IV",
-  "item.extended_drawers.downgrade": "Drawer Downgrade",
   "item.extended_drawers.creative_upgrade": "Creative Drawer Upgrade",
   "item.extended_drawers.upgrade_frame": "Upgrade Frame",
   "item.extended_drawers.lock": "Drawer Lock",
+  "item.extended_drawers.limiter": "Capacity Limiter",
+  "item.extended_drawers.dupe_wand": "Duplication Wand",
+
+  "item.extended_drawers.limiter.clear": "Clear",
+  "item.extended_drawers.limiter.limit": "Limit: %s",
+  "item.extended_drawers.limiter.unset": "Unset",
 
   "tooltip.extended_drawers.shift_for_modifiers": "Press SHIFT for modifiers",
   "tooltip.extended_drawers.drawer_contents": "Contains:",
   "tooltip.extended_drawers.modifiers": "Modifiers: %s",
   "tooltip.extended_drawers.empty": "Empty",
+
   "itemGroup.extended_drawers.main": "Extended Drawers",
+
   "extended_drawer.drawer.upgrade_fail": "Can't change upgrade; too many items.",
+  "extended_drawer.drawer.limiter_fail": "Can't change limiter; too many items.",
 
   "resourcepack.extended_drawers.alt": "ED: Alternative Textures",
   "resourcepack.extended_drawers.programmer_art": "ED: Programmer Art",
@@ -87,11 +95,13 @@
   "config.extended_drawers.client.textOffset.description": "Offset from the bottom of the slot to move the text by on drawers",
   "config.extended_drawers.client.icons": "Icons",
   "config.extended_drawers.client.lockedIcon": "Locked mode icon",
-  "config.extended_drawers.client.lockedIcon.description": "The id of icon to be displayed on locked drawers. This texture must be available on the block texture atlas (all block and item textures reside here) to work properly.\n\nThe actual behaviour is controlled by the 'extended_drawers:toggle/lock' tag.",
+  "config.extended_drawers.client.lockedIcon.description": "The id of icon to be displayed on locked drawers. This texture must be available on the block texture atlas (all block and item textures reside there) to work properly.\n\nThe actual behaviour is controlled by the 'extended_drawers:toggle/lock' tag.",
   "config.extended_drawers.client.voidingIcon": "Voiding mode icon",
-  "config.extended_drawers.client.voidingIcon.description": "The id of icon to be displayed on voiding drawers. This texture must be available on the block texture atlas (all block and item textures reside here) to work properly.\n\nThe actual behaviour is controlled by the 'extended_drawers:toggle/voiding' tag.",
+  "config.extended_drawers.client.voidingIcon.description": "The id of icon to be displayed on voiding drawers. This texture must be available on the block texture atlas (all block and item textures reside there) to work properly.\n\nThe actual behaviour is controlled by the 'extended_drawers:toggle/voiding' tag.",
   "config.extended_drawers.client.hiddenIcon": "Hidden mode icon",
-  "config.extended_drawers.client.hiddenIcon.description": "The id of icon to be displayed on hidden drawers. This texture must be available on the block texture atlas (all block and item textures reside here) to work properly.\n\nThe actual behaviour is controlled by the 'extended_drawers:toggle/hidden' tag.",
+  "config.extended_drawers.client.hiddenIcon.description": "The id of icon to be displayed on hidden drawers. This texture must be available on the block texture atlas (all block and item textures reside there) to work properly.\n\nThe actual behaviour is controlled by the 'extended_drawers:toggle/hidden' tag.",
+  "config.extended_drawers.client.dupingIcon": "Duping mode icon",
+  "config.extended_drawers.client.dupingIcon.description": "The id of icon to be displayed on duping drawers. This texture must be available on the block texture atlas (all block and item textures reside there) to work properly.\n\nThe actual behaviour is controlled by the 'extended_drawers:toggle/duping' tag.",
 
   "config.extended_drawers.creativeBreakingBehaviour.break": "Break",
   "config.extended_drawers.creativeBreakingBehaviour.break.description": "Break: Breaking is instant as normal.",

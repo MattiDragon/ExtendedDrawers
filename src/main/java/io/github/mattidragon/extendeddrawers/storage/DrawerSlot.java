@@ -2,7 +2,6 @@ package io.github.mattidragon.extendeddrawers.storage;
 
 import io.github.mattidragon.extendeddrawers.ExtendedDrawers;
 import io.github.mattidragon.extendeddrawers.block.entity.DrawerBlockEntity;
-import io.github.mattidragon.extendeddrawers.item.UpgradeItem;
 import io.github.mattidragon.extendeddrawers.misc.ItemUtils;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.base.ResourceAmount;
@@ -10,9 +9,7 @@ import net.fabricmc.fabric.api.transfer.v1.storage.base.SingleSlotStorage;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.fabricmc.fabric.api.transfer.v1.transaction.base.SnapshotParticipant;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
@@ -39,26 +36,6 @@ public final class DrawerSlot extends SnapshotParticipant<DrawerSlot.Snapshot> i
         this.owner = owner;
         this.capacityMultiplier = capacityMultiplier;
         settings = new Settings();
-    }
-
-    /**
-     * Attempts to change the upgrade of this slot.
-     * @return Whether the change was successful.
-     */
-    @Override
-    public boolean changeUpgrade(@Nullable UpgradeItem newUpgrade, World world, BlockPos pos, Direction side, @Nullable PlayerEntity player) {
-        var oldUpgrade = settings.upgrade;
-        settings.upgrade = newUpgrade;
-        if (getAmount() > getCapacity() && ExtendedDrawers.CONFIG.get().misc().blockUpgradeRemovalsWithOverflow()) {
-            settings.upgrade = oldUpgrade;
-            if (player != null)
-                player.sendMessage(Text.translatable("extended_drawer.drawer.upgrade_fail"), true);
-            return false;
-        }
-
-        ItemUtils.offerOrDrop(world, pos, side, player, new ItemStack(oldUpgrade));
-        dumpExcess(world, pos, side, player);
-        return true;
     }
 
     @Override
@@ -96,7 +73,7 @@ public final class DrawerSlot extends SnapshotParticipant<DrawerSlot.Snapshot> i
         if (extracted > 0) {
             updateSnapshots(transaction);
             amount -= extracted;
-            if (amount == 0 && !settings.locked) {
+            if (amount == 0 && !settings.locked && !settings.duping) {
                 item = ItemVariant.blank();
                 settings.sortingDirty = true;
             }
@@ -104,7 +81,7 @@ public final class DrawerSlot extends SnapshotParticipant<DrawerSlot.Snapshot> i
             ExtendedDrawers.LOGGER.warn("Somehow extract negative amount of items ({}) from drawer, aborting. Arguments: item={} maxAmount={}. Status: item={} capacity={} amount={}", extracted, item, maxAmount, this.item, getCapacity(), amount);
             return 0;
         }
-        return extracted;
+        return settings.duping ? maxAmount : extracted;
     }
 
     @Override
@@ -118,8 +95,13 @@ public final class DrawerSlot extends SnapshotParticipant<DrawerSlot.Snapshot> i
     }
 
     @Override
-    public long getAmount() {
+    public long getTrueAmount() {
         return amount;
+    }
+
+    @Override
+    public long getAmount() {
+        return settings.duping ? Long.MAX_VALUE : amount;
     }
 
     @Override
@@ -128,8 +110,9 @@ public final class DrawerSlot extends SnapshotParticipant<DrawerSlot.Snapshot> i
         var capacity = (long) (config.drawerCapacity() * this.capacityMultiplier);
         if (config.stackSizeAffectsCapacity())
             capacity /= 64.0 / item.getItem().getMaxCount();
-        if (settings.upgrade != null)
-            capacity = settings.upgrade.modifier.applyAsLong(capacity);
+        if (getUpgrade() != null)
+            capacity = getUpgrade().modifier.applyAsLong(capacity);
+        capacity = Math.min(capacity, getLimiter());
         return capacity;
     }
 

@@ -2,14 +2,15 @@ package io.github.mattidragon.extendeddrawers.storage;
 
 import io.github.mattidragon.extendeddrawers.ExtendedDrawers;
 import io.github.mattidragon.extendeddrawers.block.entity.StorageDrawerBlockEntity;
+import io.github.mattidragon.extendeddrawers.item.LimiterItem;
 import io.github.mattidragon.extendeddrawers.item.UpgradeItem;
+import io.github.mattidragon.extendeddrawers.misc.ItemUtils;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.registry.Registries;
-import net.minecraft.util.Identifier;
+import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
@@ -18,13 +19,56 @@ import org.jetbrains.annotations.Nullable;
 
 @SuppressWarnings("UnstableApiUsage")
 public sealed interface DrawerStorage extends Comparable<DrawerStorage>, Storage<ItemVariant> permits DrawerSlot, CompactingDrawerStorage {
-    boolean changeUpgrade(@Nullable UpgradeItem newUpgrade, World world, BlockPos pos, Direction side, @Nullable PlayerEntity player);
-
     StorageDrawerBlockEntity getOwner();
 
     Settings settings();
 
     boolean isBlank();
+
+    long getCapacity();
+
+    /**
+     * True amount value without duping mode changes
+     */
+    long getTrueAmount();
+
+    default boolean changeUpgrade(ItemVariant newUpgrade, World world, BlockPos pos, Direction side, @Nullable PlayerEntity player) {
+        if (!(newUpgrade.getItem() instanceof UpgradeItem) && !newUpgrade.isBlank()) return false;
+
+        var oldUpgrade = settings().upgrade;
+        if (newUpgrade.isBlank() && oldUpgrade.isBlank()) return false;
+
+        settings().upgrade = newUpgrade;
+        if (getTrueAmount() > getCapacity() && ExtendedDrawers.CONFIG.get().misc().blockUpgradeRemovalsWithOverflow()) {
+            settings().upgrade = oldUpgrade;
+            if (player != null)
+                player.sendMessage(Text.translatable("extended_drawer.drawer.upgrade_fail"), true);
+            return false;
+        }
+
+        ItemUtils.offerOrDrop(world, pos, side, player, oldUpgrade.toStack());
+        dumpExcess(world, pos, side, player);
+        return true;
+    }
+
+    default boolean changeLimiter(ItemVariant newLimiter, World world, BlockPos pos, Direction side, @Nullable PlayerEntity player) {
+        if (!(newLimiter.getItem() instanceof LimiterItem) && !newLimiter.isBlank()) return false;
+
+        var oldLimiter = settings().limiter;
+        if (newLimiter.isBlank() && oldLimiter.isBlank()) return false;
+
+        settings().limiter = newLimiter;
+        if (getTrueAmount() > getCapacity() && ExtendedDrawers.CONFIG.get().misc().blockUpgradeRemovalsWithOverflow()) {
+            settings().limiter = oldLimiter;
+            if (player != null)
+                player.sendMessage(Text.translatable("extended_drawer.drawer.limiter_fail"), true);
+            return false;
+        }
+
+        ItemUtils.offerOrDrop(world, pos, side, player, oldLimiter.toStack());
+        dumpExcess(world, pos, side, player);
+        return true;
+    }
 
     default void update() {
         getOwner().onSlotChanged(settings().sortingDirty);
@@ -49,14 +93,18 @@ public sealed interface DrawerStorage extends Comparable<DrawerStorage>, Storage
         settings().locked = nbt.getBoolean("locked");
         settings().voiding = nbt.getBoolean("voiding");
         settings().hidden = nbt.getBoolean("hidden");
-        settings().upgrade = Registries.ITEM.get(Identifier.tryParse(nbt.getString("upgrade"))) instanceof UpgradeItem upgrade ? upgrade : null;
+        settings().duping = nbt.getBoolean("duping");
+        settings().upgrade = ItemVariant.fromNbt(nbt.getCompound("capacityUpgrade"));
+        settings().limiter = ItemVariant.fromNbt(nbt.getCompound("limiter"));
     }
 
     default void writeNbt(NbtCompound nbt) {
         nbt.putBoolean("locked", settings().locked);
         nbt.putBoolean("voiding", settings().voiding);
         nbt.putBoolean("hidden", settings().hidden);
-        nbt.putString("upgrade", Registries.ITEM.getId(settings().upgrade).toString());
+        nbt.putBoolean("duping", settings().duping);
+        nbt.put("capacityUpgrade", settings().upgrade.toNbt());
+        nbt.put("limiter", settings().limiter.toNbt());
     }
 
     /**
@@ -86,9 +134,18 @@ public sealed interface DrawerStorage extends Comparable<DrawerStorage>, Storage
         return settings().hidden;
     }
 
+    default boolean isDuping() {
+        return settings().duping;
+    }
+
     @Nullable
     default UpgradeItem getUpgrade() {
-        return settings().upgrade;
+        return settings().upgrade.getItem() instanceof UpgradeItem upgrade ? upgrade : null;
+    }
+
+    default long getLimiter() {
+        var limiterNbt = settings().limiter.getNbt();
+        return limiterNbt == null ? Long.MAX_VALUE : limiterNbt.getLong("limit");
     }
 
     default void setLocked(boolean locked) {
@@ -108,13 +165,25 @@ public sealed interface DrawerStorage extends Comparable<DrawerStorage>, Storage
         update();
     }
 
+    default void setDuping(boolean duping) {
+        settings().duping = duping;
+        update();
+    }
+
+    default boolean hasLimiter() {
+        return !settings().limiter.isBlank();
+    }
+
     class Settings {
-        @Nullable
-        UpgradeItem upgrade = null;
+        ItemVariant upgrade = ItemVariant.blank();
+        ItemVariant limiter = ItemVariant.blank();
+
         boolean locked = false;
-        boolean lockOverridden = false;
         boolean hidden = false;
         boolean voiding = false;
+        boolean duping = false;
+
+        boolean lockOverridden = false;
         boolean sortingDirty = false;
     }
 }

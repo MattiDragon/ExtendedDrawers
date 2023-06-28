@@ -104,6 +104,19 @@ public class AccessPointBlock extends NetworkBlock implements DrawerInteractionH
     }
 
     @Override
+    public ActionResult toggleDuping(BlockState state, World world, BlockPos pos, Vec3d hitPos, Direction side) {
+        if (!(world instanceof ServerWorld serverWorld)) return ActionResult.PASS;
+        var storages = NetworkStorageCache.get(serverWorld, pos).parts;
+        var newState = storages.stream()
+                .map(DrawerStorage::isDuping)
+                .mapToInt(value -> value ? 1 : -1)
+                .sum() <= 0;
+        storages.forEach(storage -> storage.setDuping(newState));
+
+        return storages.size() == 0 ? ActionResult.PASS : ActionResult.SUCCESS;
+    }
+
+    @Override
     public ActionResult toggleHide(BlockState state, World world, BlockPos pos, Vec3d hitPos, Direction side) {
         if (!(world instanceof ServerWorld serverWorld)) return ActionResult.PASS;
         var storages = NetworkStorageCache.get(serverWorld, pos).parts;

@@ -4,7 +4,6 @@ import io.github.mattidragon.extendeddrawers.ExtendedDrawers;
 import io.github.mattidragon.extendeddrawers.block.entity.CompactingDrawerBlockEntity;
 import io.github.mattidragon.extendeddrawers.compacting.CompressionLadder;
 import io.github.mattidragon.extendeddrawers.compacting.CompressionRecipeManager;
-import io.github.mattidragon.extendeddrawers.item.UpgradeItem;
 import io.github.mattidragon.extendeddrawers.misc.ItemUtils;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.StoragePreconditions;
@@ -13,9 +12,7 @@ import net.fabricmc.fabric.api.transfer.v1.storage.base.SingleSlotStorage;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.fabricmc.fabric.api.transfer.v1.transaction.base.SnapshotParticipant;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
@@ -42,22 +39,6 @@ public final class CompactingDrawerStorage extends SnapshotParticipant<Compactin
     }
 
     @Override
-    public boolean changeUpgrade(@Nullable UpgradeItem newUpgrade, World world, BlockPos pos, Direction side, @Nullable PlayerEntity player) {
-        var oldUpgrade = settings.upgrade;
-        settings.upgrade = newUpgrade;
-        if (amount > getCapacity() && ExtendedDrawers.CONFIG.get().misc().blockUpgradeRemovalsWithOverflow()) {
-            settings.upgrade = oldUpgrade;
-            if (player != null)
-                player.sendMessage(Text.translatable("extended_drawer.drawer.upgrade_fail"), true);
-            return false;
-        }
-
-        ItemUtils.offerOrDrop(world, pos, side, player, new ItemStack(oldUpgrade));
-        dumpExcess(world, pos, side, player);
-        return true;
-    }
-
-    @Override
     public void dumpExcess(World world, BlockPos pos, @Nullable Direction side, @Nullable PlayerEntity player) {
         if (amount > getCapacity()) {
             var slots = getSlots();
@@ -66,7 +47,7 @@ public final class CompactingDrawerStorage extends SnapshotParticipant<Compactin
                 var slot = slots[i];
                 if (slot.isBlocked()) continue;
 
-                var toDrop = slot.getAmount() - slot.getCapacity();
+                var toDrop = slot.getTrueAmount() - slot.getCapacity();
                 ItemUtils.offerOrDropStacks(world, pos, side, player, slot.getResource(), toDrop);
                 amount -= toDrop * slot.compression;
             }
@@ -84,9 +65,10 @@ public final class CompactingDrawerStorage extends SnapshotParticipant<Compactin
         long capacity = config.compactingCapacity();
         if (config.stackSizeAffectsCapacity())
             capacity /= 64.0 / item.getItem().getMaxCount();
-        if (settings.upgrade != null)
-            capacity = settings.upgrade.modifier.applyAsLong(capacity);
+        if (getUpgrade() != null)
+            capacity = getUpgrade().modifier.applyAsLong(capacity);
         capacity *= getTotalCompression();
+        capacity = Math.min(capacity, getLimiter());
         return capacity;
     }
 
@@ -271,7 +253,8 @@ public final class CompactingDrawerStorage extends SnapshotParticipant<Compactin
         update();
     }
 
-    public long getAmount() {
+    @Override
+    public long getTrueAmount() {
         return amount;
     }
 
@@ -328,7 +311,7 @@ public final class CompactingDrawerStorage extends SnapshotParticipant<Compactin
                 updateSnapshots(transaction);
                 amount += inserted * compression;
             } else if (inserted < 0) {
-                ExtendedDrawers.LOGGER.warn("Somehow inserted negative amount of items ({}) into compacting drawer, aborting. Arguments: item={} maxAmount={}. Status: compression={} item={} capacity={} amount={}", inserted, item, maxAmount, compression, this.item, getCapacity(), getAmount());
+                ExtendedDrawers.LOGGER.warn("Somehow inserted negative amount of items ({}) into compacting drawer, aborting. Arguments: item={} maxAmount={}. Status: compression={} item={} capacity={} amount={}", inserted, item, maxAmount, compression, this.item, getCapacity(), getTrueAmount());
                 return 0;
             }
 
@@ -340,20 +323,20 @@ public final class CompactingDrawerStorage extends SnapshotParticipant<Compactin
             if (blocked) return 0;
             if (!this.item.equals(item)) return 0;
 
-            var extracted = Math.min(maxAmount, getAmount());
+            var extracted = Math.min(maxAmount, getTrueAmount());
             if (extracted > 0) {
                 updateSnapshots(transaction);
                 amount -= extracted * compression;
             } else if (extracted < 0) {
-                ExtendedDrawers.LOGGER.warn("Somehow extracted negative amount of items ({}) from compacting drawer, aborting. Arguments: item={} maxAmount={}. Status: compression={} item={} capacity={} amount={}", extracted, item, maxAmount, compression, this.item, getCapacity(), getAmount());
+                ExtendedDrawers.LOGGER.warn("Somehow extracted negative amount of items ({}) from compacting drawer, aborting. Arguments: item={} maxAmount={}. Status: compression={} item={} capacity={} amount={}", extracted, item, maxAmount, compression, this.item, getCapacity(), getTrueAmount());
                 return 0;
             }
 
-            if (amount == 0 && !settings.locked) {
+            if (amount == 0 && !settings.locked && !settings.duping) {
                 clear();
             }
 
-            return extracted;
+            return settings.duping ? maxAmount : extracted;
         }
 
         @Override
@@ -380,9 +363,16 @@ public final class CompactingDrawerStorage extends SnapshotParticipant<Compactin
             return (CompactingDrawerStorage.this.getCapacity() - CompactingDrawerStorage.this.amount) / compression;
         }
 
+        /**
+         * Returns the true amount, without duping mode shenanigans
+         */
+        public long getTrueAmount() {
+            return CompactingDrawerStorage.this.amount / compression;
+        }
+
         @Override
         public long getAmount() {
-            return CompactingDrawerStorage.this.amount / compression;
+            return settings.duping ? Long.MAX_VALUE : getTrueAmount();
         }
 
         @Override

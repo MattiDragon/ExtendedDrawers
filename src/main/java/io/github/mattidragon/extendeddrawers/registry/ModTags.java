@@ -14,6 +14,7 @@ public class ModTags {
         public static final TagKey<Item> TOGGLE_LOCK = TagKey.of(RegistryKeys.ITEM, id("toggle/lock"));
         public static final TagKey<Item> TOGGLE_VOIDING = TagKey.of(RegistryKeys.ITEM, id("toggle/voiding"));
         public static final TagKey<Item> TOGGLE_HIDDEN = TagKey.of(RegistryKeys.ITEM, id("toggle/hidden"));
+        public static final TagKey<Item> TOGGLE_DUPING = TagKey.of(RegistryKeys.ITEM, id("toggle/duping"));
     }
     
     public static class BlockTags {

@@ -23,7 +23,15 @@ public interface DrawerInteractionHandler {
         return ActionResult.PASS;
     }
 
-    default ActionResult upgrade(BlockState state, World world, BlockPos pos, Vec3d hitPos, Direction side, @Nullable PlayerEntity player, ItemStack stack) {
+    default ActionResult toggleDuping(BlockState state, World world, BlockPos pos, Vec3d hitPos, Direction side) {
+        return ActionResult.PASS;
+    }
+
+    default ActionResult changeUpgrade(BlockState state, World world, BlockPos pos, Vec3d hitPos, Direction side, @Nullable PlayerEntity player, ItemStack stack) {
+        return ActionResult.PASS;
+    }
+
+    default ActionResult changeLimiter(BlockState state, World world, BlockPos pos, Vec3d hitPos, Direction side, @Nullable PlayerEntity player, ItemStack stack) {
         return ActionResult.PASS;
     }
 }

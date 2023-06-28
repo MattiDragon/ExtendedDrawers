@@ -1,12 +1,12 @@
 {
   "parent": "minecraft:recipes/root",
   "criteria": {
-    "has_compacting_drawer": {
+    "has_chest": {
       "conditions": {
         "items": [
           {
             "items": [
-              "extended_drawers:compacting_drawer"
+              "minecraft:chest"
             ]
           }
         ]
@@ -22,7 +22,7 @@
   },
   "requirements": [
     [
-      "has_compacting_drawer",
+      "has_chest",
       "has_the_recipe"
     ]
   ],

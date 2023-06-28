@@ -1,12 +1,12 @@
 {
   "parent": "minecraft:recipes/root",
   "criteria": {
-    "has_lock": {
+    "has_gold_ingot": {
       "conditions": {
         "items": [
           {
             "items": [
-              "extended_drawers:lock"
+              "minecraft:gold_ingot"
             ]
           }
         ]
@@ -22,7 +22,7 @@
   },
   "requirements": [
     [
-      "has_lock",
+      "has_gold_ingot",
       "has_the_recipe"
     ]
   ],

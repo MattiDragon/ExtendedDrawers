@@ -3,7 +3,6 @@ package io.github.mattidragon.extendeddrawers.client.renderer;
 import io.github.mattidragon.extendeddrawers.ExtendedDrawers;
 import io.github.mattidragon.extendeddrawers.block.ShadowDrawerBlock;
 import io.github.mattidragon.extendeddrawers.block.entity.ShadowDrawerBlockEntity;
-import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.WorldRenderer;
@@ -11,6 +10,7 @@ import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
 import net.minecraft.client.texture.Sprite;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.screen.PlayerScreenHandler;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Objects;
@@ -40,7 +40,16 @@ public class ShadowDrawerBlockEntityRenderer extends AbstractDrawerBlockEntityRe
         List<Sprite> icons = drawer.isHidden() ? List.of(MinecraftClient.getInstance()
                 .getSpriteAtlas(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE)
                 .apply(ExtendedDrawers.CONFIG.get().client().icons().hiddenIcon())) : List.of();
-        renderSlot(drawer.isHidden() ? ItemVariant.blank() : drawer.item, drawer.item.isBlank() || ExtendedDrawers.CONFIG.get().client().displayEmptyCount() ? null : drawer.countCache, false, icons, matrices, vertexConsumers, light, overlay, (int) drawer.getPos().asLong(), drawer.getPos(), drawer.getWorld());
+        @Nullable
+        String amount = String.valueOf(drawer.countCache);
+        if (drawer.countCache == ShadowDrawerBlockEntity.INFINITE_COUNT_MARKER)
+            amount = "∞";
+        if (drawer.item.isBlank())
+            amount = null;
+        if (drawer.countCache == 0 && !ExtendedDrawers.CONFIG.get().client().displayEmptyCount())
+            amount = null;
+
+        renderSlot(drawer.item, amount, false, drawer.isHidden(), icons, matrices, vertexConsumers, light, overlay, (int) drawer.getPos().asLong(), drawer.getPos(), drawer.getWorld());
         matrices.pop();
     }
 }

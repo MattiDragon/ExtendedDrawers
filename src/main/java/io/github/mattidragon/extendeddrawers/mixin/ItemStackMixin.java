@@ -38,6 +38,11 @@ public abstract class ItemStackMixin {
                 if (result != ActionResult.PASS)
                     cir.setReturnValue(result);
             }
+            if (isIn(ModTags.ItemTags.TOGGLE_DUPING)) {
+                var result = handler.toggleDuping(state, world, context.getBlockPos(), context.getHitPos(), context.getSide());
+                if (result != ActionResult.PASS)
+                    cir.setReturnValue(result);
+            }
         }
     }
 }
