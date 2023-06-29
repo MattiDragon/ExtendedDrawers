@@ -17,7 +17,6 @@ repositories {
     maven { url "https://maven.blamejared.com" }
     maven { url "https://maven.isxander.dev/releases" }
     maven { url "https://maven.terraformersmc.com" }
-    mavenLocal()
     maven { url "https://jitpack.io" }
 }
 
@@ -32,7 +31,7 @@ dependencies {
     include modImplementation("com.kneelawk:graphlib:$graphlib_version")
     //modImplementation "vazkii.patchouli:Patchouli:$patchouli_version"
 
-    modImplementation annotationProcessor(include("io.github.mattidragon.configtoolkit:ConfigToolkit:1.0.0-alpha.8"))
+    modImplementation annotationProcessor(include("com.github.mattidragon:ConfigToolkit:$configtoolkit_version"))
     modImplementation include("dev.isxander.yacl:yet-another-config-lib-fabric:$yacl_version")
     modImplementation "com.terraformersmc:modmenu:$modmenu_version"
 
