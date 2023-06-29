@@ -48,7 +48,11 @@ Extended drawers will make sure drawers without voiding enabled fill up first.
 
 ### Hidden mode
 Hide icons on drawers to reduce lag or hide your valuables, but remember, anyone can change it.
-Applied by sneaking and using black dye on drawers.
+Applied by sneaking and using black dye or ink sacs on drawers.
+
+### Duping mode
+As for 1.20, you can use a by default unobtainable dupe wand to toggle duping mode on drawers.
+They will continue to provide items even when empty. Voiding mode must still be applied separately.
 
 ## Customization
 Extended drawers offers two main ways to customize the experience: the configs and datapacks.
@@ -98,12 +102,9 @@ but I'd prefer you create your modpacks on modrinth or curseforge directly.
 This mod is only officially available on [curseforge](https://www.curseforge.com/minecraft/mc-mods/extended-drawers), [modrinth](https://modrinth.com/mod/extended-drawers) and [github](https://github.com/mattidragon/extendeddrawers). 
 Any other sites are third-party reuploads and should not be trusted.
 
-### Version support
-I only support the latest and mostly modded version of minecraft. 
-Old versions may receive important patches, but I will not be backporting new features.
-If you really want a feature on an old version you can backport it yourself and open a pull request.
-
-*1.18 support has been abandoned. 1.19 will be the main focus now*
+### Porting and Forking
+You can read my policy on [forking and porting mods](https://gist.github.com/MattiDragon/6b9e71e8516447f53f0d5fb296ab8868).
+This mod will not be ported to anything older than 1.19.4 due to that version adding necessary client features.
 
 ### Incompatibilities
 I intend to try and stay compatible with as many mods as possible, but might abandon support for some if it becomes too hard.
