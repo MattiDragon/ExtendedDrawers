@@ -40,9 +40,9 @@
     }
   ],
   "depends": {
-    "fabricloader": ">=0.14.9",
-    "fabric": ">=0.61.0",
-    "minecraft": "~1.20-beta.4",
+    "fabricloader": ">=0.14.21",
+    "fabric": ">=0.84.0",
+    "minecraft": "~1.20.1",
     "graphlib": "*"
   },
   "suggests": {
