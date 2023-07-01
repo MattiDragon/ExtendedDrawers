@@ -36,7 +36,7 @@ dependencies {
     modImplementation "com.terraformersmc:modmenu:$modmenu_version"
 
     // Mixin Extras
-    annotationProcessor(include(modImplementation("com.github.LlamaLad7:MixinExtras:$mixinextras_version")))
+    annotationProcessor(include(modImplementation("com.github.LlamaLad7.mixinextras:mixinextras-fabric:$mixinextras_version")))
 
     // Add generated data to runtime classpath (slightly hacky)
     runtimeOnly files("src/main/generated")
