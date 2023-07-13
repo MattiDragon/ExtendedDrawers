@@ -92,6 +92,7 @@ public final class CompressionRecipeManager {
         return candidate;
     }
 
+    @Nullable
     private RecipePair findCompressionRecipe(ItemVariant decompressed, World world) {
         return IntStream.of(3, 2, 1)
                 .mapToObj(size -> findCompressionRecipeForSize(decompressed, world, size))
@@ -101,17 +102,19 @@ public final class CompressionRecipeManager {
     }
 
     private Stream<RecipePair> findCompressionRecipeForSize(ItemVariant decompressed, World world, int size) {
+        var decompressedStack = decompressed.toStack(size * size);
         return findRecipes(decompressed.toStack(), size, world) // Find compression recipes
-                .filter(compressed -> findRecipes(compressed, 1, world).anyMatch(decompressed::matches))// Find matching decompression recipe
+                .filter(compressed -> findRecipes(compressed, 1, world).anyMatch(decompressed2 -> ItemStack.areEqual(decompressed2, decompressedStack))) // Find matching decompression recipe
                 .map(compressed -> new RecipePair(ItemVariant.of(compressed), decompressed, size * size));
     }
 
     @Nullable
     private RecipePair findDecompressionRecipe(ItemVariant compressed, World world) {
-        return findRecipes(compressed.toStack(), 1, world) // Find decompression recipe
-                .flatMap(result -> IntStream.of(3, 2, 1) // Check each size from largest to smallest for matching compression recipes
-                        .filter(size -> findRecipes(result, size, world).anyMatch(compressed::matches))
-                        .mapToObj(size -> new RecipePair(compressed, ItemVariant.of(result), size * size)))
+        var compressedStack = compressed.toStack();
+        return findRecipes(compressedStack, 1, world) // Find decompression recipe
+                .flatMap(decompressed -> IntStream.of(3, 2, 1) // Check each size from largest to smallest for matching compression recipes
+                        .filter(size -> findRecipes(decompressed, size, world).anyMatch(compressed2 -> ItemStack.areEqual(compressedStack, compressed2)))
+                        .mapToObj(size -> new RecipePair(compressed, ItemVariant.of(decompressed), size * size)))
                 .findFirst()
                 .orElse(null);
     }
