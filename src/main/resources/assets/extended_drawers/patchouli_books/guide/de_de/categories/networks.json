@@ -1,0 +1,6 @@
+{
+  "name": "Schubladen Netzwerk",
+  "description": "Dieser Eintrag zeigt dir wie ein Schubladen Netzwerk funktioniert und wie man eins selber aufbaut. $(br2)Er zeigt dir auch wie man das Netzwerk mit anderen Mods kompatibel macht.",
+  "icon": "extended_drawers:access_point",
+  "sortnum": 1
+}

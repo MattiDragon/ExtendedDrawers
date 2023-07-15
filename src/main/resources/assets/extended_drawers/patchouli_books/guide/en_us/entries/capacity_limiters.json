@@ -1,0 +1,13 @@
+{
+  "name": "Capacity Limiters",
+  "icon": "extended_drawers:limiter",
+  "category": "extended_drawers:modifiers",
+  "pages": [
+    "$(item)Capacity Limiters/$ are useful little items that allow you to limit the capacity of $(l:drawers)drawers@!. They can be useful in contraptions and assembly lines where you want the limit the amount stored without advanced redstone. @p@Right click with one in hand to open it's configuration screen where you can set the limit.",
+    {
+      "type": "patchouli:crafting",
+      "recipe": "extended_drawers:limiter",
+      "text": "Capacity limiters can be applied to drawers by shift clicking with a configured limiter. @p@Limiters can be copied by placing a configured limiter together with an unset one in the crafting grid."
+    }
+  ]
+}
