@@ -1,3 +1,5 @@
+name: Publish (Base)
+
 on:
   workflow_call:
     inputs:

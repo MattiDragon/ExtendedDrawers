@@ -14,7 +14,7 @@ on:
         type: string
 
 jobs:
-  publish-new:
+  publish:
     uses: ./.github/workflows/publish_base.yaml
     with:
       version-type: ${{ inputs.version-type }}
