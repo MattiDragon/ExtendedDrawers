@@ -22,11 +22,4 @@ public class CompactingDrawerBlockNode implements DrawerNetworkBlockNode {
     public @NotNull BlockNodeType getType() {
         return TYPE;
     }
-
-    @Override
-    public void update(ServerWorld world, NodeHolder<BlockNode> node) {
-        var pos = node.getBlockPos();
-        var state = world.getBlockState(pos);
-        world.updateListeners(pos, state, state, Block.NOTIFY_LISTENERS);
-    }
 }

@@ -21,9 +21,4 @@ public class AccessPointBlockNode implements DrawerNetworkBlockNode {
     public @NotNull BlockNodeType getType() {
         return TYPE;
     }
-
-    @Override
-    public void update(ServerWorld world, NodeHolder<BlockNode> node) {
-
-    }
 }

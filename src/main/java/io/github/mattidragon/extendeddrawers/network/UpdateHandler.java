@@ -41,6 +41,7 @@ public class UpdateHandler implements GraphEntity<UpdateHandler> {
                         drawerNode.update(world, node);
                     }
                 });
+        queuedUpdate = null;
     }
 
     @Override

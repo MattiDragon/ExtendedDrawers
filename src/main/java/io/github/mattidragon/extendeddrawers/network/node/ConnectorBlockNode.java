@@ -1,9 +1,6 @@
 package io.github.mattidragon.extendeddrawers.network.node;
 
-import com.kneelawk.graphlib.api.graph.NodeHolder;
-import com.kneelawk.graphlib.api.graph.user.BlockNode;
 import com.kneelawk.graphlib.api.graph.user.BlockNodeType;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 
@@ -20,9 +17,5 @@ public class ConnectorBlockNode implements DrawerNetworkBlockNode {
     @Override
     public @NotNull BlockNodeType getType() {
         return TYPE;
-    }
-
-    @Override
-    public void update(ServerWorld world, NodeHolder<BlockNode> node) {
     }
 }
