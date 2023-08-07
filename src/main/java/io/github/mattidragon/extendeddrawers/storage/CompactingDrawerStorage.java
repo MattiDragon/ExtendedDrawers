@@ -64,7 +64,7 @@ public final class CompactingDrawerStorage extends SnapshotParticipant<Compactin
         var config = ExtendedDrawers.CONFIG.get().storage();
         long capacity = config.compactingCapacity();
         if (config.stackSizeAffectsCapacity())
-            capacity /= 64.0 / item.getItem().getMaxCount();
+            capacity /= (long) (64.0 / item.getItem().getMaxCount());
         if (getUpgrade() != null)
             capacity = getUpgrade().modifier.applyAsLong(capacity);
         capacity *= getTotalCompression();
@@ -111,14 +111,14 @@ public final class CompactingDrawerStorage extends SnapshotParticipant<Compactin
     @Override
     public long extract(ItemVariant resource, long maxAmount, TransactionContext transaction) {
         StoragePreconditions.notNegative(maxAmount);
-        long extraced = 0;
+        long extracted = 0;
 
         for (var slot : getActiveSlots()) {
-            extraced += slot.extract(resource, maxAmount - extraced, transaction);
-            if (extraced == maxAmount) break;
+            extracted += slot.extract(resource, maxAmount - extracted, transaction);
+            if (extracted == maxAmount) break;
         }
 
-        return extraced;
+        return extracted;
     }
 
     @Override
@@ -258,8 +258,7 @@ public final class CompactingDrawerStorage extends SnapshotParticipant<Compactin
         return amount;
     }
 
-    record Snapshot(ItemVariant item, long amount) {
-    }
+    protected record Snapshot(ItemVariant item, long amount) {}
 
     private class StorageIterator implements Iterator<StorageView<ItemVariant>> {
         private int index = slots.length - 1;

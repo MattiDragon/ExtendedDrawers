@@ -87,7 +87,7 @@ public class AccessPointBlock extends NetworkBlock implements DrawerInteractionH
                 .sum() <= 0;
         storages.forEach(storage -> storage.setLocked(newState));
     
-        return storages.size() == 0 ? ActionResult.PASS : ActionResult.SUCCESS;
+        return storages.isEmpty() ? ActionResult.PASS : ActionResult.SUCCESS;
     }
 
     @Override
@@ -100,7 +100,7 @@ public class AccessPointBlock extends NetworkBlock implements DrawerInteractionH
                 .sum() <= 0;
         storages.forEach(storage -> storage.setVoiding(newState));
 
-        return storages.size() == 0 ? ActionResult.PASS : ActionResult.SUCCESS;
+        return storages.isEmpty() ? ActionResult.PASS : ActionResult.SUCCESS;
     }
 
     @Override
@@ -113,7 +113,7 @@ public class AccessPointBlock extends NetworkBlock implements DrawerInteractionH
                 .sum() <= 0;
         storages.forEach(storage -> storage.setDuping(newState));
 
-        return storages.size() == 0 ? ActionResult.PASS : ActionResult.SUCCESS;
+        return storages.isEmpty() ? ActionResult.PASS : ActionResult.SUCCESS;
     }
 
     @Override
