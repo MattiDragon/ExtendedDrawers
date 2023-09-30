@@ -1,8 +1,8 @@
 # Extended Drawers
-[![Badge showing the amount of downloads on modrinth](https://img.shields.io/badge/dynamic/json?color=2d2d2d&colorA=5da545&label=&suffix=%20downloads%20&query=downloads&url=https://api.modrinth.com/v2/project/AhtxbnpG&style=flat-square&logo=modrinth&logoColor=2d2d2d)](https://modrinth.com/mod/extended-drawers)
-[![Badge showing the amount of downloads on curseforge](https://cf.way2muchnoise.eu/full_616602_downloads.svg?badge_style=flat)](https://www.curseforge.com/minecraft/mc-mods/extended-drawers)
-[![Badge linking to issues on github](https://img.shields.io/badge/dynamic/json?query=value&url=https://img.shields.io/github/issues-raw/mattidragon/extendeddrawers.json&label=&logo=github&color=2d2d2d&style=flat-square&labelColor=6e5494&logoColor=2d2d2d&suffix=%20issues)](https://github.com/MattiDragon/ExtendedDrawers/issues)
-[![Badge linking to support on discord](https://img.shields.io/discord/760524772189798431?label=&logo=discord&color=2d2d2d&style=flat-square&labelColor=5865f2&logoColor=2d2d2d)](https://discord.gg/26T5KK2PBv)
+[![Badge showing the amount of downloads on modrinth](https://img.shields.io/badge/dynamic/json?color=2d2d2d&colorA=5da545&label=&suffix=%20downloads%20&query=downloads&url=https://api.modrinth.com/v2/project/AhtxbnpG&style=flat&logo=modrinth&logoColor=2d2d2d)](https://modrinth.com/mod/extended-drawers)
+[![Badge showing the amount of downloads on curseforge](https://img.shields.io/badge/dynamic/json?query=value&url=https://img.shields.io/curseforge/dt/616602.json&label=&logo=curseforge&color=2d2d2d&style=flat&labelColor=F16436&logoColor=2d2d2d&suffix=%20downloads)](https://www.curseforge.com/minecraft/mc-mods/extended-drawers)
+[![Badge linking to issues on github](https://img.shields.io/badge/dynamic/json?query=value&url=https://img.shields.io/github/issues-raw/mattidragon/extendeddrawers.json&label=&logo=github&color=2d2d2d&style=flat&labelColor=6e5494&logoColor=2d2d2d&suffix=%20issues)](https://github.com/MattiDragon/ExtendedDrawers/issues)
+[![Badge linking to support on discord](https://img.shields.io/discord/760524772189798431?label=&logo=discord&color=2d2d2d&style=flat&labelColor=5865f2&logoColor=2d2d2d)](https://discord.gg/26T5KK2PBv)
 
 A mod inspired by storage drawers that aims to allow for easy creation of powerful yet not
 overpowered storage systems using simple components.
@@ -104,7 +104,8 @@ Any other sites are third-party reuploads and should not be trusted.
 
 ### Porting and Forking
 You can read my policy on [forking and porting mods](https://gist.github.com/MattiDragon/6b9e71e8516447f53f0d5fb296ab8868).
-This mod will not be ported to anything older than 1.19.4 due to that version adding necessary client features.
+
+Current target: 1.20.1 and 1.20.2.
 
 ### Incompatibilities
 I intend to try and stay compatible with as many mods as possible, but might abandon support for some if it becomes too hard.
