@@ -1,5 +1,6 @@
 package io.github.mattidragon.extendeddrawers.block.entity;
 
+import io.github.mattidragon.extendeddrawers.network.NetworkRegistry;
 import io.github.mattidragon.extendeddrawers.network.UpdateHandler;
 import io.github.mattidragon.extendeddrawers.storage.DrawerStorage;
 import net.minecraft.block.Block;
@@ -21,8 +22,9 @@ public abstract class StorageDrawerBlockEntity extends BlockEntity {
     }
 
     public void onSlotChanged(boolean sortingChanged) {
-        markDirty();
         if (world instanceof ServerWorld serverWorld) {
+            // Using this instead of markDirty to handle cases where drawer is in unloaded chunks (why doesn't minecraft save in unloaded chunks?)
+            world.getWorldChunk(pos).setNeedsSaving(true);
             UpdateHandler.scheduleUpdate(serverWorld, pos, sortingChanged ? UpdateHandler.ChangeType.CONTENT : UpdateHandler.ChangeType.COUNT);
             var state = getCachedState();
             world.updateListeners(pos, state, state, Block.NOTIFY_LISTENERS);
@@ -35,4 +37,26 @@ public abstract class StorageDrawerBlockEntity extends BlockEntity {
 
     @Override
     public abstract void writeNbt(NbtCompound nbt);
+
+    @Override
+    public void markRemoved() {
+        super.markRemoved();
+        if (world instanceof ServerWorld serverWorld) {
+            NetworkRegistry.UNIVERSE.getServerGraphWorld(serverWorld)
+                    .getAllGraphsAt(pos)
+                    .map(graph -> graph.getGraphEntity(NetworkRegistry.STORAGE_CACHE_TYPE))
+                    .forEach(cache -> cache.onNodeUnloaded(pos));
+        }
+    }
+
+    @Override
+    public void cancelRemoval() {
+        super.cancelRemoval();
+        if (world instanceof ServerWorld serverWorld) {
+            NetworkRegistry.UNIVERSE.getServerGraphWorld(serverWorld)
+                    .getAllGraphsAt(pos)
+                    .map(graph -> graph.getGraphEntity(NetworkRegistry.STORAGE_CACHE_TYPE))
+                    .forEach(cache -> cache.onNodeReloaded(pos));
+        }
+    }
 }

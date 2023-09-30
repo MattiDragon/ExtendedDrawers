@@ -32,7 +32,11 @@ public class UpdateHandler implements GraphEntity<UpdateHandler> {
         if (queuedUpdate == null) return;
         if (!(context.getBlockWorld() instanceof ServerWorld world)) return;
 
-        context.getGraph().getGraphEntity(NetworkRegistry.STORAGE_CACHE_TYPE).update(queuedUpdate);
+        NetworkStorageCache networkStorageCache = context.getGraph().getGraphEntity(NetworkRegistry.STORAGE_CACHE_TYPE);
+        // Structure updates are handled elsewhere and count updates don't matter
+        if (queuedUpdate == ChangeType.CONTENT) {
+            networkStorageCache.sort();
+        }
 
         context.getGraph()
                 .getNodes()

@@ -15,7 +15,10 @@ public class NetworkRegistry {
     public static final GraphUniverse UNIVERSE = GraphUniverse.builder()
             .saveMode(SaveMode.INCREMENTAL)
             .build(id("drawers"));
-    public static final GraphEntityType<NetworkStorageCache> STORAGE_CACHE_TYPE = GraphEntityType.of(id("storage_cache"), NetworkStorageCache::new);
+    public static final GraphEntityType<NetworkStorageCache> STORAGE_CACHE_TYPE = GraphEntityType.of(id("storage_cache"),
+            NetworkStorageCache::new,
+            nbt -> new NetworkStorageCache(),
+            NetworkStorageCache::split);
     public static final GraphEntityType<UpdateHandler> UPDATE_HANDLER_TYPE = GraphEntityType.of(id("update_handler"), UpdateHandler::new);
 
     public static void register() {

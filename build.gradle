@@ -17,8 +17,9 @@ repositories {
     maven { url "https://maven.blamejared.com" }
     maven { url "https://maven.isxander.dev/releases" }
     maven { url "https://maven.terraformersmc.com" }
-    maven { url "https://jitpack.io" }
+    maven { url 'https://maven.quiltmc.org/repository/release/' }
     maven { url 'https://maven.cafeteria.dev/releases/' }
+    maven { url "https://jitpack.io" }
 }
 
 // Has to run before dependencies so that we get access to proper dependency configurations
@@ -102,7 +103,6 @@ java {
     archivesBaseName = project.archives_base_name
     withSourcesJar()
 }
-
 
 publishing {
     publications.create("mavenJava", MavenPublication) {

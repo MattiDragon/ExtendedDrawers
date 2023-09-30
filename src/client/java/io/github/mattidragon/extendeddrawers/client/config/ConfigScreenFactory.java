@@ -2,7 +2,8 @@ package io.github.mattidragon.extendeddrawers.client.config;
 
 import dev.isxander.yacl3.api.*;
 import dev.isxander.yacl3.api.controller.*;
-import dev.isxander.yacl3.gui.ImageRenderer;
+import dev.isxander.yacl3.gui.image.ImageRenderer;
+import dev.isxander.yacl3.gui.image.ImageRendererManager;
 import io.github.mattidragon.extendeddrawers.ExtendedDrawers;
 import io.github.mattidragon.extendeddrawers.client.renderer.AbstractDrawerBlockEntityRenderer;
 import io.github.mattidragon.extendeddrawers.config.ConfigData;
@@ -31,13 +32,12 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 import static io.github.mattidragon.extendeddrawers.ExtendedDrawers.id;
 import static io.github.mattidragon.extendeddrawers.config.ConfigData.DEFAULT;
 
 public class ConfigScreenFactory {
-    public static final Function<Float, Text> FLOAT_FORMATTER;
+    public static final ValueFormatter<Float> FLOAT_FORMATTER;
 
     static {
         var format = NumberFormat.getNumberInstance(Locale.ROOT);
@@ -134,13 +134,13 @@ public class ConfigScreenFactory {
                 .option(Option.<CreativeBreakingBehaviour>createBuilder()
                         .name(Text.translatable("config.extended_drawers.misc.frontBreakingBehaviour"))
                         .binding(DEFAULT.misc().frontBreakingBehaviour(), instance::frontBreakingBehaviour, instance::frontBreakingBehaviour)
-                        .controller(option -> EnumControllerBuilder.create(option).enumClass(CreativeBreakingBehaviour.class).valueFormatter(CreativeBreakingBehaviour::getDisplayName))
+                        .controller(option -> EnumControllerBuilder.create(option).enumClass(CreativeBreakingBehaviour.class).formatValue(CreativeBreakingBehaviour::getDisplayName))
                         .description(value -> creativeBreakingBehaviourDescription(Text.translatable("config.extended_drawers.misc.frontBreakingBehaviour.description"), value))
                         .build())
                 .option(Option.<CreativeBreakingBehaviour>createBuilder()
                         .name(Text.translatable("config.extended_drawers.misc.sideBreakingBehaviour"))
                         .binding(DEFAULT.misc().sideBreakingBehaviour(), instance::sideBreakingBehaviour, instance::sideBreakingBehaviour)
-                        .controller(option -> EnumControllerBuilder.create(option).enumClass(CreativeBreakingBehaviour.class).valueFormatter(CreativeBreakingBehaviour::getDisplayName))
+                        .controller(option -> EnumControllerBuilder.create(option).enumClass(CreativeBreakingBehaviour.class).formatValue(CreativeBreakingBehaviour::getDisplayName))
                         .description(value -> creativeBreakingBehaviourDescription(Text.translatable("config.extended_drawers.misc.sideBreakingBehaviour.description"), value))
                         .build())
                 .option(Option.<Boolean>createBuilder()
@@ -204,25 +204,25 @@ public class ConfigScreenFactory {
                         .name(Text.translatable("config.extended_drawers.client.lockedIcon"))
                         .binding(DEFAULT.client().icons().lockedIcon(), icons::lockedIcon, icons::lockedIcon)
                         .customController(IdentifierController::new)
-                        .description(id -> OptionDescription.createBuilder().customImage(ImageRenderer.getOrMakeSync(id, () -> Optional.of(new IconRenderer(id)))).text(Text.translatable("config.extended_drawers.client.lockedIcon.description")).build())
+                        .description(id -> OptionDescription.createBuilder().customImage(ImageRendererManager.registerImage(id, () -> () -> new IconRenderer(id)).thenApply(Optional::of)).text(Text.translatable("config.extended_drawers.client.lockedIcon.description")).build())
                         .build())
                 .option(Option.<Identifier>createBuilder()
                         .name(Text.translatable("config.extended_drawers.client.voidingIcon"))
                         .binding(DEFAULT.client().icons().voidingIcon(), icons::voidingIcon, icons::voidingIcon)
                         .customController(IdentifierController::new)
-                        .description(id -> OptionDescription.createBuilder().customImage(ImageRenderer.getOrMakeSync(id, () -> Optional.of(new IconRenderer(id)))).text(Text.translatable("config.extended_drawers.client.voidingIcon.description")).build())
+                        .description(id -> OptionDescription.createBuilder().customImage(ImageRendererManager.registerImage(id, () -> () -> new IconRenderer(id)).thenApply(Optional::of)).text(Text.translatable("config.extended_drawers.client.voidingIcon.description")).build())
                         .build())
                 .option(Option.<Identifier>createBuilder()
                         .name(Text.translatable("config.extended_drawers.client.hiddenIcon"))
                         .binding(DEFAULT.client().icons().hiddenIcon(), icons::hiddenIcon, icons::hiddenIcon)
                         .customController(IdentifierController::new)
-                        .description(id -> OptionDescription.createBuilder().customImage(ImageRenderer.getOrMakeSync(id, () -> Optional.of(new IconRenderer(id)))).text(Text.translatable("config.extended_drawers.client.hiddenIcon.description")).build())
+                        .description(id -> OptionDescription.createBuilder().customImage(ImageRendererManager.registerImage(id, () -> () -> new IconRenderer(id)).thenApply(Optional::of)).text(Text.translatable("config.extended_drawers.client.hiddenIcon.description")).build())
                         .build())
                 .option(Option.<Identifier>createBuilder()
                         .name(Text.translatable("config.extended_drawers.client.dupingIcon"))
                         .binding(DEFAULT.client().icons().dupingIcon(), icons::dupingIcon, icons::dupingIcon)
                         .customController(IdentifierController::new)
-                        .description(id -> OptionDescription.createBuilder().customImage(ImageRenderer.getOrMakeSync(id, () -> Optional.of(new IconRenderer(id)))).text(Text.translatable("config.extended_drawers.client.dupingIcon.description")).build())
+                        .description(id -> OptionDescription.createBuilder().customImage(ImageRendererManager.registerImage(id, () -> () -> new IconRenderer(id)).thenApply(Optional::of)).text(Text.translatable("config.extended_drawers.client.dupingIcon.description")).build())
                         .build())
                 .build();
     }
@@ -233,31 +233,31 @@ public class ConfigScreenFactory {
         var smallItemScale = Option.<Float>createBuilder()
                 .name(Text.translatable("config.extended_drawers.client.smallItemScale"))
                 .binding(DEFAULT.client().layout().smallItemScale(), instance::smallItemScale, instance::smallItemScale)
-                .controller(option -> FloatSliderControllerBuilder.create(option).range(0f, 2f).step(0.05f).valueFormatter(FLOAT_FORMATTER))
+                .controller(option -> FloatSliderControllerBuilder.create(option).range(0f, 2f).step(0.05f).formatValue(FLOAT_FORMATTER))
                 .description(OptionDescription.createBuilder().customImage(CompletableFuture.completedFuture(Optional.of(layoutRenderer))).text(Text.translatable("config.extended_drawers.client.smallItemScale.description")).build())
                 .build();
         var largeItemScale = Option.<Float>createBuilder()
                 .name(Text.translatable("config.extended_drawers.client.largeItemScale"))
                 .binding(DEFAULT.client().layout().largeItemScale(), instance::largeItemScale, instance::largeItemScale)
-                .controller(option -> FloatSliderControllerBuilder.create(option).range(0f, 2f).step(0.05f).valueFormatter(FLOAT_FORMATTER))
+                .controller(option -> FloatSliderControllerBuilder.create(option).range(0f, 2f).step(0.05f).formatValue(FLOAT_FORMATTER))
                 .description(OptionDescription.createBuilder().customImage(CompletableFuture.completedFuture(Optional.of(layoutRenderer))).text(Text.translatable("config.extended_drawers.client.largeItemScale.description")).build())
                 .build();
         var smallTextScale = Option.<Float>createBuilder()
                 .name(Text.translatable("config.extended_drawers.client.smallTextScale"))
                 .binding(DEFAULT.client().layout().smallTextScale(), instance::smallTextScale, instance::smallTextScale)
-                .controller(option -> FloatSliderControllerBuilder.create(option).range(0f, 2f).step(0.05f).valueFormatter(FLOAT_FORMATTER))
+                .controller(option -> FloatSliderControllerBuilder.create(option).range(0f, 2f).step(0.05f).formatValue(FLOAT_FORMATTER))
                 .description(OptionDescription.createBuilder().customImage(CompletableFuture.completedFuture(Optional.of(layoutRenderer))).text(Text.translatable("config.extended_drawers.client.smallTextScale.description")).build())
                 .build();
         var largeTextScale = Option.<Float>createBuilder()
                 .name(Text.translatable("config.extended_drawers.client.largeTextScale"))
                 .binding(DEFAULT.client().layout().largeTextScale(), instance::largeTextScale, instance::largeTextScale)
-                .controller(option -> FloatSliderControllerBuilder.create(option).range(0f, 2f).step(0.05f).valueFormatter(FLOAT_FORMATTER))
+                .controller(option -> FloatSliderControllerBuilder.create(option).range(0f, 2f).step(0.05f).formatValue(FLOAT_FORMATTER))
                 .description(OptionDescription.createBuilder().customImage(CompletableFuture.completedFuture(Optional.of(layoutRenderer))).text(Text.translatable("config.extended_drawers.client.largeTextScale.description")).build())
                 .build();
         var textOffset = Option.<Float>createBuilder()
                 .name(Text.translatable("config.extended_drawers.client.textOffset"))
                 .binding(DEFAULT.client().layout().textOffset(), instance::textOffset, instance::textOffset)
-                .controller(option -> FloatSliderControllerBuilder.create(option).range(0f, 1f).step(0.05f).valueFormatter(FLOAT_FORMATTER))
+                .controller(option -> FloatSliderControllerBuilder.create(option).range(0f, 1f).step(0.05f).formatValue(FLOAT_FORMATTER))
                 .description(OptionDescription.createBuilder().customImage(CompletableFuture.completedFuture(Optional.of(layoutRenderer))).text(Text.translatable("config.extended_drawers.client.textOffset.description")).build())
                 .build();
 
@@ -297,7 +297,7 @@ public class ConfigScreenFactory {
         }
 
         @Override
-        public int render(DrawContext context, int x, int y, int renderWidth) {
+        public int render(DrawContext context, int x, int y, int renderWidth, float tickDelta) {
             if (!initialized) return 0;
 
             var atlas = MinecraftClient.getInstance().getSpriteAtlas(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE);
@@ -373,7 +373,7 @@ public class ConfigScreenFactory {
 
     private record IconRenderer(Identifier id) implements ImageRenderer {
         @Override
-        public int render(DrawContext graphics, int x, int y, int renderWidth) {
+        public int render(DrawContext graphics, int x, int y, int renderWidth, float tickDelta) {
             var blockAtlas = MinecraftClient.getInstance().getSpriteAtlas(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE);
             var sprite = blockAtlas.apply(id);
 
