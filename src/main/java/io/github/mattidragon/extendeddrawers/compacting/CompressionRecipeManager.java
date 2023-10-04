@@ -4,6 +4,7 @@ import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.recipe.RecipeEntry;
 import net.minecraft.recipe.RecipeManager;
 import net.minecraft.recipe.RecipeType;
 import net.minecraft.screen.ScreenHandler;
@@ -123,6 +124,7 @@ public final class CompressionRecipeManager {
         var inventory = createInventory(stack, size);
         return recipeManager.getAllMatches(RecipeType.CRAFTING, inventory, world)
                 .stream()
+                .map(RecipeEntry::value)
                 .filter(recipe -> recipe.getRemainder(inventory).stream().allMatch(ItemStack::isEmpty)) // We can't deal with remainders, so we just prevent recipe with them from being used
                 .map(recipe -> recipe.craft(inventory, world.getRegistryManager()))
                 .filter(result -> !result.isEmpty());

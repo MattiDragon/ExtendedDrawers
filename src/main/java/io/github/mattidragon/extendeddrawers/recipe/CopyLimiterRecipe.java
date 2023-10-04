@@ -14,8 +14,8 @@ import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.world.World;
 
 public class CopyLimiterRecipe extends SpecialCraftingRecipe {
-    public CopyLimiterRecipe(Identifier id, CraftingRecipeCategory category) {
-        super(id, category);
+    public CopyLimiterRecipe(CraftingRecipeCategory category) {
+        super(category);
     }
 
     @Override

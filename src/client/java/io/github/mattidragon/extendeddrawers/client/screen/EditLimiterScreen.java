@@ -95,7 +95,7 @@ public class EditLimiterScreen extends Screen {
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         if (client == null) return;
 
-        renderBackground(context);
+        renderBackground(context, mouseX, mouseY, delta);
         context.drawTexture(TEXTURE, width / 2 - 64, height / 2 - 32, 0, 0, 128, 64, 128, 64);
         context.drawText(client.textRenderer, getTitle(), width / 2 - 58, height / 2 - 16 - 10, 0x404040, false);
         super.render(context, mouseX, mouseY, delta);

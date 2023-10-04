@@ -7,17 +7,12 @@ import io.github.mattidragon.extendeddrawers.registry.ModTags;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
 import net.fabricmc.fabric.api.tag.convention.v1.ConventionalItemTags;
-import net.minecraft.data.server.recipe.ComplexRecipeJsonBuilder;
-import net.minecraft.data.server.recipe.RecipeJsonProvider;
-import net.minecraft.data.server.recipe.RecipeProvider;
-import net.minecraft.data.server.recipe.ShapedRecipeJsonBuilder;
+import net.minecraft.data.server.recipe.*;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.book.RecipeCategory;
 import net.minecraft.registry.tag.ItemTags;
-
-import java.util.function.Consumer;
 
 class DrawersRecipeProvider extends FabricRecipeProvider {
     public DrawersRecipeProvider(FabricDataOutput output) {
@@ -25,7 +20,7 @@ class DrawersRecipeProvider extends FabricRecipeProvider {
     }
     
     @Override
-    public void generate(Consumer<RecipeJsonProvider> exporter) {
+    public void generate(RecipeExporter exporter) {
         offerUpgradeRecipe(exporter, ModItems.T1_UPGRADE, Ingredient.ofItems(Items.BARREL), ModItems.UPGRADE_FRAME, Items.STICK);
         offerUpgradeRecipe(exporter, ModItems.T2_UPGRADE, Ingredient.ofItems(Items.IRON_BLOCK), ModItems.T1_UPGRADE, Items.STICK);
         offerUpgradeRecipe(exporter, ModItems.T3_UPGRADE, Ingredient.ofItems(Items.DIAMOND_BLOCK), ModItems.T2_UPGRADE, Items.BLAZE_ROD);
@@ -42,7 +37,7 @@ class DrawersRecipeProvider extends FabricRecipeProvider {
                 .offerTo(exporter, ExtendedDrawers.id("copy_limiter").toString());
     }
     
-    private void offerDrawerRecipes(Consumer<RecipeJsonProvider> exporter) {
+    private void offerDrawerRecipes(RecipeExporter exporter) {
         ShapedRecipeJsonBuilder.create(RecipeCategory.DECORATIONS, ModItems.SHADOW_DRAWER)
                 .input('E', Items.END_STONE_BRICKS)
                 .input('C', Items.END_CRYSTAL)
@@ -90,7 +85,7 @@ class DrawersRecipeProvider extends FabricRecipeProvider {
                 .offerTo(exporter);
     }
     
-    private void offerLockRecipe(Consumer<RecipeJsonProvider> exporter) {
+    private void offerLockRecipe(RecipeExporter exporter) {
         ShapedRecipeJsonBuilder.create(RecipeCategory.TOOLS, ModItems.LOCK)
                 .input('G', Items.GOLD_INGOT)
                 .input('g', Items.GOLD_NUGGET)
@@ -101,7 +96,7 @@ class DrawersRecipeProvider extends FabricRecipeProvider {
                 .offerTo(exporter);
     }
 
-    private void offerLimiterRecipe(Consumer<RecipeJsonProvider> exporter) {
+    private void offerLimiterRecipe(RecipeExporter exporter) {
         ShapedRecipeJsonBuilder.create(RecipeCategory.REDSTONE, ModItems.LIMITER)
                 .input('C', Items.COPPER_INGOT)
                 .input('R', Items.REDSTONE)
@@ -113,7 +108,7 @@ class DrawersRecipeProvider extends FabricRecipeProvider {
                 .offerTo(exporter);
     }
     
-    private void offerAccessPointRecipe(Consumer<RecipeJsonProvider> exporter) {
+    private void offerAccessPointRecipe(RecipeExporter exporter) {
         ShapedRecipeJsonBuilder.create(RecipeCategory.DECORATIONS, ModItems.ACCESS_POINT)
                 .input('I', Items.IRON_INGOT)
                 .input('C', Items.COBBLESTONE)
@@ -125,7 +120,7 @@ class DrawersRecipeProvider extends FabricRecipeProvider {
                 .offerTo(exporter);
     }
     
-    private void offerConnectorRecipe(Consumer<RecipeJsonProvider> exporter) {
+    private void offerConnectorRecipe(RecipeExporter exporter) {
         ShapedRecipeJsonBuilder.create(RecipeCategory.DECORATIONS, ModItems.CONNECTOR)
                 .input('L', ItemTags.LOGS)
                 .input('P', ItemTags.PLANKS)
@@ -136,7 +131,7 @@ class DrawersRecipeProvider extends FabricRecipeProvider {
                 .offerTo(exporter);
     }
     
-    private void offerUpgradeFrameRecipe(Consumer<RecipeJsonProvider> exporter) {
+    private void offerUpgradeFrameRecipe(RecipeExporter exporter) {
         ShapedRecipeJsonBuilder.create(RecipeCategory.MISC, ModItems.UPGRADE_FRAME)
                 .input('S', Items.STICK)
                 .input('C', Items.COBBLESTONE)
@@ -147,7 +142,7 @@ class DrawersRecipeProvider extends FabricRecipeProvider {
                 .offerTo(exporter);
     }
     
-    private void offerUpgradeRecipe(Consumer<RecipeJsonProvider> exporter, Item result, Ingredient material, Item base, Item stick) {
+    private void offerUpgradeRecipe(RecipeExporter exporter, Item result, Ingredient material, Item base, Item stick) {
         ShapedRecipeJsonBuilder.create(RecipeCategory.MISC, result)
                 .input('M', material)
                 .input('B', base)

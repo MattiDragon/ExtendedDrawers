@@ -1,5 +1,6 @@
 package io.github.mattidragon.extendeddrawers.misc;
 
+import com.mojang.serialization.Codec;
 import net.minecraft.text.Text;
 import net.minecraft.util.StringIdentifiable;
 
@@ -9,7 +10,6 @@ import java.util.Locale;
 public enum CreativeBreakingBehaviour implements StringIdentifiable {
     BREAK, MINE, NO_BREAK;
 
-    @SuppressWarnings("deprecation")
     public static final Codec<CreativeBreakingBehaviour> CODEC = StringIdentifiable.createCodec(CreativeBreakingBehaviour::values);
 
     public Text getDisplayName() {

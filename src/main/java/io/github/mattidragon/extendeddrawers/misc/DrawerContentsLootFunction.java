@@ -1,7 +1,7 @@
 package io.github.mattidragon.extendeddrawers.misc;
 
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonObject;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.github.mattidragon.extendeddrawers.ExtendedDrawers;
 import io.github.mattidragon.extendeddrawers.block.entity.StorageDrawerBlockEntity;
 import io.github.mattidragon.extendeddrawers.registry.ModBlocks;
@@ -16,13 +16,15 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 
+import java.util.List;
+
 import static io.github.mattidragon.extendeddrawers.ExtendedDrawers.id;
 
 public class DrawerContentsLootFunction extends ConditionalLootFunction {
+    private static final Codec<DrawerContentsLootFunction> CODEC = RecordCodecBuilder.create((instance) -> method_53344(instance).apply(instance, DrawerContentsLootFunction::new));
+    private static final LootFunctionType TYPE = new LootFunctionType(CODEC);
     
-    private static final LootFunctionType TYPE = new LootFunctionType(new Serializer());
-    
-    protected DrawerContentsLootFunction(LootCondition[] conditions) {
+    protected DrawerContentsLootFunction(List<LootCondition> conditions) {
         super(conditions);
     }
     
@@ -55,12 +57,5 @@ public class DrawerContentsLootFunction extends ConditionalLootFunction {
     @Override
     public LootFunctionType getType() {
         return TYPE;
-    }
-    
-    public static class Serializer extends ConditionalLootFunction.Serializer<DrawerContentsLootFunction> {
-        @Override
-        public DrawerContentsLootFunction fromJson(JsonObject json, JsonDeserializationContext context, LootCondition[] conditions) {
-            return new DrawerContentsLootFunction(conditions);
-        }
     }
 }
