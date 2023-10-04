@@ -1,5 +1,6 @@
 package io.github.mattidragon.extendeddrawers.block.entity;
 
+import io.github.mattidragon.extendeddrawers.network.NetworkStorageCache;
 import io.github.mattidragon.extendeddrawers.network.UpdateHandler;
 import io.github.mattidragon.extendeddrawers.storage.DrawerStorage;
 import net.minecraft.block.Block;
@@ -21,8 +22,9 @@ public abstract class StorageDrawerBlockEntity extends BlockEntity {
     }
 
     public void onSlotChanged(boolean sortingChanged) {
-        markDirty();
         if (world instanceof ServerWorld serverWorld) {
+            // markDirty don't work in far away chunks
+            world.getWorldChunk(pos).setNeedsSaving(true);
             UpdateHandler.scheduleUpdate(serverWorld, pos, sortingChanged ? UpdateHandler.ChangeType.CONTENT : UpdateHandler.ChangeType.COUNT);
             var state = getCachedState();
             world.updateListeners(pos, state, state, Block.NOTIFY_LISTENERS);
@@ -35,4 +37,12 @@ public abstract class StorageDrawerBlockEntity extends BlockEntity {
 
     @Override
     public abstract void writeNbt(NbtCompound nbt);
+
+    @Override
+    public void markRemoved() {
+        super.markRemoved();
+        if (world instanceof ServerWorld serverWorld) {
+            NetworkStorageCache.handleUnload(serverWorld, pos);
+        }
+    }
 }

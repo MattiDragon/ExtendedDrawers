@@ -68,6 +68,15 @@ public class NetworkStorageCache {
                         .toList());
     }
 
+    public static void handleUnload(ServerWorld world, BlockPos pos) {
+        var optionalId = GraphLib.getController(world).getGraphsAt(pos).findFirst();
+        if (optionalId.isEmpty()) {
+            ExtendedDrawers.LOGGER.warn("Missing graph at " + pos);
+            return;
+        }
+        CACHE.get(world.getRegistryKey()).remove(optionalId.getAsLong());
+    }
+
     public static void clear() {
         CACHE.clear();
     }
