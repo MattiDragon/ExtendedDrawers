@@ -74,7 +74,9 @@ public class NetworkStorageCache {
             ExtendedDrawers.LOGGER.warn("Missing graph at " + pos);
             return;
         }
-        CACHE.get(world.getRegistryKey()).remove(optionalId.getAsLong());
+        if (CACHE.containsKey(world.getRegistryKey())) {
+            CACHE.get(world.getRegistryKey()).remove(optionalId.getAsLong());
+        }
     }
 
     public static void clear() {
