@@ -8,11 +8,15 @@ import com.kneelawk.graphlib.api.graph.NodeHolder;
 import com.kneelawk.graphlib.api.graph.user.*;
 import com.kneelawk.graphlib.api.util.LinkPos;
 import io.github.mattidragon.extendeddrawers.block.entity.StorageDrawerBlockEntity;
+import io.github.mattidragon.extendeddrawers.network.node.CompactingDrawerBlockNode;
+import io.github.mattidragon.extendeddrawers.network.node.DrawerBlockNode;
 import io.github.mattidragon.extendeddrawers.storage.DrawerStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.base.CombinedStorage;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -46,11 +50,14 @@ public class NetworkStorageCache implements GraphEntity<NetworkStorageCache> {
         return cachedStorage;
     }
 
-    private void addMissingStorages() {
+    public void addMissingStorages() {
         if (!missingPositions.isEmpty()) {
             missingPositions.forEach(pos -> {
                 if (context.getBlockWorld().getBlockEntity(pos) instanceof StorageDrawerBlockEntity drawer) {
-                    drawer.streamStorages().forEach(cachedStorage.parts::add);
+                    drawer.streamStorages().forEach(storage -> {
+                        cachedStorage.parts.add(storage);
+                        positions.put(pos, storage);
+                    });
                 }
             });
             missingPositions.clear();
@@ -97,11 +104,13 @@ public class NetworkStorageCache implements GraphEntity<NetworkStorageCache> {
 
         // Remove storages from cache
         positions.get(pos).forEach(cachedStorage.parts::remove);
+        positions.removeAll(pos);
         missingPositions.remove(pos);
     }
 
     public void onNodeUnloaded(BlockPos pos) {
         positions.get(pos).forEach(cachedStorage.parts::remove);
+        positions.removeAll(pos);
         missingPositions.add(pos);
     }
 
@@ -147,6 +156,49 @@ public class NetworkStorageCache implements GraphEntity<NetworkStorageCache> {
         sort();
 
         return newCache;
+    }
+
+    public List<Text> getDebugInfo() {
+        var list = new ArrayList<Text>();
+        list.add(Text.literal("Storage Cache Debug Info").formatted(Formatting.BOLD, Formatting.YELLOW));
+        list.add(Text.literal("  %s uncached positions".formatted(missingPositions.size())));
+        list.add(Text.literal("  %s cached positions".formatted(positions.size())));
+        list.add(Text.literal("  %s storages".formatted(cachedStorage.parts.size())));
+        list.add(Text.empty());
+
+        context.getGraph()
+                .getNodes()
+                .filter(holder -> holder.getNode() instanceof DrawerBlockNode || holder.getNode() instanceof CompactingDrawerBlockNode)
+                .map(NodeHolder::getBlockPos)
+                .forEach(pos -> {
+                    list.add(Text.literal("%s".formatted(pos.toShortString())).formatted(Formatting.YELLOW));
+                    var isValid = false;
+                    if (missingPositions.contains(pos)) {
+                        list.add(Text.literal("  Not cached").formatted(Formatting.RED));
+                        isValid = true;
+                    }
+                    if (positions.containsKey(pos)) {
+                        list.add(Text.literal("  Cached: %s storage(s)".formatted(positions.get(pos).size())).formatted(Formatting.GREEN));
+                        isValid = true;
+                    }
+
+                    if (!isValid) {
+                        list.add(Text.literal("  Missing from cache").formatted(Formatting.DARK_RED));
+                    }
+                });
+
+        return list;
+    }
+
+    public void forceCacheUpdate() {
+        cachedStorage.parts.clear();
+        positions.clear();
+        missingPositions.clear();
+        context.getGraph()
+                .getNodes()
+                .map(NodeHolder::getBlockPos)
+                .forEach(missingPositions::add);
+        addMissingStorages();
     }
 }
 
