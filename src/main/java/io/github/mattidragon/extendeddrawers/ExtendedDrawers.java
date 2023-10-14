@@ -2,6 +2,7 @@ package io.github.mattidragon.extendeddrawers;
 
 import io.github.mattidragon.configloader.api.ConfigManager;
 import io.github.mattidragon.extendeddrawers.config.ConfigData;
+import io.github.mattidragon.extendeddrawers.misc.DrawerCacheCommand;
 import io.github.mattidragon.extendeddrawers.misc.DrawerContentsLootFunction;
 import io.github.mattidragon.extendeddrawers.misc.ShiftAccess;
 import io.github.mattidragon.extendeddrawers.network.NetworkRegistry;
@@ -49,6 +50,7 @@ public class ExtendedDrawers implements ModInitializer {
         NetworkRegistry.register();
         CompressionOverrideSyncPacket.register();
         SetLimiterLimitPacket.register();
+        DrawerCacheCommand.register();
         ResourceManagerHelper.registerBuiltinResourcePack(id("alt"), MOD_CONTAINER, Text.translatable("resourcepack.extended_drawers.alt"), ResourcePackActivationType.NORMAL);
         ResourceManagerHelper.registerBuiltinResourcePack(id("dev"), MOD_CONTAINER, Text.translatable("resourcepack.extended_drawers.programmer_art"), ResourcePackActivationType.NORMAL);
     }
