@@ -65,6 +65,8 @@
   "config.extended_drawers.misc.frontBreakingBehaviour.description": "This option controls how breaking drawer blocks works on the front face in creative mode.\n",
   "config.extended_drawers.misc.sideBreakingBehaviour": "Side breaking behavior",
   "config.extended_drawers.misc.sideBreakingBehaviour.description": "This option controls how breaking drawer blocks works on the side, back, bottom and top faces in creative mode.\n",
+  "config.extended_drawers.misc.cachingMode": "Caching mode",
+  "config.extended_drawers.misc.cachingMode.description": "Controls the way in which drawer networks are cached (stored for later use). Different options have different performance characteristics.\n\n",
   "config.extended_drawers.misc.blockUpgradeRemovalsWithOverflow": "Prevent overflow",
   "config.extended_drawers.misc.blockUpgradeRemovalsWithOverflow.description": "If enabled, you can't remove upgrades if the slot would overflow after removal. If disabled, the drawer will drop the overflowing items on the ground.",
   "config.extended_drawers.misc.allowRecursion": "Allow recursion",
@@ -110,5 +112,12 @@
   "config.extended_drawers.creativeBreakingBehaviour.mine": "Mine",
   "config.extended_drawers.creativeBreakingBehaviour.mine.description": "Mine: Breaking works as in survival.",
   "config.extended_drawers.creativeBreakingBehaviour.no_break": "No break",
-  "config.extended_drawers.creativeBreakingBehaviour.no_break.description": "No break: Block can't be broken, like bedrock in survival."
+  "config.extended_drawers.creativeBreakingBehaviour.no_break.description": "No break: Block can't be broken, like bedrock in survival.",
+
+  "config.extended_drawers.cachingMode.none": "None",
+  "config.extended_drawers.cachingMode.none.description": "None: No caching is preformed. This option generally results in poor performance, especially with large networks that are often interacted with, but is almost guaranteed to be bug free. Only use this option if you are experiencing issues with the other options.",
+  "config.extended_drawers.cachingMode.simple": "Simple",
+  "config.extended_drawers.cachingMode.simple.description": "Simple: Networks are cached, but the cache is rebuilt entirely each time the physical structure of the network changes. This option performs almost equally to the 'smart' option unless there's a lot of structural changes. This option is more likely to be stable and generally recommended. This is the default option.",
+  "config.extended_drawers.cachingMode.smart": "Smart",
+  "config.extended_drawers.cachingMode.smart.description": "Smart: Networks are cached, and the cache is updated incrementally as the physical structure of the network changes. This option performs better than the 'simple' option when there's a lot of structural changes, but it's more prone to bugs. Use this option if you're experiencing performance issues with the 'simple' option and are willing to risk buggy behaviour."
 }

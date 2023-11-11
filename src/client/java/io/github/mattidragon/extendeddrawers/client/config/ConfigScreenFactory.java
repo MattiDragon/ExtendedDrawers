@@ -12,6 +12,7 @@ import io.github.mattidragon.extendeddrawers.config.category.MutableClientCatego
 import io.github.mattidragon.extendeddrawers.config.category.MutableMiscCategory;
 import io.github.mattidragon.extendeddrawers.config.category.MutableStorageCategory;
 import io.github.mattidragon.extendeddrawers.misc.CreativeBreakingBehaviour;
+import io.github.mattidragon.extendeddrawers.network.cache.CachingMode;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
@@ -140,6 +141,12 @@ public class ConfigScreenFactory {
                         .binding(DEFAULT.misc().sideBreakingBehaviour(), instance::sideBreakingBehaviour, instance::sideBreakingBehaviour)
                         .controller(option -> EnumControllerBuilder.create(option).enumClass(CreativeBreakingBehaviour.class).formatValue(CreativeBreakingBehaviour::getDisplayName))
                         .description(value -> creativeBreakingBehaviourDescription(Text.translatable("config.extended_drawers.misc.sideBreakingBehaviour.description"), value))
+                        .build())
+                .option(Option.<CachingMode>createBuilder()
+                        .name(Text.translatable("config.extended_drawers.misc.cachingMode"))
+                        .binding(DEFAULT.misc().cachingMode(), instance::cachingMode, instance::cachingMode)
+                        .controller(option -> EnumControllerBuilder.create(option).enumClass(CachingMode.class).formatValue(CachingMode::getDisplayName))
+                        .description(option -> OptionDescription.of(Text.translatable("config.extended_drawers.misc.cachingMode.description").append(Text.translatable("config.extended_drawers.cachingMode.%s.description".formatted(option.asString())))))
                         .build())
                 .option(Option.<Boolean>createBuilder()
                         .name(Text.translatable("config.extended_drawers.misc.blockUpgradeRemovalsWithOverflow"))

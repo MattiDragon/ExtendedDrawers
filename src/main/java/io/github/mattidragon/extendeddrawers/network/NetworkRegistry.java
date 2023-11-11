@@ -4,7 +4,10 @@ package io.github.mattidragon.extendeddrawers.network;
 import com.kneelawk.graphlib.api.graph.GraphUniverse;
 import com.kneelawk.graphlib.api.graph.user.GraphEntityType;
 import com.kneelawk.graphlib.api.world.SaveMode;
+import io.github.mattidragon.extendeddrawers.ExtendedDrawers;
 import io.github.mattidragon.extendeddrawers.block.base.NetworkComponent;
+import io.github.mattidragon.extendeddrawers.network.cache.NetworkStorageCache;
+import io.github.mattidragon.extendeddrawers.network.cache.SmartNetworkStorageCache;
 import io.github.mattidragon.extendeddrawers.network.node.*;
 
 import java.util.List;
@@ -16,8 +19,8 @@ public class NetworkRegistry {
             .saveMode(SaveMode.INCREMENTAL)
             .build(id("drawers"));
     public static final GraphEntityType<NetworkStorageCache> STORAGE_CACHE_TYPE = GraphEntityType.of(id("storage_cache"),
-            NetworkStorageCache::new,
-            nbt -> new NetworkStorageCache(),
+            () -> ExtendedDrawers.CONFIG.get().misc().cachingMode().createCache(),
+            nbt -> ExtendedDrawers.CONFIG.get().misc().cachingMode().createCache(),
             NetworkStorageCache::split);
     public static final GraphEntityType<UpdateHandler> UPDATE_HANDLER_TYPE = GraphEntityType.of(id("update_handler"), UpdateHandler::new);
 
