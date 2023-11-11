@@ -6,6 +6,7 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 
 public abstract class NetworkBlockWithEntity<T extends BlockEntity> extends NetworkBlock implements BlockEntityProvider {
     protected NetworkBlockWithEntity(Settings settings) {
@@ -13,7 +14,8 @@ public abstract class NetworkBlockWithEntity<T extends BlockEntity> extends Netw
     }
     
     protected abstract BlockEntityType<T> getType();
-    
+
+    @Nullable
     protected final T getBlockEntity(World world, BlockPos pos) {
         return getType().get(world, pos);
     }

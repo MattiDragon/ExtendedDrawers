@@ -160,6 +160,7 @@ public class DrawerBlock extends NetworkBlockWithEntity<DrawerBlockEntity> imple
         var slot = getSlot(internalPos);
         
         var drawer = getBlockEntity(world, pos);
+        if (drawer == null) return ActionResult.PASS;
         var playerStack = player.getStackInHand(hand);
         var storage = drawer.storages[slot];
 
@@ -209,6 +210,7 @@ public class DrawerBlock extends NetworkBlockWithEntity<DrawerBlockEntity> imple
         if (!player.canModifyBlocks()) return;
         
         var drawer = getBlockEntity(world, pos);
+        if (drawer == null) return;
         
         // We don't have sub-block position or a hit result, so we need to raycast ourselves
         var hit = DrawerRaycastUtil.getTarget(player, pos);
@@ -247,14 +249,18 @@ public class DrawerBlock extends NetworkBlockWithEntity<DrawerBlockEntity> imple
     
     @Override
     public int getComparatorOutput(BlockState state, World world, BlockPos pos) {
-        return StorageUtil.calculateComparatorOutput(getBlockEntity(world, pos).combinedStorage);
+        var drawer = getBlockEntity(world, pos);
+        if (drawer == null) return 0;
+        return StorageUtil.calculateComparatorOutput(drawer.combinedStorage);
     }
     
     @Override
     public ActionResult toggleLock(BlockState state, World world, BlockPos pos, Vec3d hitPos, Direction side) {
         var facePos = DrawerRaycastUtil.calculateFaceLocation(pos, hitPos, side, state.get(FACING));
         if (facePos == null) return ActionResult.PASS;
-        var storage = getBlockEntity(world, pos).storages[getSlot(facePos)];
+        var drawer = getBlockEntity(world, pos);
+        if (drawer == null) return ActionResult.PASS;
+        var storage = drawer.storages[getSlot(facePos)];
         storage.setLocked(!storage.isLocked());
         return ActionResult.SUCCESS;
     }
@@ -263,7 +269,9 @@ public class DrawerBlock extends NetworkBlockWithEntity<DrawerBlockEntity> imple
     public ActionResult toggleVoid(BlockState state, World world, BlockPos pos, Vec3d hitPos, Direction side) {
         var facePos = DrawerRaycastUtil.calculateFaceLocation(pos, hitPos, side, state.get(FACING));
         if (facePos == null) return ActionResult.PASS;
-        var storage = getBlockEntity(world, pos).storages[getSlot(facePos)];
+        var drawer = getBlockEntity(world, pos);
+        if (drawer == null) return ActionResult.PASS;
+        var storage = drawer.storages[getSlot(facePos)];
         storage.setVoiding(!storage.isVoiding());
         return ActionResult.SUCCESS;
     }
@@ -272,7 +280,9 @@ public class DrawerBlock extends NetworkBlockWithEntity<DrawerBlockEntity> imple
     public ActionResult toggleHide(BlockState state, World world, BlockPos pos, Vec3d hitPos, Direction side) {
         var facePos = DrawerRaycastUtil.calculateFaceLocation(pos, hitPos, side, state.get(FACING));
         if (facePos == null) return ActionResult.PASS;
-        var storage = getBlockEntity(world, pos).storages[getSlot(facePos)];
+        var drawer = getBlockEntity(world, pos);
+        if (drawer == null) return ActionResult.PASS;
+        var storage = drawer.storages[getSlot(facePos)];
         storage.setHidden(!storage.isHidden());
         return ActionResult.SUCCESS;
     }
@@ -281,7 +291,9 @@ public class DrawerBlock extends NetworkBlockWithEntity<DrawerBlockEntity> imple
     public ActionResult toggleDuping(BlockState state, World world, BlockPos pos, Vec3d hitPos, Direction side) {
         var facePos = DrawerRaycastUtil.calculateFaceLocation(pos, hitPos, side, state.get(FACING));
         if (facePos == null) return ActionResult.PASS;
-        var storage = getBlockEntity(world, pos).storages[getSlot(facePos)];
+        var drawer = getBlockEntity(world, pos);
+        if (drawer == null) return ActionResult.PASS;
+        var storage = drawer.storages[getSlot(facePos)];
         storage.setDuping(!storage.isDuping());
         return ActionResult.SUCCESS;
     }
@@ -292,7 +304,9 @@ public class DrawerBlock extends NetworkBlockWithEntity<DrawerBlockEntity> imple
        
         var facePos = DrawerRaycastUtil.calculateFaceLocation(pos, hitPos, side, state.get(FACING));
         if (facePos == null) return ActionResult.PASS;
-        var storage = getBlockEntity(world, pos).storages[getSlot(facePos)];
+        var drawer = getBlockEntity(world, pos);
+        if (drawer == null) return ActionResult.PASS;
+        var storage = drawer.storages[getSlot(facePos)];
     
         if (!(stack.getItem() instanceof UpgradeItem)) {
             ExtendedDrawers.LOGGER.warn("Expected drawer upgrade to be UpgradeItem but found " + stack.getItem().getClass().getSimpleName() + " instead");
@@ -312,7 +326,9 @@ public class DrawerBlock extends NetworkBlockWithEntity<DrawerBlockEntity> imple
 
         var facePos = DrawerRaycastUtil.calculateFaceLocation(pos, hitPos, side, state.get(FACING));
         if (facePos == null) return ActionResult.PASS;
-        var storage = getBlockEntity(world, pos).storages[getSlot(facePos)];
+        var drawer = getBlockEntity(world, pos);
+        if (drawer == null) return ActionResult.PASS;
+        var storage = drawer.storages[getSlot(facePos)];
 
         if (!stack.isOf(ModItems.LIMITER)) {
             ExtendedDrawers.LOGGER.warn("Expected limiter to be limiter but found " + stack + " instead");
