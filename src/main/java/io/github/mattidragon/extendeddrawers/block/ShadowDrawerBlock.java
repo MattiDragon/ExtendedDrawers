@@ -51,7 +51,9 @@ public class ShadowDrawerBlock extends NetworkBlockWithEntity<ShadowDrawerBlockE
     @Override
     public void onPlaced(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
         super.onPlaced(world, pos, state, placer, itemStack);
-        getBlockEntity(world, pos).recalculateContents();
+        var drawer = getBlockEntity(world, pos);
+        if (drawer == null) return;
+        drawer.recalculateContents();
     }
 
     private static Storage<ItemVariant> createStorage(ServerWorld world, BlockPos pos) {
@@ -90,6 +92,7 @@ public class ShadowDrawerBlock extends NetworkBlockWithEntity<ShadowDrawerBlockE
         if (!(world instanceof ServerWorld serverWorld)) return ActionResult.CONSUME_PARTIAL;
 
         var drawer = getBlockEntity(world, pos);
+        if (drawer == null) return ActionResult.PASS;
         var playerStack = player.getStackInHand(hand);
         
         if (player.isSneaking() || drawer.item.isBlank()) {
@@ -128,6 +131,7 @@ public class ShadowDrawerBlock extends NetworkBlockWithEntity<ShadowDrawerBlockE
         if (!(world instanceof ServerWorld serverWorld)) return;
 
         var drawer = getBlockEntity(world, pos);
+        if (drawer == null) return;
         
         var hit = DrawerRaycastUtil.getTarget(player, pos);
         if (hit.getType() == HitResult.Type.MISS) return;
@@ -160,6 +164,7 @@ public class ShadowDrawerBlock extends NetworkBlockWithEntity<ShadowDrawerBlockE
     public ActionResult toggleHide(BlockState state, World world, BlockPos pos, Vec3d hitPos, Direction side) {
         if (side != state.get(FACING)) return ActionResult.PASS;
         var drawer = getBlockEntity(world, pos);
+        if (drawer == null) return ActionResult.PASS;
         drawer.setHidden(!drawer.isHidden());
         return ActionResult.SUCCESS;
     }

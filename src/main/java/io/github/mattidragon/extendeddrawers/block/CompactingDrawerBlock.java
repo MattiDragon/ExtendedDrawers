@@ -157,6 +157,7 @@ public class CompactingDrawerBlock extends NetworkBlockWithEntity<CompactingDraw
         if (internalPos == null) return ActionResult.PASS;
 
         var drawer = getBlockEntity(world, pos);
+        if (drawer == null) return ActionResult.PASS;
         var slot = getSlot(internalPos, drawer.storage.getActiveSlotCount());
         var storage = drawer.storage.getSlot(slot);
 
@@ -208,6 +209,7 @@ public class CompactingDrawerBlock extends NetworkBlockWithEntity<CompactingDraw
         if (!player.canModifyBlocks()) return;
         
         var drawer = getBlockEntity(world, pos);
+        if (drawer == null) return;
         
         // We don't have sub-block position or a hit result, so we need to raycast ourselves
         var hit = DrawerRaycastUtil.getTarget(player, pos);
@@ -268,14 +270,18 @@ public class CompactingDrawerBlock extends NetworkBlockWithEntity<CompactingDraw
     
     @Override
     public int getComparatorOutput(BlockState state, World world, BlockPos pos) {
-        return StorageUtil.calculateComparatorOutput(getBlockEntity(world, pos).storage);
+        var drawer = getBlockEntity(world, pos);
+        if (drawer == null) return 0;
+        return StorageUtil.calculateComparatorOutput(drawer.storage);
     }
     
     @Override
     public ActionResult toggleLock(BlockState state, World world, BlockPos pos, Vec3d hitPos, Direction side) {
         var facePos = DrawerRaycastUtil.calculateFaceLocation(pos, hitPos, side, state.get(FACING));
         if (facePos == null) return ActionResult.PASS;
-        var storage = getBlockEntity(world, pos).storage;
+        var drawer = getBlockEntity(world, pos);
+        if (drawer == null) return ActionResult.PASS;
+        var storage = drawer.storage;
         storage.setLocked(!storage.isLocked());
         return ActionResult.SUCCESS;
     }
@@ -284,7 +290,9 @@ public class CompactingDrawerBlock extends NetworkBlockWithEntity<CompactingDraw
     public ActionResult toggleVoid(BlockState state, World world, BlockPos pos, Vec3d hitPos, Direction side) {
         var facePos = DrawerRaycastUtil.calculateFaceLocation(pos, hitPos, side, state.get(FACING));
         if (facePos == null) return ActionResult.PASS;
-        var storage = getBlockEntity(world, pos).storage;
+        var drawer = getBlockEntity(world, pos);
+        if (drawer == null) return ActionResult.PASS;
+        var storage = drawer.storage;
         storage.setVoiding(!storage.isVoiding());
         return ActionResult.SUCCESS;
     }
@@ -293,7 +301,9 @@ public class CompactingDrawerBlock extends NetworkBlockWithEntity<CompactingDraw
     public ActionResult toggleHide(BlockState state, World world, BlockPos pos, Vec3d hitPos, Direction side) {
         var facePos = DrawerRaycastUtil.calculateFaceLocation(pos, hitPos, side, state.get(FACING));
         if (facePos == null) return ActionResult.PASS;
-        var storage = getBlockEntity(world, pos).storage;
+        var drawer = getBlockEntity(world, pos);
+        if (drawer == null) return ActionResult.PASS;
+        var storage = drawer.storage;
         storage.setHidden(!storage.isHidden());
         return ActionResult.SUCCESS;
     }
@@ -302,7 +312,9 @@ public class CompactingDrawerBlock extends NetworkBlockWithEntity<CompactingDraw
     public ActionResult toggleDuping(BlockState state, World world, BlockPos pos, Vec3d hitPos, Direction side) {
         var facePos = DrawerRaycastUtil.calculateFaceLocation(pos, hitPos, side, state.get(FACING));
         if (facePos == null) return ActionResult.PASS;
-        var storage = getBlockEntity(world, pos).storage;
+        var drawer = getBlockEntity(world, pos);
+        if (drawer == null) return ActionResult.PASS;
+        var storage = drawer.storage;
         storage.setDuping(!storage.isDuping());
         return ActionResult.SUCCESS;
     }
@@ -313,7 +325,9 @@ public class CompactingDrawerBlock extends NetworkBlockWithEntity<CompactingDraw
        
         var facePos = DrawerRaycastUtil.calculateFaceLocation(pos, hitPos, side, state.get(FACING));
         if (facePos == null) return ActionResult.PASS;
-        var storage = getBlockEntity(world, pos).storage;
+        var drawer = getBlockEntity(world, pos);
+        if (drawer == null) return ActionResult.PASS;
+        var storage = drawer.storage;
     
         if (!(stack.getItem() instanceof UpgradeItem)) {
             ExtendedDrawers.LOGGER.warn("Expected drawer upgrade to be UpgradeItem but found " + stack.getItem().getClass().getSimpleName() + " instead");
@@ -335,7 +349,9 @@ public class CompactingDrawerBlock extends NetworkBlockWithEntity<CompactingDraw
 
         var facePos = DrawerRaycastUtil.calculateFaceLocation(pos, hitPos, side, state.get(FACING));
         if (facePos == null) return ActionResult.PASS;
-        var storage = getBlockEntity(world, pos).storage;
+        var drawer = getBlockEntity(world, pos);
+        if (drawer == null) return ActionResult.PASS;
+        var storage = drawer.storage;
 
         if (!stack.isOf(ModItems.LIMITER)) {
             ExtendedDrawers.LOGGER.warn("Expected limiter to be limiter but found " + stack + " instead");
