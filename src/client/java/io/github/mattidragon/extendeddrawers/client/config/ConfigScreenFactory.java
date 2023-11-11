@@ -119,8 +119,6 @@ public class ConfigScreenFactory {
     }
 
     private static ConfigCategory createMiscCategory(MutableMiscCategory instance) {
-        var text = new Text[]{Text.translatable("config.extended_drawers.misc.drawersDropContentsOnBreak.description").append(Text.translatable("config.extended_drawers.misc.drawersDropContentsOnBreak.warning").formatted(Formatting.YELLOW))};
-        var text1 = new Text[]{Text.translatable("config.extended_drawers.misc.allowRecursion.description").append(Text.translatable("config.extended_drawers.misc.allowRecursion.warning").formatted(Formatting.YELLOW))};
         return ConfigCategory.createBuilder()
                 .name(Text.translatable("config.extended_drawers.misc"))
                 .option(Option.<Integer>createBuilder()
@@ -153,13 +151,19 @@ public class ConfigScreenFactory {
                         .name(Text.translatable("config.extended_drawers.misc.allowRecursion"))
                         .binding(DEFAULT.misc().allowRecursion(), instance::allowRecursion, instance::allowRecursion)
                         .controller(TickBoxControllerBuilder::create)
-                        .description(OptionDescription.of(text1))
+                        .description(OptionDescription.of(Text.translatable("config.extended_drawers.misc.allowRecursion.description").append(Text.translatable("config.extended_drawers.misc.allowRecursion.warning").formatted(Formatting.YELLOW))))
                         .build())
                 .option(Option.<Boolean>createBuilder()
                         .name(Text.translatable("config.extended_drawers.misc.drawersDropContentsOnBreak"))
                         .binding(DEFAULT.misc().drawersDropContentsOnBreak(), instance::drawersDropContentsOnBreak, instance::drawersDropContentsOnBreak)
                         .controller(TickBoxControllerBuilder::create)
-                        .description(OptionDescription.of(text))
+                        .description(OptionDescription.of(Text.translatable("config.extended_drawers.misc.drawersDropContentsOnBreak.description").append(Text.translatable("config.extended_drawers.misc.drawersDropContentsOnBreak.warning").formatted(Formatting.YELLOW))))
+                        .build())
+                .option(Option.<Boolean>createBuilder()
+                        .name(Text.translatable("config.extended_drawers.misc.dropDrawersInCreative"))
+                        .binding(DEFAULT.misc().dropDrawersInCreative(), instance::dropDrawersInCreative, instance::dropDrawersInCreative)
+                        .controller(TickBoxControllerBuilder::create)
+                        .description(OptionDescription.of(Text.translatable("config.extended_drawers.misc.dropDrawersInCreative.description")))
                         .build())
                 .build();
     }

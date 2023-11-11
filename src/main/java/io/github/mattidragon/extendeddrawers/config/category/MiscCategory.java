@@ -12,8 +12,9 @@ public record MiscCategory(int insertAllTime,
                            CreativeBreakingBehaviour sideBreakingBehaviour,
                            boolean blockUpgradeRemovalsWithOverflow,
                            boolean allowRecursion,
-                           boolean drawersDropContentsOnBreak) implements MutableMiscCategory.Source {
-    public static final MiscCategory DEFAULT = new MiscCategory(10, CreativeBreakingBehaviour.MINE, CreativeBreakingBehaviour.BREAK, true, false, false);
+                           boolean drawersDropContentsOnBreak,
+                           boolean dropDrawersInCreative) implements MutableMiscCategory.Source {
+    public static final MiscCategory DEFAULT = new MiscCategory(10, CreativeBreakingBehaviour.MINE, CreativeBreakingBehaviour.BREAK, true, false, false, true);
 
     public static final Codec<MiscCategory> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             DefaultedFieldCodec.of(Codec.INT, "insertAllTime", DEFAULT.insertAllTime).forGetter(MiscCategory::insertAllTime),
@@ -21,6 +22,7 @@ public record MiscCategory(int insertAllTime,
             DefaultedFieldCodec.of(CreativeBreakingBehaviour.CODEC, "sideBreakingBehaviour", DEFAULT.sideBreakingBehaviour).forGetter(MiscCategory::sideBreakingBehaviour),
             DefaultedFieldCodec.of(Codec.BOOL, "blockUpgradeRemovalsWithOverflow", DEFAULT.blockUpgradeRemovalsWithOverflow).forGetter(MiscCategory::blockUpgradeRemovalsWithOverflow),
             DefaultedFieldCodec.of(Codec.BOOL, "allowRecursion", DEFAULT.allowRecursion).forGetter(MiscCategory::allowRecursion),
-            DefaultedFieldCodec.of(Codec.BOOL, "drawersDropContentsOnBreak", DEFAULT.drawersDropContentsOnBreak).forGetter(MiscCategory::drawersDropContentsOnBreak)
+            DefaultedFieldCodec.of(Codec.BOOL, "drawersDropContentsOnBreak", DEFAULT.drawersDropContentsOnBreak).forGetter(MiscCategory::drawersDropContentsOnBreak),
+            DefaultedFieldCodec.of(Codec.BOOL, "dropDrawersInCreative", DEFAULT.dropDrawersInCreative).forGetter(MiscCategory::dropDrawersInCreative)
     ).apply(instance, MiscCategory::new));
 }

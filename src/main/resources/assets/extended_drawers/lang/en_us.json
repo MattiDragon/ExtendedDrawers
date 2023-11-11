@@ -73,6 +73,8 @@
   "config.extended_drawers.misc.drawersDropContentsOnBreak": "Drop drawer contents",
   "config.extended_drawers.misc.drawersDropContentsOnBreak.description": "If enabled, drawers will drop their contents instead of retaining them when broken.\n\n",
   "config.extended_drawers.misc.drawersDropContentsOnBreak.warning": "Warning: This can lead to large amounts of dropped items, causing significant lag.",
+  "config.extended_drawers.misc.dropDrawersInCreative": "Drop drawers in creative",
+  "config.extended_drawers.misc.dropDrawersInCreative.description": "If enabled, drawers will drop as items even when broken in creative mode.",
   "config.extended_drawers.client": "Client",
   "config.extended_drawers.client.itemRenderDistance": "Item render distance",
   "config.extended_drawers.client.itemRenderDistance.description": "The render distance of the item display on drawers. Measured in blocks.",
