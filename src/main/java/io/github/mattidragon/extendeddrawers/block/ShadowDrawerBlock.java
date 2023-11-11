@@ -5,7 +5,7 @@ import io.github.mattidragon.extendeddrawers.block.base.DrawerInteractionHandler
 import io.github.mattidragon.extendeddrawers.block.base.NetworkBlockWithEntity;
 import io.github.mattidragon.extendeddrawers.block.entity.ShadowDrawerBlockEntity;
 import io.github.mattidragon.extendeddrawers.misc.DrawerRaycastUtil;
-import io.github.mattidragon.extendeddrawers.network.NetworkStorageCache;
+import io.github.mattidragon.extendeddrawers.network.cache.NetworkStorageCache;
 import io.github.mattidragon.extendeddrawers.network.node.DrawerNetworkBlockNode;
 import io.github.mattidragon.extendeddrawers.network.node.ShadowDrawerBlockNode;
 import io.github.mattidragon.extendeddrawers.registry.ModBlocks;

@@ -3,6 +3,7 @@ package io.github.mattidragon.extendeddrawers.network;
 import com.kneelawk.graphlib.api.graph.GraphEntityContext;
 import com.kneelawk.graphlib.api.graph.user.GraphEntity;
 import com.kneelawk.graphlib.api.graph.user.GraphEntityType;
+import io.github.mattidragon.extendeddrawers.network.cache.NetworkStorageCache;
 import io.github.mattidragon.extendeddrawers.network.node.DrawerNetworkBlockNode;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.server.world.ServerWorld;
@@ -35,7 +36,7 @@ public class UpdateHandler implements GraphEntity<UpdateHandler> {
         NetworkStorageCache networkStorageCache = context.getGraph().getGraphEntity(NetworkRegistry.STORAGE_CACHE_TYPE);
         // Structure updates are handled elsewhere and count updates don't matter
         if (queuedUpdate == ChangeType.CONTENT) {
-            networkStorageCache.sort();
+            networkStorageCache.onSortingChanged();
         }
 
         context.getGraph()

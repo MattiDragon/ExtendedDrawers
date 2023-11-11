@@ -3,7 +3,7 @@ package io.github.mattidragon.extendeddrawers.misc;
 import com.kneelawk.graphlib.api.graph.NodeHolder;
 import com.kneelawk.graphlib.api.util.NodePos;
 import io.github.mattidragon.extendeddrawers.network.NetworkRegistry;
-import io.github.mattidragon.extendeddrawers.network.NetworkStorageCache;
+import io.github.mattidragon.extendeddrawers.network.cache.NetworkStorageCache;
 import io.github.mattidragon.extendeddrawers.network.node.CompactingDrawerBlockNode;
 import io.github.mattidragon.extendeddrawers.network.node.DrawerBlockNode;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
@@ -71,7 +71,7 @@ public class DrawerCacheCommand {
                                                 .map(graph -> graph.getGraphEntity(NetworkRegistry.STORAGE_CACHE_TYPE))
                                                 .toList();
 
-                                        caches.forEach(NetworkStorageCache::addMissingStorages);
+                                        caches.forEach(NetworkStorageCache::update);
 
                                         source.sendFeedback(() -> Text.literal("Updated cache").formatted(Formatting.GREEN), false);
                                         return 1;
@@ -85,7 +85,7 @@ public class DrawerCacheCommand {
                                                         .map(graph -> graph.getGraphEntity(NetworkRegistry.STORAGE_CACHE_TYPE))
                                                         .toList();
 
-                                                caches.forEach(NetworkStorageCache::forceCacheUpdate);
+                                                caches.forEach(NetworkStorageCache::forceUpdate);
 
                                                 source.sendFeedback(() -> Text.literal("Force updated cache").formatted(Formatting.GREEN), false);
                                                 return 1;

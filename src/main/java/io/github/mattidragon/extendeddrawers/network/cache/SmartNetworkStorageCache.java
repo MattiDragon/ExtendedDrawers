@@ -1,4 +1,4 @@
-package io.github.mattidragon.extendeddrawers.network;
+package io.github.mattidragon.extendeddrawers.network.cache;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
@@ -13,8 +13,6 @@ import io.github.mattidragon.extendeddrawers.network.node.DrawerBlockNode;
 import io.github.mattidragon.extendeddrawers.storage.DrawerStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.base.CombinedStorage;
-import net.minecraft.nbt.NbtElement;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
@@ -27,30 +25,20 @@ import java.util.*;
  * Caches storages of all slots in networks to make lookup less expensive.
  */
 @SuppressWarnings("UnstableApiUsage")
-public class NetworkStorageCache implements GraphEntity<NetworkStorageCache> {
+public class SmartNetworkStorageCache implements NetworkStorageCache {
     private GraphEntityContext context;
     private final CombinedStorage<ItemVariant, DrawerStorage> cachedStorage = new CombinedStorage<>(new ArrayList<>());
     private final Multimap<BlockPos, DrawerStorage> positions = HashMultimap.create();
     private final Set<BlockPos> missingPositions = new HashSet<>();
 
-    /**
-     * Helper to easily get the cached storage from a world and pos.
-     */
-    public static CombinedStorage<ItemVariant, DrawerStorage> get(ServerWorld world, BlockPos pos) {
-        return NetworkRegistry.UNIVERSE.getServerGraphWorld(world)
-                .getLoadedGraphsAt(pos)
-                .map(graph -> graph.getGraphEntity(NetworkRegistry.STORAGE_CACHE_TYPE))
-                .map(NetworkStorageCache::get)
-                .findFirst()
-                .orElseGet(() -> new CombinedStorage<>(new ArrayList<>()));
-    }
-
+    @Override
     public CombinedStorage<ItemVariant, DrawerStorage> get() {
-        addMissingStorages();
+        update();
         return cachedStorage;
     }
 
-    public void addMissingStorages() {
+    @Override
+    public void update() {
         if (!missingPositions.isEmpty()) {
             missingPositions.forEach(pos -> {
                 if (context.getBlockWorld().getBlockEntity(pos) instanceof StorageDrawerBlockEntity drawer) {
@@ -61,11 +49,12 @@ public class NetworkStorageCache implements GraphEntity<NetworkStorageCache> {
                 }
             });
             missingPositions.clear();
-            sort();
+            onSortingChanged();
         }
     }
 
-    public void sort() {
+    @Override
+    public void onSortingChanged() {
         cachedStorage.parts.sort(null);
     }
 
@@ -82,24 +71,14 @@ public class NetworkStorageCache implements GraphEntity<NetworkStorageCache> {
     }
 
     @Override
-    public @NotNull GraphEntityType<?> getType() {
-        return NetworkRegistry.STORAGE_CACHE_TYPE;
-    }
-
-    @Override
-    public @Nullable NbtElement toTag() {
-        return null;
-    }
-
-    @Override
     public void onNodeCreated(@NotNull NodeHolder<BlockNode> node, @Nullable NodeEntity nodeEntity) {
-        GraphEntity.super.onNodeCreated(node, nodeEntity);
+        NetworkStorageCache.super.onNodeCreated(node, nodeEntity);
         missingPositions.add(node.getBlockPos());
     }
 
     @Override
     public void onNodeDestroyed(@NotNull NodeHolder<BlockNode> node, @Nullable NodeEntity nodeEntity, Map<LinkPos, LinkEntity> linkEntities) {
-        GraphEntity.super.onNodeDestroyed(node, nodeEntity, linkEntities);
+        NetworkStorageCache.super.onNodeDestroyed(node, nodeEntity, linkEntities);
         var pos = node.getBlockPos();
 
         // Remove storages from cache
@@ -108,26 +87,33 @@ public class NetworkStorageCache implements GraphEntity<NetworkStorageCache> {
         missingPositions.remove(pos);
     }
 
+    @Override
     public void onNodeUnloaded(BlockPos pos) {
         positions.get(pos).forEach(cachedStorage.parts::remove);
         positions.removeAll(pos);
         missingPositions.add(pos);
     }
 
+    @Override
     public void onNodeReloaded(BlockPos pos) {
         missingPositions.add(pos);
     }
 
     @Override
     public void merge(@NotNull NetworkStorageCache other) {
-        this.positions.putAll(other.positions);
-        this.missingPositions.addAll(other.missingPositions);
-        this.cachedStorage.parts.addAll(other.cachedStorage.parts);
-        this.sort();
+        if (!(other instanceof SmartNetworkStorageCache smart)) {
+            forceUpdate();
+        } else {
+            this.positions.putAll(smart.positions);
+            this.missingPositions.addAll(smart.missingPositions);
+            this.cachedStorage.parts.addAll(smart.cachedStorage.parts);
+            this.onSortingChanged();
+        }
     }
 
-    public @NotNull NetworkStorageCache split(@NotNull BlockGraph originalGraph, @NotNull BlockGraph newGraph) {
-        var newCache = new NetworkStorageCache();
+    @Override
+    public @NotNull SmartNetworkStorageCache split(@NotNull BlockGraph originalGraph, @NotNull BlockGraph newGraph) {
+        var newCache = new SmartNetworkStorageCache();
 
         // Split position based storage cache
         for (var iterator = positions.entries().iterator(); iterator.hasNext(); ) {
@@ -152,15 +138,16 @@ public class NetworkStorageCache implements GraphEntity<NetworkStorageCache> {
 
         // Update storage of new cache and sort the storage of this one for good measure.
         newCache.cachedStorage.parts.addAll(newCache.positions.values());
-        newCache.sort();
-        sort();
+        newCache.onSortingChanged();
+        onSortingChanged();
 
         return newCache;
     }
 
+    @Override
     public List<Text> getDebugInfo() {
         var list = new ArrayList<Text>();
-        list.add(Text.literal("Storage Cache Debug Info").formatted(Formatting.BOLD, Formatting.YELLOW));
+        list.add(Text.literal("Smart Storage Cache Debug Info").formatted(Formatting.BOLD, Formatting.YELLOW));
         list.add(Text.literal("  %s uncached positions".formatted(missingPositions.size())));
         list.add(Text.literal("  %s cached positions".formatted(positions.size())));
         list.add(Text.literal("  %s storages".formatted(cachedStorage.parts.size())));
@@ -190,7 +177,8 @@ public class NetworkStorageCache implements GraphEntity<NetworkStorageCache> {
         return list;
     }
 
-    public void forceCacheUpdate() {
+    @Override
+    public void forceUpdate() {
         cachedStorage.parts.clear();
         positions.clear();
         missingPositions.clear();
@@ -198,9 +186,10 @@ public class NetworkStorageCache implements GraphEntity<NetworkStorageCache> {
                 .getNodes()
                 .map(NodeHolder::getBlockPos)
                 .forEach(missingPositions::add);
-        addMissingStorages();
+        update();
     }
 
+    @Override
     public Text getDebugInfo(BlockPos pos) {
         if (missingPositions.contains(pos)) {
             return Text.literal("Not cached").formatted(Formatting.GREEN);
