@@ -200,5 +200,15 @@ public class NetworkStorageCache implements GraphEntity<NetworkStorageCache> {
                 .forEach(missingPositions::add);
         addMissingStorages();
     }
+
+    public Text getDebugInfo(BlockPos pos) {
+        if (missingPositions.contains(pos)) {
+            return Text.literal("Not cached").formatted(Formatting.GREEN);
+        }
+        if (positions.containsKey(pos)) {
+            return Text.literal("Cached: %s storage(s)".formatted(positions.get(pos).size())).formatted(Formatting.GREEN);
+        }
+        return Text.literal("Missing from cache").formatted(Formatting.RED);
+    }
 }
 
