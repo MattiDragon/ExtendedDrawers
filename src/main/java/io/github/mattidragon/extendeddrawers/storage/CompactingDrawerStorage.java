@@ -1,5 +1,6 @@
 package io.github.mattidragon.extendeddrawers.storage;
 
+import com.google.common.base.MoreObjects;
 import io.github.mattidragon.extendeddrawers.ExtendedDrawers;
 import io.github.mattidragon.extendeddrawers.block.entity.CompactingDrawerBlockEntity;
 import io.github.mattidragon.extendeddrawers.compacting.CompressionLadder;
@@ -22,6 +23,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Stream;
 
 @SuppressWarnings("UnstableApiUsage")
@@ -119,6 +121,11 @@ public final class CompactingDrawerStorage extends SnapshotParticipant<Compactin
         }
 
         return extracted;
+    }
+
+    @Override
+    public Iterator<StorageView<ItemVariant>> nonEmptyIterator() {
+        return new NonEmptyIterator();
     }
 
     @Override
@@ -274,6 +281,33 @@ public final class CompactingDrawerStorage extends SnapshotParticipant<Compactin
         }
     }
 
+
+    private class NonEmptyIterator implements Iterator<StorageView<ItemVariant>> {
+        private int index = slots.length - 1;
+
+        @Override
+        public boolean hasNext() {
+            // Loop over and check for non-empty storage
+            // No need for range check as the loop doesn't do anything if index is out of bounds
+            for (int i = index; i >= 0; i--) {
+                if (!getSlots()[i].isResourceBlank()) return true;
+            }
+
+            return false;
+        }
+
+        @Override
+        public Slot next() {
+            for (; index >= 0; index--) {
+                if (!getSlots()[index].isResourceBlank()) {
+                    return slots[index--];
+                }
+            }
+
+            throw new NoSuchElementException();
+        }
+    }
+
     public class Slot implements SingleSlotStorage<ItemVariant> {
         private int compression;
         private ItemVariant item;
@@ -291,6 +325,7 @@ public final class CompactingDrawerStorage extends SnapshotParticipant<Compactin
 
         @Override
         public long insert(ItemVariant item, long maxAmount, TransactionContext transaction) {
+            if (updatePending) updateSlots();
             StoragePreconditions.notBlankNotNegative(item, maxAmount);
             if (blocked) return 0;
             if (!this.item.equals(item) && !this.item.isBlank()) return 0;
@@ -319,6 +354,7 @@ public final class CompactingDrawerStorage extends SnapshotParticipant<Compactin
 
         @Override
         public long extract(ItemVariant item, long maxAmount, TransactionContext transaction) {
+            if (updatePending) updateSlots();
             if (blocked) return 0;
             if (!this.item.equals(item)) return 0;
 
@@ -350,6 +386,7 @@ public final class CompactingDrawerStorage extends SnapshotParticipant<Compactin
 
         @Override
         public boolean isResourceBlank() {
+            if (updatePending) updateSlots();
             return item.isBlank();
         }
 
@@ -389,6 +426,15 @@ public final class CompactingDrawerStorage extends SnapshotParticipant<Compactin
 
         public long getCompression() {
             return compression;
+        }
+
+        @Override
+        public String toString() {
+            return MoreObjects.toStringHelper(this)
+                    .add("compression", compression)
+                    .add("item", item)
+                    .add("blocked", blocked)
+                    .toString();
         }
     }
 }
