@@ -1,6 +1,5 @@
 package io.github.mattidragon.extendeddrawers.network.cache;
 
-import com.mojang.serialization.Codec;
 import net.minecraft.text.Text;
 import net.minecraft.util.StringIdentifiable;
 
@@ -12,6 +11,7 @@ public enum CachingMode implements StringIdentifiable {
     SIMPLE(SimpleNetworkStorageCache::new),
     SMART(SmartNetworkStorageCache::new);
 
+    @SuppressWarnings("deprecation")
     public static final Codec<CachingMode> CODEC = StringIdentifiable.createCodec(CachingMode::values);
 
     private final Supplier<NetworkStorageCache> cacheSupplier;
