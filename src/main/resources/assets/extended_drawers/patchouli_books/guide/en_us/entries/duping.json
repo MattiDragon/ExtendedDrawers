@@ -1,9 +1,9 @@
 {
-  "name": "Duping Mode",
-  "icon": "extended_drawers:dupe_wand",
-  "category": "extended_drawers:modifiers",
-  "pages": [
-    "Duping mode can be toggled with a $(item)dupe wand/$. It makes it so that the $(l:drawers)drawer@! starts duping items when you extract beyond what it stores. @p@This is useful for server admins that want to give out free items, or as an endgame unlock in a modpack.",
-    "Like $(l:lock)locks@! the items aren't consumed and can be applied to access points. @p@Unlike other modifiers this one isn't obtainable in survival mode by default. However, modpacks often add recipes for the dupe wand."
-  ]
+    "name": "book.extended_drawers.patchouli.text13",
+    "icon": "extended_drawers:dupe_wand",
+    "category": "extended_drawers:modifiers",
+    "pages": [
+        "Duping mode can be toggled with a $(item)dupe wand/$. It makes it so that the $(l:drawers)drawer@! starts duping items when you extract beyond what it stores. @p@This is useful for server admins that want to give out free items, or as an endgame unlock in a modpack.",
+        "Like $(l:lock)locks@! the items aren't consumed and can be applied to access points. @p@Unlike other modifiers this one isn't obtainable in survival mode by default. However, modpacks often add recipes for the dupe wand."
+    ]
 }

@@ -1,33 +1,33 @@
 {
-  "name": "Drawer Upgrades",
-  "icon": "extended_drawers:t2_upgrade",
-  "category": "extended_drawers:modifiers",
-  "pages": [
-    "@item@Upgrades@! are applied using different upgrade items. They increase the capacity of a $(l:drawers)drawer@! slot. @p@To install one, simply click on a slot with the @item@upgrade@! in hand while sneaking. @p@They are most useful when storing lots of items.",
-    {
-      "type": "patchouli:crafting",
-      "recipe": "extended_drawers:upgrade_frame",
-      "text": "The $(item)Upgrade Frame/$ is the base item of all upgrades. It doesn't do anything by itself."
-    },
-    {
-      "type": "patchouli:crafting",
-      "recipe": "extended_drawers:t1_upgrade",
-      "text": "The $(item)Drawer Upgrade I/$ is the first tier of the upgrade. It doubles the capacity of the drawer."
-    },
-    {
-      "type": "patchouli:crafting",
-      "recipe": "extended_drawers:t2_upgrade",
-      "text": "The $(item)Drawer Upgrade II/$ is the second tier of the upgrade. It multiplies the capacity of the drawer by 4."
-    },
-    {
-      "type": "patchouli:crafting",
-      "recipe": "extended_drawers:t3_upgrade",
-      "text": "The $(item)Drawer Upgrade III/$ is the third tier of the upgrade. It multiplies the capacity of the drawer by 8."
-    },
-    {
-      "type": "patchouli:crafting",
-      "recipe": "extended_drawers:t4_upgrade",
-      "text": "The $(item)Drawer Upgrade IV/$ is the fourth tier of the upgrade. It multiplies the capacity of the drawer by 16."
-    }
-  ]
+    "name": "book.extended_drawers.patchouli.text23",
+    "icon": "extended_drawers:t2_upgrade",
+    "category": "extended_drawers:modifiers",
+    "pages": [
+        "@item@Upgrades@! are applied using different upgrade items. They increase the capacity of a $(l:drawers)drawer@! slot. @p@To install one, simply click on a slot with the @item@upgrade@! in hand while sneaking. @p@They are most useful when storing lots of items.",
+        {
+            "type": "patchouli:crafting",
+            "recipe": "extended_drawers:upgrade_frame",
+            "text": "book.extended_drawers.patchouli.text24"
+        },
+        {
+            "type": "patchouli:crafting",
+            "recipe": "extended_drawers:t1_upgrade",
+            "text": "book.extended_drawers.patchouli.text25"
+        },
+        {
+            "type": "patchouli:crafting",
+            "recipe": "extended_drawers:t2_upgrade",
+            "text": "book.extended_drawers.patchouli.text26"
+        },
+        {
+            "type": "patchouli:crafting",
+            "recipe": "extended_drawers:t3_upgrade",
+            "text": "book.extended_drawers.patchouli.text27"
+        },
+        {
+            "type": "patchouli:crafting",
+            "recipe": "extended_drawers:t4_upgrade",
+            "text": "book.extended_drawers.patchouli.text28"
+        }
+    ]
 }

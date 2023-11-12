@@ -1,17 +1,17 @@
 {
-  "name": "Normal Drawers",
-  "icon": "extended_drawers:single_drawer",
-  "category": "extended_drawers:blocks",
-  "pages": [
-    "@item@Drawers@! are the core components of $(l:simple_networks)networks@! as they store items. They can be improved using $(l:modifiers)modifiers@!. @p@They come in different configurations: 1x1, 2x1 and 2x2.",
-    {
-      "type": "patchouli:crafting",
-      "recipe": "extended_drawers:single_drawer",
-      "recipe2": "extended_drawers:double_drawer"
-    },
-    {
-      "type": "patchouli:crafting",
-      "recipe": "extended_drawers:quad_drawer"
-    }
-  ]
+    "name": "book.extended_drawers.patchouli.text12",
+    "icon": "extended_drawers:single_drawer",
+    "category": "extended_drawers:blocks",
+    "pages": [
+        "@item@Drawers@! are the core components of $(l:simple_networks)networks@! as they store items. They can be improved using $(l:modifiers)modifiers@!. @p@They come in different configurations: 1x1, 2x1 and 2x2.",
+        {
+            "type": "patchouli:crafting",
+            "recipe": "extended_drawers:single_drawer",
+            "recipe2": "extended_drawers:double_drawer"
+        },
+        {
+            "type": "patchouli:crafting",
+            "recipe": "extended_drawers:quad_drawer"
+        }
+    ]
 }

@@ -1,12 +1,12 @@
 {
-  "name": "Access Points",
-  "icon": "extended_drawers:access_point",
-  "category": "extended_drawers:blocks",
-  "pages": [
-    "@item@Access Points@! allow inserting items to the whole $(l:simple_networks)network@!, automatically finding the right drawer, see $(l:insertion_order)this@! for ordering. @p@They also act as an interface for other mods to access the network, see $(l:mod_interoperability)this@! for more info.",
-    {
-      "type": "patchouli:crafting",
-      "recipe": "extended_drawers:access_point"
-    }
-  ]
+    "name": "book.extended_drawers.patchouli.text7",
+    "icon": "extended_drawers:access_point",
+    "category": "extended_drawers:blocks",
+    "pages": [
+        "@item@Access Points@! allow inserting items to the whole $(l:simple_networks)network@!, automatically finding the right drawer, see $(l:insertion_order)this@! for ordering. @p@They also act as an interface for other mods to access the network, see $(l:mod_interoperability)this@! for more info.",
+        {
+            "type": "patchouli:crafting",
+            "recipe": "extended_drawers:access_point"
+        }
+    ]
 }

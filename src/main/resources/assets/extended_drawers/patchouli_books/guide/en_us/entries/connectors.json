@@ -1,12 +1,12 @@
 {
-  "name": "Connectors",
-  "icon": "extended_drawers:connector",
-  "category": "extended_drawers:blocks",
-  "pages": [
-    "@item@Connectors@! are simple blocks that allow you to connect different parts of your $(l:simple_networks)network@! together without wasting resources on $(l:drawers)drawers@!. @p@They also produce less lag as they don't have to store any data.",
-    {
-      "type": "patchouli:crafting",
-      "recipe": "extended_drawers:connector"
-    }
-  ]
+    "name": "book.extended_drawers.patchouli.text11",
+    "icon": "extended_drawers:connector",
+    "category": "extended_drawers:blocks",
+    "pages": [
+        "@item@Connectors@! are simple blocks that allow you to connect different parts of your $(l:simple_networks)network@! together without wasting resources on $(l:drawers)drawers@!. @p@They also produce less lag as they don't have to store any data.",
+        {
+            "type": "patchouli:crafting",
+            "recipe": "extended_drawers:connector"
+        }
+    ]
 }

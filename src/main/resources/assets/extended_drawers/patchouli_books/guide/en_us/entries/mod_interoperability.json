@@ -1,9 +1,9 @@
 {
-  "name": "Mod Interoperability",
-  "icon": "minecraft:hopper",
-  "category": "extended_drawers:networks",
-  "pages": [
-    "$(l:simple_networks)Networks@! can be interacted with by any mod using the @thing@fabric transfer api@! as well as hoppers. @p@Individual $(l:drawers)drawers@! support inserting and extracting from their slots. @p@$(l:access_points)Access points@! and $(l:shadow_drawers)shadow drawers@! provide access to the whole network with additional filtering if using a shadow drawer.",
-    "These systems allow you to build complex contraptions that can do all kinds of things. $(br2)Here are some examples:$(br)$(li)You can hook up a ME system from applied energetics to an access point for easy gui access. $(li)You can use long connector chains and shadow drawers to transfer items long distances instantly and without chunk loading in the middle."
-  ]
+    "name": "book.extended_drawers.patchouli.text20",
+    "icon": "minecraft:hopper",
+    "category": "extended_drawers:networks",
+    "pages": [
+        "$(l:simple_networks)Networks@! can be interacted with by any mod using the @thing@fabric transfer api@! as well as hoppers. @p@Individual $(l:drawers)drawers@! support inserting and extracting from their slots. @p@$(l:access_points)Access points@! and $(l:shadow_drawers)shadow drawers@! provide access to the whole network with additional filtering if using a shadow drawer.",
+        "These systems allow you to build complex contraptions that can do all kinds of things. $(br2)Here are some examples:$(br)$(li)You can hook up a ME system from applied energetics to an access point for easy gui access. $(li)You can use long connector chains and shadow drawers to transfer items long distances instantly and without chunk loading in the middle."
+    ]
 }

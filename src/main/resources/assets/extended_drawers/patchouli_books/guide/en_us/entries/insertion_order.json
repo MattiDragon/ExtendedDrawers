@@ -1,15 +1,15 @@
 {
-  "name": "Insertion Order",
-  "icon": "extended_drawers:access_point",
-  "category": "extended_drawers:networks",
-  "pages": [
-    "You may have noticed that when inserting items into a $(l:networks)network@! they prefer certain slots. This is because I have included a little bit of logic in networks so that they prioritizes certain slots to make your life easier. @p@Knowing these rules will be useful when designing storage systems so I have decided to write them down here.",
-    {
-      "type": "patchouli:text",
-      "text": "First, the network will search for slots containing the item. $(l:lock)Locked@! ones are preferred over unlocked ones. If the item isn't found or if the slots are full the network will search through empty slots. Non-$(l:voiding)voiding@! drawers will be preferred to make sure you don't accidentally void items. $(br2)For performance reasons sorting within these categories is arbitrary, but it shouldn't impact you that much.",
-      "title": "Rules"
-    },
-    "$(l)Example #1:/$$(br)A network has one locked slot with a diamond in it and one non-locked slot with a diamond in it. When inserting a diamond, it will go into the locked slot if it can. @p@$(l)Example #2:/$$(br)A network has one empty locked slot and one slot with an emerald in it. When inserting an emerald it will prefer the slot with the emerald despite the other slot being locked.",
-    "$(l)Example #3:/$$(br)A network has one voiding slot with a diamond in it and one non-voiding slot with a diamond in it. When inserting a diamond, it will go into the non-voiding slot if it can. @p@$(l)Example #4:/$$(br)A network has one full locked voiding slot and a non-locked voiding slot, both diamonds in them. When inserting an diamond it will prefer the locked slot and get voided ignoring the non-locked slot with space."
-  ]
+    "name": "book.extended_drawers.patchouli.text15",
+    "icon": "extended_drawers:access_point",
+    "category": "extended_drawers:networks",
+    "pages": [
+        "You may have noticed that when inserting items into a $(l:networks)network@! they prefer certain slots. This is because I have included a little bit of logic in networks so that they prioritizes certain slots to make your life easier. @p@Knowing these rules will be useful when designing storage systems so I have decided to write them down here.",
+        {
+            "type": "patchouli:text",
+            "text": "book.extended_drawers.patchouli.text16",
+            "title": "book.extended_drawers.patchouli.text17"
+        },
+        "$(l)Example #1:/$$(br)A network has one locked slot with a diamond in it and one non-locked slot with a diamond in it. When inserting a diamond, it will go into the locked slot if it can. @p@$(l)Example #2:/$$(br)A network has one empty locked slot and one slot with an emerald in it. When inserting an emerald it will prefer the slot with the emerald despite the other slot being locked.",
+        "$(l)Example #3:/$$(br)A network has one voiding slot with a diamond in it and one non-voiding slot with a diamond in it. When inserting a diamond, it will go into the non-voiding slot if it can. @p@$(l)Example #4:/$$(br)A network has one full locked voiding slot and a non-locked voiding slot, both diamonds in them. When inserting an diamond it will prefer the locked slot and get voided ignoring the non-locked slot with space."
+    ]
 }

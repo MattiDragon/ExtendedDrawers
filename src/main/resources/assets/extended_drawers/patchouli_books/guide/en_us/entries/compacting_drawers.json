@@ -1,12 +1,12 @@
 {
-  "name": "Compacting Drawers",
-  "icon": "extended_drawers:compacting_drawer",
-  "category": "extended_drawers:blocks",
-  "pages": [
-    "While slightly more expensive to craft $(item)compacting drawers/$ offer a lot of convenience over regular $(l:drawers)drawers/$. They automatically compress and decompress your items. They normally use crafting recipes, but some items might get special support.",
-    {
-      "type": "patchouli:crafting",
-      "recipe": "extended_drawers:compacting_drawer"
-    }
-  ]
+    "name": "book.extended_drawers.patchouli.text10",
+    "icon": "extended_drawers:compacting_drawer",
+    "category": "extended_drawers:blocks",
+    "pages": [
+        "While slightly more expensive to craft $(item)compacting drawers/$ offer a lot of convenience over regular $(l:drawers)drawers/$. They automatically compress and decompress your items. They normally use crafting recipes, but some items might get special support.",
+        {
+            "type": "patchouli:crafting",
+            "recipe": "extended_drawers:compacting_drawer"
+        }
+    ]
 }

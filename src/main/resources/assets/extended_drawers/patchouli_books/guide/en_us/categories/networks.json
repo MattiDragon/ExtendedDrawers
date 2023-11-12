@@ -1,6 +1,6 @@
 {
-  "name": "Drawer Networking",
-  "description": "This section goes over how drawer networks work and how to set up one. $(br2)It also includes tips on how to integrate your network with other mods.",
-  "icon": "extended_drawers:access_point",
-  "sortnum": 1
+    "name": "book.extended_drawers.patchouli.text5",
+    "description": "book.extended_drawers.patchouli.text6",
+    "icon": "extended_drawers:access_point",
+    "sortnum": 1
 }
