@@ -63,7 +63,15 @@ public class AccessPointBlock extends NetworkBlock implements DrawerInteractionH
             var isDoubleClick = getAndResetInsertStatus(player, pos, 0);
             
             if (isDoubleClick) {
-                inserted = (int) StorageUtil.move(PlayerInventoryStorage.of(player), storage, itemVariant -> StorageUtil.findStoredResource(storage, (itemVariant1) -> itemVariant1.equals(itemVariant)) != null, Long.MAX_VALUE, t);
+                inserted = (int) StorageUtil.move(PlayerInventoryStorage.of(player), storage, itemVariant -> {
+                    for (var view : storage) {
+                        if (view.getResource().equals(itemVariant)) {
+                            return true;
+                        }
+                    }
+
+                    return false;
+                }, Long.MAX_VALUE, t);
             } else {
                 if (playerStack.isEmpty()) return ActionResult.PASS;
             
