@@ -1,13 +1,11 @@
 package io.github.mattidragon.extendeddrawers.network;
 
-
 import com.kneelawk.graphlib.api.graph.GraphUniverse;
 import com.kneelawk.graphlib.api.graph.user.GraphEntityType;
 import com.kneelawk.graphlib.api.world.SaveMode;
 import io.github.mattidragon.extendeddrawers.ExtendedDrawers;
 import io.github.mattidragon.extendeddrawers.block.base.NetworkComponent;
 import io.github.mattidragon.extendeddrawers.network.cache.NetworkStorageCache;
-import io.github.mattidragon.extendeddrawers.network.cache.SmartNetworkStorageCache;
 import io.github.mattidragon.extendeddrawers.network.node.*;
 
 import java.util.List;
