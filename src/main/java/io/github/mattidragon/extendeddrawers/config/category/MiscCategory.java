@@ -4,8 +4,8 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.github.mattidragon.configloader.api.DefaultedFieldCodec;
 import io.github.mattidragon.configloader.api.GenerateMutable;
-import io.github.mattidragon.extendeddrawers.network.cache.CachingMode;
 import io.github.mattidragon.extendeddrawers.misc.CreativeBreakingBehaviour;
+import io.github.mattidragon.extendeddrawers.network.cache.CachingMode;
 
 @GenerateMutable
 public record MiscCategory(int insertAllTime,
