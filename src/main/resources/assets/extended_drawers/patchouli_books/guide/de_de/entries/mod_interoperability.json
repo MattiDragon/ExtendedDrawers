@@ -1,9 +1,0 @@
-{
-  "name": "Mod Kompatibilität",
-  "icon": "minecraft:hopper",
-  "category": "extended_drawers:networks",
-  "pages": [
-    "$(l:simple_networks)Netzwerke@! können mit anderen Mod Speicher Medien mit Hilfe der @thing@fabric transfer api@! verbunden werden. @p@Individuelle $(l:drawers)Schubladen@! unterstützen das einfügen und entnehmen Mod Items aus deren Slots. @p@$(l:access_points)Zugangspunkte@! und $(l:shadow_drawers)Schatten Schubladen@! ermöglichen den Zugang and das ganze Netzwerk mit zusätzlichen Filter Einstellungen wenn eine Schatten Schublade benutzt wird.",
-    "Diese Systeme erlauben dir ein complexes System zu bauen. $(br2)Hier ein paar Beispiele:$(br)$(li)Du kannst ein ME System an einen Zugangspunkt anschließen und auf das Lager zugreifen. $(li)Du kannst lange Ketten aus Schatten Schubladen nutzen um Itmes über lange Distanzen zu transportieren, ohne dass zwischendurch Chunks geladen werden müssen."
-  ]
-}
