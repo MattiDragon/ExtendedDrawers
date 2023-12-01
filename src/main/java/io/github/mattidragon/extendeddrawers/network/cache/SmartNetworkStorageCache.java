@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.function.Predicate;
 
 /**
  * Caches storages of all slots in networks to make lookup less expensive.
@@ -64,7 +65,7 @@ public class SmartNetworkStorageCache implements NetworkStorageCache {
     public void onInit(@NotNull GraphEntityContext context) {
         this.context = context;
         missingPositions.clear();
-        context.getGraph().getNodes().map(NodeHolder::getBlockPos).forEach(missingPositions::add);
+        context.getGraph().getNodes().map(NodeHolder::getBlockPos).filter(Predicate.not(positions::containsKey)).forEach(missingPositions::add);
     }
 
     @Override
@@ -125,6 +126,7 @@ public class SmartNetworkStorageCache implements NetworkStorageCache {
 
             if (newGraph.getNodesAt(pos).findAny().isPresent()) {
                 iterator.remove();
+                cachedStorage.parts.remove(storage);
                 newCache.positions.put(pos, storage);
             }
         }
