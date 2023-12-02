@@ -25,7 +25,7 @@
     "<l:modifiers>":"$(l:modifiers)",
     "<l:shadow_drawers>":"$(l:shadow_drawers)",
     "<l:access_points>":"$(l:access_points)",
-    "<(l:mod_interoperability>":"$(l:mod_interoperability)",
+    "<l:mod_interoperability>":"$(l:mod_interoperability)",
     "<l:networks>":"$(l:networks)",
     "<l:voiding>":"$(l:voiding)"
   },
