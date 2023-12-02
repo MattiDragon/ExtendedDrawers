@@ -7,7 +7,7 @@
     {
       "type": "patchouli:crafting",
       "recipe": "extended_drawers:limiter",
-      "text": "book.extended_drawers.entries.capacity_limiters.page.1.text"
+      "text": "book.extended_drawers.entries.capacity_limiters.page.1"
     }
   ]
 }

@@ -7,27 +7,27 @@
     {
       "type": "patchouli:crafting",
       "recipe": "extended_drawers:upgrade_frame",
-      "text": "book.extended_drawers.entries.upgrades.page.1.text"
+      "text": "book.extended_drawers.entries.upgrades.page.1"
     },
     {
       "type": "patchouli:crafting",
       "recipe": "extended_drawers:t1_upgrade",
-      "text": "book.extended_drawers.entries.upgrades.page.2.text"
+      "text": "book.extended_drawers.entries.upgrades.page.2"
     },
     {
       "type": "patchouli:crafting",
       "recipe": "extended_drawers:t2_upgrade",
-      "text": "book.extended_drawers.entries.upgrades.page.3.text"
+      "text": "book.extended_drawers.entries.upgrades.page.3"
     },
     {
       "type": "patchouli:crafting",
       "recipe": "extended_drawers:t3_upgrade",
-      "text": "book.extended_drawers.entries.upgrades.page.4.text"
+      "text": "book.extended_drawers.entries.upgrades.page.4"
     },
     {
       "type": "patchouli:crafting",
       "recipe": "extended_drawers:t4_upgrade",
-      "text": "book.extended_drawers.entries.upgrades.page.5.text"
+      "text": "book.extended_drawers.entries.upgrades.page.5"
     }
   ]
 }
