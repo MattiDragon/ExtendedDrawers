@@ -26,7 +26,6 @@ public class ShadowDrawerBlockEntityRenderer extends AbstractDrawerBlockEntityRe
         return Math.max(config.textRenderDistance(), config.itemRenderDistance());
     }
     
-    @SuppressWarnings("UnstableApiUsage")
     @Override
     public void render(ShadowDrawerBlockEntity drawer, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
         var dir = drawer.getCachedState().get(ShadowDrawerBlock.FACING);

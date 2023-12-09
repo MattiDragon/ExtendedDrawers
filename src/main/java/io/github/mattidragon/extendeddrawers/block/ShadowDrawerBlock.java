@@ -39,7 +39,7 @@ import org.jetbrains.annotations.Nullable;
 
 import static io.github.mattidragon.extendeddrawers.misc.DrawerInteractionStatusManager.getAndResetInsertStatus;
 
-@SuppressWarnings({"UnstableApiUsage", "deprecation"}) // transfer api and mojank block method deprecation
+@SuppressWarnings({"deprecation"}) // transfer api and mojank block method deprecation
 public class ShadowDrawerBlock extends NetworkBlockWithEntity<ShadowDrawerBlockEntity> implements CreativeBreakBlocker, DrawerInteractionHandler {
     public static final DirectionProperty FACING = Properties.HORIZONTAL_FACING;
     

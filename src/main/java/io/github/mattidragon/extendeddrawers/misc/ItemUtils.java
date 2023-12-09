@@ -9,7 +9,6 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
-@SuppressWarnings("UnstableApiUsage")
 public class ItemUtils {
     public static void offerOrDropStacks(World world, BlockPos pos, @Nullable Direction side, @Nullable PlayerEntity player, ItemVariant item, long amount) {
         var maxCount = item.getItem().getMaxCount();

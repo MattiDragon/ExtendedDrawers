@@ -13,7 +13,6 @@ import net.minecraft.util.math.BlockPos;
 
 import java.util.stream.Stream;
 
-@SuppressWarnings("UnstableApiUsage")
 public class CompactingDrawerBlockEntity extends StorageDrawerBlockEntity {
     public final CompactingDrawerStorage storage;
 

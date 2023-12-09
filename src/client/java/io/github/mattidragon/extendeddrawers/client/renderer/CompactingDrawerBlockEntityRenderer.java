@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-@SuppressWarnings("UnstableApiUsage")
 public class CompactingDrawerBlockEntityRenderer extends AbstractDrawerBlockEntityRenderer<CompactingDrawerBlockEntity> {
     public CompactingDrawerBlockEntityRenderer(BlockEntityRendererFactory.Context context) {
         super(context.getItemRenderer(), context.getTextRenderer());

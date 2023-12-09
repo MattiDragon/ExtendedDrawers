@@ -27,7 +27,6 @@ import java.util.function.Predicate;
 /**
  * Caches storages of all slots in networks to make lookup less expensive.
  */
-@SuppressWarnings("UnstableApiUsage")
 public class SmartNetworkStorageCache implements NetworkStorageCache {
     private GraphEntityContext context;
     private final CombinedStorage<ItemVariant, DrawerStorage> cachedStorage = new CombinedStorage<>(new ArrayList<>());

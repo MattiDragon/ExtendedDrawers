@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-@SuppressWarnings("UnstableApiUsage")
 public interface NetworkStorageCache extends GraphEntity<NetworkStorageCache> {
     /**
      * Helper to easily get the cached storage from a world and pos.

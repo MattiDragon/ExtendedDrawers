@@ -14,7 +14,6 @@ import net.minecraft.registry.Registries;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-@SuppressWarnings("UnstableApiUsage")
 public record CompressionOverrideSyncPacket(List<CompressionLadder> overrides) implements FabricPacket {
     public static final PacketType<CompressionOverrideSyncPacket> TYPE = PacketType.create(ExtendedDrawers.id("compression_override_sync"), CompressionOverrideSyncPacket::new);
 

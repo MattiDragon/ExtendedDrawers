@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-@SuppressWarnings("UnstableApiUsage")
 public class CompressionOverrideLoader extends JsonDataLoader {
     private static final Gson GSON = new Gson();
     private final CompressionRecipeManager compressionRecipeManager;

@@ -17,7 +17,6 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-@SuppressWarnings("UnstableApiUsage")
 public sealed interface DrawerStorage extends Comparable<DrawerStorage>, Storage<ItemVariant>, ModifierAccess permits DrawerSlot, CompactingDrawerStorage {
     StorageDrawerBlockEntity getOwner();
 

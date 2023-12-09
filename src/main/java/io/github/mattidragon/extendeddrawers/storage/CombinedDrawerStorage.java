@@ -15,7 +15,6 @@ import java.util.Iterator;
  * Stores slots in a fixed size array. The storage array is copied on iteration to avoid issues with mods that iterate storages outside transactions, because we need to sort slots.
  * This class also don't need to handle multi-view storages since each slot is a single view, so it's simpler.
  */
-@SuppressWarnings("UnstableApiUsage")
 public class CombinedDrawerStorage implements Storage<ItemVariant> {
     private DrawerSlot[] slots;
 

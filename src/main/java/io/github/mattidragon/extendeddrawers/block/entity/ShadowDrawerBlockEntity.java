@@ -16,7 +16,6 @@ import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 
-@SuppressWarnings("UnstableApiUsage")
 public class ShadowDrawerBlockEntity extends BlockEntity {
     public static final long INFINITE_COUNT_MARKER = -2;
     public ItemVariant item = ItemVariant.blank();

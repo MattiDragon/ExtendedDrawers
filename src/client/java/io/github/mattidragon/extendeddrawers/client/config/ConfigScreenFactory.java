@@ -289,7 +289,6 @@ public class ConfigScreenFactory {
         return OptionDescription.of(text, Text.translatable("config.extended_drawers.creativeBreakingBehaviour." + value.asString() + ".description"));
     }
 
-    @SuppressWarnings("UnstableApiUsage")
     private static class LayoutRenderer implements ImageRenderer {
         private Option<Float> smallItemScale = null;
         private Option<Float> largeItemScale = null;

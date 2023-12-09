@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Stream;
 
-@SuppressWarnings("UnstableApiUsage")
 public final class CompactingDrawerStorage extends SnapshotParticipant<CompactingDrawerStorage.Snapshot> implements DrawerStorage {
     private final CompactingDrawerBlockEntity owner;
     private final Settings settings;

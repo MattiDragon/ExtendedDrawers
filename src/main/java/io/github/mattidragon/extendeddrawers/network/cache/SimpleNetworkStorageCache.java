@@ -24,7 +24,6 @@ import java.util.Map;
 /**
  * A simple implementation of {@link NetworkStorageCache} that clears itself on any change.
  */
-@SuppressWarnings("UnstableApiUsage")
 public class SimpleNetworkStorageCache implements NetworkStorageCache {
     private GraphEntityContext context;
     @Nullable

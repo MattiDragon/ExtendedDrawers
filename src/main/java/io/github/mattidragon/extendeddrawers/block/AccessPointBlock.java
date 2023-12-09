@@ -29,7 +29,7 @@ import net.minecraft.world.World;
 
 import static io.github.mattidragon.extendeddrawers.misc.DrawerInteractionStatusManager.getAndResetInsertStatus;
 
-@SuppressWarnings({"UnstableApiUsage", "deprecation"}) // transfer api and mojank block method deprecation
+@SuppressWarnings({"deprecation"}) // transfer api and mojank block method deprecation
 public class AccessPointBlock extends NetworkBlock implements DrawerInteractionHandler {
     public AccessPointBlock(Settings settings) {
         super(settings);

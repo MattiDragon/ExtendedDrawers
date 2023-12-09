@@ -16,7 +16,6 @@ import java.util.function.Function;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-@SuppressWarnings("UnstableApiUsage")
 public final class CompressionRecipeManager {
     private final RecipeManager recipeManager;
     private final Map<ItemVariant, CompressionLadder> ladders = new HashMap<>();

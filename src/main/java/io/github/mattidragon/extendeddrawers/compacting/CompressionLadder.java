@@ -9,7 +9,6 @@ import java.util.List;
  * First step has the base item (e.g. nuggets) and a size of 1.
  * Each step after that has a new item (ingots, blocks) and a size that counts how many of the first tier is necessary (9, 81).
  */
-@SuppressWarnings("UnstableApiUsage")
 public record CompressionLadder(List<Step> steps) {
     public CompressionLadder(List<Step> steps) {
         this.steps = List.copyOf(steps);

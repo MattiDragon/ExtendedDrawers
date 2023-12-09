@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
-@SuppressWarnings("UnstableApiUsage")
 public class NoOpNetworkStorageCache implements NetworkStorageCache {
     private GraphEntityContext context;
 

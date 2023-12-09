@@ -19,7 +19,6 @@ import net.minecraft.util.math.BlockPos;
 import java.util.Arrays;
 import java.util.stream.Stream;
 
-@SuppressWarnings("UnstableApiUsage")
 public class DrawerBlockEntity extends StorageDrawerBlockEntity {
     public final int slots = ((DrawerBlock)this.getCachedState().getBlock()).slots;
     public final DrawerSlot[] storages = new DrawerSlot[((DrawerBlock)this.getCachedState().getBlock()).slots];
