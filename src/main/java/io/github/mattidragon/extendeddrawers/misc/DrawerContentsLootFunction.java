@@ -21,7 +21,7 @@ import java.util.List;
 import static io.github.mattidragon.extendeddrawers.ExtendedDrawers.id;
 
 public class DrawerContentsLootFunction extends ConditionalLootFunction {
-    private static final Codec<DrawerContentsLootFunction> CODEC = RecordCodecBuilder.create((instance) -> method_53344(instance).apply(instance, DrawerContentsLootFunction::new));
+    private static final Codec<DrawerContentsLootFunction> CODEC = RecordCodecBuilder.create((instance) -> addConditionsField(instance).apply(instance, DrawerContentsLootFunction::new));
     private static final LootFunctionType TYPE = new LootFunctionType(CODEC);
     
     protected DrawerContentsLootFunction(List<LootCondition> conditions) {

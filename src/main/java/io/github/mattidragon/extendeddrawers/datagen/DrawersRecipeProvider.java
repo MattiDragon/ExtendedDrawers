@@ -1,6 +1,7 @@
 package io.github.mattidragon.extendeddrawers.datagen;
 
 import io.github.mattidragon.extendeddrawers.ExtendedDrawers;
+import io.github.mattidragon.extendeddrawers.recipe.CopyLimiterRecipe;
 import io.github.mattidragon.extendeddrawers.registry.ModItems;
 import io.github.mattidragon.extendeddrawers.registry.ModRecipes;
 import io.github.mattidragon.extendeddrawers.registry.ModTags;
@@ -36,8 +37,8 @@ class DrawersRecipeProvider extends FabricRecipeProvider {
         offerAccessPointRecipe(exporter);
         offerConnectorRecipe(exporter);
 
-        ComplexRecipeJsonBuilder.create(ModRecipes.COPY_LIMITER_SERIALIZER)
-                .offerTo(exporter, ExtendedDrawers.id("copy_limiter").toString());
+        ComplexRecipeJsonBuilder.create(CopyLimiterRecipe::new)
+                .offerTo(exporter, ExtendedDrawers.id("copy_limiter"));
     }
     
     private void offerDrawerRecipes(RecipeExporter exporter) {

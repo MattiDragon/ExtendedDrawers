@@ -1,6 +1,5 @@
 plugins {
-    id 'fabric-loom' version '1.3-SNAPSHOT'
-    id 'io.github.juuxel.loom-vineflower' version '1.11.0'
+    id 'fabric-loom' version '1.4-SNAPSHOT'
     id 'maven-publish'
 }
 
@@ -9,6 +8,7 @@ def isDev = System.env.DEV_BUILD == "true"
 
 version project.mod_version + (isDev ? "-dev.$run" : "") + "+mc.$minecraft_version"
 group project.maven_group
+base.archivesName = project.archives_base_name
 
 repositories {
     maven { url "https://kneelawk.com/maven/" }
@@ -39,10 +39,6 @@ dependencies {
     modImplementation annotationProcessor(include("com.github.mattidragon:ConfigToolkit:$configtoolkit_version"))
     modImplementation include("dev.isxander.yacl:yet-another-config-lib-fabric:$yacl_version")
     modImplementation "com.terraformersmc:modmenu:$modmenu_version"
-
-    // Mixin Extras
-    modImplementation include("com.github.LlamaLad7.mixinextras:mixinextras-fabric:$mixinextras_version")
-    annotationProcessor clientAnnotationProcessor("com.github.LlamaLad7.mixinextras:mixinextras-fabric:$mixinextras_version")
 
     modImplementation include("me.luligabi:NoIndium:$noindium_version")
 
@@ -100,7 +96,6 @@ jar {
 }
 
 java {
-    archivesBaseName = project.archives_base_name
     withSourcesJar()
 }
 

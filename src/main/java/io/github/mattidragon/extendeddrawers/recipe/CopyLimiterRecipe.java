@@ -19,7 +19,7 @@ public class CopyLimiterRecipe extends SpecialCraftingRecipe {
 
     @Override
     public boolean matches(RecipeInputInventory inventory, World world) {
-        var stacks = inventory.getInputStacks();
+        var stacks = inventory.getHeldStacks();
         boolean setLimiterFound = false;
         boolean unsetLimiterFound = false;
 
@@ -41,7 +41,7 @@ public class CopyLimiterRecipe extends SpecialCraftingRecipe {
 
     @Override
     public ItemStack craft(RecipeInputInventory inventory, DynamicRegistryManager registryManager) {
-        var stacks = inventory.getInputStacks();
+        var stacks = inventory.getHeldStacks();
         Long limit = null;
 
         for (var stack : stacks) {

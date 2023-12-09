@@ -195,14 +195,14 @@ public class DrawerBlock extends NetworkBlockWithEntity<DrawerBlockEntity> imple
     }
 
     @Override
-    public void onBreak(World world, BlockPos pos, BlockState state, PlayerEntity player) {
+    public BlockState onBreak(World world, BlockPos pos, BlockState state, PlayerEntity player) {
         var blockEntity = getBlockEntity(world, pos);
         if (blockEntity != null && ExtendedDrawers.CONFIG.get().misc().dropDrawersInCreative() && !world.isClient && player.isCreative() && !blockEntity.isEmpty()) {
             getDroppedStacks(state, (ServerWorld) world, pos, blockEntity, player, player.getStackInHand(Hand.MAIN_HAND))
                     .forEach(stack -> ItemScatterer.spawn(world, pos.getX(), pos.getY(), pos.getZ(), stack));
         }
 
-        super.onBreak(world, pos, state, player);
+        return super.onBreak(world, pos, state, player);
     }
     
     @Override
