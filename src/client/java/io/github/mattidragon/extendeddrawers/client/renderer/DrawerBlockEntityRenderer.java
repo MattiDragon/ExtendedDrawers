@@ -2,6 +2,7 @@ package io.github.mattidragon.extendeddrawers.client.renderer;
 
 import io.github.mattidragon.extendeddrawers.ExtendedDrawers;
 import io.github.mattidragon.extendeddrawers.block.DrawerBlock;
+import io.github.mattidragon.extendeddrawers.block.base.StorageDrawerBlock;
 import io.github.mattidragon.extendeddrawers.block.entity.DrawerBlockEntity;
 import io.github.mattidragon.extendeddrawers.storage.DrawerSlot;
 import net.minecraft.client.MinecraftClient;
@@ -30,7 +31,7 @@ public class DrawerBlockEntityRenderer extends AbstractDrawerBlockEntityRenderer
     
     @Override
     public void render(DrawerBlockEntity drawer, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
-        var dir = drawer.getCachedState().get(DrawerBlock.FACING);
+        var dir = drawer.getCachedState().get(StorageDrawerBlock.FACING);
         var world = drawer.getWorld();
         
         if (!shouldRender(drawer, dir)) return;
@@ -84,6 +85,6 @@ public class DrawerBlockEntityRenderer extends AbstractDrawerBlockEntityRenderer
         if (storage.isDuping())
             amount = "∞";
 
-        renderSlot(storage.getItem(), amount, small, storage.isHidden(), icons, matrices, vertexConsumers, light, overlay, seed, pos, world);
+        renderSlot(storage.getResource(), amount, small, storage.isHidden(), icons, matrices, vertexConsumers, light, overlay, seed, pos, world);
     }
 }

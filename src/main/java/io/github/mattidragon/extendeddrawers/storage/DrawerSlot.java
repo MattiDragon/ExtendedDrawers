@@ -157,10 +157,6 @@ public final class DrawerSlot extends SnapshotParticipant<DrawerSlot.Snapshot> i
         nbt.putLong("amount", amount);
     }
 
-    public ItemVariant getItem() {
-        return item;
-    }
-
     public void setLocked(boolean locked) {
         if (!locked && amount == 0) {
             item = ItemVariant.blank();

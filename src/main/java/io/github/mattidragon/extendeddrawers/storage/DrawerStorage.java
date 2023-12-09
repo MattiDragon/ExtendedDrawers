@@ -18,7 +18,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @SuppressWarnings("UnstableApiUsage")
-public sealed interface DrawerStorage extends Comparable<DrawerStorage>, Storage<ItemVariant> permits DrawerSlot, CompactingDrawerStorage {
+public sealed interface DrawerStorage extends Comparable<DrawerStorage>, Storage<ItemVariant>, ModifierAccess permits DrawerSlot, CompactingDrawerStorage {
     StorageDrawerBlockEntity getOwner();
 
     Settings settings();
@@ -32,6 +32,7 @@ public sealed interface DrawerStorage extends Comparable<DrawerStorage>, Storage
      */
     long getTrueAmount();
 
+    @Override
     default boolean changeUpgrade(ItemVariant newUpgrade, World world, BlockPos pos, Direction side, @Nullable PlayerEntity player) {
         if (!(newUpgrade.getItem() instanceof UpgradeItem) && !newUpgrade.isBlank()) return false;
 
@@ -51,6 +52,7 @@ public sealed interface DrawerStorage extends Comparable<DrawerStorage>, Storage
         return true;
     }
 
+    @Override
     default boolean changeLimiter(ItemVariant newLimiter, World world, BlockPos pos, Direction side, @Nullable PlayerEntity player) {
         if (!(newLimiter.getItem() instanceof LimiterItem) && !newLimiter.isBlank()) return false;
 
@@ -113,6 +115,7 @@ public sealed interface DrawerStorage extends Comparable<DrawerStorage>, Storage
      * Should not be used multiple times within the same transaction.
      * @param transaction The transaction for which the lock stays overridden. When closed
      */
+    @Override
     default void overrideLock(TransactionContext transaction) {
         if (settings().lockOverridden) {
             ExtendedDrawers.LOGGER.warn("Tried to override drawer lock while already overridden. Unexpected behavior may follow.");
@@ -122,54 +125,65 @@ public sealed interface DrawerStorage extends Comparable<DrawerStorage>, Storage
         settings().lockOverridden = true;
     }
 
+    @Override
     default boolean isLocked() {
         return settings().locked;
     }
 
+    @Override
     default boolean isVoiding() {
         return settings().voiding;
     }
 
+    @Override
     default boolean isHidden() {
         return settings().hidden;
     }
 
+    @Override
     default boolean isDuping() {
         return settings().duping;
     }
 
+    @Override
     @Nullable
     default UpgradeItem getUpgrade() {
         return settings().upgrade.getItem() instanceof UpgradeItem upgrade ? upgrade : null;
     }
 
+    @Override
     default long getLimiter() {
         var limiterNbt = settings().limiter.getNbt();
         return limiterNbt == null ? Long.MAX_VALUE : limiterNbt.getLong("limit");
     }
 
+    @Override
     default void setLocked(boolean locked) {
         settings().sortingDirty = true;
         settings().locked = locked;
         update();
     }
 
+    @Override
     default void setVoiding(boolean voiding) {
         settings().sortingDirty = true;
         settings().voiding = voiding;
         update();
     }
 
+    @Override
     default void setHidden(boolean hidden) {
         settings().hidden = hidden;
         update();
     }
 
+    @Override
     default void setDuping(boolean duping) {
         settings().duping = duping;
         update();
     }
 
+    @Override
     default boolean hasLimiter() {
         return !settings().limiter.isBlank();
     }
