@@ -8,6 +8,8 @@ import dev.isxander.yacl3.gui.controllers.string.IStringController;
 import dev.isxander.yacl3.gui.controllers.string.StringControllerElement;
 import net.minecraft.util.Identifier;
 
+import java.util.Objects;
+
 public record IdentifierController(Option<Identifier> option) implements IStringController<Identifier> {
     @Override
     public String getString() {
@@ -16,7 +18,7 @@ public record IdentifierController(Option<Identifier> option) implements IString
 
     @Override
     public void setFromString(String value) {
-        option.requestSet(Identifier.tryParse(value));
+        option.requestSet(Objects.requireNonNullElse(Identifier.tryParse(value), new Identifier("air")));
     }
 
     @Override

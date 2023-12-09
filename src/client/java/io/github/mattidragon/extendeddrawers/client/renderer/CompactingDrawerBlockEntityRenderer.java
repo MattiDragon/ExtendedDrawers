@@ -1,9 +1,9 @@
 package io.github.mattidragon.extendeddrawers.client.renderer;
 
 import io.github.mattidragon.extendeddrawers.ExtendedDrawers;
-import io.github.mattidragon.extendeddrawers.block.CompactingDrawerBlock;
-import io.github.mattidragon.extendeddrawers.block.DrawerBlock;
+import io.github.mattidragon.extendeddrawers.block.base.StorageDrawerBlock;
 import io.github.mattidragon.extendeddrawers.block.entity.CompactingDrawerBlockEntity;
+import io.github.mattidragon.extendeddrawers.registry.ModBlocks;
 import io.github.mattidragon.extendeddrawers.storage.CompactingDrawerStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.minecraft.client.MinecraftClient;
@@ -38,7 +38,7 @@ public class CompactingDrawerBlockEntityRenderer extends AbstractDrawerBlockEnti
     @Override
     public void render(CompactingDrawerBlockEntity drawer, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
         var drawerPos = drawer.getPos();
-        var dir = drawer.getCachedState().get(DrawerBlock.FACING);
+        var dir = drawer.getCachedState().get(StorageDrawerBlock.FACING);
         var world = drawer.getWorld();
 
         if (!shouldRender(drawer, dir)) return;
@@ -60,15 +60,15 @@ public class CompactingDrawerBlockEntityRenderer extends AbstractDrawerBlockEnti
 
         if (slots.length >= 1) { // Top slot
             matrices.translate(0, 0.25, 0);
-            renderSlot(drawer.storage.getSlot(CompactingDrawerBlock.getSlot(new Vec2f(0.5f, 0.25f), slots.length)), light, overlay, matrices, vertexConsumers, (int) drawer.getPos().asLong(), drawerPos, world);
+            renderSlot(ModBlocks.COMPACTING_DRAWER.getSlot(drawer, ModBlocks.COMPACTING_DRAWER.getSlotIndex(drawer, new Vec2f(0.5f, 0.25f))), light, overlay, matrices, vertexConsumers, (int) drawer.getPos().asLong(), drawerPos, world);
         }
         if (slots.length >= 2) { // Bottom right
             matrices.translate(0.25, -0.5, 0);
-            renderSlot(drawer.storage.getSlot(CompactingDrawerBlock.getSlot(new Vec2f(0.75f, 0.75f), slots.length)), light, overlay, matrices, vertexConsumers, (int) drawer.getPos().asLong(), drawerPos, world);
+            renderSlot(ModBlocks.COMPACTING_DRAWER.getSlot(drawer, ModBlocks.COMPACTING_DRAWER.getSlotIndex(drawer, new Vec2f(0.75f, 0.75f))), light, overlay, matrices, vertexConsumers, (int) drawer.getPos().asLong(), drawerPos, world);
         }
         if (slots.length >= 3) { // Bottom left
             matrices.translate(-0.5, 0, 0);
-            renderSlot(drawer.storage.getSlot(CompactingDrawerBlock.getSlot(new Vec2f(0.25f, 0.75f), slots.length)), light, overlay, matrices, vertexConsumers, (int) drawer.getPos().asLong(), drawerPos, world);
+            renderSlot(ModBlocks.COMPACTING_DRAWER.getSlot(drawer, ModBlocks.COMPACTING_DRAWER.getSlotIndex(drawer, new Vec2f(0.25f, 0.75f))), light, overlay, matrices, vertexConsumers, (int) drawer.getPos().asLong(), drawerPos, world);
         }
 
         

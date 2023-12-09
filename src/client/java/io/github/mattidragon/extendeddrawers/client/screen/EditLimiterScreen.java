@@ -58,7 +58,7 @@ public class EditLimiterScreen extends Screen {
                 .width(38)
                 .build());
         
-        textField = addDrawableChild(new TextFieldWidget(client.textRenderer, width / 2 - 58, height / 2 - 16, 116, 20, Text.translatable("")));
+        textField = addDrawableChild(new TextFieldWidget(client.textRenderer, width / 2 - 58, height / 2 - 16, 116, 20, Text.literal("")));
         textField.setRenderTextProvider((text, index) -> { // Render invalid text as red
             var style = isValid(text) ? Style.EMPTY : Style.EMPTY.withColor(Formatting.RED);
             return OrderedText.styledForwardsVisitedString(text, style);
