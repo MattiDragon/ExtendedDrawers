@@ -1,17 +1,58 @@
 {
   "variants": {
-    "facing=east": {
+    "face=ceiling,facing=east": {
+      "model": "extended_drawers:block/quad_drawer",
+      "x": 90,
+      "y": 90
+    },
+    "face=ceiling,facing=north": {
+      "model": "extended_drawers:block/quad_drawer",
+      "x": 90,
+      "y": 0
+    },
+    "face=ceiling,facing=south": {
+      "model": "extended_drawers:block/quad_drawer",
+      "x": 90,
+      "y": 180
+    },
+    "face=ceiling,facing=west": {
+      "model": "extended_drawers:block/quad_drawer",
+      "x": 90,
+      "y": 270
+    },
+    "face=floor,facing=east": {
+      "model": "extended_drawers:block/quad_drawer",
+      "x": 270,
+      "y": 90
+    },
+    "face=floor,facing=north": {
+      "model": "extended_drawers:block/quad_drawer",
+      "x": 270,
+      "y": 0
+    },
+    "face=floor,facing=south": {
+      "model": "extended_drawers:block/quad_drawer",
+      "x": 270,
+      "y": 180
+    },
+    "face=floor,facing=west": {
+      "model": "extended_drawers:block/quad_drawer",
+      "x": 270,
+      "y": 270
+    },
+    "face=wall,facing=east": {
       "model": "extended_drawers:block/quad_drawer",
       "y": 90
     },
-    "facing=north": {
-      "model": "extended_drawers:block/quad_drawer"
+    "face=wall,facing=north": {
+      "model": "extended_drawers:block/quad_drawer",
+      "y": 0
     },
-    "facing=south": {
+    "face=wall,facing=south": {
       "model": "extended_drawers:block/quad_drawer",
       "y": 180
     },
-    "facing=west": {
+    "face=wall,facing=west": {
       "model": "extended_drawers:block/quad_drawer",
       "y": 270
     }

@@ -19,9 +19,9 @@ import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
 import net.minecraft.text.Text;
-import net.minecraft.util.*;
+import net.minecraft.util.Formatting;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec2f;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
@@ -30,10 +30,10 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Arrays;
 import java.util.List;
 
+@SuppressWarnings("UnstableApiUsage")
 public class CompactingDrawerBlock extends StorageDrawerBlock<CompactingDrawerBlockEntity> {
     public CompactingDrawerBlock(Settings settings) {
         super(settings);
-        setDefaultState(stateManager.getDefaultState().with(FACING, Direction.NORTH));
     }
 
     @Override

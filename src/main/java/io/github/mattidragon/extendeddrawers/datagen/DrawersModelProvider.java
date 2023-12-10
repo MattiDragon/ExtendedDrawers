@@ -5,7 +5,10 @@ import io.github.mattidragon.extendeddrawers.registry.ModItems;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricModelProvider;
 import net.minecraft.block.Block;
+import net.minecraft.block.enums.BlockFace;
 import net.minecraft.data.client.*;
+import net.minecraft.state.property.Properties;
+import net.minecraft.util.math.Direction;
 
 import java.util.Optional;
 
@@ -45,13 +48,33 @@ class DrawersModelProvider extends FabricModelProvider {
     }
 
     private void generateCompactingDrawerModel(BlockStateModelGenerator generator) {
-        generator.blockStateCollector.accept(VariantsBlockStateSupplier.create(ModBlocks.COMPACTING_DRAWER, BlockStateVariant.create().put(VariantSettings.MODEL, id("block/compacting_drawer"))).coordinate(BlockStateModelGenerator.createNorthDefaultHorizontalRotationStates()));
+        generator.blockStateCollector.accept(
+                VariantsBlockStateSupplier.create(
+                                ModBlocks.COMPACTING_DRAWER,
+                                BlockStateVariant.create().put(VariantSettings.MODEL, id("block/compacting_drawer")))
+                        .coordinate(getBlockStateMap()));
     }
 
     private void registerDrawerModel(Block block, BlockStateModelGenerator generator) {
         var template = new Model(Optional.of(id("drawer_template")), Optional.empty(), TextureKey.FRONT);
 
         var model = template.upload(block, TextureMap.of(TextureKey.FRONT, ModelIds.getBlockModelId(block)), generator.modelCollector);
-        generator.blockStateCollector.accept(VariantsBlockStateSupplier.create(block, BlockStateVariant.create().put(VariantSettings.MODEL, model)).coordinate(BlockStateModelGenerator.createNorthDefaultHorizontalRotationStates()));
+        generator.blockStateCollector.accept(VariantsBlockStateSupplier.create(block, BlockStateVariant.create().put(VariantSettings.MODEL, model)).coordinate(getBlockStateMap()));
+    }
+
+    private static BlockStateVariantMap.DoubleProperty<BlockFace, Direction> getBlockStateMap() {
+        return BlockStateVariantMap.create(Properties.BLOCK_FACE, Properties.HORIZONTAL_FACING)
+                .register(BlockFace.FLOOR, Direction.EAST, BlockStateVariant.create().put(VariantSettings.Y, VariantSettings.Rotation.R90).put(VariantSettings.X, VariantSettings.Rotation.R270))
+                .register(BlockFace.FLOOR, Direction.WEST, BlockStateVariant.create().put(VariantSettings.Y, VariantSettings.Rotation.R270).put(VariantSettings.X, VariantSettings.Rotation.R270))
+                .register(BlockFace.FLOOR, Direction.SOUTH, BlockStateVariant.create().put(VariantSettings.Y, VariantSettings.Rotation.R180).put(VariantSettings.X, VariantSettings.Rotation.R270))
+                .register(BlockFace.FLOOR, Direction.NORTH, BlockStateVariant.create().put(VariantSettings.Y, VariantSettings.Rotation.R0).put(VariantSettings.X, VariantSettings.Rotation.R270))
+                .register(BlockFace.WALL, Direction.EAST, BlockStateVariant.create().put(VariantSettings.Y, VariantSettings.Rotation.R90))
+                .register(BlockFace.WALL, Direction.WEST, BlockStateVariant.create().put(VariantSettings.Y, VariantSettings.Rotation.R270))
+                .register(BlockFace.WALL, Direction.SOUTH, BlockStateVariant.create().put(VariantSettings.Y, VariantSettings.Rotation.R180))
+                .register(BlockFace.WALL, Direction.NORTH, BlockStateVariant.create().put(VariantSettings.Y, VariantSettings.Rotation.R0))
+                .register(BlockFace.CEILING, Direction.EAST, BlockStateVariant.create().put(VariantSettings.Y, VariantSettings.Rotation.R90).put(VariantSettings.X, VariantSettings.Rotation.R90))
+                .register(BlockFace.CEILING, Direction.WEST, BlockStateVariant.create().put(VariantSettings.Y, VariantSettings.Rotation.R270).put(VariantSettings.X, VariantSettings.Rotation.R90))
+                .register(BlockFace.CEILING, Direction.SOUTH, BlockStateVariant.create().put(VariantSettings.Y, VariantSettings.Rotation.R180).put(VariantSettings.X, VariantSettings.Rotation.R90))
+                .register(BlockFace.CEILING, Direction.NORTH, BlockStateVariant.create().put(VariantSettings.Y, VariantSettings.Rotation.R0).put(VariantSettings.X, VariantSettings.Rotation.R90));
     }
 }
