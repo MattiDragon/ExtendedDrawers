@@ -8,6 +8,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.enums.BlockFace;
 import net.minecraft.data.client.*;
 import net.minecraft.state.property.Properties;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Direction;
 
 import java.util.Optional;
@@ -28,9 +29,7 @@ class DrawersModelProvider extends FabricModelProvider {
         registerDrawerModel(ModBlocks.DOUBLE_DRAWER, generator);
         registerDrawerModel(ModBlocks.QUAD_DRAWER, generator);
 
-        generator.registerNorthDefaultHorizontalRotatable(ModBlocks.SHADOW_DRAWER,
-                TextureMap.sideEnd(id("block/shadow_drawer_side"), id("block/shadow_drawer_side")));
-
+        generateShadowDrawerModel(generator);
         generateCompactingDrawerModel(generator);
     }
 
@@ -45,6 +44,15 @@ class DrawersModelProvider extends FabricModelProvider {
         generator.register(ModItems.UPGRADE_FRAME, Models.GENERATED);
         generator.register(ModItems.LIMITER, Models.GENERATED);
         generator.register(ModItems.DUPE_WAND, Models.GENERATED);
+    }
+
+    private static void generateShadowDrawerModel(BlockStateModelGenerator generator) {
+        Identifier identifier = Models.ORIENTABLE.upload(ModBlocks.SHADOW_DRAWER, TextureMap.sideEnd(id("block/shadow_drawer_side"), id("block/shadow_drawer_side")).copyAndAdd(TextureKey.FRONT, TextureMap.getId(ModBlocks.SHADOW_DRAWER)), generator.modelCollector);
+        generator.blockStateCollector.accept(
+                        VariantsBlockStateSupplier.create(
+                                ModBlocks.SHADOW_DRAWER,
+                                        BlockStateVariant.create().put(VariantSettings.MODEL, identifier))
+                                .coordinate(getBlockStateMap()));
     }
 
     private void generateCompactingDrawerModel(BlockStateModelGenerator generator) {
