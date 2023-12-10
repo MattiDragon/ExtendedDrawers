@@ -17,6 +17,7 @@ import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.block.enums.BlockFace;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemPlacementContext;
@@ -24,6 +25,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.DirectionProperty;
+import net.minecraft.state.property.EnumProperty;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.BlockMirror;
@@ -37,16 +39,16 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
-import static io.github.mattidragon.extendeddrawers.block.base.StorageDrawerBlock.FACE;
 import static io.github.mattidragon.extendeddrawers.misc.DrawerInteractionStatusManager.getAndResetInsertStatus;
 
 @SuppressWarnings({"UnstableApiUsage", "deprecation"}) // transfer api and mojank block method deprecation
 public class ShadowDrawerBlock extends NetworkBlockWithEntity<ShadowDrawerBlockEntity> implements CreativeBreakBlocker, DrawerInteractionHandler {
     public static final DirectionProperty FACING = Properties.HORIZONTAL_FACING;
+    public static final EnumProperty<BlockFace> FACE = Properties.BLOCK_FACE;
     
     public ShadowDrawerBlock(Settings settings) {
         super(settings);
-        setDefaultState(stateManager.getDefaultState().with(FACING, Direction.NORTH));
+        setDefaultState(stateManager.getDefaultState().with(FACING, Direction.NORTH).with(FACE, BlockFace.WALL));
     }
 
     @Override
@@ -67,16 +69,25 @@ public class ShadowDrawerBlock extends NetworkBlockWithEntity<ShadowDrawerBlockE
     protected BlockEntityType<ShadowDrawerBlockEntity> getType() {
         return ModBlocks.SHADOW_DRAWER_BLOCK_ENTITY;
     }
-    
+
+    @Override
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        builder.add(FACING);
+        builder.add(FACING, FACE);
     }
-    
+
     @Override
     public BlockState getPlacementState(ItemPlacementContext ctx) {
-        return this.getDefaultState().with(FACING, ctx.getHorizontalPlayerFacing().getOpposite());
+        var face = switch (ctx.getPlayerLookDirection().getOpposite()) {
+            case DOWN -> BlockFace.CEILING;
+            case UP -> BlockFace.FLOOR;
+            default -> BlockFace.WALL;
+        };
+
+        return this.getDefaultState()
+                .with(FACE, face)
+                .with(FACING, ctx.getHorizontalPlayerFacing().getOpposite());
     }
-    
+
     @Override
     public BlockState rotate(BlockState state, BlockRotation rotation) {
         return state.with(FACING, rotation.rotate(state.get(FACING)));
@@ -89,7 +100,7 @@ public class ShadowDrawerBlock extends NetworkBlockWithEntity<ShadowDrawerBlockE
     
     @Override
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
-        if (hit.getSide() != state.get(FACING) || !player.canModifyBlocks()) return ActionResult.PASS;
+        if (!isFront(state, hit.getSide()) || !player.canModifyBlocks()) return ActionResult.PASS;
         if (!(world instanceof ServerWorld serverWorld)) return ActionResult.CONSUME_PARTIAL;
 
         var drawer = getBlockEntity(world, pos);
@@ -153,7 +164,11 @@ public class ShadowDrawerBlock extends NetworkBlockWithEntity<ShadowDrawerBlockE
     
     @Override
     public boolean isFront(BlockState state, Direction direction) {
-        return state.get(FACING) == direction;
+        return switch (state.get(FACE)) {
+            case FLOOR -> direction == Direction.UP;
+            case CEILING -> direction == Direction.DOWN;
+            case WALL -> direction == state.get(FACING);
+        };
     }
 
     @Override

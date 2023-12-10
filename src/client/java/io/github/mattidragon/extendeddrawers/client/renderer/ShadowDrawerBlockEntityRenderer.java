@@ -1,9 +1,8 @@
 package io.github.mattidragon.extendeddrawers.client.renderer;
 
 import io.github.mattidragon.extendeddrawers.ExtendedDrawers;
-import io.github.mattidragon.extendeddrawers.block.ShadowDrawerBlock;
+import io.github.mattidragon.extendeddrawers.block.base.StorageDrawerBlock;
 import io.github.mattidragon.extendeddrawers.block.entity.ShadowDrawerBlockEntity;
-import net.minecraft.block.enums.BlockFace;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.WorldRenderer;
@@ -30,11 +29,14 @@ public class ShadowDrawerBlockEntityRenderer extends AbstractDrawerBlockEntityRe
     @SuppressWarnings("UnstableApiUsage")
     @Override
     public void render(ShadowDrawerBlockEntity drawer, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
-        var dir = drawer.getCachedState().get(ShadowDrawerBlock.FACING);
+        var horizontalDir = drawer.getCachedState().get(StorageDrawerBlock.FACING);
+        var face = drawer.getCachedState().get(StorageDrawerBlock.FACE);
+        var dir = StorageDrawerBlock.getFront(drawer.getCachedState());
+
         if (!shouldRender(drawer, dir)) return;
         
         matrices.push();
-        alignMatrices(matrices, dir, BlockFace.WALL);
+        alignMatrices(matrices, horizontalDir, face);
 
         light = WorldRenderer.getLightmapCoordinates(Objects.requireNonNull(drawer.getWorld()), drawer.getPos().offset(dir));
 
