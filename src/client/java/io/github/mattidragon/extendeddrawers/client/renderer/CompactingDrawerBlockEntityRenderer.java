@@ -37,13 +37,15 @@ public class CompactingDrawerBlockEntityRenderer extends AbstractDrawerBlockEnti
     @Override
     public void render(CompactingDrawerBlockEntity drawer, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
         var drawerPos = drawer.getPos();
-        var dir = drawer.getCachedState().get(StorageDrawerBlock.FACING);
+        var horizontalDir = drawer.getCachedState().get(StorageDrawerBlock.FACING);
+        var face = drawer.getCachedState().get(StorageDrawerBlock.FACE);
+        var dir = StorageDrawerBlock.getFront(drawer.getCachedState());
         var world = drawer.getWorld();
 
         if (!shouldRender(drawer, dir)) return;
 
         matrices.push();
-        alignMatrices(matrices, dir);
+        alignMatrices(matrices, horizontalDir, face);
 
         light = WorldRenderer.getLightmapCoordinates(Objects.requireNonNull(drawer.getWorld()), drawer.getPos().offset(dir));
 

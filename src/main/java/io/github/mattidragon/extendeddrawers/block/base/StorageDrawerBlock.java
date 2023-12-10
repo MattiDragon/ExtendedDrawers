@@ -15,12 +15,14 @@ import net.fabricmc.fabric.api.transfer.v1.storage.base.SingleSlotStorage;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.enums.BlockFace;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.DirectionProperty;
+import net.minecraft.state.property.EnumProperty;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.*;
 import net.minecraft.util.hit.BlockHitResult;
@@ -35,19 +37,29 @@ import org.jetbrains.annotations.Nullable;
 @SuppressWarnings("deprecation")
 public abstract class StorageDrawerBlock<T extends StorageDrawerBlockEntity> extends NetworkBlockWithEntity<T> implements DrawerInteractionHandler, CreativeBreakBlocker {
     public static final DirectionProperty FACING = Properties.HORIZONTAL_FACING;
+    public static final EnumProperty<BlockFace> FACE = Properties.BLOCK_FACE;
 
     protected StorageDrawerBlock(Settings settings) {
         super(settings);
+        setDefaultState(stateManager.getDefaultState().with(FACING, Direction.NORTH).with(FACE, BlockFace.WALL));
     }
 
     @Override
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        builder.add(FACING);
+        builder.add(FACING, FACE);
     }
 
     @Override
     public BlockState getPlacementState(ItemPlacementContext ctx) {
-        return this.getDefaultState().with(FACING, ctx.getHorizontalPlayerFacing().getOpposite());
+        var face = switch (ctx.getPlayerLookDirection().getOpposite()) {
+            case DOWN -> BlockFace.CEILING;
+            case UP -> BlockFace.FLOOR;
+            default -> BlockFace.WALL;
+        };
+
+        return this.getDefaultState()
+                .with(FACE, face)
+                .with(FACING, ctx.getHorizontalPlayerFacing().getOpposite());
     }
 
     @Override
@@ -86,7 +98,7 @@ public abstract class StorageDrawerBlock<T extends StorageDrawerBlockEntity> ext
         // We don't have sub-block position or a hit result, so we need to raycast ourselves
         var hit = DrawerRaycastUtil.getTarget(player, pos);
         if (hit.getType() == HitResult.Type.MISS) return;
-        var internalPos = DrawerRaycastUtil.calculateFaceLocation(pos, hit.getPos(), hit.getSide(), state.get(FACING));
+        var internalPos = DrawerRaycastUtil.calculateFaceLocation(pos, hit.getPos(), hit.getSide(), state.get(FACING), state.get(FACE));
         if (internalPos == null) return;
 
         var storage = getSlot(drawer, getSlotIndex(drawer, internalPos));
@@ -105,11 +117,11 @@ public abstract class StorageDrawerBlock<T extends StorageDrawerBlockEntity> ext
 
     @Override
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
-        if (hit.getSide() != state.get(FACING) || !player.canModifyBlocks() || hand == Hand.OFF_HAND)
+        if (!isFront(state, hit.getSide()) || !player.canModifyBlocks() || hand == Hand.OFF_HAND)
             return ActionResult.PASS;
         if (!(world instanceof ServerWorld)) return ActionResult.CONSUME_PARTIAL;
 
-        var internalPos = DrawerRaycastUtil.calculateFaceLocation(pos, hit.getPos(), hit.getSide(), state.get(FACING));
+        var internalPos = DrawerRaycastUtil.calculateFaceLocation(pos, hit.getPos(), hit.getSide(), state.get(FACING), state.get(FACE));
         if (internalPos == null) return ActionResult.PASS;
 
         var drawer = getBlockEntity(world, pos);
@@ -160,7 +172,7 @@ public abstract class StorageDrawerBlock<T extends StorageDrawerBlockEntity> ext
     protected abstract ModifierAccess getModifierAccess(T drawer, Vec2f facePos);
 
     protected @Nullable ModifierAccess tryGetModifierAccess(BlockState state, World world, BlockPos pos, Vec3d hitPos, Direction side) {
-        var facePos = DrawerRaycastUtil.calculateFaceLocation(pos, hitPos, side, state.get(StorageDrawerBlock.FACING));
+        var facePos = DrawerRaycastUtil.calculateFaceLocation(pos, hitPos, side, state.get(StorageDrawerBlock.FACING), state.get(FACE));
         if (facePos == null) return null;
         var drawer = getBlockEntity(world, pos);
         if (drawer == null) return null;
@@ -239,8 +251,20 @@ public abstract class StorageDrawerBlock<T extends StorageDrawerBlockEntity> ext
         return ActionResult.FAIL;
     }
 
+    public static Direction getFront(BlockState state) {
+        return switch (state.get(FACE)) {
+            case FLOOR -> Direction.UP;
+            case CEILING -> Direction.DOWN;
+            case WALL -> state.get(FACING);
+        };
+    }
+
     @Override
     public boolean isFront(BlockState state, Direction direction) {
-        return state.get(FACING) == direction;
+        return switch (state.get(FACE)) {
+            case FLOOR -> direction == Direction.UP;
+            case CEILING -> direction == Direction.DOWN;
+            case WALL -> direction == state.get(FACING);
+        };
     }
 }

@@ -30,6 +30,5 @@
     "recipes": [
       "extended_drawers:compacting_drawer"
     ]
-  },
-  "sends_telemetry_event": false
+  }
 }

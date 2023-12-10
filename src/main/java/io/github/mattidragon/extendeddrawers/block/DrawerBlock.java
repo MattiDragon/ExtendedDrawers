@@ -19,9 +19,8 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
-import net.minecraft.util.*;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec2f;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
@@ -35,7 +34,6 @@ public class DrawerBlock extends StorageDrawerBlock<DrawerBlockEntity> {
     public DrawerBlock(Settings settings, int slots) {
         super(settings);
         this.slots = slots;
-        setDefaultState(stateManager.getDefaultState().with(FACING, Direction.NORTH));
     }
 
     @Override

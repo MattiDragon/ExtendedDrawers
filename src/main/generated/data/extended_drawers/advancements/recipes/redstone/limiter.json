@@ -28,6 +28,5 @@
     "recipes": [
       "extended_drawers:limiter"
     ]
-  },
-  "sends_telemetry_event": false
+  }
 }

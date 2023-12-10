@@ -6,6 +6,7 @@ import net.fabricmc.fabric.api.renderer.v1.mesh.MutableQuadView;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.minecraft.block.Block;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.block.enums.BlockFace;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.render.DiffuseLighting;
@@ -24,7 +25,6 @@ import net.minecraft.util.math.RotationAxis;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
-import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 
@@ -144,9 +144,9 @@ public abstract class AbstractDrawerBlockEntityRenderer<T extends BlockEntity> i
         } else {
             // Stolen from storage drawers
             if (model.isSideLit()) {
-                matrices.peek().getNormalMatrix().mul(new Matrix3f().set(ITEM_LIGHT_ROTATION_3D));
+                matrices.peek().getNormalMatrix().rotate(ITEM_LIGHT_ROTATION_3D);
             } else {
-                matrices.peek().getNormalMatrix().mul(new Matrix3f().set(ITEM_LIGHT_ROTATION_FLAT));
+                matrices.peek().getNormalMatrix().rotate(ITEM_LIGHT_ROTATION_FLAT);
             }
         }
 
@@ -175,11 +175,19 @@ public abstract class AbstractDrawerBlockEntityRenderer<T extends BlockEntity> i
         matrices.pop();
     }
 
-    protected void alignMatrices(MatrixStack matrices, Direction dir) {
-        var pos = dir.getUnitVector();
+    protected void alignMatrices(MatrixStack matrices, Direction dir, BlockFace face) {
+        var pos = switch (face) {
+            case FLOOR -> Direction.UP.getUnitVector();
+            case CEILING -> Direction.DOWN.getUnitVector();
+            default -> dir.getUnitVector();
+        };
         matrices.translate(pos.x / 2 + 0.5, pos.y / 2 + 0.5, pos.z / 2 + 0.5);
-        matrices.multiply(dir.getRotationQuaternion());
-        matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(-90));
+        matrices.multiplyPositionMatrix(new Matrix4f().rotation(dir.getRotationQuaternion()));
+        switch (face) {
+            case FLOOR -> matrices.multiplyPositionMatrix(new Matrix4f().rotation(RotationAxis.POSITIVE_X.rotationDegrees(-90)));
+            case CEILING -> matrices.multiplyPositionMatrix(new Matrix4f().rotation(RotationAxis.POSITIVE_X.rotationDegrees(90)));
+        }
+        matrices.multiplyPositionMatrix(new Matrix4f().rotation(RotationAxis.POSITIVE_X.rotationDegrees(-90)));
         matrices.translate(0, 0, 0.01);
     }
 }

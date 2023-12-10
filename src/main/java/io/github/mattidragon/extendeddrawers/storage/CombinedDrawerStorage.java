@@ -6,6 +6,7 @@ import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
 import net.fabricmc.fabric.api.transfer.v1.storage.StoragePreconditions;
 import net.fabricmc.fabric.api.transfer.v1.storage.StorageView;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.Iterator;
@@ -77,7 +78,7 @@ public class CombinedDrawerStorage implements Storage<ItemVariant> {
     }
 
     @Override
-    public Iterator<StorageView<ItemVariant>> iterator() {
+    public @NotNull Iterator<StorageView<ItemVariant>> iterator() {
         return Iterators.forArray(slots);
     }
 }
