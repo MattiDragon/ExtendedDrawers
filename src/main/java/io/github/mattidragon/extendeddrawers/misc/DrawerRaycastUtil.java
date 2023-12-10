@@ -1,5 +1,6 @@
 package io.github.mattidragon.extendeddrawers.misc;
 
+import net.minecraft.block.enums.WallMountLocation;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
@@ -11,16 +12,35 @@ import org.jetbrains.annotations.Nullable;
 
 public class DrawerRaycastUtil {
     @Nullable
-    public static Vec2f calculateFaceLocation(BlockPos blockPos, Vec3d hitPos, Direction hitDirection, Direction blockDirection) {
-        if (hitDirection != blockDirection) return null;
+    public static Vec2f calculateFaceLocation(BlockPos blockPos, Vec3d hitPos, Direction hitDirection, Direction blockDirection, WallMountLocation mountLocation) {
+        if (mountLocation == WallMountLocation.CEILING && hitDirection != Direction.DOWN
+            || mountLocation == WallMountLocation.FLOOR && hitDirection != Direction.UP
+            || mountLocation == WallMountLocation.WALL && hitDirection != blockDirection)
+            return null;
         var internalPos = hitPos.subtract(Vec3d.of(blockPos));
-        
-        return switch (blockDirection) {
-            case NORTH -> new Vec2f((float) (1 - internalPos.x), (float) (1 - internalPos.y));
-            case SOUTH -> new Vec2f((float) (internalPos.x), (float) (1 - internalPos.y));
-            case EAST -> new Vec2f((float) (1 - internalPos.z), (float) (1 - internalPos.y));
-            case WEST -> new Vec2f((float) (internalPos.z), (float) (1 - internalPos.y));
-            default -> null;
+
+        return switch (mountLocation) {
+            case WALL -> switch (blockDirection) {
+                case NORTH -> new Vec2f((float) (1 - internalPos.x), (float) (1 - internalPos.y));
+                case SOUTH -> new Vec2f((float) (internalPos.x), (float) (1 - internalPos.y));
+                case EAST -> new Vec2f((float) (1 - internalPos.z), (float) (1 - internalPos.y));
+                case WEST -> new Vec2f((float) (internalPos.z), (float) (1 - internalPos.y));
+                default -> null;
+            };
+            case FLOOR -> switch (blockDirection) {
+                case NORTH -> new Vec2f((float) (1 - internalPos.x), (float) (1 - internalPos.z));
+                case SOUTH -> new Vec2f((float) (internalPos.x), (float) (internalPos.z));
+                case EAST -> new Vec2f((float) (1 - internalPos.z), (float) (internalPos.x));
+                case WEST -> new Vec2f((float) (internalPos.z), (float) (1 - internalPos.x));
+                default -> null;
+            };
+            case CEILING -> switch (blockDirection) {
+                case NORTH -> new Vec2f((float) (1 - internalPos.x), (float) (internalPos.z));
+                case SOUTH -> new Vec2f((float) (internalPos.x), (float) (1 - internalPos.z));
+                case EAST -> new Vec2f((float) (1 - internalPos.z), (float) (1 - internalPos.x));
+                case WEST -> new Vec2f((float) (internalPos.z), (float) (internalPos.x));
+                default -> null;
+            };
         };
     }
     
