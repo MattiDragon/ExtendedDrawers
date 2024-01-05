@@ -28,6 +28,12 @@ public class SimpleNetworkStorageCache implements NetworkStorageCache {
     private GraphEntityContext context;
     @Nullable
     private CombinedStorage<ItemVariant, DrawerStorage> cachedStorage = null;
+    /**
+     * Stores if an update is currently in progress.
+     * This is required as the block entity query in the update can trigger a cancelRemoval call on the block entity which in turn results in a clear which breaks the update.
+     * It should be safe to ignore the update as no significant changes should have happened.
+     */
+    private boolean updating = false;
 
     @Override
     public CombinedStorage<ItemVariant, DrawerStorage> get() {
@@ -35,17 +41,29 @@ public class SimpleNetworkStorageCache implements NetworkStorageCache {
         return cachedStorage;
     }
 
+    private void clear() {
+        if (updating) {
+            return;
+        }
+        cachedStorage = null;
+    }
+
     @Override
     public void update() {
-        cachedStorage = new CombinedStorage<>(new ArrayList<>());
-        context.getGraph()
-                .getNodes()
-                .forEach(node -> {
-                    if (node.getBlockEntity() instanceof StorageDrawerBlockEntity drawer) {
-                        drawer.streamStorages().forEach(storage -> cachedStorage.parts.add(storage));
-                    }
-                });
-        cachedStorage.parts.sort(null);
+        try {
+            updating = true;
+            cachedStorage = new CombinedStorage<>(new ArrayList<>());
+            context.getGraph()
+                    .getNodes()
+                    .forEach(node -> {
+                        if (node.getBlockEntity() instanceof StorageDrawerBlockEntity drawer) {
+                            drawer.streamStorages().forEach(storage -> cachedStorage.parts.add(storage));
+                        }
+                    });
+            cachedStorage.parts.sort(null);
+        } finally {
+            updating = false;
+        }
     }
 
     @Override
@@ -61,27 +79,27 @@ public class SimpleNetworkStorageCache implements NetworkStorageCache {
 
     @Override
     public void onNodeCreated(@NotNull NodeHolder<BlockNode> node, @Nullable NodeEntity nodeEntity) {
-        cachedStorage = null;
+        clear();
     }
 
     @Override
     public void onNodeDestroyed(@NotNull NodeHolder<BlockNode> node, @Nullable NodeEntity nodeEntity, Map<LinkPos, LinkEntity> linkEntities) {
-        cachedStorage = null;
+        clear();
     }
 
     @Override
     public void onNodeUnloaded(BlockPos pos) {
-        cachedStorage = null;
+        clear();
     }
 
     @Override
     public void onNodeReloaded(BlockPos pos) {
-        cachedStorage = null;
+        clear();
     }
 
     @Override
     public @NotNull NetworkStorageCache split(@NotNull BlockGraph originalGraph, @NotNull BlockGraph newGraph) {
-        cachedStorage = null;
+        clear();
         return new SimpleNetworkStorageCache();
     }
 
@@ -110,6 +128,6 @@ public class SimpleNetworkStorageCache implements NetworkStorageCache {
 
     @Override
     public void merge(@NotNull NetworkStorageCache other) {
-        cachedStorage = null;
+        clear();
     }
 }
