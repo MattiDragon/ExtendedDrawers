@@ -10,10 +10,24 @@
   "model": "extended_drawers:guide_book",
   "use_resource_pack": true,
   "macros": {
-    "@thing@": "$(thing)",
-    "@item@": "$(item)",
+    "<thing>": "$(thing)",
+    "<item>": "$(item)",
     "@mod@": "$(#eb2cf5)",
-    "@!": "$()",
-    "@p@": "$(p)"
-  }
+    "<li>":"$(li)",
+    "<!>": "$()",
+    "<p>": "$(p)",
+    "<br2>":"$(br2)",
+    "<l>":"$(l)",
+    "<l:simple_networks>":"$(l:simple_networks)",
+    "<l:insertion_order>":"$(l:insertion_order)",
+    "<l:lock>":"$(l:lock)",
+    "<l:drawers>":"$(l:drawers)",
+    "<l:modifiers>":"$(l:modifiers)",
+    "<l:shadow_drawers>":"$(l:shadow_drawers)",
+    "<l:access_points>":"$(l:access_points)",
+    "<l:mod_interoperability>":"$(l:mod_interoperability)",
+    "<l:networks>":"$(l:networks)",
+    "<l:voiding>":"$(l:voiding)"
+  },
+  "i18n":true
 }

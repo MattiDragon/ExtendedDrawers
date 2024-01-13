@@ -1,5 +1,5 @@
 {
-  "name": "Blocks",
-  "description": "Extended Drawers offers a variety of blocks with different uses.",
+  "name": "book.extended_drawers.categories.blocks.name",
+  "description": "book.extended_drawers.categories.blocks.desc",
   "icon": "extended_drawers:shadow_drawer"
 }

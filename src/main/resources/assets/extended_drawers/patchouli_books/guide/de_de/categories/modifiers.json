@@ -1,5 +1,0 @@
-{
-  "name": "Modifiers",
-  "description": "Modifiers sind Items welche zu Schubladen hinzugefügt werden können und damit ihr verhalten verändern. Manche von ihnen funktionieren wie Schalter und können auf meheren Schubladen gleichzeitig eingesetzt werden, währen andere einzeln eingesetzt werden müssen.",
-  "icon": "extended_drawers:t2_upgrade"
-}
