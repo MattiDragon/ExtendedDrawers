@@ -65,7 +65,7 @@ public class CompactingDrawerBlock extends StorageDrawerBlock<CompactingDrawerBl
         drawer.readNbt(nbt);
         var storage = drawer.storage;
 
-        var list = Arrays.stream(storage.getActiveSlots())
+        var list = Arrays.stream(storage.getActiveSlotArray())
                 .map(slot -> new ResourceAmount<>(slot.getResource(), slot.getTrueAmount()))
                 .filter(resource -> !resource.resource().isBlank())
                 .toList();
@@ -86,7 +86,7 @@ public class CompactingDrawerBlock extends StorageDrawerBlock<CompactingDrawerBl
         if (!state.isOf(newState.getBlock())) {
             var drawer = getBlockEntity(world, pos);
             if (drawer != null && ExtendedDrawers.CONFIG.get().misc().drawersDropContentsOnBreak()) {
-                var slots = drawer.storage.getSlots();
+                var slots = drawer.storage.getSlotArray();
                 var amount = drawer.storage.getTrueAmount();
                 // Iterate slots in reverse order
                 for (int i = slots.length - 1; i >= 0; i--) {

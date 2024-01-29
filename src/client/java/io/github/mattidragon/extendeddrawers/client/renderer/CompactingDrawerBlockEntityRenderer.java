@@ -57,7 +57,7 @@ public class CompactingDrawerBlockEntityRenderer extends AbstractDrawerBlockEnti
 
         renderIcons(drawer, matrices, vertexConsumers, light, overlay);
 
-        var slots = drawer.storage.getActiveSlots();
+        var slots = drawer.storage.getActiveSlotArray();
 
         if (slots.length >= 1) { // Top slot
             matrices.translate(0, 0.25, 0);

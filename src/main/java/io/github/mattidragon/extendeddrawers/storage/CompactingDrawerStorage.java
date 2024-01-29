@@ -7,6 +7,7 @@ import io.github.mattidragon.extendeddrawers.compacting.CompressionLadder;
 import io.github.mattidragon.extendeddrawers.compacting.CompressionRecipeManager;
 import io.github.mattidragon.extendeddrawers.misc.ItemUtils;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
+import net.fabricmc.fabric.api.transfer.v1.storage.SlottedStorage;
 import net.fabricmc.fabric.api.transfer.v1.storage.StoragePreconditions;
 import net.fabricmc.fabric.api.transfer.v1.storage.StorageView;
 import net.fabricmc.fabric.api.transfer.v1.storage.base.SingleSlotStorage;
@@ -26,7 +27,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Stream;
 
-public final class CompactingDrawerStorage extends SnapshotParticipant<CompactingDrawerStorage.Snapshot> implements DrawerStorage {
+public final class CompactingDrawerStorage extends SnapshotParticipant<CompactingDrawerStorage.Snapshot> implements DrawerStorage, SlottedStorage<ItemVariant> {
     private final CompactingDrawerBlockEntity owner;
     private final Settings settings;
     private ItemVariant item = ItemVariant.blank();
@@ -42,7 +43,7 @@ public final class CompactingDrawerStorage extends SnapshotParticipant<Compactin
     @Override
     public void dumpExcess(World world, BlockPos pos, @Nullable Direction side, @Nullable PlayerEntity player) {
         if (amount > getCapacity()) {
-            var slots = getSlots();
+            var slots = getSlotArray();
             // Iterate slots in reverse order
             for (int i = slots.length - 1; i >= 0; i--) {
                 var slot = slots[i];
@@ -100,11 +101,11 @@ public final class CompactingDrawerStorage extends SnapshotParticipant<Compactin
         StoragePreconditions.notBlankNotNegative(resource, maxAmount);
         long inserted = 0;
 
-        for (var slot : getActiveSlots()) {
+        for (var slot : getActiveSlotArray()) {
             inserted += slot.insert(resource, maxAmount - inserted, transaction);
             if (inserted == maxAmount) break;
         }
-        if (Arrays.stream(getActiveSlots()).anyMatch(slot -> slot.item.equals(resource)) && settings.voiding)
+        if (Arrays.stream(getActiveSlotArray()).anyMatch(slot -> slot.item.equals(resource)) && settings.voiding)
             return maxAmount;
         return inserted;
     }
@@ -114,7 +115,7 @@ public final class CompactingDrawerStorage extends SnapshotParticipant<Compactin
         StoragePreconditions.notNegative(maxAmount);
         long extracted = 0;
 
-        for (var slot : getActiveSlots()) {
+        for (var slot : getActiveSlotArray()) {
             extracted += slot.extract(resource, maxAmount - extracted, transaction);
             if (extracted == maxAmount) break;
         }
@@ -132,8 +133,14 @@ public final class CompactingDrawerStorage extends SnapshotParticipant<Compactin
         return new StorageIterator();
     }
 
+    @Override
+    public int getSlotCount() {
+        return getActiveSlotCount();
+    }
+
+    @Override
     public Slot getSlot(int index) {
-        return getSlots()[index];
+        return getSlotArray()[index];
     }
 
     @Override
@@ -163,15 +170,15 @@ public final class CompactingDrawerStorage extends SnapshotParticipant<Compactin
     /**
      * Returns all non-blocked slots in a new array
      */
-    public Slot[] getActiveSlots() {
+    public Slot[] getActiveSlotArray() {
         int count = getActiveSlotCount();
         var result = new Slot[count];
-        System.arraycopy(getSlots(), 0, result, 0, count);
+        System.arraycopy(getSlotArray(), 0, result, 0, count);
         return result;
     }
 
     public int getActiveSlotCount() {
-        var slots = getSlots();
+        var slots = getSlotArray();
         int size;
         for (size = 0; size < slots.length; size++) {
             if (slots[size].blocked) break;
@@ -179,13 +186,13 @@ public final class CompactingDrawerStorage extends SnapshotParticipant<Compactin
         return size;
     }
 
-    public Slot[] getSlots() {
+    public Slot[] getSlotArray() {
         if (updatePending) updateSlots();
         return slots;
     }
 
     private int getTotalCompression() {
-        var slots = getActiveSlots();
+        var slots = getActiveSlotArray();
         if (slots.length == 0) return 1; // Fallback in case something breaks
 
         return slots[slots.length-1].compression;
@@ -276,7 +283,7 @@ public final class CompactingDrawerStorage extends SnapshotParticipant<Compactin
 
         @Override
         public Slot next() {
-            return getSlots()[index--];
+            return getSlotArray()[index--];
         }
     }
 
@@ -289,7 +296,7 @@ public final class CompactingDrawerStorage extends SnapshotParticipant<Compactin
             // Loop over and check for non-empty storage
             // No need for range check as the loop doesn't do anything if index is out of bounds
             for (int i = index; i >= 0; i--) {
-                if (!getSlots()[i].isResourceBlank()) return true;
+                if (!getSlotArray()[i].isResourceBlank()) return true;
             }
 
             return false;
@@ -298,7 +305,7 @@ public final class CompactingDrawerStorage extends SnapshotParticipant<Compactin
         @Override
         public Slot next() {
             for (; index >= 0; index--) {
-                if (!getSlots()[index].isResourceBlank()) {
+                if (!getSlotArray()[index].isResourceBlank()) {
                     return slots[index--];
                 }
             }
