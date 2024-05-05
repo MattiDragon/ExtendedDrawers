@@ -1,0 +1,6 @@
+{
+  "name": "서랍 네트워킹",
+  "description": "이 섹션은 서랍 네트워크의 작동 방식과 설정하는 방법에 대해 설명합니다. $(br2)또한 다른 모드와 네트워크를 통합하는 팁도 포함되어 있습니다.",
+  "icon": "extended_drawers:access_point",
+  "sortnum": 1
+}
