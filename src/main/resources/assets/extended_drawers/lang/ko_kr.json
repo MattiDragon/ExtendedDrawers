@@ -41,7 +41,7 @@
   "command.extended_drawers.reload.fail": "구성 파일 다시로드 실패. 로그를 확인하세요.",
   "command.extended_drawers.reload.success": "구성 파일을 성공적으로 다시로드했습니다!",
 
-  "config.extended_drawers": "확장 서랍",
+  "config.extended_drawers": "Extended Drawers",
   "config.extended_drawers.storage": "저장소",
   "config.extended_drawers.storage.drawerCapacity": "서랍 용량",
   "config.extended_drawers.storage.drawerCapacity.description": "서랍의 기본 용량입니다. 이후 업그레이드 및 기타 옵션에 의해 최종 용량이 조정됩니다.",
