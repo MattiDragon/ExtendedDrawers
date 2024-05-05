@@ -1,0 +1,23 @@
+{
+  "name": "간단한 네트워크",
+  "icon": "extended_drawers:single_drawer",
+  "category": "extended_drawers:networks",
+  "pages": [
+    "$(l:drawers)서랍@!을 옆에 두기만 하면 간단한 네트워크가 생성됩니다. 그러나 해당 네트워크는 아직 아무것도 수행하지 않습니다. $(br2)우리는 간단하게 시작하여 네트워크에 $(l:access_points)접근 지점@!을 추가할 것입니다. 이를 통해 원하는 서랍에 아이템을 삽입할 수 있게 됩니다.",
+    {
+      "type": "patchouli:multiblock",
+      "multiblock": {
+        "mapping": {
+          "D": "extended_drawers:single_drawer[facing=west]",
+          "0": "extended_drawers:single_drawer[facing=west]",
+          "A": "extended_drawers:access_point"
+        },
+        "pattern": [
+          ["D0A"]
+        ]
+      },
+      "enable_visualize": false,
+      "text": ""
+    }
+  ]
+}

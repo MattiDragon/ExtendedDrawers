@@ -1,0 +1,12 @@
+{
+  "name": "그림자 서랍",
+  "icon": "extended_drawers:shadow_drawer",
+  "category": "extended_drawers:blocks",
+  "pages": [
+    "$(item)그림자 서랍/$은 $(l:access_points)접근 지점@!과 비슷하지만 하나의 아이템만 처리합니다. 또한 플레이어가 아이템을 추출하고 개수를 표시할 수 있습니다. $(br2)그림자 서랍은 $(l:lock)잠긴@! 것처럼 작동하지만, shift-클릭으로 아이템을 지울 수 있습니다.",
+    {
+      "type": "patchouli:crafting",
+      "recipe": "extended_drawers:shadow_drawer"
+    }
+  ]
+}
