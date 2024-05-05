@@ -26,7 +26,7 @@
   "tooltip.extended_drawers.modifiers": "수정자: %s",
   "tooltip.extended_drawers.empty": "비어 있음",
 
-  "itemGroup.extended_drawers.main": "확장 서랍",
+  "itemGroup.extended_drawers.main": "Extended Drawers",
 
   "extended_drawer.drawer.upgrade_fail": "업그레이드 변경 불가; 아이템이 너무 많습니다.",
   "extended_drawer.drawer.limiter_fail": "제한기 변경 불가; 아이템이 너무 많습니다.",
