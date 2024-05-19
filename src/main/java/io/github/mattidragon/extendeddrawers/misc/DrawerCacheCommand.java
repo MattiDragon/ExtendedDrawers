@@ -24,7 +24,7 @@ public class DrawerCacheCommand {
                                     .executes(context -> {
                                         var source = context.getSource();
                                         var pos = BlockPosArgumentType.getBlockPos(context, "pos");
-                                        NetworkRegistry.UNIVERSE.getServerGraphWorld(source.getWorld())
+                                        NetworkRegistry.UNIVERSE.getGraphWorld(source.getWorld())
                                                 .getAllGraphsAt(pos)
                                                 .map(graph -> graph.getGraphEntity(NetworkRegistry.STORAGE_CACHE_TYPE))
                                                 .map(NetworkStorageCache::getDebugInfo)
@@ -36,7 +36,7 @@ public class DrawerCacheCommand {
                                     .executes(context -> {
                                         var source = context.getSource();
                                         var pos = BlockPosArgumentType.getBlockPos(context, "pos");
-                                        var graphs = NetworkRegistry.UNIVERSE.getServerGraphWorld(source.getWorld())
+                                        var graphs = NetworkRegistry.UNIVERSE.getGraphWorld(source.getWorld())
                                                 .getAllGraphsAt(pos)
                                                 .toList();
                                         if (graphs.isEmpty()) {
@@ -48,7 +48,7 @@ public class DrawerCacheCommand {
                                             return 0;
                                         }
 
-                                        var graph = graphs.get(0);
+                                        var graph = graphs.getFirst();
                                         var cache = graph.getGraphEntity(NetworkRegistry.STORAGE_CACHE_TYPE);
 
                                         graph.getNodes()
@@ -66,7 +66,7 @@ public class DrawerCacheCommand {
                                     .executes(context -> {
                                         var source = context.getSource();
                                         var pos = BlockPosArgumentType.getBlockPos(context, "pos");
-                                        var caches = NetworkRegistry.UNIVERSE.getServerGraphWorld(source.getWorld())
+                                        var caches = NetworkRegistry.UNIVERSE.getGraphWorld(source.getWorld())
                                                 .getAllGraphsAt(pos)
                                                 .map(graph -> graph.getGraphEntity(NetworkRegistry.STORAGE_CACHE_TYPE))
                                                 .toList();
@@ -80,7 +80,7 @@ public class DrawerCacheCommand {
                                             .executes(context -> {
                                                 var source = context.getSource();
                                                 var pos = BlockPosArgumentType.getBlockPos(context, "pos");
-                                                var caches = NetworkRegistry.UNIVERSE.getServerGraphWorld(source.getWorld())
+                                                var caches = NetworkRegistry.UNIVERSE.getGraphWorld(source.getWorld())
                                                         .getAllGraphsAt(pos)
                                                         .map(graph -> graph.getGraphEntity(NetworkRegistry.STORAGE_CACHE_TYPE))
                                                         .toList();

@@ -30,7 +30,6 @@ import net.minecraft.state.property.Properties;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.BlockMirror;
 import net.minecraft.util.BlockRotation;
-import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
@@ -41,7 +40,6 @@ import org.jetbrains.annotations.Nullable;
 
 import static io.github.mattidragon.extendeddrawers.misc.DrawerInteractionStatusManager.getAndResetInsertStatus;
 
-@SuppressWarnings({"deprecation"}) // transfer api and mojank block method deprecation
 public class ShadowDrawerBlock extends NetworkBlockWithEntity<ShadowDrawerBlockEntity> implements CreativeBreakBlocker, DrawerInteractionHandler {
     public static final DirectionProperty FACING = Properties.HORIZONTAL_FACING;
     public static final EnumProperty<BlockFace> FACE = Properties.BLOCK_FACE;
@@ -99,13 +97,13 @@ public class ShadowDrawerBlock extends NetworkBlockWithEntity<ShadowDrawerBlockE
     }
     
     @Override
-    public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
+    public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, BlockHitResult hit) {
         if (!isFront(state, hit.getSide()) || !player.canModifyBlocks()) return ActionResult.PASS;
         if (!(world instanceof ServerWorld serverWorld)) return ActionResult.CONSUME_PARTIAL;
 
         var drawer = getBlockEntity(world, pos);
         if (drawer == null) return ActionResult.PASS;
-        var playerStack = player.getStackInHand(hand);
+        var playerStack = player.getMainHandStack();
         
         if (player.isSneaking() || drawer.item.isBlank()) {
             drawer.item = ItemVariant.of(playerStack);

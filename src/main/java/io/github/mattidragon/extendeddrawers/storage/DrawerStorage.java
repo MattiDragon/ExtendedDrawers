@@ -5,11 +5,13 @@ import io.github.mattidragon.extendeddrawers.block.entity.StorageDrawerBlockEnti
 import io.github.mattidragon.extendeddrawers.item.LimiterItem;
 import io.github.mattidragon.extendeddrawers.item.UpgradeItem;
 import io.github.mattidragon.extendeddrawers.misc.ItemUtils;
+import io.github.mattidragon.extendeddrawers.registry.ModDataComponents;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -95,8 +97,8 @@ public sealed interface DrawerStorage extends Comparable<DrawerStorage>, Storage
         settings().voiding = nbt.getBoolean("voiding");
         settings().hidden = nbt.getBoolean("hidden");
         settings().duping = nbt.getBoolean("duping");
-        settings().upgrade = ItemVariant.fromNbt(nbt.getCompound("capacityUpgrade"));
-        settings().limiter = ItemVariant.fromNbt(nbt.getCompound("limiter"));
+        settings().upgrade = ItemVariant.CODEC.parse(NbtOps.INSTANCE, nbt.getCompound("capacityUpgrade")).getOrThrow();
+        settings().limiter = ItemVariant.CODEC.parse(NbtOps.INSTANCE, nbt.getCompound("limiter")).getOrThrow();
     }
 
     default void writeNbt(NbtCompound nbt) {
@@ -104,8 +106,8 @@ public sealed interface DrawerStorage extends Comparable<DrawerStorage>, Storage
         nbt.putBoolean("voiding", settings().voiding);
         nbt.putBoolean("hidden", settings().hidden);
         nbt.putBoolean("duping", settings().duping);
-        nbt.put("capacityUpgrade", settings().upgrade.toNbt());
-        nbt.put("limiter", settings().limiter.toNbt());
+        nbt.put("capacityUpgrade", ItemVariant.CODEC.encodeStart(NbtOps.INSTANCE, settings().upgrade).getOrThrow());
+        nbt.put("limiter", ItemVariant.CODEC.encodeStart(NbtOps.INSTANCE, settings().limiter).getOrThrow());
     }
 
     /**
@@ -152,8 +154,8 @@ public sealed interface DrawerStorage extends Comparable<DrawerStorage>, Storage
 
     @Override
     default long getLimiter() {
-        var limiterNbt = settings().limiter.getNbt();
-        return limiterNbt == null ? Long.MAX_VALUE : limiterNbt.getLong("limit");
+        // TODO: do this without creating a stack
+        return settings().limiter.toStack().getOrDefault(ModDataComponents.LIMITER_LIMIT, Long.MAX_VALUE);
     }
 
     @Override

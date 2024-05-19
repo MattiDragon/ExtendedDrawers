@@ -5,7 +5,6 @@ import com.kneelawk.graphlib.api.graph.user.GraphEntity;
 import com.kneelawk.graphlib.api.graph.user.GraphEntityType;
 import io.github.mattidragon.extendeddrawers.network.cache.NetworkStorageCache;
 import io.github.mattidragon.extendeddrawers.network.node.DrawerNetworkBlockNode;
-import net.minecraft.nbt.NbtElement;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import org.apache.commons.lang3.ObjectUtils;
@@ -18,7 +17,7 @@ public class UpdateHandler implements GraphEntity<UpdateHandler> {
     private ChangeType queuedUpdate;
 
     public static void scheduleUpdate(ServerWorld world, BlockPos pos, ChangeType type) {
-        NetworkRegistry.UNIVERSE.getServerGraphWorld(world)
+        NetworkRegistry.UNIVERSE.getGraphWorld(world)
                 .getLoadedGraphsAt(pos)
                 .map(graph -> graph.getGraphEntity(NetworkRegistry.UPDATE_HANDLER_TYPE))
                 .forEach(updateHandler -> updateHandler.scheduleUpdate(type));
@@ -62,11 +61,6 @@ public class UpdateHandler implements GraphEntity<UpdateHandler> {
     @Override
     public @NotNull GraphEntityType<?> getType() {
         return NetworkRegistry.UPDATE_HANDLER_TYPE;
-    }
-
-    @Override
-    public @Nullable NbtElement toTag() {
-        return null;
     }
 
     @Override

@@ -15,6 +15,7 @@
     "EEE"
   ],
   "result": {
-    "item": "extended_drawers:shadow_drawer"
+    "count": 1,
+    "id": "extended_drawers:shadow_drawer"
   }
 }

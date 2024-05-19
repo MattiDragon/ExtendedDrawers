@@ -87,7 +87,7 @@ public abstract class AbstractDrawerBlockEntityRenderer<T extends BlockEntity> i
         var emitter = Objects.requireNonNull(RendererAccess.INSTANCE.getRenderer()).meshBuilder().getEmitter();
         emitter.square(Direction.UP, 0, 0, 1, 1, 1);
         emitter.spriteBake(sprite, MutableQuadView.BAKE_LOCK_UV);
-        vertexConsumers.getBuffer(RenderLayer.getCutout()).quad(matrices.peek(), emitter.toBakedQuad(sprite), 1, 1, 1, light, overlay);
+        vertexConsumers.getBuffer(RenderLayer.getCutout()).quad(matrices.peek(), emitter.toBakedQuad(sprite), 1, 1, 1, 1, light, overlay);
 
         matrices.pop();
     }
@@ -123,7 +123,7 @@ public abstract class AbstractDrawerBlockEntityRenderer<T extends BlockEntity> i
         var emitter = Objects.requireNonNull(RendererAccess.INSTANCE.getRenderer()).meshBuilder().getEmitter();
         emitter.square(Direction.UP, 0, 0, 1, 1, 0);
         emitter.spriteBake(sprite, MutableQuadView.BAKE_LOCK_UV);
-        vertexConsumers.getBuffer(RenderLayer.getCutout()).quad(matrices.peek(), emitter.toBakedQuad(sprite), 1, 1, 1, light, overlay);
+        vertexConsumers.getBuffer(RenderLayer.getCutout()).quad(matrices.peek(), emitter.toBakedQuad(sprite), 1, 1, 1, 1, light, overlay);
         matrices.pop();
     }
 
@@ -152,7 +152,7 @@ public abstract class AbstractDrawerBlockEntityRenderer<T extends BlockEntity> i
 
         itemRenderer.renderItem(stack, ModelTransformationMode.GUI, false, matrices, vertexConsumers, light, OverlayTexture.DEFAULT_UV, model);
 
-        if (isGui) DiffuseLighting.disableGuiDepthLighting();
+        if (isGui) DiffuseLighting.enableGuiDepthLighting();
 
         matrices.pop();
     }

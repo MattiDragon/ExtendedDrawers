@@ -21,6 +21,7 @@
     "SPS"
   ],
   "result": {
-    "item": "extended_drawers:compacting_drawer"
+    "count": 1,
+    "id": "extended_drawers:compacting_drawer"
   }
 }

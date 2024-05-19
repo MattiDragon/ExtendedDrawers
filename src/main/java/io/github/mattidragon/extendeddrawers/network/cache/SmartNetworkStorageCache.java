@@ -73,14 +73,12 @@ public class SmartNetworkStorageCache implements NetworkStorageCache {
     }
 
     @Override
-    public void onNodeCreated(@NotNull NodeHolder<BlockNode> node, @Nullable NodeEntity nodeEntity) {
-        NetworkStorageCache.super.onNodeCreated(node, nodeEntity);
+    public void onPostNodeCreated(@NotNull NodeHolder<BlockNode> node, @Nullable NodeEntity nodeEntity) {
         missingPositions.add(node.getBlockPos());
     }
 
     @Override
-    public void onNodeDestroyed(@NotNull NodeHolder<BlockNode> node, @Nullable NodeEntity nodeEntity, Map<LinkPos, LinkEntity> linkEntities) {
-        NetworkStorageCache.super.onNodeDestroyed(node, nodeEntity, linkEntities);
+    public void onPostNodeDestroyed(@NotNull NodeHolder<BlockNode> node, @Nullable NodeEntity nodeEntity, Map<LinkPos, LinkEntity> linkEntities) {
         var pos = node.getBlockPos();
 
         // Remove storages from cache

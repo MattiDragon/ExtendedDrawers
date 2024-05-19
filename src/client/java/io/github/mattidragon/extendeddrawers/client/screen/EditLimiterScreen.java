@@ -1,7 +1,7 @@
 package io.github.mattidragon.extendeddrawers.client.screen;
 
 import io.github.mattidragon.extendeddrawers.ExtendedDrawers;
-import io.github.mattidragon.extendeddrawers.networking.SetLimiterLimitPacket;
+import io.github.mattidragon.extendeddrawers.networking.SetLimiterLimitPayload;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
@@ -37,7 +37,7 @@ public class EditLimiterScreen extends Screen {
                     try {
                         var limit = Long.parseLong(textField.getText());
                         if (limit <= 0) throw new NumberFormatException();
-                        ClientPlayNetworking.send(new SetLimiterLimitPacket(slot, limit));
+                        ClientPlayNetworking.send(new SetLimiterLimitPayload(slot, limit));
                     } catch (NumberFormatException ignored) {}
                     close();
                 })
@@ -46,7 +46,7 @@ public class EditLimiterScreen extends Screen {
                 .build());
 
         clearButton = addDrawableChild(ButtonWidget.builder(Text.translatable("item.extended_drawers.limiter.clear"), button -> {
-                    ClientPlayNetworking.send(new SetLimiterLimitPacket(slot, -1));
+                    ClientPlayNetworking.send(new SetLimiterLimitPayload(slot, -1));
                     close();
                 })
                 .position(width / 2 - 19, height / 2 + 6)
@@ -92,13 +92,16 @@ public class EditLimiterScreen extends Screen {
     }
 
     @Override
-    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        if (client == null) return;
-
-        renderBackground(context, mouseX, mouseY, delta);
+    public void renderBackground(DrawContext context, int mouseX, int mouseY, float delta) {
+        renderInGameBackground(context);
         context.drawTexture(TEXTURE, width / 2 - 64, height / 2 - 32, 0, 0, 128, 64, 128, 64);
-        context.drawText(client.textRenderer, getTitle(), width / 2 - 58, height / 2 - 16 - 10, 0x404040, false);
+    }
+
+    @Override
+    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         super.render(context, mouseX, mouseY, delta);
+        if (client == null) return;
+        context.drawText(client.textRenderer, getTitle(), width / 2 - 58, height / 2 - 16 - 10, 0x404040, false);
     }
 
     @Override

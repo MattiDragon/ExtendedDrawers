@@ -5,7 +5,7 @@
       "conditions": {
         "items": [
           {
-            "tag": "extended_drawers:drawers"
+            "items": "#extended_drawers:drawers"
           }
         ]
       },

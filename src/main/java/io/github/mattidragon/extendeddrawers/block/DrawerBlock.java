@@ -7,24 +7,21 @@ import io.github.mattidragon.extendeddrawers.misc.ItemUtils;
 import io.github.mattidragon.extendeddrawers.network.node.DrawerBlockNode;
 import io.github.mattidragon.extendeddrawers.network.node.DrawerNetworkBlockNode;
 import io.github.mattidragon.extendeddrawers.registry.ModBlocks;
+import io.github.mattidragon.extendeddrawers.registry.ModDataComponents;
 import io.github.mattidragon.extendeddrawers.storage.DrawerSlot;
 import io.github.mattidragon.extendeddrawers.storage.ModifierAccess;
 import net.fabricmc.fabric.api.transfer.v1.storage.StorageUtil;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.client.item.TooltipContext;
-import net.minecraft.item.BlockItem;
+import net.minecraft.client.item.TooltipType;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec2f;
-import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -37,18 +34,13 @@ public class DrawerBlock extends StorageDrawerBlock<DrawerBlockEntity> {
     }
 
     @Override
-    public void appendTooltip(ItemStack stack, @Nullable BlockView blockView, List<Text> tooltip, TooltipContext context) {
-        var nbt = BlockItem.getBlockEntityNbt(stack);
-        if (nbt == null) return;
+    public void appendTooltip(ItemStack stack, Item.TooltipContext context, List<Text> tooltip, TooltipType options) {
+        var component = stack.get(ModDataComponents.DRAWER_CONTENTS);
+        if (component == null) return;
 
-        var list = nbt.getList("items", NbtElement.COMPOUND_TYPE).stream()
-                .map(NbtCompound.class::cast)
-                .map(data -> {
-                    var slot = new DrawerSlot(null, 1);
-                    slot.readNbt(data);
-                    return slot;
-                })
-                .filter(slot -> !slot.isBlank() || slot.getUpgrade() != null || slot.isHidden() || slot.isLocked() || slot.isVoiding())
+        var list = component.slots()
+                .stream()
+                .filter(slot -> !slot.item().isBlank() || slot.upgrade() != null || slot.hidden() || slot.locked() || slot.voiding() || slot.duping())
                 .toList();
         if (list.isEmpty()) return;
         boolean shift = ExtendedDrawers.SHIFT_ACCESS.isShiftPressed();
@@ -58,15 +50,15 @@ public class DrawerBlock extends StorageDrawerBlock<DrawerBlockEntity> {
             tooltip.add(Text.empty());
         }
 
-        if (!list.stream().allMatch(DrawerSlot::isBlank) || shift)
+        if (!list.stream().allMatch(slot -> slot.item().isBlank()) || shift)
             tooltip.add(Text.translatable("tooltip.extended_drawers.drawer_contents").formatted(Formatting.GRAY));
         for (var slot : list) {
             MutableText text;
-            if (!slot.isBlank()) {
+            if (!slot.item().isBlank()) {
                 text = Text.literal(" - ");
-                text.append(Text.literal(String.valueOf(slot.getTrueAmount())))
+                text.append(Text.literal(String.valueOf(slot.amount())))
                         .append(" ")
-                        .append(slot.getResource().toStack().getName());
+                        .append(slot.item().toStack().getName());
             } else if (shift) {
                 text = Text.literal(" - ");
                 text.append(Text.translatable("tooltip.extended_drawers.empty").formatted(Formatting.ITALIC));
@@ -75,14 +67,14 @@ public class DrawerBlock extends StorageDrawerBlock<DrawerBlockEntity> {
             // Seems like client code is safe here. If this breaks then other mods are broken too.
             if (shift) {
                 text.append("  ")
-                        .append(Text.literal("V").formatted(slot.isVoiding() ? Formatting.WHITE : Formatting.DARK_GRAY))
-                        .append(Text.literal("L").formatted(slot.isLocked() ? Formatting.WHITE : Formatting.DARK_GRAY))
-                        .append(Text.literal("H").formatted(slot.isHidden() ? Formatting.WHITE : Formatting.DARK_GRAY));
-                if (slot.isDuping())
+                        .append(Text.literal("V").formatted(slot.voiding() ? Formatting.WHITE : Formatting.DARK_GRAY))
+                        .append(Text.literal("L").formatted(slot.locked() ? Formatting.WHITE : Formatting.DARK_GRAY))
+                        .append(Text.literal("H").formatted(slot.hidden() ? Formatting.WHITE : Formatting.DARK_GRAY));
+                if (slot.duping())
                     text.append(Text.literal("D").formatted(Formatting.WHITE));
 
-                if (slot.getUpgrade() != null) {
-                    text.append(" ").append(slot.getUpgrade().getName().copy().formatted(Formatting.AQUA));
+                if (!slot.upgrade().isBlank()) {
+                    text.append(" ").append(slot.upgrade().getItem().getName().copy().formatted(Formatting.AQUA));
                 }
             }
             tooltip.add(text.formatted(Formatting.GRAY));

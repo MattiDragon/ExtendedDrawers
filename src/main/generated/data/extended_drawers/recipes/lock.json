@@ -15,6 +15,7 @@
     "GGG"
   ],
   "result": {
-    "item": "extended_drawers:lock"
+    "count": 1,
+    "id": "extended_drawers:lock"
   }
 }

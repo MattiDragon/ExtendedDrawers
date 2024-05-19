@@ -8,6 +8,8 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import io.github.mattidragon.extendeddrawers.ExtendedDrawers;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.minecraft.command.argument.ItemStringReader;
+import net.minecraft.item.ItemStack;
+import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.registry.Registries;
 import net.minecraft.resource.JsonDataLoader;
 import net.minecraft.resource.ResourceManager;
@@ -68,12 +70,14 @@ public class CompressionOverrideLoader extends JsonDataLoader {
     private ItemVariant parseItem(String data) {
         try {
             var reader = new StringReader(data);
-            var result = ItemStringReader.item(Registries.ITEM.getReadOnlyWrapper(), reader);
+            var result = new ItemStringReader(DynamicRegistryManager.of(Registries.REGISTRIES)).consume(reader);
             if (reader.getRemainingLength() != 0) {
                 throw new JsonParseException("Failed to parse item, found trailing data: '%s'".formatted(reader.getRemaining()));
             }
-
-            return ItemVariant.of(result.item().value(), result.nbt());
+            
+            var stack = new ItemStack(result.item());
+            stack.applyComponentsFrom(result.components());
+            return ItemVariant.of(stack);
         } catch (CommandSyntaxException e) {
             throw new JsonParseException("Failed to parse item", e);
         }

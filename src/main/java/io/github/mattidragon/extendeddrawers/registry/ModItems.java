@@ -3,7 +3,6 @@ package io.github.mattidragon.extendeddrawers.registry;
 import io.github.mattidragon.extendeddrawers.item.DrawerItem;
 import io.github.mattidragon.extendeddrawers.item.LimiterItem;
 import io.github.mattidragon.extendeddrawers.item.UpgradeItem;
-import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.registry.Registries;
@@ -12,23 +11,23 @@ import net.minecraft.registry.Registry;
 import static io.github.mattidragon.extendeddrawers.ExtendedDrawers.id;
 
 public class ModItems {
-    public static final Item SINGLE_DRAWER = new DrawerItem(ModBlocks.SINGLE_DRAWER, new FabricItemSettings());
-    public static final Item DOUBLE_DRAWER = new DrawerItem(ModBlocks.DOUBLE_DRAWER, new FabricItemSettings());
-    public static final Item QUAD_DRAWER = new DrawerItem(ModBlocks.QUAD_DRAWER, new FabricItemSettings());
-    public static final Item CONNECTOR = new BlockItem(ModBlocks.CONNECTOR, new FabricItemSettings());
-    public static final Item SHADOW_DRAWER = new DrawerItem(ModBlocks.SHADOW_DRAWER, new FabricItemSettings());
-    public static final Item COMPACTING_DRAWER = new DrawerItem(ModBlocks.COMPACTING_DRAWER, new FabricItemSettings());
-    public static final Item ACCESS_POINT = new BlockItem(ModBlocks.ACCESS_POINT, new FabricItemSettings());
+    public static final Item SINGLE_DRAWER = new DrawerItem(ModBlocks.SINGLE_DRAWER, new Item.Settings());
+    public static final Item DOUBLE_DRAWER = new DrawerItem(ModBlocks.DOUBLE_DRAWER, new Item.Settings());
+    public static final Item QUAD_DRAWER = new DrawerItem(ModBlocks.QUAD_DRAWER, new Item.Settings());
+    public static final Item CONNECTOR = new BlockItem(ModBlocks.CONNECTOR, new Item.Settings());
+    public static final Item SHADOW_DRAWER = new DrawerItem(ModBlocks.SHADOW_DRAWER, new Item.Settings());
+    public static final Item COMPACTING_DRAWER = new DrawerItem(ModBlocks.COMPACTING_DRAWER, new Item.Settings());
+    public static final Item ACCESS_POINT = new BlockItem(ModBlocks.ACCESS_POINT, new Item.Settings());
     
-    public static final Item UPGRADE_FRAME = new Item(new FabricItemSettings());
-    public static final UpgradeItem T1_UPGRADE = new UpgradeItem(new FabricItemSettings(), id("item/t1_upgrade"), 1);
-    public static final UpgradeItem T2_UPGRADE = new UpgradeItem(new FabricItemSettings(), id("item/t2_upgrade"), 2);
-    public static final UpgradeItem T3_UPGRADE = new UpgradeItem(new FabricItemSettings(), id("item/t3_upgrade"), 3);
-    public static final UpgradeItem T4_UPGRADE = new UpgradeItem(new FabricItemSettings(), id("item/t4_upgrade"), 4);
-    public static final UpgradeItem CREATIVE_UPGRADE = new UpgradeItem(new FabricItemSettings(), id("item/creative_upgrade"), value -> Long.MAX_VALUE);
-    public static final LimiterItem LIMITER = new LimiterItem(new FabricItemSettings());
-    public static final Item LOCK = new Item(new FabricItemSettings());
-    public static final Item DUPE_WAND = new Item(new FabricItemSettings());
+    public static final Item UPGRADE_FRAME = new Item(new Item.Settings());
+    public static final UpgradeItem T1_UPGRADE = new UpgradeItem(new Item.Settings(), id("item/t1_upgrade"), 1);
+    public static final UpgradeItem T2_UPGRADE = new UpgradeItem(new Item.Settings(), id("item/t2_upgrade"), 2);
+    public static final UpgradeItem T3_UPGRADE = new UpgradeItem(new Item.Settings(), id("item/t3_upgrade"), 3);
+    public static final UpgradeItem T4_UPGRADE = new UpgradeItem(new Item.Settings(), id("item/t4_upgrade"), 4);
+    public static final UpgradeItem CREATIVE_UPGRADE = new UpgradeItem(new Item.Settings(), id("item/creative_upgrade"), value -> Long.MAX_VALUE);
+    public static final LimiterItem LIMITER = new LimiterItem(new Item.Settings());
+    public static final Item LOCK = new Item(new Item.Settings());
+    public static final Item DUPE_WAND = new Item(new Item.Settings());
 
     public static void register() {
         Registry.register(Registries.ITEM, id("single_drawer"), SINGLE_DRAWER);

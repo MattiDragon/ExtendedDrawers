@@ -8,14 +8,12 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 
 import java.util.stream.Stream;
 
-/**
- * A drawer block entity that gets saved to item nbt by {@link io.github.mattidragon.extendeddrawers.misc.DrawerContentsLootFunction DrawerContentsLootFunction}.
- */
 public abstract class StorageDrawerBlockEntity extends BlockEntity {
     public StorageDrawerBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
@@ -34,15 +32,15 @@ public abstract class StorageDrawerBlockEntity extends BlockEntity {
     public abstract Stream<? extends DrawerStorage> streamStorages();
 
     public abstract boolean isEmpty();
-
+    
     @Override
-    public abstract void writeNbt(NbtCompound nbt);
+    public abstract void writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup);
 
     @Override
     public void markRemoved() {
         super.markRemoved();
         if (world instanceof ServerWorld serverWorld) {
-            NetworkRegistry.UNIVERSE.getServerGraphWorld(serverWorld)
+            NetworkRegistry.UNIVERSE.getGraphWorld(serverWorld)
                     .getAllGraphsAt(pos)
                     .map(graph -> graph.getGraphEntity(NetworkRegistry.STORAGE_CACHE_TYPE))
                     .forEach(cache -> cache.onNodeUnloaded(pos));
@@ -53,7 +51,7 @@ public abstract class StorageDrawerBlockEntity extends BlockEntity {
     public void cancelRemoval() {
         super.cancelRemoval();
         if (world instanceof ServerWorld serverWorld) {
-            NetworkRegistry.UNIVERSE.getServerGraphWorld(serverWorld)
+            NetworkRegistry.UNIVERSE.getGraphWorld(serverWorld)
                     .getAllGraphsAt(pos)
                     .map(graph -> graph.getGraphEntity(NetworkRegistry.STORAGE_CACHE_TYPE))
                     .forEach(cache -> cache.onNodeReloaded(pos));

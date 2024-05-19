@@ -18,6 +18,7 @@
     "LCL"
   ],
   "result": {
-    "item": "extended_drawers:quad_drawer"
+    "count": 1,
+    "id": "extended_drawers:quad_drawer"
   }
 }

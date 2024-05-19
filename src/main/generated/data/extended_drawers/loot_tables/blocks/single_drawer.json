@@ -13,11 +13,11 @@
           "type": "minecraft:item",
           "functions": [
             {
-              "function": "minecraft:copy_name",
+              "function": "minecraft:copy_components",
+              "include": [
+                "extended_drawers:drawer_contents"
+              ],
               "source": "block_entity"
-            },
-            {
-              "function": "extended_drawers:drawer_contents"
             }
           ],
           "name": "extended_drawers:single_drawer"

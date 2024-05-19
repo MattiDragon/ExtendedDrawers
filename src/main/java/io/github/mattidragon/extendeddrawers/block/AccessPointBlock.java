@@ -20,7 +20,6 @@ import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -29,7 +28,6 @@ import net.minecraft.world.World;
 
 import static io.github.mattidragon.extendeddrawers.misc.DrawerInteractionStatusManager.getAndResetInsertStatus;
 
-@SuppressWarnings({"deprecation"}) // transfer api and mojank block method deprecation
 public class AccessPointBlock extends NetworkBlock implements DrawerInteractionHandler {
     public AccessPointBlock(Settings settings) {
         super(settings);
@@ -50,7 +48,7 @@ public class AccessPointBlock extends NetworkBlock implements DrawerInteractionH
     }
 
     @Override
-    public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
+    protected ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, BlockHitResult hit) {
         if (!player.canModifyBlocks()) return ActionResult.PASS;
         if (!(world instanceof ServerWorld serverWorld)) return ActionResult.CONSUME_PARTIAL;
 
@@ -59,7 +57,7 @@ public class AccessPointBlock extends NetworkBlock implements DrawerInteractionH
         try (var t = Transaction.openOuter()) {
             int inserted;
     
-            var playerStack = player.getStackInHand(hand);
+            var playerStack = player.getMainHandStack();
             var isDoubleClick = getAndResetInsertStatus(player, pos, 0);
             
             if (isDoubleClick) {
@@ -128,7 +126,7 @@ public class AccessPointBlock extends NetworkBlock implements DrawerInteractionH
     public ActionResult toggleHide(BlockState state, World world, BlockPos pos, Vec3d hitPos, Direction side) {
         if (!(world instanceof ServerWorld serverWorld)) return ActionResult.PASS;
         var storages = NetworkStorageCache.get(serverWorld, pos).parts;
-        var shadowDrawers = NetworkRegistry.UNIVERSE.getServerGraphWorld(serverWorld)
+        var shadowDrawers = NetworkRegistry.UNIVERSE.getGraphWorld(serverWorld)
                 .getLoadedGraphsAt(pos)
                 .flatMap(BlockGraph::getNodes)
                 .map(NodeHolder::getBlockPos)

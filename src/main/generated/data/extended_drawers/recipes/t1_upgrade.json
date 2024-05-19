@@ -18,6 +18,7 @@
     "SSS"
   ],
   "result": {
-    "item": "extended_drawers:t1_upgrade"
+    "count": 1,
+    "id": "extended_drawers:t1_upgrade"
   }
 }

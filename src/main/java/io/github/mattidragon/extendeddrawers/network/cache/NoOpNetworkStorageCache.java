@@ -2,11 +2,6 @@ package io.github.mattidragon.extendeddrawers.network.cache;
 
 import com.kneelawk.graphlib.api.graph.BlockGraph;
 import com.kneelawk.graphlib.api.graph.GraphEntityContext;
-import com.kneelawk.graphlib.api.graph.NodeHolder;
-import com.kneelawk.graphlib.api.graph.user.BlockNode;
-import com.kneelawk.graphlib.api.graph.user.LinkEntity;
-import com.kneelawk.graphlib.api.graph.user.NodeEntity;
-import com.kneelawk.graphlib.api.util.LinkPos;
 import io.github.mattidragon.extendeddrawers.block.entity.StorageDrawerBlockEntity;
 import io.github.mattidragon.extendeddrawers.storage.DrawerStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
@@ -15,11 +10,9 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Stream;
 
 public class NoOpNetworkStorageCache implements NetworkStorageCache {
@@ -52,16 +45,6 @@ public class NoOpNetworkStorageCache implements NetworkStorageCache {
     @Override
     public void onSortingChanged() {
 
-    }
-
-    @Override
-    public void onNodeCreated(@NotNull NodeHolder<BlockNode> node, @Nullable NodeEntity nodeEntity) {
-        NetworkStorageCache.super.onNodeCreated(node, nodeEntity);
-    }
-
-    @Override
-    public void onNodeDestroyed(@NotNull NodeHolder<BlockNode> node, @Nullable NodeEntity nodeEntity, Map<LinkPos, LinkEntity> linkEntities) {
-        NetworkStorageCache.super.onNodeDestroyed(node, nodeEntity, linkEntities);
     }
 
     @Override

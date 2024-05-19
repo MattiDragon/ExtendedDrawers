@@ -13,7 +13,7 @@ import static io.github.mattidragon.extendeddrawers.ExtendedDrawers.id;
 public class ShadowDrawerBlockNode implements DrawerNetworkBlockNode {
     public static final Identifier ID = id("shadow_drawers");
     public static final ShadowDrawerBlockNode INSTANCE = new ShadowDrawerBlockNode();
-    public static final BlockNodeType TYPE = BlockNodeType.of(ID, tag -> INSTANCE);
+    public static final BlockNodeType TYPE = BlockNodeType.of(ID, () -> INSTANCE);
 
     private ShadowDrawerBlockNode() {
     }

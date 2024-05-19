@@ -15,6 +15,7 @@
     "LPL"
   ],
   "result": {
-    "item": "extended_drawers:connector"
+    "count": 1,
+    "id": "extended_drawers:connector"
   }
 }

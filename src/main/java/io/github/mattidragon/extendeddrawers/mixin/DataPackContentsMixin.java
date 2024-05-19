@@ -20,10 +20,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.List;
 
-// We lower our priority to run before QSL because they have an unconditional return in their getContents mixin.
-// This is a temporary workaround until they switch to using mixin extras
-// See: https://github.com/QuiltMC/quilt-standard-libraries/issues/358
-@Mixin(value = DataPackContents.class, priority = 900)
+@Mixin(value = DataPackContents.class)
 public class DataPackContentsMixin {
     @Shadow @Final private RecipeManager recipeManager;
 

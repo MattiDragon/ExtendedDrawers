@@ -2,6 +2,7 @@ package io.github.mattidragon.extendeddrawers.storage;
 
 import io.github.mattidragon.extendeddrawers.ExtendedDrawers;
 import io.github.mattidragon.extendeddrawers.block.entity.DrawerBlockEntity;
+import io.github.mattidragon.extendeddrawers.component.DrawerSlotComponent;
 import io.github.mattidragon.extendeddrawers.misc.ItemUtils;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.base.ResourceAmount;
@@ -10,6 +11,7 @@ import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.fabricmc.fabric.api.transfer.v1.transaction.base.SnapshotParticipant;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
@@ -40,6 +42,32 @@ public final class DrawerSlot extends SnapshotParticipant<DrawerSlot.Snapshot> i
     @Override
     public DrawerBlockEntity getOwner() {
         return owner;
+    }
+    
+    public void readComponent(DrawerSlotComponent component) {
+        settings.upgrade = component.upgrade();
+        settings.limiter = component.limiter();
+        settings.locked = component.locked();
+        settings.hidden = component.hidden();
+        settings.voiding = component.voiding();
+        settings.duping = component.duping();
+        
+        item = component.item();
+        amount = component.amount();
+        if (item.isBlank()) amount = 0;
+    }
+    
+    public DrawerSlotComponent toComponent() {
+        return new DrawerSlotComponent(
+                settings.upgrade,
+                settings.limiter,
+                settings.locked,
+                settings.hidden,
+                settings.voiding,
+                settings.duping,
+                item, 
+                amount
+        );
     }
 
     @Override
@@ -144,7 +172,7 @@ public final class DrawerSlot extends SnapshotParticipant<DrawerSlot.Snapshot> i
     @Override
     public void readNbt(NbtCompound nbt) {
         DrawerStorage.super.readNbt(nbt);
-        item = ItemVariant.fromNbt(nbt.getCompound("item"));
+        item = ItemVariant.CODEC.parse(NbtOps.INSTANCE, nbt.getCompound("item")).getOrThrow();
         amount = nbt.getLong("amount");
         if (item.isBlank()) amount = 0; // Avoids dupes with drawers of removed items
     }
@@ -152,7 +180,7 @@ public final class DrawerSlot extends SnapshotParticipant<DrawerSlot.Snapshot> i
     @Override
     public void writeNbt(NbtCompound nbt) {
         DrawerStorage.super.writeNbt(nbt);
-        nbt.put("item", item.toNbt());
+        nbt.put("item", ItemVariant.CODEC.encodeStart(NbtOps.INSTANCE, item).getOrThrow());
         nbt.putLong("amount", amount);
     }
 

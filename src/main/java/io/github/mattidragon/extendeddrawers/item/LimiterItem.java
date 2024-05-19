@@ -1,12 +1,12 @@
 package io.github.mattidragon.extendeddrawers.item;
 
 import io.github.mattidragon.extendeddrawers.block.base.DrawerInteractionHandler;
-import net.minecraft.client.item.TooltipContext;
+import io.github.mattidragon.extendeddrawers.registry.ModDataComponents;
+import net.minecraft.client.item.TooltipType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsageContext;
-import net.minecraft.nbt.NbtElement;
 import net.minecraft.stat.Stats;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
@@ -14,7 +14,6 @@ import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -23,24 +22,14 @@ public class LimiterItem extends Item {
         super(settings);
     }
 
-    @Nullable
-    public static Long getLimit(ItemStack stack) {
-        var stackNbt = stack.getNbt();
-        if (stackNbt == null || !stackNbt.contains("limit", NbtElement.NUMBER_TYPE)) {
-            return null;
-        } else {
-            return stackNbt.getLong("limit");
-        }
-    }
-
     @Override
-    public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
-        var stackNbt = stack.getNbt();
+    public void appendTooltip(ItemStack stack, TooltipContext context, List<Text> tooltip, TooltipType type) {
+        var component = stack.get(ModDataComponents.LIMITER_LIMIT);
         Text limitText;
-        if (stackNbt == null || !stackNbt.contains("limit", NbtElement.NUMBER_TYPE)) {
+        if (component == null) {
             limitText = Text.translatable("item.extended_drawers.limiter.unset").formatted(Formatting.ITALIC);
         } else {
-            limitText = Text.literal(String.valueOf(stackNbt.getLong("limit")));
+            limitText = Text.literal(String.valueOf(component));
         }
         tooltip.add(Text.translatable("item.extended_drawers.limiter.limit", limitText).formatted(Formatting.GRAY));
     }

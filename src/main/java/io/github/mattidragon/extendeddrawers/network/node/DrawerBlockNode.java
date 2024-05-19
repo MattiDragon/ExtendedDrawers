@@ -9,7 +9,7 @@ import static io.github.mattidragon.extendeddrawers.ExtendedDrawers.id;
 public class DrawerBlockNode implements DrawerNetworkBlockNode {
     public static final Identifier ID = id("drawer");
     public static final DrawerBlockNode INSTANCE = new DrawerBlockNode();
-    public static final BlockNodeType TYPE = BlockNodeType.of(ID, tag -> INSTANCE);
+    public static final BlockNodeType TYPE = BlockNodeType.of(ID, () -> INSTANCE);
 
     private DrawerBlockNode() {
     }

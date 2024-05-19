@@ -1,6 +1,7 @@
 package io.github.mattidragon.extendeddrawers.recipe;
 
 import io.github.mattidragon.extendeddrawers.item.LimiterItem;
+import io.github.mattidragon.extendeddrawers.registry.ModDataComponents;
 import io.github.mattidragon.extendeddrawers.registry.ModItems;
 import io.github.mattidragon.extendeddrawers.registry.ModRecipes;
 import net.minecraft.inventory.RecipeInputInventory;
@@ -8,7 +9,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.recipe.SpecialCraftingRecipe;
 import net.minecraft.recipe.book.CraftingRecipeCategory;
-import net.minecraft.registry.DynamicRegistryManager;
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.world.World;
 
@@ -26,7 +27,7 @@ public class CopyLimiterRecipe extends SpecialCraftingRecipe {
         for (var stack : stacks) {
             if (stack.isEmpty()) continue;
             if (!stack.isOf(ModItems.LIMITER)) return false;
-            var limit = LimiterItem.getLimit(stack);
+            var limit = stack.get(ModDataComponents.LIMITER_LIMIT);
             if (limit == null) {
                 if (!unsetLimiterFound) unsetLimiterFound = true;
                 else return false;
@@ -40,13 +41,13 @@ public class CopyLimiterRecipe extends SpecialCraftingRecipe {
     }
 
     @Override
-    public ItemStack craft(RecipeInputInventory inventory, DynamicRegistryManager registryManager) {
+    public ItemStack craft(RecipeInputInventory inventory, RegistryWrapper.WrapperLookup registryLookup) {
         var stacks = inventory.getHeldStacks();
         Long limit = null;
 
         for (var stack : stacks) {
             if (stack.isEmpty()) continue;
-            var checkingLimit = LimiterItem.getLimit(stack);
+            var checkingLimit = stack.get(ModDataComponents.LIMITER_LIMIT);
             if (checkingLimit != null)  {
                 limit = checkingLimit;
             }
@@ -56,7 +57,7 @@ public class CopyLimiterRecipe extends SpecialCraftingRecipe {
             return ItemStack.EMPTY;
 
         var stack = ModItems.LIMITER.getDefaultStack();
-        stack.getOrCreateNbt().putLong("limit", limit);
+        stack.set(ModDataComponents.LIMITER_LIMIT, limit);
         return stack;
     }
 
@@ -74,8 +75,10 @@ public class CopyLimiterRecipe extends SpecialCraftingRecipe {
             var item = stack.getItem();
             if (item.getRecipeRemainder() != null) {
                 result.set(i, stack.getRecipeRemainder());
-            } else if (item instanceof LimiterItem && LimiterItem.getLimit(stack) != null) {
-                result.set(i, stack.copyWithCount(1));
+            } else {
+                if (item instanceof LimiterItem && stack.get(ModDataComponents.LIMITER_LIMIT) != null) {
+                    result.set(i, stack.copyWithCount(1));
+                }
             }
         }
 

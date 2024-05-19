@@ -11,9 +11,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "extended_drawers:upgrade_frame"
-            ]
+            "items": "extended_drawers:upgrade_frame"
           }
         ]
       },

@@ -34,7 +34,6 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
-@SuppressWarnings("deprecation")
 public abstract class StorageDrawerBlock<T extends StorageDrawerBlockEntity> extends NetworkBlockWithEntity<T> implements DrawerInteractionHandler, CreativeBreakBlocker {
     public static final DirectionProperty FACING = Properties.HORIZONTAL_FACING;
     public static final EnumProperty<BlockFace> FACE = Properties.BLOCK_FACE;
@@ -116,8 +115,8 @@ public abstract class StorageDrawerBlock<T extends StorageDrawerBlockEntity> ext
     }
 
     @Override
-    public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
-        if (!isFront(state, hit.getSide()) || !player.canModifyBlocks() || hand == Hand.OFF_HAND)
+    public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, BlockHitResult hit) {
+        if (!isFront(state, hit.getSide()) || !player.canModifyBlocks())
             return ActionResult.PASS;
         if (!(world instanceof ServerWorld)) return ActionResult.CONSUME_PARTIAL;
 
@@ -130,7 +129,7 @@ public abstract class StorageDrawerBlock<T extends StorageDrawerBlockEntity> ext
         var storage = getSlot(drawer, slot);
 
         ModifierAccess modifiers = getModifierAccess(drawer, internalPos);
-        var playerStack = player.getStackInHand(hand);
+        var playerStack = player.getMainHandStack();
 
         // Upgrade & limiter removal
         if (playerStack.isEmpty() && player.isSneaking()) {
@@ -219,7 +218,7 @@ public abstract class StorageDrawerBlock<T extends StorageDrawerBlockEntity> ext
         if (access == null) return ActionResult.PASS;
 
         if (!(stack.getItem() instanceof UpgradeItem)) {
-            ExtendedDrawers.LOGGER.warn("Expected drawer upgrade to be UpgradeItem but found " + stack.getItem().getClass().getSimpleName() + " instead");
+            ExtendedDrawers.LOGGER.warn("Expected drawer upgrade to be UpgradeItem but found {} instead", stack.getItem().getClass().getSimpleName());
             return ActionResult.FAIL;
         }
 
@@ -238,7 +237,7 @@ public abstract class StorageDrawerBlock<T extends StorageDrawerBlockEntity> ext
         if (access == null) return ActionResult.PASS;
 
         if (!stack.isOf(ModItems.LIMITER)) {
-            ExtendedDrawers.LOGGER.warn("Expected limiter to be limiter but found " + stack + " instead");
+            ExtendedDrawers.LOGGER.warn("Expected limiter to be limiter but found {} instead", stack);
             return ActionResult.FAIL;
         }
 

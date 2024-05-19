@@ -5,7 +5,7 @@ import io.github.mattidragon.extendeddrawers.client.renderer.CompactingDrawerBlo
 import io.github.mattidragon.extendeddrawers.client.renderer.DrawerBlockEntityRenderer;
 import io.github.mattidragon.extendeddrawers.client.renderer.ShadowDrawerBlockEntityRenderer;
 import io.github.mattidragon.extendeddrawers.compacting.CompressionRecipeManager;
-import io.github.mattidragon.extendeddrawers.networking.CompressionOverrideSyncPacket;
+import io.github.mattidragon.extendeddrawers.networking.CompressionOverrideSyncPayload;
 import io.github.mattidragon.extendeddrawers.registry.ModBlocks;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
@@ -19,8 +19,8 @@ public class ExtendedDrawersClient implements ClientModInitializer {
         BlockEntityRendererFactories.register(ModBlocks.SHADOW_DRAWER_BLOCK_ENTITY, ShadowDrawerBlockEntityRenderer::new);
         BlockEntityRendererFactories.register(ModBlocks.COMPACTING_DRAWER_BLOCK_ENTITY, CompactingDrawerBlockEntityRenderer::new);
 
-        ClientPlayNetworking.registerGlobalReceiver(CompressionOverrideSyncPacket.TYPE, (packet, player, responseSender) ->
-                CompressionRecipeManager.of(player.networkHandler.getRecipeManager()).setOverrides(packet.overrides()));
+        ClientPlayNetworking.registerGlobalReceiver(CompressionOverrideSyncPayload.ID, (packet, context) ->
+                CompressionRecipeManager.of(context.player().networkHandler.getRecipeManager()).setOverrides(packet.overrides()));
 
         ExtendedDrawers.SHIFT_ACCESS = Screen::hasShiftDown;
     }

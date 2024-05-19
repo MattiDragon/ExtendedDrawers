@@ -12,7 +12,6 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 import org.jetbrains.annotations.Nullable;
 
-@SuppressWarnings("deprecation") // mojank block method deprecation
 public abstract class NetworkBlock extends Block implements NetworkComponent {
     protected NetworkBlock(Settings settings) {
         super(settings);
@@ -21,7 +20,7 @@ public abstract class NetworkBlock extends Block implements NetworkComponent {
     @Override
     public BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState neighborState, WorldAccess world, BlockPos pos, BlockPos neighborPos) {
         if (world instanceof ServerWorld serverWorld && neighborState.getBlock() instanceof NetworkComponent) {
-            NetworkRegistry.UNIVERSE.getServerGraphWorld(serverWorld).updateNodes(pos);
+            NetworkRegistry.UNIVERSE.getGraphWorld(serverWorld).updateNodes(pos);
         }
         return super.getStateForNeighborUpdate(state, direction, neighborState, world, pos, neighborPos);
     }
@@ -29,7 +28,7 @@ public abstract class NetworkBlock extends Block implements NetworkComponent {
     @Override
     public void onPlaced(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
         if (world instanceof ServerWorld serverWorld) {
-            NetworkRegistry.UNIVERSE.getServerGraphWorld(serverWorld).updateNodes(pos);
+            NetworkRegistry.UNIVERSE.getGraphWorld(serverWorld).updateNodes(pos);
         }
     }
     
@@ -37,7 +36,7 @@ public abstract class NetworkBlock extends Block implements NetworkComponent {
     public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
         super.onStateReplaced(state, world, pos, newState, moved);
         if (world instanceof ServerWorld serverWorld) {
-            NetworkRegistry.UNIVERSE.getServerGraphWorld(serverWorld).updateNodes(pos);
+            NetworkRegistry.UNIVERSE.getGraphWorld(serverWorld).updateNodes(pos);
         }
     }
 }

@@ -3,12 +3,12 @@ package io.github.mattidragon.extendeddrawers;
 import io.github.mattidragon.configloader.api.ConfigManager;
 import io.github.mattidragon.extendeddrawers.config.ConfigData;
 import io.github.mattidragon.extendeddrawers.misc.DrawerCacheCommand;
-import io.github.mattidragon.extendeddrawers.misc.DrawerContentsLootFunction;
 import io.github.mattidragon.extendeddrawers.misc.ShiftAccess;
 import io.github.mattidragon.extendeddrawers.network.NetworkRegistry;
-import io.github.mattidragon.extendeddrawers.networking.CompressionOverrideSyncPacket;
-import io.github.mattidragon.extendeddrawers.networking.SetLimiterLimitPacket;
+import io.github.mattidragon.extendeddrawers.networking.CompressionOverrideSyncPayload;
+import io.github.mattidragon.extendeddrawers.networking.SetLimiterLimitPayload;
 import io.github.mattidragon.extendeddrawers.registry.ModBlocks;
+import io.github.mattidragon.extendeddrawers.registry.ModDataComponents;
 import io.github.mattidragon.extendeddrawers.registry.ModItems;
 import io.github.mattidragon.extendeddrawers.registry.ModRecipes;
 import net.fabricmc.api.ModInitializer;
@@ -42,14 +42,14 @@ public class ExtendedDrawers implements ModInitializer {
     @Override
     public void onInitialize() {
         ModBlocks.register();
+        ModDataComponents.register();
         ModItems.register();
         ModRecipes.register();
-        DrawerContentsLootFunction.register();
         registerItemGroup();
         registerCommand();
         NetworkRegistry.register();
-        CompressionOverrideSyncPacket.register();
-        SetLimiterLimitPacket.register();
+        CompressionOverrideSyncPayload.register();
+        SetLimiterLimitPayload.register();
         DrawerCacheCommand.register();
         ResourceManagerHelper.registerBuiltinResourcePack(id("alt"), MOD_CONTAINER, Text.translatable("resourcepack.extended_drawers.alt"), ResourcePackActivationType.NORMAL);
         ResourceManagerHelper.registerBuiltinResourcePack(id("dev"), MOD_CONTAINER, Text.translatable("resourcepack.extended_drawers.programmer_art"), ResourcePackActivationType.NORMAL);

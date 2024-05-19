@@ -6,7 +6,7 @@ import io.github.mattidragon.extendeddrawers.registry.ModItems;
 import io.github.mattidragon.extendeddrawers.registry.ModTags;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
-import net.fabricmc.fabric.api.tag.convention.v1.ConventionalItemTags;
+import net.fabricmc.fabric.api.tag.convention.v2.ConventionalItemTags;
 import net.minecraft.data.server.recipe.ComplexRecipeJsonBuilder;
 import net.minecraft.data.server.recipe.RecipeExporter;
 import net.minecraft.data.server.recipe.RecipeProvider;
@@ -15,13 +15,16 @@ import net.minecraft.item.Item;
 import net.minecraft.item.Items;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.book.RecipeCategory;
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.registry.tag.ItemTags;
 
+import java.util.concurrent.CompletableFuture;
+
 class DrawersRecipeProvider extends FabricRecipeProvider {
-    public DrawersRecipeProvider(FabricDataOutput output) {
-        super(output);
+    public DrawersRecipeProvider(FabricDataOutput output, CompletableFuture<RegistryWrapper.WrapperLookup> registriesFuture) {
+        super(output, registriesFuture);
     }
-    
+
     @Override
     public void generate(RecipeExporter exporter) {
         offerUpgradeRecipe(exporter, ModItems.T1_UPGRADE, Ingredient.ofItems(Items.BARREL), ModItems.UPGRADE_FRAME, Items.STICK);

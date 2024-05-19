@@ -18,6 +18,7 @@
     "LPL"
   ],
   "result": {
-    "item": "extended_drawers:single_drawer"
+    "count": 1,
+    "id": "extended_drawers:single_drawer"
   }
 }

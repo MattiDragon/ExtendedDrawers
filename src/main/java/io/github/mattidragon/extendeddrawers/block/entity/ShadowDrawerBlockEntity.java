@@ -10,9 +10,11 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.listener.ClientPlayPacketListener;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 
@@ -70,26 +72,24 @@ public class ShadowDrawerBlockEntity extends BlockEntity {
     }
     
     @Override
-    public NbtCompound toInitialChunkDataNbt() {
+    public NbtCompound toInitialChunkDataNbt(RegistryWrapper.WrapperLookup registryLookup) {
         var nbt = new NbtCompound();
-        writeNbt(nbt);
+        writeNbt(nbt, registryLookup);
         nbt.putLong("count", countCache);
         nbt.putBoolean("hidden", isHidden());
         return nbt;
     }
     
     @Override
-    public void readNbt(NbtCompound nbt) {
-        super.readNbt(nbt);
+    public void readNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
         if (nbt.contains("count")) countCache = nbt.getLong("count");
-        item = ItemVariant.fromNbt(nbt.getCompound("item"));
+        item = ItemVariant.CODEC.parse(NbtOps.INSTANCE, nbt.getCompound("item")).getOrThrow();
         hidden = nbt.getBoolean("hidden");
     }
     
     @Override
-    protected void writeNbt(NbtCompound nbt) {
-        super.writeNbt(nbt);
-        nbt.put("item", item.toNbt());
+    public void writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
+        nbt.put("item", ItemVariant.CODEC.encodeStart(NbtOps.INSTANCE, item).getOrThrow());
     }
 
     public boolean isHidden() {
