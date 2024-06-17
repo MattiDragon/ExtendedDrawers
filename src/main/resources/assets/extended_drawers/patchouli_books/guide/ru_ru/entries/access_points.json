@@ -1,0 +1,12 @@
+{
+  "name": "Точки Доступа",
+  "icon": "extended_drawers:access_point",
+  "category": "extended_drawers:blocks",
+  "pages": [
+    "@item@Точки Доступа@! позволяет вставлять предметы во всю $(l:simple_networks)сеть@!, автоматически находит нужный ящик, смотрите $(l:insertion_order)этот раздел@! чтобы узнать порядок ввода предметов. @p@Они также служат интерфейсом для доступа других модов к сети, подробнее об этом читайте $(l:mod_interoperability)здесь@!.",
+    {
+      "type": "patchouli:crafting",
+      "recipe": "extended_drawers:access_point"
+    }
+  ]
+}

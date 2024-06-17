@@ -1,0 +1,33 @@
+{
+  "name": "Улучшения Ящиков",
+  "icon": "extended_drawers:t2_upgrade",
+  "category": "extended_drawers:modifiers",
+  "pages": [
+    "@item@Улучшения@! применяются с использованием различных предметов улучшения. Они увеличивают вместимость предметов $(l:drawers)ящика@!. @p@Чтобы установить его, просто нажмите ПКМ на ящик с @item@улучшением@! в руках используя SHIFT. @p@Они наиболее удобны при хранении большого количества предметов.",
+    {
+      "type": "patchouli:crafting",
+      "recipe": "extended_drawers:upgrade_frame",
+      "text": "$(item)Рамка Улучшения/$ это базовый элемент всех апгрейдов. Сам по себе он ничего не делает."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "extended_drawers:t1_upgrade",
+      "text": "$(item)Улучшение Ящика I/$ это первый уровень улучшения. Он увеличивает вместимость ящика в 2 раза."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "extended_drawers:t2_upgrade",
+      "text": "$(item)Улучшение Ящика II/$ это второй уровень улучшения. Он увеличивает вместимость ящика в 4 раза."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "extended_drawers:t3_upgrade",
+      "text": "$(item)Улучшение Ящика III/$ это третий уровень улучшения. Он увеличивает вместимость ящика в 8 раз."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "extended_drawers:t4_upgrade",
+      "text": "$(item)Улучшение Ящика IV/$ это четвертый уровень улучшения. Он увеличивает вместимость ящика в 16 раз."
+    }
+  ]
+}

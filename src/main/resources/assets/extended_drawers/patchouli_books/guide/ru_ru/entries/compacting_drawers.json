@@ -1,0 +1,12 @@
+{
+  "name": "Компактные ящики",
+  "icon": "extended_drawers:compacting_drawer",
+  "category": "extended_drawers:blocks",
+  "pages": [
+    "Несмотря на то, что создание $(item)компактных ящиков/$ обходится немного дороже, они гораздо удобнее обычных $(l:drawers)ящиков/$. Они автоматические сжимают и разжимают ваши предметы. Обычно они используют обычный рецепт, но некоторые предметы могут потребовать особую поддержку.",
+    {
+      "type": "patchouli:crafting",
+      "recipe": "extended_drawers:compacting_drawer"
+    }
+  ]
+}
