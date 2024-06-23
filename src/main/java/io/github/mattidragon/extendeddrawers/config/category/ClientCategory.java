@@ -31,7 +31,7 @@ public record ClientCategory(int itemRenderDistance,
                             Identifier voidingIcon,
                             Identifier hiddenIcon,
                             Identifier dupingIcon) implements MutableClientCategory.MutableIconGroup.Source {
-        private static final IconGroup DEFAULT = new IconGroup(id("item/lock"), new Identifier("minecraft", "item/lava_bucket"), new Identifier("minecraft", "item/black_dye"), id("item/dupe_wand"));
+        private static final IconGroup DEFAULT = new IconGroup(id("item/lock"), Identifier.ofVanilla("item/lava_bucket"), Identifier.ofVanilla("item/black_dye"), id("item/dupe_wand"));
 
         public static final Codec<IconGroup> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 AlwaysSerializedOptionalFieldCodec.create(Identifier.CODEC, "lockedIcon", DEFAULT.lockedIcon).forGetter(IconGroup::lockedIcon),

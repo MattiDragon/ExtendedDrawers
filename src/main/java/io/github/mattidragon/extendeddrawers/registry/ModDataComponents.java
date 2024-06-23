@@ -4,22 +4,22 @@ import com.mojang.serialization.Codec;
 import io.github.mattidragon.extendeddrawers.ExtendedDrawers;
 import io.github.mattidragon.extendeddrawers.component.DrawerContentsComponent;
 import io.github.mattidragon.extendeddrawers.component.DrawerSlotComponent;
-import net.minecraft.component.DataComponentType;
+import net.minecraft.component.ComponentType;
 import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 
 public class ModDataComponents {
-    public static final DataComponentType<Long> LIMITER_LIMIT = DataComponentType.<Long>builder()
+    public static final ComponentType<Long> LIMITER_LIMIT = ComponentType.<Long>builder()
             .codec(Codec.LONG)
             .packetCodec(PacketCodecs.VAR_LONG)
             .build();
-    public static final DataComponentType<DrawerContentsComponent> DRAWER_CONTENTS = DataComponentType.<DrawerContentsComponent>builder()
+    public static final ComponentType<DrawerContentsComponent> DRAWER_CONTENTS = ComponentType.<DrawerContentsComponent>builder()
             .codec(DrawerContentsComponent.CODEC)
             .packetCodec(DrawerContentsComponent.PACKET_CODEC)
             .cache()
             .build();
-    public static final DataComponentType<DrawerSlotComponent> COMPACTING_DRAWER_CONTENTS = DataComponentType.<DrawerSlotComponent>builder()
+    public static final ComponentType<DrawerSlotComponent> COMPACTING_DRAWER_CONTENTS = ComponentType.<DrawerSlotComponent>builder()
             .codec(DrawerSlotComponent.CODEC)
             .packetCodec(DrawerSlotComponent.PACKET_CODEC)
             .cache()

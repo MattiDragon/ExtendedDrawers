@@ -76,7 +76,7 @@ public class CompressionOverrideLoader extends JsonDataLoader {
             }
             
             var stack = new ItemStack(result.item());
-            stack.applyComponentsFrom(result.components());
+            stack.applyChanges(result.components());
             return ItemVariant.of(stack);
         } catch (CommandSyntaxException e) {
             throw new JsonParseException("Failed to parse item", e);

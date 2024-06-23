@@ -18,12 +18,12 @@ public record IdentifierController(Option<Identifier> option) implements IString
 
     @Override
     public void setFromString(String value) {
-        option.requestSet(Objects.requireNonNullElse(Identifier.tryParse(value), new Identifier("air")));
+        option.requestSet(Objects.requireNonNullElse(Identifier.tryParse(value), Identifier.ofVanilla("air")));
     }
 
     @Override
     public boolean isInputValid(String input) {
-        return Identifier.isValid(input);
+        return !Identifier.validate(input).isError();
     }
 
     @Override

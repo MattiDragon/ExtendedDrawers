@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '1.6-SNAPSHOT'
+    id 'fabric-loom' version '1.7-SNAPSHOT'
     id 'maven-publish'
 }
 
@@ -33,8 +33,8 @@ dependencies {
     modImplementation "net.fabricmc.fabric-api:fabric-api:$fabric_version"
 
     // Dependencies
-    include modImplementation("com.kneelawk.graphlib:core-fabric:$graphlib_version")
-    modLocalRuntime("com.kneelawk.graphlib:debugrender-fabric:$graphlib_version")
+    include modImplementation("com.kneelawk.graphlib:graphlib-core-fabric:$graphlib_version")
+    modLocalRuntime("com.kneelawk.graphlib:graphlib-debugrender-fabric:$graphlib_version")
     //modImplementation "vazkii.patchouli:Patchouli:$patchouli_version"
 
     modImplementation annotationProcessor(include("com.github.mattidragon:ConfigToolkit:$configtoolkit_version"))

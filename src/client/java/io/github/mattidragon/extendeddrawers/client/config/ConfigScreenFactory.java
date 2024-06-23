@@ -345,7 +345,7 @@ public class ConfigScreenFactory {
                 matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(180));
                 matrices.translate(0.5, -0.5, 0);
 
-                var voidingSprite = atlas.apply(new Identifier("minecraft", "item/lava_bucket"));
+                var voidingSprite = atlas.apply(Identifier.ofVanilla("item/lava_bucket"));
                 var lockSprite = atlas.apply(id("item/lock"));
                 var upgrade2Sprite = atlas.apply(id("item/t2_upgrade"));
                 var upgrade4Sprite = atlas.apply(id("item/t4_upgrade"));

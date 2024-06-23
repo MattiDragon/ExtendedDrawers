@@ -36,7 +36,7 @@ public class ExtendedDrawers implements ModInitializer {
     public static ShiftAccess SHIFT_ACCESS = () -> false;
 
     public static Identifier id(String path) {
-        return new Identifier(MOD_ID, path);
+        return Identifier.of(MOD_ID, path);
     }
 
     @Override

@@ -1,13 +1,11 @@
 package io.github.mattidragon.extendeddrawers.compacting;
 
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.RecipeEntry;
 import net.minecraft.recipe.RecipeManager;
 import net.minecraft.recipe.RecipeType;
-import net.minecraft.screen.ScreenHandler;
+import net.minecraft.recipe.input.CraftingRecipeInput;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
@@ -135,22 +133,12 @@ public final class CompressionRecipeManager {
      * @param size The width and height of the inventory. Slot count is size squared.
      * @return A filled crafting inventory of specified size
      */
-    private CraftingInventory createInventory(ItemStack stack, int size) {
-        var inventory = new CraftingInventory(new ScreenHandler(null, -1) {
-            @Override
-            public ItemStack quickMove(PlayerEntity player, int slot) {
-                return ItemStack.EMPTY;
-            }
-
-            @Override
-            public boolean canUse(PlayerEntity player) {
-                return false;
-            }
-        }, size, size);
+    private CraftingRecipeInput createInventory(ItemStack stack, int size) {
+        var list = new ArrayList<ItemStack>(size * size);
         for (int i = 0; i < size * size; i++) {
-            inventory.setStack(i, stack);
+            list.add(stack);
         }
-        return inventory;
+        return CraftingRecipeInput.create(size, size, list);
     }
 
     private record RecipePair(ItemVariant compressed, ItemVariant decompressed, int scale) {

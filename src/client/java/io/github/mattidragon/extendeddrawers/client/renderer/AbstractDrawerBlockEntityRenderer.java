@@ -1,6 +1,7 @@
 package io.github.mattidragon.extendeddrawers.client.renderer;
 
 import io.github.mattidragon.extendeddrawers.ExtendedDrawers;
+import io.github.mattidragon.extendeddrawers.client.mixin.RenderSystemAccess;
 import net.fabricmc.fabric.api.renderer.v1.RendererAccess;
 import net.fabricmc.fabric.api.renderer.v1.mesh.MutableQuadView;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
@@ -27,6 +28,7 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
+import org.joml.Vector3f;
 
 import java.util.List;
 import java.util.Objects;
@@ -37,7 +39,6 @@ public abstract class AbstractDrawerBlockEntityRenderer<T extends BlockEntity> i
 
     private final ItemRenderer itemRenderer;
     private final TextRenderer textRenderer;
-    private boolean isGui = false;
 
     public AbstractDrawerBlockEntityRenderer(ItemRenderer itemRenderer, TextRenderer textRenderer) {
         this.itemRenderer = itemRenderer;
@@ -49,13 +50,11 @@ public abstract class AbstractDrawerBlockEntityRenderer<T extends BlockEntity> i
      */
     public static AbstractDrawerBlockEntityRenderer<BlockEntity> createRendererTool() {
         var client = MinecraftClient.getInstance();
-        AbstractDrawerBlockEntityRenderer<BlockEntity> renderer = new AbstractDrawerBlockEntityRenderer<>(client.getItemRenderer(), client.textRenderer) {
+        return new AbstractDrawerBlockEntityRenderer<>(client.getItemRenderer(), client.textRenderer) {
             @Override
             public void render(BlockEntity entity, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
             }
         };
-        renderer.isGui = true;
-        return renderer;
     }
 
     public void renderSlot(ItemVariant item, @Nullable String amount, boolean small, boolean hidden, List<Sprite> icons, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay, int seed, BlockPos pos, World world) {
@@ -134,26 +133,29 @@ public abstract class AbstractDrawerBlockEntityRenderer<T extends BlockEntity> i
         matrices.push();
         matrices.scale(itemScale, itemScale, 1);
         matrices.scale(0.75f, 0.75f, 1);
-        matrices.multiplyPositionMatrix(new Matrix4f().scale(1, 1, 0.01f));
-
+        matrices.peek().getPositionMatrix().mul(new Matrix4f().scale(1, 1, 0.01f));
+        
         var stack = item.toStack();
         var model = itemRenderer.getModel(stack, world, null, seed);
 
-        if (isGui) {
-            DiffuseLighting.disableGuiDepthLighting();
+        // Copy existing light configuration
+        var lights = new Vector3f[2];
+        System.arraycopy(RenderSystemAccess.getShaderLightDirections(), 0, lights, 0, 2);
+
+        // Set up gui lighting
+        if (model.isSideLit()) {
+            matrices.peek().getNormalMatrix().rotate(ITEM_LIGHT_ROTATION_3D);
+            DiffuseLighting.enableGuiDepthLighting();
         } else {
-            // Stolen from storage drawers
-            if (model.isSideLit()) {
-                matrices.peek().getNormalMatrix().rotate(ITEM_LIGHT_ROTATION_3D);
-            } else {
-                matrices.peek().getNormalMatrix().rotate(ITEM_LIGHT_ROTATION_FLAT);
-            }
+            matrices.peek().getNormalMatrix().rotate(ITEM_LIGHT_ROTATION_FLAT);
+            DiffuseLighting.disableGuiDepthLighting();
         }
 
         itemRenderer.renderItem(stack, ModelTransformationMode.GUI, false, matrices, vertexConsumers, light, OverlayTexture.DEFAULT_UV, model);
 
-        if (isGui) DiffuseLighting.enableGuiDepthLighting();
-
+        // Restore light configuration
+        System.arraycopy(lights, 0, RenderSystemAccess.getShaderLightDirections(), 0, 2);
+        
         matrices.pop();
     }
 
@@ -182,12 +184,13 @@ public abstract class AbstractDrawerBlockEntityRenderer<T extends BlockEntity> i
             default -> dir.getUnitVector();
         };
         matrices.translate(pos.x / 2 + 0.5, pos.y / 2 + 0.5, pos.z / 2 + 0.5);
-        matrices.multiplyPositionMatrix(new Matrix4f().rotation(dir.getRotationQuaternion()));
+        // We only transform the position matrix as the normals have to stay in the old configuration for item lighting
+        matrices.peek().getPositionMatrix().rotate(dir.getRotationQuaternion());
         switch (face) {
-            case FLOOR -> matrices.multiplyPositionMatrix(new Matrix4f().rotation(RotationAxis.POSITIVE_X.rotationDegrees(-90)));
-            case CEILING -> matrices.multiplyPositionMatrix(new Matrix4f().rotation(RotationAxis.POSITIVE_X.rotationDegrees(90)));
+            case FLOOR -> matrices.peek().getPositionMatrix().rotate(RotationAxis.POSITIVE_X.rotationDegrees(-90));
+            case CEILING -> matrices.peek().getPositionMatrix().rotate(RotationAxis.POSITIVE_X.rotationDegrees(90));
         }
-        matrices.multiplyPositionMatrix(new Matrix4f().rotation(RotationAxis.POSITIVE_X.rotationDegrees(-90)));
+        matrices.peek().getPositionMatrix().rotate(RotationAxis.POSITIVE_X.rotationDegrees(-90));
         matrices.translate(0, 0, 0.01);
     }
 }

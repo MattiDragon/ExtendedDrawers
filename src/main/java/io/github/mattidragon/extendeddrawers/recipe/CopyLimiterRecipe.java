@@ -4,11 +4,11 @@ import io.github.mattidragon.extendeddrawers.item.LimiterItem;
 import io.github.mattidragon.extendeddrawers.registry.ModDataComponents;
 import io.github.mattidragon.extendeddrawers.registry.ModItems;
 import io.github.mattidragon.extendeddrawers.registry.ModRecipes;
-import net.minecraft.inventory.RecipeInputInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.recipe.SpecialCraftingRecipe;
 import net.minecraft.recipe.book.CraftingRecipeCategory;
+import net.minecraft.recipe.input.CraftingRecipeInput;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.world.World;
@@ -19,8 +19,8 @@ public class CopyLimiterRecipe extends SpecialCraftingRecipe {
     }
 
     @Override
-    public boolean matches(RecipeInputInventory inventory, World world) {
-        var stacks = inventory.getHeldStacks();
+    public boolean matches(CraftingRecipeInput input, World world) {
+        var stacks = input.getStacks();
         boolean setLimiterFound = false;
         boolean unsetLimiterFound = false;
 
@@ -41,8 +41,8 @@ public class CopyLimiterRecipe extends SpecialCraftingRecipe {
     }
 
     @Override
-    public ItemStack craft(RecipeInputInventory inventory, RegistryWrapper.WrapperLookup registryLookup) {
-        var stacks = inventory.getHeldStacks();
+    public ItemStack craft(CraftingRecipeInput input, RegistryWrapper.WrapperLookup registryLookup) {
+        var stacks = input.getStacks();
         Long limit = null;
 
         for (var stack : stacks) {
@@ -67,11 +67,11 @@ public class CopyLimiterRecipe extends SpecialCraftingRecipe {
     }
 
     @Override
-    public DefaultedList<ItemStack> getRemainder(RecipeInputInventory inventory) {
-        var result = DefaultedList.ofSize(inventory.size(), ItemStack.EMPTY);
+    public DefaultedList<ItemStack> getRemainder(CraftingRecipeInput input) {
+        var result = DefaultedList.ofSize(input.getSize(), ItemStack.EMPTY);
 
         for(int i = 0; i < result.size(); ++i) {
-            var stack = inventory.getStack(i);
+            var stack = input.getStackInSlot(i);
             var item = stack.getItem();
             if (item.getRecipeRemainder() != null) {
                 result.set(i, stack.getRecipeRemainder());
