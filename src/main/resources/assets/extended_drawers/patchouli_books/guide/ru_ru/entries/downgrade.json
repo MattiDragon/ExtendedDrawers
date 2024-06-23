@@ -1,0 +1,12 @@
+{
+  "name": "Ухудшение Ящика",
+  "icon": "extended_drawers:downgrade",
+  "category": "extended_drawers:modifiers",
+  "pages": [
+    "@item@Ухудшение@! это специальный тип $(l:upgrades)улучшени@! который позволяет поставить лимит $(l:drawers)ящика@! ровно до 64 предметов. @p@Оно наиболее полезно при создании автоматических систем.",
+    {
+      "type": "patchouli:crafting",
+      "recipe": "extended_drawers:downgrade"
+    }
+  ]
+}

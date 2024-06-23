@@ -1,0 +1,12 @@
+{
+  "name": "Теневые Ящики",
+  "icon": "extended_drawers:shadow_drawer",
+  "category": "extended_drawers:blocks",
+  "pages": [
+    "$(item)Теневые Ящики/$ работают так же как и $(l:access_points)Точки Доступа/$ только они работают всего с одним предметом. Они также позволяют игрокам извлекать предметы и показывать их количество. $(br2)Они ведут себя так, как если бы они были $(l:lock)заблокированными@!, но их предмет можно очистить, нажав на него пкм + shift.",
+    {
+      "type": "patchouli:crafting",
+      "recipe": "extended_drawers:shadow_drawer"
+    }
+  ]
+}

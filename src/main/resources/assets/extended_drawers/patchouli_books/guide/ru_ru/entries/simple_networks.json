@@ -1,0 +1,23 @@
+{
+  "name": "Простые Сети",
+  "icon": "extended_drawers:single_drawer",
+  "category": "extended_drawers:networks",
+  "pages": [
+    "Просто установив несколько $(l:drawers)бочек@! рядом друг с другом, вы создадите простую сеть. Однако эта сеть пока ничего не делает. $(br2)Мы начнем с простого и добавим в сеть  $(l:access_points)точку доступа@!. Он позволяет вставлять предметы в нужные ящики, не подходя к ним.",
+    {
+      "type": "patchouli:multiblock",
+      "multiblock": {
+        "mapping": {
+          "D": "extended_drawers:single_drawer[facing=west]",
+          "0": "extended_drawers:single_drawer[facing=west]",
+          "A": "extended_drawers:access_point"
+        },
+        "pattern": [
+          ["D0A"]
+        ]
+      },
+      "enable_visualize": false,
+      "text": ""
+    }
+  ]
+}
