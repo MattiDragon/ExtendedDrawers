@@ -1,0 +1,17 @@
+{
+  "name": "일반 서랍",
+  "icon": "extended_drawers:single_drawer",
+  "category": "extended_drawers:blocks",
+  "pages": [
+    "@item@서랍@!은 $(l:simple_networks)네트워크@!의 핵심 구성 요소로 아이템을 저장합니다. $(l:modifiers)수정자@!를 사용하여 개선할 수 있습니다. @p@다양한 구성으로 제공됩니다: 1x1, 2x1 및 2x2.",
+    {
+      "type": "patchouli:crafting",
+      "recipe": "extended_drawers:single_drawer",
+      "recipe2": "extended_drawers:double_drawer"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "extended_drawers:quad_drawer"
+    }
+  ]
+}

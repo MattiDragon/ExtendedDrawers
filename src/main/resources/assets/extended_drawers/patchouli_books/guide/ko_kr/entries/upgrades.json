@@ -1,0 +1,33 @@
+{
+  "name": "서랍 업그레이드",
+  "icon": "extended_drawers:t2_upgrade",
+  "category": "extended_drawers:modifiers",
+  "pages": [
+    "@item@업그레이드@!는 다양한 업그레이드 아이템을 사용하여 적용됩니다. 이는 $(l:drawers)서랍@! 슬롯의 용량을 증가시킵니다. @p@업그레이드를 설치하려면, 손에 업그레이드를 든 채로 숨쉬는 상태로 슬롯을 클릭하면 됩니다. @p@많은 양의 아이템을 저장할 때 가장 유용합니다.",
+    {
+      "type": "patchouli:crafting",
+      "recipe": "extended_drawers:upgrade_frame",
+      "text": "$(item)업그레이드 프레임/$은 모든 업그레이드의 기본 아이템입니다. 그 자체로는 아무 기능도 하지 않습니다."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "extended_drawers:t1_upgrade",
+      "text": "$(item)서랍 업그레이드 I/$는 업그레이드의 첫 번째 단계입니다. 서랍의 용량을 두 배로 늘립니다."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "extended_drawers:t2_upgrade",
+      "text": "$(item)서랍 업그레이드 II/$는 업그레이드의 두 번째 단계입니다. 서랍의 용량을 4배로 증가시킵니다."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "extended_drawers:t3_upgrade",
+      "text": "$(item)서랍 업그레이드 III/$는 업그레이드의 세 번째 단계입니다. 서랍의 용량을 8배로 증가시킵니다."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "extended_drawers:t4_upgrade",
+      "text": "$(item)서랍 업그레이드 IV/$는 업그레이드의 네 번째 단계입니다. 서랍의 용량을 16배로 증가시킵니다."
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "name": "연결자",
+  "icon": "extended_drawers:connector",
+  "category": "extended_drawers:blocks",
+  "pages": [
+    "@item@연결자@!는 서로 다른 부분을 $(l:simple_networks)네트워크@!에 함께 연결할 수 있는 간단한 블록입니다. $(l:drawers)서랍@!에 자원을 낭비하지 않고 연결할 수 있습니다. @p@데이터를 저장할 필요가 없기 때문에 더 적은 랙을 발생시킵니다.",
+    {
+      "type": "patchouli:crafting",
+      "recipe": "extended_drawers:connector"
+    }
+  ]
+}

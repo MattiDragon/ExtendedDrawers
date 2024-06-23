@@ -1,0 +1,12 @@
+{
+  "name": "접근 지점",
+  "icon": "extended_drawers:access_point",
+  "category": "extended_drawers:blocks",
+  "pages": [
+    "@item@접근 지점@!는 전체 $(l:simple_networks)네트워크에 아이템을 삽입할 수 있게 해주며, 자동으로 올바른 서랍을 찾아주며, 순서를 확인하려면 $(l:insertion_order)여기@!를 참조하세요. @p@또한 다른 모드가 네트워크에 접근할 수 있도록 인터페이스로 작동합니다. 자세한 내용은 $(l:mod_interoperability)여기@!를 참조하세요.",
+    {
+      "type": "patchouli:crafting",
+      "recipe": "extended_drawers:access_point"
+    }
+  ]
+}

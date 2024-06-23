@@ -1,0 +1,12 @@
+{
+  "name": "압축 서랍",
+  "icon": "extended_drawers:compacting_drawer",
+  "category": "extended_drawers:blocks",
+  "pages": [
+    "조금 더 비싸지만 제작하는 동안 $(item)압축 서랍/$은 보통의 $(l:drawers)서랍@!보다 훨씬 편리합니다. 아이템을 자동으로 압축하고 해제합니다. 보통은 제작 레시피를 사용하지만 일부 아이템은 특별한 지원을 받을 수도 있습니다.",
+    {
+      "type": "patchouli:crafting",
+      "recipe": "extended_drawers:compacting_drawer"
+    }
+  ]
+}
