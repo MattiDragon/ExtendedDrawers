@@ -12,6 +12,8 @@ import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtOps;
+import net.minecraft.registry.RegistryOps;
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -92,22 +94,22 @@ public sealed interface DrawerStorage extends Comparable<DrawerStorage>, Storage
 
     void dumpExcess(World world, BlockPos pos, @Nullable Direction side, @Nullable PlayerEntity player);
 
-    default void readNbt(NbtCompound nbt) {
+    default void readNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
         settings().locked = nbt.getBoolean("locked");
         settings().voiding = nbt.getBoolean("voiding");
         settings().hidden = nbt.getBoolean("hidden");
         settings().duping = nbt.getBoolean("duping");
-        settings().upgrade = ItemVariant.CODEC.parse(NbtOps.INSTANCE, nbt.getCompound("capacityUpgrade")).getOrThrow();
-        settings().limiter = ItemVariant.CODEC.parse(NbtOps.INSTANCE, nbt.getCompound("limiter")).getOrThrow();
+        settings().upgrade = ItemVariant.CODEC.parse(RegistryOps.of(NbtOps.INSTANCE, registryLookup), nbt.getCompound("capacityUpgrade")).getOrThrow();
+        settings().limiter = ItemVariant.CODEC.parse(RegistryOps.of(NbtOps.INSTANCE, registryLookup), nbt.getCompound("limiter")).getOrThrow();
     }
 
-    default void writeNbt(NbtCompound nbt) {
+    default void writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
         nbt.putBoolean("locked", settings().locked);
         nbt.putBoolean("voiding", settings().voiding);
         nbt.putBoolean("hidden", settings().hidden);
         nbt.putBoolean("duping", settings().duping);
-        nbt.put("capacityUpgrade", ItemVariant.CODEC.encodeStart(NbtOps.INSTANCE, settings().upgrade).getOrThrow());
-        nbt.put("limiter", ItemVariant.CODEC.encodeStart(NbtOps.INSTANCE, settings().limiter).getOrThrow());
+        nbt.put("capacityUpgrade", ItemVariant.CODEC.encodeStart(RegistryOps.of(NbtOps.INSTANCE, registryLookup), settings().upgrade).getOrThrow());
+        nbt.put("limiter", ItemVariant.CODEC.encodeStart(RegistryOps.of(NbtOps.INSTANCE, registryLookup), settings().limiter).getOrThrow());
     }
 
     /**

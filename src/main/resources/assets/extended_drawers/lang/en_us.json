@@ -25,6 +25,13 @@
   "tooltip.extended_drawers.drawer_contents": "Contains:",
   "tooltip.extended_drawers.modifiers": "Modifiers: %s",
   "tooltip.extended_drawers.empty": "Empty",
+  
+  "tag.item.extended_drawers.upgrade": "Drawer Upgrades",
+  "tag.item.extended_drawers.drawers": "Drawers",
+  "tag.item.extended_drawers.toggle.voiding": "Voiding Toggles",
+  "tag.item.extended_drawers.toggle.lock": "Lock Toggles",
+  "tag.item.extended_drawers.toggle.hidden": "Hiding Toggles",
+  "tag.item.extended_drawers.toggle.duping": "Duping Toggles",
 
   "itemGroup.extended_drawers.main": "Extended Drawers",
 

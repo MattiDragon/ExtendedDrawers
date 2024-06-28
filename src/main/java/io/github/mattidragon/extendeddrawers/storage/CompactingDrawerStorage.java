@@ -17,6 +17,8 @@ import net.fabricmc.fabric.api.transfer.v1.transaction.base.SnapshotParticipant;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtOps;
+import net.minecraft.registry.RegistryOps;
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
@@ -180,18 +182,18 @@ public final class CompactingDrawerStorage extends SnapshotParticipant<Compactin
     }
 
     @Override
-    public void readNbt(NbtCompound nbt) {
-        DrawerStorage.super.readNbt(nbt);
-        item = ItemVariant.CODEC.parse(NbtOps.INSTANCE, nbt.getCompound("item")).getOrThrow();
+    public void readNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
+        DrawerStorage.super.readNbt(nbt, registryLookup);
+        item = ItemVariant.CODEC.parse(RegistryOps.of(NbtOps.INSTANCE, registryLookup), nbt.getCompound("item")).getOrThrow();
         amount = nbt.getLong("amount");
         if (item.isBlank()) amount = 0; // Avoids dupes with drawers of removed items
         updatePending = true;
     }
 
     @Override
-    public void writeNbt(NbtCompound nbt) {
-        DrawerStorage.super.writeNbt(nbt);
-        nbt.put("item", ItemVariant.CODEC.encodeStart(NbtOps.INSTANCE, item).getOrThrow());
+    public void writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
+        DrawerStorage.super.writeNbt(nbt, registryLookup);
+        nbt.put("item", ItemVariant.CODEC.encodeStart(RegistryOps.of(NbtOps.INSTANCE, registryLookup), item).getOrThrow());
         nbt.putLong("amount", amount);
     }
 

@@ -103,7 +103,7 @@ public class DrawerBlockEntity extends StorageDrawerBlockEntity {
     protected void readNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
         var list = nbt.getList("items", NbtElement.COMPOUND_TYPE).stream().map(NbtCompound.class::cast).toList();
         for (int i = 0; i < list.size(); i++) {
-            storages[i].readNbt(list.get(i));
+            storages[i].readNbt(list.get(i), registryLookup);
         }
         sortSlots();
     }
@@ -113,7 +113,7 @@ public class DrawerBlockEntity extends StorageDrawerBlockEntity {
         var list = new NbtList();
         for (var storage : storages) {
             var storageNbt = new NbtCompound();
-            storage.writeNbt(storageNbt);
+            storage.writeNbt(storageNbt, registryLookup);
             list.add(storageNbt);
         }
         nbt.put("items", list);

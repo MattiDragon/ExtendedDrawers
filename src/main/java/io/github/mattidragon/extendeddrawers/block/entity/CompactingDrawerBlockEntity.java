@@ -66,13 +66,13 @@ public class CompactingDrawerBlockEntity extends StorageDrawerBlockEntity {
     
     @Override
     public void readNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
-        storage.readNbt(nbt.getCompound("storage"));
+        storage.readNbt(nbt.getCompound("storage"), registryLookup);
     }
     
     @Override
     public void writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
         var storageNbt = new NbtCompound();
-        storage.writeNbt(storageNbt);
+        storage.writeNbt(storageNbt, registryLookup);
         nbt.put("storage", storageNbt);
     }
 }
