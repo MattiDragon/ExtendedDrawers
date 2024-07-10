@@ -34,6 +34,7 @@ class DrawersBlockLootTableProvider extends FabricBlockLootTableProvider {
         return LootTable.builder().pool(addSurvivesExplosionCondition(drop, LootPool.builder().rolls(ConstantLootNumberProvider.create(1.0f))
                 .with(ItemEntry.builder(drop)
                         .apply(CopyComponentsLootFunction.builder(CopyComponentsLootFunction.Source.BLOCK_ENTITY)
-                                .include(ModDataComponents.DRAWER_CONTENTS)))));
+                                .include(ModDataComponents.DRAWER_CONTENTS)
+                                .include(ModDataComponents.COMPACTING_DRAWER_CONTENTS)))));
     }
 }

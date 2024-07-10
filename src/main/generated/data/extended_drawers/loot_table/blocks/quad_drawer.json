@@ -15,7 +15,8 @@
             {
               "function": "minecraft:copy_components",
               "include": [
-                "extended_drawers:drawer_contents"
+                "extended_drawers:drawer_contents",
+                "extended_drawers:compacting_drawer_contents"
               ],
               "source": "block_entity"
             }
