@@ -138,7 +138,7 @@ public final class DrawerSlot extends SnapshotParticipant<DrawerSlot.Snapshot> i
         var config = ExtendedDrawers.CONFIG.get().storage();
         var capacity = (long) (config.drawerCapacity() * this.capacityMultiplier);
         if (config.stackSizeAffectsCapacity())
-            capacity /= (long) (64.0 / item.getItem().getMaxCount());
+            capacity = (long) (capacity / (64.0 / item.getItem().getMaxCount()));
         if (getUpgrade() != null)
             capacity = getUpgrade().modifier.applyAsLong(capacity);
         capacity = Math.min(capacity, getLimiter());
