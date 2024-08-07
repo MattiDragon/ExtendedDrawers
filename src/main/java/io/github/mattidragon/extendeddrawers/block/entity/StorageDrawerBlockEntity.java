@@ -26,6 +26,7 @@ public abstract class StorageDrawerBlockEntity extends BlockEntity {
             UpdateHandler.scheduleUpdate(serverWorld, pos, sortingChanged ? UpdateHandler.ChangeType.CONTENT : UpdateHandler.ChangeType.COUNT);
             var state = getCachedState();
             world.updateListeners(pos, state, state, Block.NOTIFY_LISTENERS);
+            world.updateComparators(pos, getCachedState().getBlock());
         }
     }
 
