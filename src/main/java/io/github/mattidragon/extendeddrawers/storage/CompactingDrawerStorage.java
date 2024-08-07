@@ -55,6 +55,7 @@ public final class CompactingDrawerStorage extends SnapshotParticipant<Compactin
         item = component.item();
         amount = component.amount();
         if (item.isBlank()) amount = 0;
+        updatePending = true;
     }
 
     public DrawerSlotComponent toComponent() {
@@ -170,7 +171,7 @@ public final class CompactingDrawerStorage extends SnapshotParticipant<Compactin
 
     @Override
     public Slot getSlot(int index) {
-        return getSlotArray()[index];
+        return getActiveSlotArray()[index];
     }
 
     @Override
