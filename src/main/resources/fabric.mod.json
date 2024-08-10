@@ -41,8 +41,8 @@
   ],
   "depends": {
     "fabricloader": ">=0.15.11",
-    "fabric": ">=0.100.3",
-    "minecraft": "1.21",
+    "fabric": ">=0.102.0",
+    "minecraft": "1.21.1",
     "graphlib": "*"
   },
   "recommends": {
