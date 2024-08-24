@@ -2,8 +2,6 @@ package io.github.mattidragon.extendeddrawers.client.renderer;
 
 import io.github.mattidragon.extendeddrawers.ExtendedDrawers;
 import io.github.mattidragon.extendeddrawers.client.mixin.RenderSystemAccess;
-import net.fabricmc.fabric.api.renderer.v1.RendererAccess;
-import net.fabricmc.fabric.api.renderer.v1.mesh.MutableQuadView;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.minecraft.block.Block;
 import net.minecraft.block.entity.BlockEntity;
@@ -83,10 +81,17 @@ public abstract class AbstractDrawerBlockEntityRenderer<T extends BlockEntity> i
 
         var sprite = MinecraftClient.getInstance().getSpriteAtlas(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE).apply(ExtendedDrawers.id("block/drawer_hidden_overlay"));
 
-        var emitter = Objects.requireNonNull(RendererAccess.INSTANCE.getRenderer()).meshBuilder().getEmitter();
-        emitter.square(Direction.UP, 0, 0, 1, 1, 1);
-        emitter.spriteBake(sprite, MutableQuadView.BAKE_LOCK_UV);
-        vertexConsumers.getBuffer(RenderLayer.getCutout()).quad(matrices.peek(), emitter.toBakedQuad(sprite), 1, 1, 1, 1, light, overlay);
+        var consumer = vertexConsumers.getBuffer(RenderLayer.getCutout());
+
+        var minU = sprite.getMinU();
+        var maxU = sprite.getMaxU();
+        var minV = sprite.getMinV();
+        var maxV = sprite.getMaxV();
+
+        consumer.vertex(matrices.peek(), 0, 0, 0).texture(minU, minV).color(0xFFFFFFFF).light(light).overlay(overlay).normal(matrices.peek(), 0, 1, 0);
+        consumer.vertex(matrices.peek(), 0, 0, 1).texture(minU, maxV).color(0xFFFFFFFF).light(light).overlay(overlay).normal(matrices.peek(), 0, 1, 0);
+        consumer.vertex(matrices.peek(), 1, 0, 1).texture(maxU, maxV).color(0xFFFFFFFF).light(light).overlay(overlay).normal(matrices.peek(), 0, 1, 0);
+        consumer.vertex(matrices.peek(), 1, 0, 0).texture(maxU, minV).color(0xFFFFFFFF).light(light).overlay(overlay).normal(matrices.peek(), 0, 1, 0);
 
         matrices.pop();
     }
@@ -119,10 +124,18 @@ public abstract class AbstractDrawerBlockEntityRenderer<T extends BlockEntity> i
         matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(90));
         matrices.translate(-0.125, -0.24, -0.5);
         matrices.scale(0.25f, 0.25f, 0.25f);
-        var emitter = Objects.requireNonNull(RendererAccess.INSTANCE.getRenderer()).meshBuilder().getEmitter();
-        emitter.square(Direction.UP, 0, 0, 1, 1, 0);
-        emitter.spriteBake(sprite, MutableQuadView.BAKE_LOCK_UV);
-        vertexConsumers.getBuffer(RenderLayer.getCutout()).quad(matrices.peek(), emitter.toBakedQuad(sprite), 1, 1, 1, 1, light, overlay);
+        var consumer = vertexConsumers.getBuffer(RenderLayer.getCutout());
+
+        var minU = sprite.getMinU();
+        var maxU = sprite.getMaxU();
+        var minV = sprite.getMinV();
+        var maxV = sprite.getMaxV();
+
+        consumer.vertex(matrices.peek(), 0, 1, 0).texture(minU, minV).color(0xFFFFFFFF).light(light).overlay(overlay).normal(matrices.peek(), 0, 1, 0);
+        consumer.vertex(matrices.peek(), 0, 1, 1).texture(minU, maxV).color(0xFFFFFFFF).light(light).overlay(overlay).normal(matrices.peek(), 0, 1, 0);
+        consumer.vertex(matrices.peek(), 1, 1, 1).texture(maxU, maxV).color(0xFFFFFFFF).light(light).overlay(overlay).normal(matrices.peek(), 0, 1, 0);
+        consumer.vertex(matrices.peek(), 1, 1, 0).texture(maxU, minV).color(0xFFFFFFFF).light(light).overlay(overlay).normal(matrices.peek(), 0, 1, 0);
+
         matrices.pop();
     }
 
