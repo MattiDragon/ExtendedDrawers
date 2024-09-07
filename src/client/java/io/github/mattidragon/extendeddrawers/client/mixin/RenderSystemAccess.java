@@ -7,7 +7,7 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 
 @Mixin(RenderSystem.class)
 public interface RenderSystemAccess {
-    @Accessor
+    @Accessor(remap = false)
     static Vector3f[] getShaderLightDirections() {
         throw new AssertionError();
     }

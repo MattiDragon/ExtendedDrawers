@@ -171,7 +171,7 @@ public final class CompactingDrawerStorage extends SnapshotParticipant<Compactin
 
     @Override
     public Slot getSlot(int index) {
-        return getActiveSlotArray()[index];
+        return getSlotArray()[index];
     }
 
     @Override
