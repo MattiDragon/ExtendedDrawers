@@ -1,6 +1,10 @@
 package io.github.mattidragon.extendeddrawers.network.node;
 
+import com.kneelawk.graphlib.api.graph.NodeHolder;
+import com.kneelawk.graphlib.api.graph.user.BlockNode;
 import com.kneelawk.graphlib.api.graph.user.BlockNodeType;
+import io.github.mattidragon.extendeddrawers.registry.ModBlocks;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 
@@ -17,5 +21,10 @@ public class AccessPointBlockNode implements DrawerNetworkBlockNode {
     @Override
     public @NotNull BlockNodeType getType() {
         return TYPE;
+    }
+
+    @Override
+    public void update(ServerWorld world, NodeHolder<BlockNode> node) {
+        world.updateComparators(node.getBlockPos(), ModBlocks.ACCESS_POINT);
     }
 }
