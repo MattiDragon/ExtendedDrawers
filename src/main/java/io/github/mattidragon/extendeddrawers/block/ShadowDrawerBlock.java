@@ -24,7 +24,6 @@ import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.StateManager;
-import net.minecraft.state.property.DirectionProperty;
 import net.minecraft.state.property.EnumProperty;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.ActionResult;
@@ -41,7 +40,7 @@ import org.jetbrains.annotations.Nullable;
 import static io.github.mattidragon.extendeddrawers.misc.DrawerInteractionStatusManager.getAndResetInsertStatus;
 
 public class ShadowDrawerBlock extends NetworkBlockWithEntity<ShadowDrawerBlockEntity> implements CreativeBreakBlocker, DrawerInteractionHandler {
-    public static final DirectionProperty FACING = Properties.HORIZONTAL_FACING;
+    public static final EnumProperty<Direction> FACING = Properties.HORIZONTAL_FACING;
     public static final EnumProperty<BlockFace> FACE = Properties.BLOCK_FACE;
     
     public ShadowDrawerBlock(Settings settings) {
@@ -99,7 +98,7 @@ public class ShadowDrawerBlock extends NetworkBlockWithEntity<ShadowDrawerBlockE
     @Override
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, BlockHitResult hit) {
         if (!isFront(state, hit.getSide()) || !player.canModifyBlocks()) return ActionResult.PASS;
-        if (!(world instanceof ServerWorld serverWorld)) return ActionResult.CONSUME_PARTIAL;
+        if (!(world instanceof ServerWorld serverWorld)) return ActionResult.CONSUME;
 
         var drawer = getBlockEntity(world, pos);
         if (drawer == null) return ActionResult.PASS;
@@ -128,7 +127,7 @@ public class ShadowDrawerBlock extends NetworkBlockWithEntity<ShadowDrawerBlockE
                 inserted = (int) storage.insert(ItemVariant.of(playerStack), playerStack.getCount(), t);
                 playerStack.decrement(inserted);
             }
-            if (inserted == 0) return ActionResult.CONSUME_PARTIAL;
+            if (inserted == 0) return ActionResult.CONSUME;
             
             t.commit();
             return ActionResult.SUCCESS;

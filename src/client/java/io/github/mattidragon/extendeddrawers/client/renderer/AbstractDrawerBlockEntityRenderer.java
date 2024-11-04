@@ -14,9 +14,9 @@ import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.block.entity.BlockEntityRenderer;
 import net.minecraft.client.render.item.ItemRenderer;
-import net.minecraft.client.render.model.json.ModelTransformationMode;
 import net.minecraft.client.texture.Sprite;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.item.ModelTransformationMode;
 import net.minecraft.screen.PlayerScreenHandler;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -29,7 +29,6 @@ import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 import java.util.List;
-import java.util.Objects;
 
 public abstract class AbstractDrawerBlockEntityRenderer<T extends BlockEntity> implements BlockEntityRenderer<T> {
     private static final Quaternionf ITEM_LIGHT_ROTATION_3D = RotationAxis.POSITIVE_X.rotationDegrees(-15).mul(RotationAxis.POSITIVE_Y.rotationDegrees(15));
@@ -103,7 +102,7 @@ public abstract class AbstractDrawerBlockEntityRenderer<T extends BlockEntity> i
         var pos = drawer.getPos();
         var state = drawer.getCachedState();
         
-        return Block.shouldDrawSide(state, world, pos, facing, pos.offset(facing));
+        return Block.shouldDrawSide(state, world.getBlockState(pos.offset(facing)), facing);
     }
 
     public void renderIcons(List<Sprite> icons, boolean small, int light, int overlay, MatrixStack matrices, VertexConsumerProvider vertexConsumers) {

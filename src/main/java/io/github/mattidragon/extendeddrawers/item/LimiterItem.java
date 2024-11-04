@@ -12,7 +12,6 @@ import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
-import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 
 import java.util.List;
@@ -35,11 +34,11 @@ public class LimiterItem extends Item {
     }
 
     @Override
-    public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
+    public ActionResult use(World world, PlayerEntity user, Hand hand) {
         var itemStack = user.getStackInHand(hand);
         user.useBook(itemStack, hand);
         user.incrementStat(Stats.USED.getOrCreateStat(this));
-        return TypedActionResult.success(itemStack, world.isClient());
+        return ActionResult.SUCCESS;
     }
 
     @Override

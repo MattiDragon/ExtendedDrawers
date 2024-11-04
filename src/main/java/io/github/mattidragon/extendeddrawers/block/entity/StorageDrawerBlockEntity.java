@@ -22,7 +22,7 @@ public abstract class StorageDrawerBlockEntity extends BlockEntity {
     public void onSlotChanged(boolean sortingChanged) {
         if (world instanceof ServerWorld serverWorld) {
             // Using this instead of markDirty to handle cases where drawer is in unloaded chunks (why doesn't minecraft save in unloaded chunks?)
-            world.getWorldChunk(pos).setNeedsSaving(true);
+            world.getWorldChunk(pos).markNeedsSaving();
             UpdateHandler.scheduleUpdate(serverWorld, pos, sortingChanged ? UpdateHandler.ChangeType.CONTENT : UpdateHandler.ChangeType.COUNT);
             var state = getCachedState();
             world.updateListeners(pos, state, state, Block.NOTIFY_LISTENERS);

@@ -19,6 +19,7 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.render.LightmapTextureManager;
 import net.minecraft.client.render.OverlayTexture;
+import net.minecraft.client.render.RenderLayer;
 import net.minecraft.item.Items;
 import net.minecraft.screen.PlayerScreenHandler;
 import net.minecraft.text.Text;
@@ -335,40 +336,42 @@ public class ConfigScreenFactory {
             var playerPos = player == null ? BlockPos.ORIGIN : player.getBlockPos();
 
             try (var ignored = ExtendedDrawers.CONFIG.override(newConfig)) {
-                context.drawSprite(x, y, 0, size, size, atlas.apply(id("block/single_drawer")));
-                context.drawSprite(x + size, y, 0, size, size, atlas.apply(id("block/quad_drawer")));
-                context.drawSprite(x + 2 * size, y, 0, size, size, atlas.apply(id("block/compacting_drawer")));
+                context.drawSpriteStretched(RenderLayer::getGuiTextured, atlas.apply(id("block/single_drawer")), x, y, size, size);
+                context.drawSpriteStretched(RenderLayer::getGuiTextured, atlas.apply(id("block/quad_drawer")), x + size, y, size, size);
+                context.drawSpriteStretched(RenderLayer::getGuiTextured, atlas.apply(id("block/compacting_drawer")), x + 2 * size, y, size, size);
 
                 matrices.push();
                 matrices.translate(x, y, 1);
                 matrices.scale(size, size, -size);
                 matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(180));
                 matrices.translate(0.5, -0.5, 0);
+                
+                context.draw(vertexConsumers -> {
+                    var voidingSprite = atlas.apply(Identifier.ofVanilla("item/lava_bucket"));
+                    var lockSprite = atlas.apply(id("item/lock"));
+                    var upgrade2Sprite = atlas.apply(id("item/t2_upgrade"));
+                    var upgrade4Sprite = atlas.apply(id("item/t4_upgrade"));
 
-                var voidingSprite = atlas.apply(Identifier.ofVanilla("item/lava_bucket"));
-                var lockSprite = atlas.apply(id("item/lock"));
-                var upgrade2Sprite = atlas.apply(id("item/t2_upgrade"));
-                var upgrade4Sprite = atlas.apply(id("item/t4_upgrade"));
+                    renderer.renderSlot(ItemVariant.of(Items.COBBLESTONE), String.valueOf((Long) 128L), false, false, List.of(lockSprite), matrices, vertexConsumers, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 0, playerPos, null);
 
-                renderer.renderSlot(ItemVariant.of(Items.COBBLESTONE), String.valueOf((Long) 128L), false, false, List.of(lockSprite), matrices, context.getVertexConsumers(), LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 0, playerPos, null);
+                    matrices.translate(0.75, 0.25, 0);
+                    renderer.renderSlot(ItemVariant.of(Items.REDSTONE), String.valueOf((Long) 16L), true, false, List.of(lockSprite), matrices, vertexConsumers, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 0, playerPos, null);
+                    matrices.translate(0.5, 0, 0);
+                    renderer.renderSlot(ItemVariant.of(Items.GUNPOWDER), String.valueOf((Long) 32L), true, false, List.of(voidingSprite), matrices, vertexConsumers, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 0, playerPos, null);
+                    matrices.translate(-0.5, -0.5, 0);
+                    renderer.renderSlot(ItemVariant.of(Items.SUGAR), String.valueOf((Long) 64L), true, false, List.of(lockSprite, voidingSprite, upgrade2Sprite), matrices, vertexConsumers, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 0, playerPos, null);
+                    matrices.translate(0.5, 0, 0);
+                    renderer.renderSlot(ItemVariant.of(Items.GLOWSTONE_DUST), String.valueOf((Long) 128L), true, false, List.of(upgrade4Sprite), matrices, vertexConsumers, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 0, playerPos, null);
 
-                matrices.translate(0.75, 0.25, 0);
-                renderer.renderSlot(ItemVariant.of(Items.REDSTONE), String.valueOf((Long) 16L), true, false, List.of(lockSprite), matrices, context.getVertexConsumers(), LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 0, playerPos, null);
-                matrices.translate(0.5, 0, 0);
-                renderer.renderSlot(ItemVariant.of(Items.GUNPOWDER), String.valueOf((Long) 32L), true, false, List.of(voidingSprite), matrices, context.getVertexConsumers(), LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 0, playerPos, null);
-                matrices.translate(-0.5, -0.5, 0);
-                renderer.renderSlot(ItemVariant.of(Items.SUGAR), String.valueOf((Long) 64L), true, false, List.of(lockSprite, voidingSprite, upgrade2Sprite), matrices, context.getVertexConsumers(), LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 0, playerPos, null);
-                matrices.translate(0.5, 0, 0);
-                renderer.renderSlot(ItemVariant.of(Items.GLOWSTONE_DUST), String.valueOf((Long) 128L), true, false, List.of(upgrade4Sprite), matrices, context.getVertexConsumers(), LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 0, playerPos, null);
-
-                matrices.translate(0.75, 0.5, 0);
-                renderer.renderIcons(List.of(lockSprite, voidingSprite, upgrade4Sprite), true, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, matrices, context.getVertexConsumers());
-                renderer.renderSlot(ItemVariant.of(Items.IRON_INGOT), String.valueOf((Long) 9L), true, false, List.of(), matrices, context.getVertexConsumers(), LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 0, playerPos, null);
-                matrices.translate(0.25, -0.5, 0);
-                renderer.renderSlot(ItemVariant.of(Items.IRON_NUGGET), String.valueOf((Long) 81L), true, false, List.of(), matrices, context.getVertexConsumers(), LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 0, playerPos, null);
-                matrices.translate(-0.5, 0, 0);
-                renderer.renderSlot(ItemVariant.of(Items.IRON_BLOCK), String.valueOf((Long) 1L), true, false, List.of(), matrices, context.getVertexConsumers(), LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 0, playerPos, null);
-
+                    matrices.translate(0.75, 0.5, 0);
+                    renderer.renderIcons(List.of(lockSprite, voidingSprite, upgrade4Sprite), true, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, matrices, vertexConsumers);
+                    renderer.renderSlot(ItemVariant.of(Items.IRON_INGOT), String.valueOf((Long) 9L), true, false, List.of(), matrices, vertexConsumers, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 0, playerPos, null);
+                    matrices.translate(0.25, -0.5, 0);
+                    renderer.renderSlot(ItemVariant.of(Items.IRON_NUGGET), String.valueOf((Long) 81L), true, false, List.of(), matrices, vertexConsumers, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 0, playerPos, null);
+                    matrices.translate(-0.5, 0, 0);
+                    renderer.renderSlot(ItemVariant.of(Items.IRON_BLOCK), String.valueOf((Long) 1L), true, false, List.of(), matrices, vertexConsumers, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 0, playerPos, null);
+                });
+                
                 matrices.pop();
             }
 
@@ -387,7 +390,7 @@ public class ConfigScreenFactory {
             var blockAtlas = MinecraftClient.getInstance().getSpriteAtlas(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE);
             var sprite = blockAtlas.apply(id);
 
-            graphics.drawSprite(x + renderWidth / 3, y, 0, renderWidth / 3, renderWidth / 3, sprite);
+            graphics.drawSpriteStretched(RenderLayer::getGuiTextured, sprite, x + renderWidth / 3, y, renderWidth / 3, renderWidth / 3);
 
             return renderWidth / 3;
         }

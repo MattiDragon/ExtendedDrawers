@@ -62,13 +62,8 @@ public class CopyLimiterRecipe extends SpecialCraftingRecipe {
     }
 
     @Override
-    public boolean fits(int width, int height) {
-        return width * height >= 2;
-    }
-
-    @Override
-    public DefaultedList<ItemStack> getRemainder(CraftingRecipeInput input) {
-        var result = DefaultedList.ofSize(input.getSize(), ItemStack.EMPTY);
+    public DefaultedList<ItemStack> getRecipeRemainders(CraftingRecipeInput input) {
+        var result = DefaultedList.ofSize(input.size(), ItemStack.EMPTY);
 
         for(int i = 0; i < result.size(); ++i) {
             var stack = input.getStackInSlot(i);
@@ -86,7 +81,7 @@ public class CopyLimiterRecipe extends SpecialCraftingRecipe {
     }
 
     @Override
-    public RecipeSerializer<?> getSerializer() {
+    public RecipeSerializer<CopyLimiterRecipe> getSerializer() {
         return ModRecipes.COPY_LIMITER_SERIALIZER;
     }
 }

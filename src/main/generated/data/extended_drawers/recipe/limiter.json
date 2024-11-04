@@ -2,15 +2,9 @@
   "type": "minecraft:crafting_shaped",
   "category": "redstone",
   "key": {
-    "C": {
-      "item": "minecraft:copper_ingot"
-    },
-    "E": {
-      "item": "minecraft:ender_pearl"
-    },
-    "R": {
-      "item": "minecraft:redstone"
-    }
+    "C": "minecraft:copper_ingot",
+    "E": "minecraft:ender_pearl",
+    "R": "minecraft:redstone"
   },
   "pattern": [
     "RCR",

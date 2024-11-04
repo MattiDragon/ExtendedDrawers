@@ -1,155 +1,16 @@
 package io.github.mattidragon.extendeddrawers.compacting;
 
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
-import net.minecraft.item.ItemStack;
-import net.minecraft.recipe.RecipeEntry;
-import net.minecraft.recipe.RecipeManager;
-import net.minecraft.recipe.RecipeType;
-import net.minecraft.recipe.input.CraftingRecipeInput;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
-import java.util.function.Function;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
-
-public final class CompressionRecipeManager {
-    private final RecipeManager recipeManager;
-    private final Map<ItemVariant, CompressionLadder> ladders = new HashMap<>();
-    private final List<CompressionLadder> overrides = new ArrayList<>();
-
-    public CompressionRecipeManager(RecipeManager recipeManager) {
-        this.recipeManager = recipeManager;
+public interface CompressionRecipeManager {
+    CompressionLadder getLadder(ItemVariant item, World world);
+    
+    static CompressionRecipeManager of(World world) {
+        return ((Provider) world).extended_drawers$getCompactingManager();
     }
-
-    public static CompressionRecipeManager of(RecipeManager recipeManager) {
-        return ((Provider) recipeManager).extended_drawers$getCompactingManager();
-    }
-
-    public void setOverrides(List<CompressionLadder> overrides) {
-        this.overrides.clear();
-        this.overrides.addAll(overrides);
-        reload();
-    }
-
-    public List<CompressionLadder> getOverrides() {
-        return overrides;
-    }
-
-    public void reload() {
-        ladders.clear();
-        for (var override : overrides) {
-            addLadder(override);
-        }
-    }
-
-    public CompressionLadder getLadder(ItemVariant item, World world) {
-        if (ladders.containsKey(item))
-            return ladders.get(item);
-        var ladder = buildLadder(item, world);
-        // Put ladder in map for all items
-        addLadder(ladder);
-        return ladder;
-    }
-
-    private void addLadder(CompressionLadder ladder) {
-        ladder.steps().forEach(step -> ladders.put(step.item(), ladder));
-    }
-
-    private CompressionLadder buildLadder(ItemVariant item, World world) {
-        var bottom = findBottom(item, world);
-        var ladder = new ArrayList<CompressionLadder.Step>();
-        var visited = new HashSet<ItemVariant>();
-        var currentItem = bottom;
-        var currentSize = 1;
-        visited.add(currentItem);
-        ladder.add(new CompressionLadder.Step(currentItem, currentSize));
-
-        while (true) {
-            var pair = findCompressionRecipe(currentItem, world);
-            if (pair == null) break; // Reached top of ladder
-            currentItem = pair.compressed;
-            currentSize *= pair.scale;
-            if (!visited.add(currentItem)) break; // Ladder is cyclic, all items accounted for
-            ladder.add(new CompressionLadder.Step(currentItem, currentSize));
-        }
-        return new CompressionLadder(List.copyOf(ladder));
-    }
-
-    private ItemVariant findBottom(ItemVariant item, World world) {
-        var visited = new HashSet<ItemVariant>();
-        var candidate = item;
-        while (true) {
-            var pair = findDecompressionRecipe(candidate, world);
-            if (pair == null) break; // Reached bottom
-            if (visited.contains(pair.decompressed)) break; // Next item would be a cycle, this is the bottom now
-            candidate = pair.decompressed;
-            visited.add(candidate);
-        }
-        return candidate;
-    }
-
-    @Nullable
-    private RecipePair findCompressionRecipe(ItemVariant decompressed, World world) {
-        return IntStream.of(3, 2, 1)
-                .mapToObj(size -> findCompressionRecipeForSize(decompressed, world, size))
-                .flatMap(Function.identity())
-                .findFirst()
-                .orElse(null);
-    }
-
-    private Stream<RecipePair> findCompressionRecipeForSize(ItemVariant decompressed, World world, int size) {
-        var decompressedStack = decompressed.toStack(size * size);
-        return findRecipes(decompressed.toStack(), size, world) // Find compression recipes
-                .filter(compressed -> findRecipes(compressed, 1, world).anyMatch(decompressed2 -> ItemStack.areEqual(decompressed2, decompressedStack))) // Find matching decompression recipe
-                .map(compressed -> new RecipePair(ItemVariant.of(compressed), decompressed, size * size));
-    }
-
-    @Nullable
-    private RecipePair findDecompressionRecipe(ItemVariant compressed, World world) {
-        var compressedStack = compressed.toStack();
-        return findRecipes(compressedStack, 1, world) // Find decompression recipe
-                .flatMap(decompressed -> IntStream.of(3, 2, 1) // Check each size from largest to smallest for matching compression recipes
-                        .filter(size -> findRecipes(decompressed, size, world).anyMatch(compressed2 -> ItemStack.areEqual(compressedStack, compressed2)))
-                        .mapToObj(size -> new RecipePair(compressed, ItemVariant.of(decompressed), size * size)))
-                .findFirst()
-                .orElse(null);
-    }
-
-    private Stream<ItemStack> findRecipes(ItemStack stack, int size, World world) {
-        var inventory = createInventory(stack, size);
-        return recipeManager.getAllMatches(RecipeType.CRAFTING, inventory, world)
-                .stream()
-                .map(RecipeEntry::value)
-                .filter(recipe -> recipe.getRemainder(inventory).stream().allMatch(ItemStack::isEmpty)) // We can't deal with remainders, so we just prevent recipe with them from being used
-                .map(recipe -> recipe.craft(inventory, world.getRegistryManager()))
-                .filter(result -> !result.isEmpty());
-    }
-
-    /**
-     * Creates a dummy crafting inventory. Similar to sheep dying so support should be fine
-     * @param stack The stack to fill the inventory with
-     * @param size The width and height of the inventory. Slot count is size squared.
-     * @return A filled crafting inventory of specified size
-     */
-    private CraftingRecipeInput createInventory(ItemStack stack, int size) {
-        var list = new ArrayList<ItemStack>(size * size);
-        for (int i = 0; i < size * size; i++) {
-            list.add(stack);
-        }
-        return CraftingRecipeInput.create(size, size, list);
-    }
-
-    private record RecipePair(ItemVariant compressed, ItemVariant decompressed, int scale) {
-    }
-
-    /**
-     * Injected into {@link RecipeManager}.
-     */
-    public interface Provider {
-        default CompressionRecipeManager extended_drawers$getCompactingManager() {
-            throw new AssertionError("extended_drawers$getCompactingManager must be overridden");
-        }
+    
+    interface Provider {
+        CompressionRecipeManager extended_drawers$getCompactingManager();
     }
 }

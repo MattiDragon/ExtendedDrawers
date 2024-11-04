@@ -2,15 +2,9 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "B": {
-      "item": "extended_drawers:t1_upgrade"
-    },
-    "M": {
-      "item": "minecraft:iron_block"
-    },
-    "S": {
-      "item": "minecraft:stick"
-    }
+    "B": "extended_drawers:t1_upgrade",
+    "M": "minecraft:iron_block",
+    "S": "minecraft:stick"
   },
   "pattern": [
     "SSS",

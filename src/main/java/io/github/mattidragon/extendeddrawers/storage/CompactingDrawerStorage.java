@@ -238,14 +238,14 @@ public final class CompactingDrawerStorage extends SnapshotParticipant<Compactin
         updatePending = false; // No need to update since cleared slots are up-to-date
     }
 
-    private void updateSlots() {
+    public void updateSlots() {
         for (var slot : slots) { // Disable all slots
             slot.reset(true);
         }
 
         var ladder = owner.getWorld() == null
                 ? new CompressionLadder(List.of(new CompressionLadder.Step(item, 1)))
-                : CompressionRecipeManager.of(owner.getWorld().getRecipeManager()).getLadder(item, owner.getWorld());
+                : CompressionRecipeManager.of(owner.getWorld()).getLadder(item, owner.getWorld());
         var ladderSize = ladder.steps().size();
         var initialPosition = ladder.getPosition(item);
         if (initialPosition == -1) throw new IllegalStateException("Item is not on it's own recipe ladder. Did we lookup mid-reload?");

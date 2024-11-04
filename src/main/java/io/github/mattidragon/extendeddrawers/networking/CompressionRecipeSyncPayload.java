@@ -2,7 +2,7 @@ package io.github.mattidragon.extendeddrawers.networking;
 
 import io.github.mattidragon.extendeddrawers.ExtendedDrawers;
 import io.github.mattidragon.extendeddrawers.compacting.CompressionLadder;
-import io.github.mattidragon.extendeddrawers.compacting.CompressionRecipeManager;
+import io.github.mattidragon.extendeddrawers.compacting.ServerCompressionRecipeManager;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
@@ -13,17 +13,18 @@ import net.minecraft.network.packet.CustomPayload;
 
 import java.util.List;
 
-public record CompressionOverrideSyncPayload(List<CompressionLadder> overrides) implements CustomPayload {
-    public static final Id<CompressionOverrideSyncPayload> ID = new Id<>(ExtendedDrawers.id("compression_override_sync"));
-    private static final PacketCodec<RegistryByteBuf, CompressionOverrideSyncPayload> CODEC = PacketCodec.tuple(
-            CompressionLadder.PACKET_CODEC.collect(PacketCodecs.toList()), CompressionOverrideSyncPayload::overrides,
-            CompressionOverrideSyncPayload::new
+public record CompressionRecipeSyncPayload(List<CompressionLadder> recipes, boolean clearRecipes) implements CustomPayload {
+    public static final Id<CompressionRecipeSyncPayload> ID = new Id<>(ExtendedDrawers.id("compression_recipe_sync"));
+    private static final PacketCodec<RegistryByteBuf, CompressionRecipeSyncPayload> CODEC = PacketCodec.tuple(
+            CompressionLadder.PACKET_CODEC.collect(PacketCodecs.toList()), CompressionRecipeSyncPayload::recipes,
+            PacketCodecs.BOOL, CompressionRecipeSyncPayload::clearRecipes,
+            CompressionRecipeSyncPayload::new
     );
 
     public static void register() {
         PayloadTypeRegistry.playS2C().register(ID, CODEC);
         ServerLifecycleEvents.SYNC_DATA_PACK_CONTENTS.register((player, joined) ->
-                ServerPlayNetworking.send(player, new CompressionOverrideSyncPayload(CompressionRecipeManager.of(player.server.getRecipeManager()).getOverrides())));
+                ServerPlayNetworking.send(player, new CompressionRecipeSyncPayload(List.copyOf(ServerCompressionRecipeManager.of(player.server.getRecipeManager()).getLadders()), true)));
     }
 
     @Override

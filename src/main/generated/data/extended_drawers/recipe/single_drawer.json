@@ -2,15 +2,9 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "C": {
-      "item": "minecraft:chest"
-    },
-    "L": {
-      "tag": "minecraft:logs"
-    },
-    "P": {
-      "tag": "minecraft:planks"
-    }
+    "C": "minecraft:chest",
+    "L": "#minecraft:logs",
+    "P": "#minecraft:planks"
   },
   "pattern": [
     "LPL",

@@ -13,6 +13,7 @@ import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 
 import java.util.stream.Stream;
 
@@ -63,7 +64,13 @@ public class CompactingDrawerBlockEntity extends StorageDrawerBlockEntity {
     public boolean isEmpty() {
         return storage.getUpgrade() == null && storage.isBlank() && !storage.isHidden() && !storage.isLocked() && !storage.isVoiding();
     }
-    
+
+    @Override
+    public void setWorld(World world) {
+        super.setWorld(world);
+        storage.updateSlots(); // Force compression ladders to load
+    }
+
     @Override
     public void readNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
         storage.readNbt(nbt.getCompound("storage"), registryLookup);

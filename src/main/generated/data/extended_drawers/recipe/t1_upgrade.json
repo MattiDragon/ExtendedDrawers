@@ -2,15 +2,9 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "B": {
-      "item": "extended_drawers:upgrade_frame"
-    },
-    "M": {
-      "item": "minecraft:barrel"
-    },
-    "S": {
-      "item": "minecraft:stick"
-    }
+    "B": "extended_drawers:upgrade_frame",
+    "M": "minecraft:barrel",
+    "S": "minecraft:stick"
   },
   "pattern": [
     "SSS",

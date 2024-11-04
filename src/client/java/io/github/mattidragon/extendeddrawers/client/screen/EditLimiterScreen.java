@@ -7,6 +7,7 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
+import net.minecraft.client.render.RenderLayer;
 import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.OrderedText;
 import net.minecraft.text.Style;
@@ -94,7 +95,7 @@ public class EditLimiterScreen extends Screen {
     @Override
     public void renderBackground(DrawContext context, int mouseX, int mouseY, float delta) {
         renderInGameBackground(context);
-        context.drawTexture(TEXTURE, width / 2 - 64, height / 2 - 32, 0, 0, 128, 64, 128, 64);
+        context.drawTexture(RenderLayer::getGuiTextured, TEXTURE, width / 2 - 64, height / 2 - 32, 0, 0, 128, 64, 128, 64);
     }
 
     @Override

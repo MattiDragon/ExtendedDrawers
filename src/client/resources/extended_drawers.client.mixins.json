@@ -6,6 +6,8 @@
   "client": [
     "ClientPlayerEntityMixin",
     "ClientPlayerInteractionManagerMixin",
+    "ClientPlayNetworkHandlerMixin",
+    "ClientWorldMixin",
     "RenderSystemAccess"
   ],
   "injectors": {

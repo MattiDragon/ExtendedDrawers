@@ -6,9 +6,12 @@
   "mixins": [
     "DataPackContentsMixin",
     "ItemStackMixin",
-    "RecipeManagerMixin",
     "ServerPlayerInteractionManagerMixin",
-    "ShulkerBoxBlockEntityMixin"
+    "ServerRecipeManagerMixin",
+    "ServerWorldMixin",
+    "ShulkerBoxBlockEntityMixin",
+    "WireConnectionDiscoverersMixin",
+    "WorldMixin"
   ],
   "injectors": {
     "defaultRequire": 1

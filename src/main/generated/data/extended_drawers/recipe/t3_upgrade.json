@@ -2,15 +2,9 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "B": {
-      "item": "extended_drawers:t2_upgrade"
-    },
-    "M": {
-      "item": "minecraft:diamond_block"
-    },
-    "S": {
-      "item": "minecraft:blaze_rod"
-    }
+    "B": "extended_drawers:t2_upgrade",
+    "M": "minecraft:diamond_block",
+    "S": "minecraft:blaze_rod"
   },
   "pattern": [
     "SSS",

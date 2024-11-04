@@ -2,12 +2,8 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "L": {
-      "tag": "minecraft:logs"
-    },
-    "P": {
-      "tag": "minecraft:planks"
-    }
+    "L": "#minecraft:logs",
+    "P": "#minecraft:planks"
   },
   "pattern": [
     "LPL",

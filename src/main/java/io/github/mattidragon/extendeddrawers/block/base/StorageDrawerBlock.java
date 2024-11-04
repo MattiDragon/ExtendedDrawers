@@ -21,7 +21,6 @@ import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.StateManager;
-import net.minecraft.state.property.DirectionProperty;
 import net.minecraft.state.property.EnumProperty;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.*;
@@ -35,7 +34,7 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 public abstract class StorageDrawerBlock<T extends StorageDrawerBlockEntity> extends NetworkBlockWithEntity<T> implements DrawerInteractionHandler, CreativeBreakBlocker {
-    public static final DirectionProperty FACING = Properties.HORIZONTAL_FACING;
+    public static final EnumProperty<Direction> FACING = Properties.HORIZONTAL_FACING;
     public static final EnumProperty<BlockFace> FACE = Properties.BLOCK_FACE;
 
     protected StorageDrawerBlock(Settings settings) {
@@ -118,7 +117,7 @@ public abstract class StorageDrawerBlock<T extends StorageDrawerBlockEntity> ext
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, BlockHitResult hit) {
         if (!isFront(state, hit.getSide()) || !player.canModifyBlocks())
             return ActionResult.PASS;
-        if (!(world instanceof ServerWorld)) return ActionResult.CONSUME_PARTIAL;
+        if (!(world instanceof ServerWorld)) return ActionResult.CONSUME;
 
         var internalPos = DrawerRaycastUtil.calculateFaceLocation(pos, hit.getPos(), hit.getSide(), state.get(FACING), state.get(FACE));
         if (internalPos == null) return ActionResult.PASS;
@@ -154,7 +153,7 @@ public abstract class StorageDrawerBlock<T extends StorageDrawerBlockEntity> ext
                 inserted = (int) ((SingleSlotStorage<ItemVariant>) storage).insert(ItemVariant.of(playerStack), playerStack.getCount(), t);
                 playerStack.decrement(inserted);
             }
-            if (inserted == 0) return ActionResult.CONSUME_PARTIAL;
+            if (inserted == 0) return ActionResult.CONSUME;
 
             t.commit();
             return ActionResult.CONSUME;

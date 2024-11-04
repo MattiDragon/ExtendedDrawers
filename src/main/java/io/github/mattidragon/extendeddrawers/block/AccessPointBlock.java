@@ -50,7 +50,7 @@ public class AccessPointBlock extends NetworkBlock implements DrawerInteractionH
     @Override
     protected ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, BlockHitResult hit) {
         if (!player.canModifyBlocks()) return ActionResult.PASS;
-        if (!(world instanceof ServerWorld serverWorld)) return ActionResult.CONSUME_PARTIAL;
+        if (!(world instanceof ServerWorld serverWorld)) return ActionResult.CONSUME;
 
         var storage = NetworkStorageCache.get(serverWorld, pos);
 
@@ -76,7 +76,7 @@ public class AccessPointBlock extends NetworkBlock implements DrawerInteractionH
                 inserted = (int) storage.insert(ItemVariant.of(playerStack), playerStack.getCount(), t);
                 playerStack.decrement(inserted);
             }
-            if (inserted == 0) return ActionResult.CONSUME_PARTIAL;
+            if (inserted == 0) return ActionResult.CONSUME;
         
             t.commit();
             return ActionResult.SUCCESS;
