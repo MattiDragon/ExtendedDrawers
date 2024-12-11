@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '1.7-SNAPSHOT'
+    id 'fabric-loom' version '1.9-SNAPSHOT'
     id 'maven-publish'
 }
 
@@ -11,7 +11,7 @@ group project.maven_group
 base.archivesName = project.archives_base_name
 
 repositories {
-    maven { url "https://kneelawk.com/maven/" }
+    maven { url "https://maven.kneelawk.com/releases/" }
     maven { url "https://maven.alexiil.uk/" }
     maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
     maven { url "https://maven.blamejared.com" }
@@ -45,6 +45,12 @@ dependencies {
     runtimeOnly files("src/main/generated")
 }
 
+fabricApi.configureDataGeneration {
+    client = true
+    createSourceSet = true
+    addToResources = false
+}
+
 loom {
     // Apply datagen at runtime
     mods.register("extended_drawers") {
@@ -53,16 +59,8 @@ loom {
         modFiles.from file("src/main/generated")
     }
 
-    runs.register("datagen") {
-        inherit runs.server
-        name "Data Generation"
-        vmArg "-Dfabric-api.datagen"
-        vmArg "-Dfabric-api.datagen.output-dir=${file("src/main/generated")}"
-        vmArg "-Dfabric-api.datagen.strict-validation"
-
+    runs.datagen {
         ideConfigGenerated = true
-
-        runDir "build/datagen/"
     }
 }
 

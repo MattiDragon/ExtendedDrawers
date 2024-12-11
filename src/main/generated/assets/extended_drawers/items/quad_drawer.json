@@ -1,0 +1,6 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "extended_drawers:block/quad_drawer"
+  }
+}

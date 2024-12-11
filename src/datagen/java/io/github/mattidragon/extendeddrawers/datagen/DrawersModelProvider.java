@@ -2,11 +2,11 @@ package io.github.mattidragon.extendeddrawers.datagen;
 
 import io.github.mattidragon.extendeddrawers.registry.ModBlocks;
 import io.github.mattidragon.extendeddrawers.registry.ModItems;
+import net.fabricmc.fabric.api.client.datagen.v1.provider.FabricModelProvider;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
-import net.fabricmc.fabric.api.datagen.v1.provider.FabricModelProvider;
 import net.minecraft.block.Block;
 import net.minecraft.block.enums.BlockFace;
-import net.minecraft.data.client.*;
+import net.minecraft.client.data.*;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Direction;
@@ -19,11 +19,11 @@ class DrawersModelProvider extends FabricModelProvider {
     public DrawersModelProvider(FabricDataOutput output) {
         super(output);
     }
-    
+
     @Override
     public void generateBlockStateModels(BlockStateModelGenerator generator) {
         generator.registerSimpleCubeAll(ModBlocks.ACCESS_POINT);
-        generator.registerSingleton(ModBlocks.CONNECTOR, TextureMap.all(id("block/drawer_base")), Models.CUBE_ALL);
+        generator.registerSingleton(ModBlocks.CONNECTOR, block -> TexturedModel.getCubeAll(id("block/drawer_base")));
 
         registerDrawerModel(ModBlocks.SINGLE_DRAWER, generator);
         registerDrawerModel(ModBlocks.DOUBLE_DRAWER, generator);

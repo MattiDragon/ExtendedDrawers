@@ -1,6 +1,7 @@
 package io.github.mattidragon.extendeddrawers.compacting;
 
 import net.minecraft.resource.JsonDataLoader;
+import net.minecraft.resource.ResourceFinder;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.profiler.Profiler;
@@ -12,7 +13,7 @@ public class CompressionOverrideLoader extends JsonDataLoader<CompressionLadder>
     private final ServerCompressionRecipeManager compressionRecipeManager;
 
     public CompressionOverrideLoader(ServerCompressionRecipeManager compressionRecipeManager) {
-        super(CompressionLadder.CODEC, "extended_drawers/compression_overrides");
+        super(CompressionLadder.CODEC, ResourceFinder.json("extended_drawers/compression_overrides"));
         this.compressionRecipeManager = compressionRecipeManager;
     }
 

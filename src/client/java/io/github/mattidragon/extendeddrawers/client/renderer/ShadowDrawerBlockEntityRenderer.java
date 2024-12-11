@@ -8,8 +8,8 @@ import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.WorldRenderer;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
 import net.minecraft.client.texture.Sprite;
+import net.minecraft.client.texture.SpriteAtlasTexture;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.screen.PlayerScreenHandler;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -17,7 +17,7 @@ import java.util.Objects;
 
 public class ShadowDrawerBlockEntityRenderer extends AbstractDrawerBlockEntityRenderer<ShadowDrawerBlockEntity> {
     public ShadowDrawerBlockEntityRenderer(BlockEntityRendererFactory.Context context) {
-        super(context.getItemRenderer(), context.getTextRenderer());
+        super(context.getItemModelManager(), context.getTextRenderer());
     }
     
     @Override
@@ -39,8 +39,9 @@ public class ShadowDrawerBlockEntityRenderer extends AbstractDrawerBlockEntityRe
 
         light = WorldRenderer.getLightmapCoordinates(Objects.requireNonNull(drawer.getWorld()), drawer.getPos().offset(dir));
 
+        @SuppressWarnings("deprecation")
         List<Sprite> icons = drawer.isHidden() ? List.of(MinecraftClient.getInstance()
-                .getSpriteAtlas(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE)
+                .getSpriteAtlas(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE)
                 .apply(ExtendedDrawers.CONFIG.get().client().icons().hiddenIcon())) : List.of();
         @Nullable
         String amount = String.valueOf(drawer.countCache);

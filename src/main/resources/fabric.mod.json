@@ -25,9 +25,6 @@
     "main": [
       "io.github.mattidragon.extendeddrawers.ExtendedDrawers"
     ],
-    "fabric-datagen": [
-      "io.github.mattidragon.extendeddrawers.datagen.ExtendedDrawersDatagen"
-    ],
     "modmenu": [
       "io.github.mattidragon.extendeddrawers.client.config.ModMenuIntegration"
     ]
@@ -42,7 +39,7 @@
   "depends": {
     "fabricloader": ">=0.15.11",
     "fabric": ">=0.102.0",
-    "minecraft": ">=1.21.2 <1.21.4-",
+    "minecraft": "1.21.4",
     "graphlib": "*"
   },
   "recommends": {

@@ -20,8 +20,8 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.render.LightmapTextureManager;
 import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.texture.SpriteAtlasTexture;
 import net.minecraft.item.Items;
-import net.minecraft.screen.PlayerScreenHandler;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
@@ -311,7 +311,8 @@ public class ConfigScreenFactory {
         public int render(DrawContext context, int x, int y, int renderWidth, float tickDelta) {
             if (!initialized) return 0;
 
-            var atlas = MinecraftClient.getInstance().getSpriteAtlas(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE);
+            @SuppressWarnings("deprecation")
+            var atlas = MinecraftClient.getInstance().getSpriteAtlas(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE);
             var size = renderWidth / 3;
             var config = ExtendedDrawers.CONFIG.get();
             var client = config.client();
@@ -387,7 +388,8 @@ public class ConfigScreenFactory {
     private record IconRenderer(Identifier id) implements ImageRenderer {
         @Override
         public int render(DrawContext graphics, int x, int y, int renderWidth, float tickDelta) {
-            var blockAtlas = MinecraftClient.getInstance().getSpriteAtlas(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE);
+            @SuppressWarnings("deprecation")
+            var blockAtlas = MinecraftClient.getInstance().getSpriteAtlas(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE);
             var sprite = blockAtlas.apply(id);
 
             graphics.drawSpriteStretched(RenderLayer::getGuiTextured, sprite, x + renderWidth / 3, y, renderWidth / 3, renderWidth / 3);

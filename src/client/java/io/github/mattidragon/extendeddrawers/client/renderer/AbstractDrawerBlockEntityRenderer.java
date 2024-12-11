@@ -8,16 +8,17 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.enums.BlockFace;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.item.ItemModelManager;
 import net.minecraft.client.render.DiffuseLighting;
 import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.block.entity.BlockEntityRenderer;
-import net.minecraft.client.render.item.ItemRenderer;
+import net.minecraft.client.render.item.ItemRenderState;
 import net.minecraft.client.texture.Sprite;
+import net.minecraft.client.texture.SpriteAtlasTexture;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ModelTransformationMode;
-import net.minecraft.screen.PlayerScreenHandler;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.RotationAxis;
@@ -34,11 +35,12 @@ public abstract class AbstractDrawerBlockEntityRenderer<T extends BlockEntity> i
     private static final Quaternionf ITEM_LIGHT_ROTATION_3D = RotationAxis.POSITIVE_X.rotationDegrees(-15).mul(RotationAxis.POSITIVE_Y.rotationDegrees(15));
     private static final Quaternionf ITEM_LIGHT_ROTATION_FLAT = RotationAxis.POSITIVE_X.rotationDegrees(-45);
 
-    private final ItemRenderer itemRenderer;
+    private final ItemModelManager itemModelManager;
     private final TextRenderer textRenderer;
+    private final ItemRenderState itemRenderState = new ItemRenderState();
 
-    public AbstractDrawerBlockEntityRenderer(ItemRenderer itemRenderer, TextRenderer textRenderer) {
-        this.itemRenderer = itemRenderer;
+    public AbstractDrawerBlockEntityRenderer(ItemModelManager itemModelManager, TextRenderer textRenderer) {
+        this.itemModelManager = itemModelManager;
         this.textRenderer = textRenderer;
     }
 
@@ -47,7 +49,7 @@ public abstract class AbstractDrawerBlockEntityRenderer<T extends BlockEntity> i
      */
     public static AbstractDrawerBlockEntityRenderer<BlockEntity> createRendererTool() {
         var client = MinecraftClient.getInstance();
-        return new AbstractDrawerBlockEntityRenderer<>(client.getItemRenderer(), client.textRenderer) {
+        return new AbstractDrawerBlockEntityRenderer<>(client.getItemModelManager(), client.textRenderer) {
             @Override
             public void render(BlockEntity entity, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
             }
@@ -78,7 +80,9 @@ public abstract class AbstractDrawerBlockEntityRenderer<T extends BlockEntity> i
         matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(90));
         matrices.translate(-0.5, 0, -0.5);
 
-        var sprite = MinecraftClient.getInstance().getSpriteAtlas(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE).apply(ExtendedDrawers.id("block/drawer_hidden_overlay"));
+        @SuppressWarnings("deprecation")
+        var sprite = MinecraftClient.getInstance().getSpriteAtlas(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE)
+                .apply(ExtendedDrawers.id("block/drawer_hidden_overlay"));
 
         var consumer = vertexConsumers.getBuffer(RenderLayer.getCutout());
 
@@ -148,14 +152,14 @@ public abstract class AbstractDrawerBlockEntityRenderer<T extends BlockEntity> i
         matrices.peek().getPositionMatrix().mul(new Matrix4f().scale(1, 1, 0.01f));
         
         var stack = item.toStack();
-        var model = itemRenderer.getModel(stack, world, null, seed);
+        itemModelManager.update(itemRenderState, stack, ModelTransformationMode.GUI, false, world, null, seed);
 
         // Copy existing light configuration
         var lights = new Vector3f[2];
         System.arraycopy(RenderSystemAccess.getShaderLightDirections(), 0, lights, 0, 2);
 
         // Set up gui lighting
-        if (model.isSideLit()) {
+        if (itemRenderState.isSideLit()) {
             matrices.peek().getNormalMatrix().rotate(ITEM_LIGHT_ROTATION_3D);
             DiffuseLighting.enableGuiDepthLighting();
         } else {
@@ -163,7 +167,7 @@ public abstract class AbstractDrawerBlockEntityRenderer<T extends BlockEntity> i
             DiffuseLighting.disableGuiDepthLighting();
         }
 
-        itemRenderer.renderItem(stack, ModelTransformationMode.GUI, false, matrices, vertexConsumers, light, OverlayTexture.DEFAULT_UV, model);
+        itemRenderState.render(matrices, vertexConsumers, light, OverlayTexture.DEFAULT_UV);
 
         // Restore light configuration
         System.arraycopy(lights, 0, RenderSystemAccess.getShaderLightDirections(), 0, 2);

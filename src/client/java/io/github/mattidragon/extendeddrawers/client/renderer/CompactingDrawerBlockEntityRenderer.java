@@ -11,8 +11,8 @@ import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.WorldRenderer;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
 import net.minecraft.client.texture.Sprite;
+import net.minecraft.client.texture.SpriteAtlasTexture;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.screen.PlayerScreenHandler;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec2f;
 import net.minecraft.util.math.Vec3d;
@@ -25,7 +25,7 @@ import java.util.Objects;
 
 public class CompactingDrawerBlockEntityRenderer extends AbstractDrawerBlockEntityRenderer<CompactingDrawerBlockEntity> {
     public CompactingDrawerBlockEntityRenderer(BlockEntityRendererFactory.Context context) {
-        super(context.getItemRenderer(), context.getTextRenderer());
+        super(context.getItemModelManager(), context.getTextRenderer());
     }
     
     @Override
@@ -79,7 +79,8 @@ public class CompactingDrawerBlockEntityRenderer extends AbstractDrawerBlockEnti
     private void renderIcons(CompactingDrawerBlockEntity drawer, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
         var icons = new ArrayList<Sprite>();
         var config = ExtendedDrawers.CONFIG.get().client().icons();
-        var blockAtlas = MinecraftClient.getInstance().getSpriteAtlas(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE);
+        @SuppressWarnings("deprecation")
+        var blockAtlas = MinecraftClient.getInstance().getSpriteAtlas(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE);
 
         if (drawer.storage.isLocked()) icons.add(blockAtlas.apply(config.lockedIcon()));
         if (drawer.storage.isVoiding()) icons.add(blockAtlas.apply(config.voidingIcon()));

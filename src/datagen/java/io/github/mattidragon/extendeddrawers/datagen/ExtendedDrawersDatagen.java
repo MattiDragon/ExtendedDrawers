@@ -2,6 +2,7 @@ package io.github.mattidragon.extendeddrawers.datagen;
 
 import net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
+import org.jetbrains.annotations.Nullable;
 
 public class ExtendedDrawersDatagen implements DataGeneratorEntrypoint {
     @Override
@@ -14,5 +15,10 @@ public class ExtendedDrawersDatagen implements DataGeneratorEntrypoint {
         var blockTagProvider = pack.addProvider(DrawersBlockTagProvider::new);
         pack.addProvider((output, future) -> new DrawersItemTagProvider(output, future, blockTagProvider));
         pack.addProvider(ReadmeDataProvider::new);
+    }
+
+    @Override
+    public @Nullable String getEffectiveModId() {
+        return "extended_drawers";
     }
 }

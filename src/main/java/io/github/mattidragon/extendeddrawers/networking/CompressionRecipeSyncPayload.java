@@ -17,7 +17,7 @@ public record CompressionRecipeSyncPayload(List<CompressionLadder> recipes, bool
     public static final Id<CompressionRecipeSyncPayload> ID = new Id<>(ExtendedDrawers.id("compression_recipe_sync"));
     private static final PacketCodec<RegistryByteBuf, CompressionRecipeSyncPayload> CODEC = PacketCodec.tuple(
             CompressionLadder.PACKET_CODEC.collect(PacketCodecs.toList()), CompressionRecipeSyncPayload::recipes,
-            PacketCodecs.BOOL, CompressionRecipeSyncPayload::clearRecipes,
+            PacketCodecs.BOOLEAN, CompressionRecipeSyncPayload::clearRecipes,
             CompressionRecipeSyncPayload::new
     );
 
