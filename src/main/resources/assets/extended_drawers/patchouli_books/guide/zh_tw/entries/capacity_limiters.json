@@ -1,0 +1,13 @@
+{
+  "name": "容量限制器",
+  "icon": "extended_drawers:limiter",
+  "category": "extended_drawers:modifiers",
+  "pages": [
+    "$(item)容量限制器/$是一種實用的小物品，可讓您限制$(l:drawers)抽屜@!的容量。 它們在您想要限制儲存量而不需要進階紅石的裝置和裝配線中非常有用。 @p@手持一個並按右鍵即可開啟其設定畫面，您可以在其中設定限制。",
+    {
+      "type": "patchouli:crafting",
+      "recipe": "extended_drawers:limiter",
+      "text": "透過使用已設定的限制器按住 Shift 並點選，即可將容量限制器套用至抽屜。 @p@可以透過將已設定的限制器與未設定的限制器一起放置在工作台中來複製限制器。"
+    }
+  ]
+}

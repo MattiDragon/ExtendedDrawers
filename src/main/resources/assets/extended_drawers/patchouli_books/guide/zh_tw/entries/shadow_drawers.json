@@ -1,0 +1,12 @@
+{
+  "name": "暗影抽屜",
+  "icon": "extended_drawers:shadow_drawer",
+  "category": "extended_drawers:blocks",
+  "pages": [
+    "$(item)暗影抽屜/$類似於$(l:access_points)連接點/$，但僅適用於單一物品。 它們還允許玩家取出物品並顯示計數。 $(br2)它們的行為就像它們被$(l:lock)鎖定@!一樣，但可以透過按住 Shift 並點選來清除其物品。",
+    {
+      "type": "patchouli:crafting",
+      "recipe": "extended_drawers:shadow_drawer"
+    }
+  ]
+}
