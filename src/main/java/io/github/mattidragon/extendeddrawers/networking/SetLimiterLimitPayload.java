@@ -1,6 +1,7 @@
 package io.github.mattidragon.extendeddrawers.networking;
 
 import io.github.mattidragon.extendeddrawers.ExtendedDrawers;
+import io.github.mattidragon.extendeddrawers.component.LimiterLimitComponent;
 import io.github.mattidragon.extendeddrawers.registry.ModDataComponents;
 import io.github.mattidragon.extendeddrawers.registry.ModItems;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
@@ -34,7 +35,7 @@ public record SetLimiterLimitPayload(int slot, long limit) implements CustomPayl
             if (packet.limit == -1) {
                 stack.remove(ModDataComponents.LIMITER_LIMIT);
             } else {
-                stack.set(ModDataComponents.LIMITER_LIMIT, packet.limit);
+                stack.set(ModDataComponents.LIMITER_LIMIT, new LimiterLimitComponent(packet.limit));
             }
         });
     }

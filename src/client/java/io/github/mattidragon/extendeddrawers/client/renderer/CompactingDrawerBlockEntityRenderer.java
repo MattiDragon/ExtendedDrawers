@@ -27,15 +27,15 @@ public class CompactingDrawerBlockEntityRenderer extends AbstractDrawerBlockEnti
     public CompactingDrawerBlockEntityRenderer(BlockEntityRendererFactory.Context context) {
         super(context.getItemModelManager(), context.getTextRenderer());
     }
-    
+
     @Override
     public int getRenderDistance() {
         var config = ExtendedDrawers.CONFIG.get().client();
         return Math.max(config.iconRenderDistance(), Math.max(config.textRenderDistance(), config.itemRenderDistance()));
     }
-    
+
     @Override
-    public void render(CompactingDrawerBlockEntity drawer, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
+    public void render(CompactingDrawerBlockEntity drawer, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay, Vec3d cameraPos) {
         var drawerPos = drawer.getPos();
         var horizontalDir = drawer.getCachedState().get(StorageDrawerBlock.FACING);
         var face = drawer.getCachedState().get(StorageDrawerBlock.FACE);
@@ -71,7 +71,6 @@ public class CompactingDrawerBlockEntityRenderer extends AbstractDrawerBlockEnti
             matrices.translate(-0.5, 0, 0);
             renderSlot(ModBlocks.COMPACTING_DRAWER.getSlot(drawer, ModBlocks.COMPACTING_DRAWER.getSlotIndex(drawer, new Vec2f(0.25f, 0.75f))), light, overlay, matrices, vertexConsumers, (int) drawer.getPos().asLong(), drawerPos, world);
         }
-
         
         matrices.pop();
     }

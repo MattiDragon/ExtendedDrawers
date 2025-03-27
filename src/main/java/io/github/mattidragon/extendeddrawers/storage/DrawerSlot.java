@@ -174,8 +174,8 @@ public final class DrawerSlot extends SnapshotParticipant<DrawerSlot.Snapshot> i
     @Override
     public void readNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
         DrawerStorage.super.readNbt(nbt, registryLookup);
-        item = ItemVariant.CODEC.parse(RegistryOps.of(NbtOps.INSTANCE, registryLookup), nbt.getCompound("item")).getOrThrow();
-        amount = nbt.getLong("amount");
+        item = nbt.get("item", ItemVariant.CODEC, RegistryOps.of(NbtOps.INSTANCE, registryLookup)).orElseGet(ItemVariant::blank);
+        amount = nbt.getLong("amount", 0);
         if (item.isBlank()) amount = 0; // Avoids dupes with drawers of removed items
     }
 

@@ -2,6 +2,7 @@ package io.github.mattidragon.extendeddrawers.storage;
 
 import io.github.mattidragon.extendeddrawers.ExtendedDrawers;
 import io.github.mattidragon.extendeddrawers.block.entity.StorageDrawerBlockEntity;
+import io.github.mattidragon.extendeddrawers.component.LimiterLimitComponent;
 import io.github.mattidragon.extendeddrawers.item.LimiterItem;
 import io.github.mattidragon.extendeddrawers.item.UpgradeItem;
 import io.github.mattidragon.extendeddrawers.misc.ItemUtils;
@@ -95,12 +96,12 @@ public sealed interface DrawerStorage extends Comparable<DrawerStorage>, Storage
     void dumpExcess(World world, BlockPos pos, @Nullable Direction side, @Nullable PlayerEntity player);
 
     default void readNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
-        settings().locked = nbt.getBoolean("locked");
-        settings().voiding = nbt.getBoolean("voiding");
-        settings().hidden = nbt.getBoolean("hidden");
-        settings().duping = nbt.getBoolean("duping");
-        settings().upgrade = ItemVariant.CODEC.parse(RegistryOps.of(NbtOps.INSTANCE, registryLookup), nbt.getCompound("capacityUpgrade")).getOrThrow();
-        settings().limiter = ItemVariant.CODEC.parse(RegistryOps.of(NbtOps.INSTANCE, registryLookup), nbt.getCompound("limiter")).getOrThrow();
+        settings().locked = nbt.getBoolean("locked", false);
+        settings().voiding = nbt.getBoolean("voiding", false);
+        settings().hidden = nbt.getBoolean("hidden", false);
+        settings().duping = nbt.getBoolean("duping", false);
+        settings().upgrade = nbt.get("capacityUpgrade", ItemVariant.CODEC, RegistryOps.of(NbtOps.INSTANCE, registryLookup)).orElseGet(ItemVariant::blank);
+        settings().limiter = nbt.get("limiter", ItemVariant.CODEC, RegistryOps.of(NbtOps.INSTANCE, registryLookup)).orElseGet(ItemVariant::blank);
     }
 
     default void writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
@@ -108,8 +109,8 @@ public sealed interface DrawerStorage extends Comparable<DrawerStorage>, Storage
         nbt.putBoolean("voiding", settings().voiding);
         nbt.putBoolean("hidden", settings().hidden);
         nbt.putBoolean("duping", settings().duping);
-        nbt.put("capacityUpgrade", ItemVariant.CODEC.encodeStart(RegistryOps.of(NbtOps.INSTANCE, registryLookup), settings().upgrade).getOrThrow());
-        nbt.put("limiter", ItemVariant.CODEC.encodeStart(RegistryOps.of(NbtOps.INSTANCE, registryLookup), settings().limiter).getOrThrow());
+        nbt.put("capacityUpgrade", ItemVariant.CODEC, RegistryOps.of(NbtOps.INSTANCE, registryLookup), settings().upgrade);
+        nbt.put("limiter", ItemVariant.CODEC, RegistryOps.of(NbtOps.INSTANCE, registryLookup), settings().limiter);
     }
 
     /**
@@ -156,8 +157,7 @@ public sealed interface DrawerStorage extends Comparable<DrawerStorage>, Storage
 
     @Override
     default long getLimiter() {
-        // TODO: do this without creating a stack
-        return settings().limiter.toStack().getOrDefault(ModDataComponents.LIMITER_LIMIT, Long.MAX_VALUE);
+        return settings().limiter.getComponentMap().getOrDefault(ModDataComponents.LIMITER_LIMIT, LimiterLimitComponent.NO_LIMIT).limit();
     }
 
     @Override

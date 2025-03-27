@@ -4,6 +4,7 @@ import io.github.mattidragon.extendeddrawers.ExtendedDrawers;
 import io.github.mattidragon.extendeddrawers.block.DrawerBlock;
 import io.github.mattidragon.extendeddrawers.component.DrawerContentsComponent;
 import io.github.mattidragon.extendeddrawers.component.DrawerSlotComponent;
+import io.github.mattidragon.extendeddrawers.misc.ItemUtils;
 import io.github.mattidragon.extendeddrawers.registry.ModBlocks;
 import io.github.mattidragon.extendeddrawers.registry.ModDataComponents;
 import io.github.mattidragon.extendeddrawers.storage.CombinedDrawerStorage;
@@ -12,8 +13,8 @@ import io.github.mattidragon.extendeddrawers.storage.DrawerStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
 import net.minecraft.block.BlockState;
 import net.minecraft.component.ComponentMap;
+import net.minecraft.component.ComponentsAccess;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.network.listener.ClientPlayPacketListener;
 import net.minecraft.network.packet.Packet;
@@ -76,6 +77,15 @@ public class DrawerBlockEntity extends StorageDrawerBlockEntity {
     }
 
     @Override
+    public void onBlockReplaced(BlockPos pos, BlockState oldState) {
+        if (!ExtendedDrawers.CONFIG.get().misc().drawersDropContentsOnBreak()) return;
+
+        for (var slot : storages) {
+            ItemUtils.offerOrDropStacks(world, pos, null, null, slot.getResource(), slot.getAmount());
+        }
+    }
+
+    @Override
     protected void addComponents(ComponentMap.Builder componentMapBuilder) {
         if (isEmpty()) return;
         var slotComponents = new ArrayList<DrawerSlotComponent>();
@@ -101,7 +111,10 @@ public class DrawerBlockEntity extends StorageDrawerBlockEntity {
 
     @Override
     protected void readNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
-        var list = nbt.getList("items", NbtElement.COMPOUND_TYPE).stream().map(NbtCompound.class::cast).toList();
+        var list = nbt.getList("items")
+                .stream()
+                .flatMap(NbtList::streamCompounds)
+                .toList();
         for (int i = 0; i < list.size(); i++) {
             storages[i].readNbt(list.get(i), registryLookup);
         }

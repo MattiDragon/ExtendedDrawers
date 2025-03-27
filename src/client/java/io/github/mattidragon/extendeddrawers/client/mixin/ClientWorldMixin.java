@@ -13,6 +13,7 @@ import java.util.Objects;
 public class ClientWorldMixin extends WorldMixin {
     @Override
     public CompressionRecipeManager extended_drawers$getCompactingManager() {
-        return ((ClientCompressionRecipeManager.Provider) Objects.requireNonNull(MinecraftClient.getInstance().getNetworkHandler(), "network handler should exist")).extended_drawers$getCompactingManager();
+        return ((ClientCompressionRecipeManager.Provider) Objects.requireNonNull(MinecraftClient.getInstance().getNetworkHandler(), "network handler should exist"))
+                .extended_drawers$getCompactingManager();
     }
 }

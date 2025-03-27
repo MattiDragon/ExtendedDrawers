@@ -1,5 +1,7 @@
 package io.github.mattidragon.extendeddrawers.block.entity;
 
+import io.github.mattidragon.extendeddrawers.ExtendedDrawers;
+import io.github.mattidragon.extendeddrawers.misc.ItemUtils;
 import io.github.mattidragon.extendeddrawers.registry.ModBlocks;
 import io.github.mattidragon.extendeddrawers.registry.ModDataComponents;
 import io.github.mattidragon.extendeddrawers.storage.CompactingDrawerStorage;
@@ -7,6 +9,7 @@ import io.github.mattidragon.extendeddrawers.storage.DrawerStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
 import net.minecraft.block.BlockState;
 import net.minecraft.component.ComponentMap;
+import net.minecraft.component.ComponentsAccess;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.listener.ClientPlayPacketListener;
 import net.minecraft.network.packet.Packet;
@@ -56,6 +59,23 @@ public class CompactingDrawerBlockEntity extends StorageDrawerBlockEntity {
     }
 
     @Override
+    public void onBlockReplaced(BlockPos pos, BlockState oldState) {
+        if (!ExtendedDrawers.CONFIG.get().misc().drawersDropContentsOnBreak()) return;
+
+        var slots = storage.getSlotArray();
+        var amount = storage.getTrueAmount();
+        // Iterate slots in reverse order
+        for (int i = slots.length - 1; i >= 0; i--) {
+            var slot = slots[i];
+            if (slot.isBlocked()) continue;
+
+            var toDrop = amount / slot.getCompression();
+            ItemUtils.offerOrDropStacks(world, pos, null, null, slot.getResource(), toDrop);
+            amount -= toDrop * slot.getCompression();
+        }
+    }
+
+    @Override
     public Stream<? extends DrawerStorage> streamStorages() {
         return Stream.of(storage);
     }
@@ -73,7 +93,8 @@ public class CompactingDrawerBlockEntity extends StorageDrawerBlockEntity {
 
     @Override
     public void readNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
-        storage.readNbt(nbt.getCompound("storage"), registryLookup);
+        nbt.getCompound("storage")
+                .ifPresent(compound -> storage.readNbt(compound, registryLookup));
     }
     
     @Override

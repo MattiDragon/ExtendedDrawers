@@ -83,9 +83,9 @@ public class ShadowDrawerBlockEntity extends BlockEntity {
     
     @Override
     public void readNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
-        if (nbt.contains("count")) countCache = nbt.getLong("count");
-        item = ItemVariant.CODEC.parse(RegistryOps.of(NbtOps.INSTANCE, registryLookup), nbt.getCompound("item")).getOrThrow();
-        hidden = nbt.getBoolean("hidden");
+        countCache = nbt.getLong("count", countCache);
+        item = nbt.get("item", ItemVariant.CODEC, RegistryOps.of(NbtOps.INSTANCE, registryLookup)).orElseGet(ItemVariant::blank);
+        hidden = nbt.getBoolean("hidden", false);
     }
     
     @Override

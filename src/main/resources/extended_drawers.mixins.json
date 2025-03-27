@@ -10,7 +10,6 @@
     "ServerRecipeManagerMixin",
     "ServerWorldMixin",
     "ShulkerBoxBlockEntityMixin",
-    "WireConnectionDiscoverersMixin",
     "WorldMixin"
   ],
   "injectors": {

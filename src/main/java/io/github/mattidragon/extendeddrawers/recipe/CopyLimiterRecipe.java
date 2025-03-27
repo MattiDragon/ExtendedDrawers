@@ -1,5 +1,6 @@
 package io.github.mattidragon.extendeddrawers.recipe;
 
+import io.github.mattidragon.extendeddrawers.component.LimiterLimitComponent;
 import io.github.mattidragon.extendeddrawers.item.LimiterItem;
 import io.github.mattidragon.extendeddrawers.registry.ModDataComponents;
 import io.github.mattidragon.extendeddrawers.registry.ModItems;
@@ -49,7 +50,7 @@ public class CopyLimiterRecipe extends SpecialCraftingRecipe {
             if (stack.isEmpty()) continue;
             var checkingLimit = stack.get(ModDataComponents.LIMITER_LIMIT);
             if (checkingLimit != null)  {
-                limit = checkingLimit;
+                limit = checkingLimit.limit();
             }
         }
 
@@ -57,7 +58,7 @@ public class CopyLimiterRecipe extends SpecialCraftingRecipe {
             return ItemStack.EMPTY;
 
         var stack = ModItems.LIMITER.getDefaultStack();
-        stack.set(ModDataComponents.LIMITER_LIMIT, limit);
+        stack.set(ModDataComponents.LIMITER_LIMIT, new LimiterLimitComponent(limit));
         return stack;
     }
 

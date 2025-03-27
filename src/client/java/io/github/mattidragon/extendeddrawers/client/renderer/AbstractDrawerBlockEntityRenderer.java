@@ -1,7 +1,7 @@
 package io.github.mattidragon.extendeddrawers.client.renderer;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import io.github.mattidragon.extendeddrawers.ExtendedDrawers;
-import io.github.mattidragon.extendeddrawers.client.mixin.RenderSystemAccess;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.minecraft.block.Block;
 import net.minecraft.block.entity.BlockEntity;
@@ -18,7 +18,7 @@ import net.minecraft.client.render.item.ItemRenderState;
 import net.minecraft.client.texture.Sprite;
 import net.minecraft.client.texture.SpriteAtlasTexture;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.item.ModelTransformationMode;
+import net.minecraft.item.ItemDisplayContext;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.RotationAxis;
@@ -51,7 +51,8 @@ public abstract class AbstractDrawerBlockEntityRenderer<T extends BlockEntity> i
         var client = MinecraftClient.getInstance();
         return new AbstractDrawerBlockEntityRenderer<>(client.getItemModelManager(), client.textRenderer) {
             @Override
-            public void render(BlockEntity entity, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
+            public void render(BlockEntity entity, float tickProgress, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay, Vec3d cameraPos) {
+
             }
         };
     }
@@ -152,11 +153,11 @@ public abstract class AbstractDrawerBlockEntityRenderer<T extends BlockEntity> i
         matrices.peek().getPositionMatrix().mul(new Matrix4f().scale(1, 1, 0.01f));
         
         var stack = item.toStack();
-        itemModelManager.update(itemRenderState, stack, ModelTransformationMode.GUI, false, world, null, seed);
+        itemModelManager.clearAndUpdate(itemRenderState, stack, ItemDisplayContext.GUI, world, null, seed);
 
         // Copy existing light configuration
         var lights = new Vector3f[2];
-        System.arraycopy(RenderSystemAccess.getShaderLightDirections(), 0, lights, 0, 2);
+        System.arraycopy(RenderSystem.getShaderLights(), 0, lights, 0, 2);
 
         // Set up gui lighting
         if (itemRenderState.isSideLit()) {
@@ -170,7 +171,7 @@ public abstract class AbstractDrawerBlockEntityRenderer<T extends BlockEntity> i
         itemRenderState.render(matrices, vertexConsumers, light, OverlayTexture.DEFAULT_UV);
 
         // Restore light configuration
-        System.arraycopy(lights, 0, RenderSystemAccess.getShaderLightDirections(), 0, 2);
+        RenderSystem.setShaderLights(lights[0], lights[1]);
         
         matrices.pop();
     }

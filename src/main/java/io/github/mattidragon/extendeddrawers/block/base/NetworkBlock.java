@@ -33,10 +33,10 @@ public abstract class NetworkBlock extends Block implements NetworkComponent {
             NetworkRegistry.UNIVERSE.getGraphWorld(serverWorld).updateNodes(pos);
         }
     }
-    
+
     @Override
-    public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
-        super.onStateReplaced(state, world, pos, newState, moved);
+    protected void onStateReplaced(BlockState state, ServerWorld world, BlockPos pos, boolean moved) {
+        super.onStateReplaced(state, world, pos, moved);
         if (world instanceof ServerWorld serverWorld) {
             NetworkRegistry.UNIVERSE.getGraphWorld(serverWorld).updateNodes(pos);
         }

@@ -26,7 +26,7 @@ public class ClientPlayerInteractionManagerMixin {
     @Shadow @Final private MinecraftClient client;
 
     // Makes creative block breaking behave like survival if we are blocking breaking of a drawer. The other injection handles complete blocking
-    @ModifyExpressionValue(method = {"attackBlock", "updateBlockBreakingProgress"}, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/GameMode;isCreative()Z"))
+    @ModifyExpressionValue(method = {"attackBlock", "updateBlockBreakingProgress"}, at = @At(value = "FIELD", target = "Lnet/minecraft/entity/player/PlayerAbilities;creativeMode:Z"))
     private boolean extended_drawers$stopCreativeBreaking(boolean original, BlockPos pos, Direction direction) {
         var world = MinecraftClient.getInstance().world;
         if (world == null) return original;

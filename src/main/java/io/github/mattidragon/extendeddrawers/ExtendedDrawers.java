@@ -68,7 +68,7 @@ public class ExtendedDrawers implements ModInitializer {
                             return 1;
                         }
                         var message = Text.translatable("command.extended_drawers.reload.fail")
-                                .fillStyle(Style.EMPTY.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.literal(error.get().toString()))));
+                                .fillStyle(Style.EMPTY.withHoverEvent(new HoverEvent.ShowText(Text.literal(error.get().toString()))));
                         context.getSource().sendError(message);
                         LOGGER.error("Failed to reload config", error.get());
                         return 0;

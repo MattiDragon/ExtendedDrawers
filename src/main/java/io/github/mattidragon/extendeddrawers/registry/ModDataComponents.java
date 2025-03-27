@@ -1,18 +1,17 @@
 package io.github.mattidragon.extendeddrawers.registry;
 
-import com.mojang.serialization.Codec;
 import io.github.mattidragon.extendeddrawers.ExtendedDrawers;
 import io.github.mattidragon.extendeddrawers.component.DrawerContentsComponent;
 import io.github.mattidragon.extendeddrawers.component.DrawerSlotComponent;
+import io.github.mattidragon.extendeddrawers.component.LimiterLimitComponent;
 import net.minecraft.component.ComponentType;
-import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 
 public class ModDataComponents {
-    public static final ComponentType<Long> LIMITER_LIMIT = ComponentType.<Long>builder()
-            .codec(Codec.LONG)
-            .packetCodec(PacketCodecs.VAR_LONG)
+    public static final ComponentType<LimiterLimitComponent> LIMITER_LIMIT = ComponentType.<LimiterLimitComponent>builder()
+            .codec(LimiterLimitComponent.CODEC)
+            .packetCodec(LimiterLimitComponent.PACKET_CODEC)
             .build();
     public static final ComponentType<DrawerContentsComponent> DRAWER_CONTENTS = ComponentType.<DrawerContentsComponent>builder()
             .codec(DrawerContentsComponent.CODEC)

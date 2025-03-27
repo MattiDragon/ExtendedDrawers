@@ -10,6 +10,7 @@ import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
 import net.minecraft.client.texture.Sprite;
 import net.minecraft.client.texture.SpriteAtlasTexture;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -27,7 +28,7 @@ public class ShadowDrawerBlockEntityRenderer extends AbstractDrawerBlockEntityRe
     }
     
     @Override
-    public void render(ShadowDrawerBlockEntity drawer, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
+    public void render(ShadowDrawerBlockEntity drawer, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay, Vec3d cameraPos) {
         var horizontalDir = drawer.getCachedState().get(StorageDrawerBlock.FACING);
         var face = drawer.getCachedState().get(StorageDrawerBlock.FACE);
         var dir = StorageDrawerBlock.getFront(drawer.getCachedState());
