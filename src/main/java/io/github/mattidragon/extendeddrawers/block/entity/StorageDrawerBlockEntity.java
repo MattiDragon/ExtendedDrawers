@@ -7,9 +7,8 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.storage.WriteView;
 import net.minecraft.util.math.BlockPos;
 
 import java.util.stream.Stream;
@@ -33,9 +32,9 @@ public abstract class StorageDrawerBlockEntity extends BlockEntity {
     public abstract Stream<? extends DrawerStorage> streamStorages();
 
     public abstract boolean isEmpty();
-    
+
     @Override
-    public abstract void writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup);
+    public abstract void writeData(WriteView view);
 
     @Override
     public void markRemoved() {

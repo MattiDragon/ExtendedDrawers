@@ -4,38 +4,28 @@ import dev.isxander.yacl3.api.*;
 import dev.isxander.yacl3.api.controller.*;
 import dev.isxander.yacl3.gui.image.ImageRenderer;
 import dev.isxander.yacl3.gui.image.ImageRendererManager;
-import io.github.mattidragon.extendeddrawers.ExtendedDrawers;
-import io.github.mattidragon.extendeddrawers.client.renderer.AbstractDrawerBlockEntityRenderer;
+import io.github.mattidragon.extendeddrawers.client.config.render.LayoutPreviewImageRenderer;
 import io.github.mattidragon.extendeddrawers.config.ConfigData;
-import io.github.mattidragon.extendeddrawers.config.category.ClientCategory;
 import io.github.mattidragon.extendeddrawers.config.category.MutableClientCategory;
 import io.github.mattidragon.extendeddrawers.config.category.MutableMiscCategory;
 import io.github.mattidragon.extendeddrawers.config.category.MutableStorageCategory;
 import io.github.mattidragon.extendeddrawers.misc.CreativeBreakingBehaviour;
 import io.github.mattidragon.extendeddrawers.network.cache.CachingMode;
-import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.render.LightmapTextureManager;
-import net.minecraft.client.render.OverlayTexture;
-import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.texture.SpriteAtlasTexture;
-import net.minecraft.item.Items;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.RotationAxis;
 
 import java.text.NumberFormat;
-import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
-import static io.github.mattidragon.extendeddrawers.ExtendedDrawers.id;
 import static io.github.mattidragon.extendeddrawers.config.ConfigData.DEFAULT;
 
 public class ConfigScreenFactory {
@@ -240,7 +230,7 @@ public class ConfigScreenFactory {
     }
 
     private static OptionGroup createLayoutGroup(MutableClientCategory.MutableLayoutGroup instance) {
-        var layoutRenderer = new LayoutRenderer();
+        var layoutRenderer = new LayoutPreviewImageRenderer();
 
         var smallItemScale = Option.<Float>createBuilder()
                 .name(Text.translatable("config.extended_drawers.client.smallItemScale"))
@@ -290,101 +280,6 @@ public class ConfigScreenFactory {
         return OptionDescription.of(text, Text.translatable("config.extended_drawers.creativeBreakingBehaviour." + value.asString() + ".description"));
     }
 
-    private static class LayoutRenderer implements ImageRenderer {
-        private Option<Float> smallItemScale = null;
-        private Option<Float> largeItemScale = null;
-        private Option<Float> smallTextScale = null;
-        private Option<Float> largeTextScale = null;
-        private Option<Float> textOffset = null;
-        private boolean initialized = false;
-
-        public void init(Option<Float> smallItemScale, Option<Float> largeItemScale, Option<Float> smallTextScale, Option<Float> largeTextScale, Option<Float> textOffset) {
-            this.smallItemScale = smallItemScale;
-            this.largeItemScale = largeItemScale;
-            this.smallTextScale = smallTextScale;
-            this.largeTextScale = largeTextScale;
-            this.textOffset = textOffset;
-            this.initialized = true;
-        }
-
-        @Override
-        public int render(DrawContext context, int x, int y, int renderWidth, float tickDelta) {
-            if (!initialized) return 0;
-
-            @SuppressWarnings("deprecation")
-            var atlas = MinecraftClient.getInstance().getSpriteAtlas(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE);
-            var size = renderWidth / 3;
-            var config = ExtendedDrawers.CONFIG.get();
-            var client = config.client();
-            var newConfig = new ConfigData(
-                    new ClientCategory(client.itemRenderDistance(),
-                            client.iconRenderDistance(),
-                            client.textRenderDistance(),
-                            client.displayEmptyCount(),
-                            new ClientCategory.LayoutGroup(smallItemScale.pendingValue(),
-                                    largeItemScale.pendingValue(),
-                                    smallTextScale.pendingValue(),
-                                    largeTextScale.pendingValue(),
-                                    textOffset.pendingValue()),
-                            client.icons()),
-                    config.storage(),
-                    config.misc());
-
-            var renderer = AbstractDrawerBlockEntityRenderer.createRendererTool();
-            var matrices = context.getMatrices();
-
-            var player = MinecraftClient.getInstance().player;
-            var playerPos = player == null ? BlockPos.ORIGIN : player.getBlockPos();
-
-            try (var ignored = ExtendedDrawers.CONFIG.override(newConfig)) {
-                context.drawSpriteStretched(RenderLayer::getGuiTextured, atlas.apply(id("block/single_drawer")), x, y, size, size);
-                context.drawSpriteStretched(RenderLayer::getGuiTextured, atlas.apply(id("block/quad_drawer")), x + size, y, size, size);
-                context.drawSpriteStretched(RenderLayer::getGuiTextured, atlas.apply(id("block/compacting_drawer")), x + 2 * size, y, size, size);
-
-                matrices.push();
-                matrices.translate(x, y, 1);
-                matrices.scale(size, size, -size);
-                matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(180));
-                matrices.translate(0.5, -0.5, 0);
-                
-                context.draw(vertexConsumers -> {
-                    var voidingSprite = atlas.apply(Identifier.ofVanilla("item/lava_bucket"));
-                    var lockSprite = atlas.apply(id("item/lock"));
-                    var upgrade2Sprite = atlas.apply(id("item/t2_upgrade"));
-                    var upgrade4Sprite = atlas.apply(id("item/t4_upgrade"));
-
-                    renderer.renderSlot(ItemVariant.of(Items.COBBLESTONE), String.valueOf((Long) 128L), false, false, List.of(lockSprite), matrices, vertexConsumers, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 0, playerPos, null);
-
-                    matrices.translate(0.75, 0.25, 0);
-                    renderer.renderSlot(ItemVariant.of(Items.REDSTONE), String.valueOf((Long) 16L), true, false, List.of(lockSprite), matrices, vertexConsumers, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 0, playerPos, null);
-                    matrices.translate(0.5, 0, 0);
-                    renderer.renderSlot(ItemVariant.of(Items.GUNPOWDER), String.valueOf((Long) 32L), true, false, List.of(voidingSprite), matrices, vertexConsumers, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 0, playerPos, null);
-                    matrices.translate(-0.5, -0.5, 0);
-                    renderer.renderSlot(ItemVariant.of(Items.SUGAR), String.valueOf((Long) 64L), true, false, List.of(lockSprite, voidingSprite, upgrade2Sprite), matrices, vertexConsumers, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 0, playerPos, null);
-                    matrices.translate(0.5, 0, 0);
-                    renderer.renderSlot(ItemVariant.of(Items.GLOWSTONE_DUST), String.valueOf((Long) 128L), true, false, List.of(upgrade4Sprite), matrices, vertexConsumers, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 0, playerPos, null);
-
-                    matrices.translate(0.75, 0.5, 0);
-                    renderer.renderIcons(List.of(lockSprite, voidingSprite, upgrade4Sprite), true, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, matrices, vertexConsumers);
-                    renderer.renderSlot(ItemVariant.of(Items.IRON_INGOT), String.valueOf((Long) 9L), true, false, List.of(), matrices, vertexConsumers, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 0, playerPos, null);
-                    matrices.translate(0.25, -0.5, 0);
-                    renderer.renderSlot(ItemVariant.of(Items.IRON_NUGGET), String.valueOf((Long) 81L), true, false, List.of(), matrices, vertexConsumers, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 0, playerPos, null);
-                    matrices.translate(-0.5, 0, 0);
-                    renderer.renderSlot(ItemVariant.of(Items.IRON_BLOCK), String.valueOf((Long) 1L), true, false, List.of(), matrices, vertexConsumers, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 0, playerPos, null);
-                });
-                
-                matrices.pop();
-            }
-
-            return size;
-        }
-
-        @Override
-        public void close() {
-
-        }
-    }
-
     private record IconRenderer(Identifier id) implements ImageRenderer {
         @Override
         public int render(DrawContext graphics, int x, int y, int renderWidth, float tickDelta) {
@@ -392,7 +287,7 @@ public class ConfigScreenFactory {
             var blockAtlas = MinecraftClient.getInstance().getSpriteAtlas(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE);
             var sprite = blockAtlas.apply(id);
 
-            graphics.drawSpriteStretched(RenderLayer::getGuiTextured, sprite, x + renderWidth / 3, y, renderWidth / 3, renderWidth / 3);
+            graphics.drawSpriteStretched(RenderPipelines.GUI_TEXTURED, sprite, x + renderWidth / 3, y, renderWidth / 3, renderWidth / 3);
 
             return renderWidth / 3;
         }

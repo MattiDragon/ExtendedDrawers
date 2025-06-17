@@ -10,7 +10,6 @@ import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -25,8 +24,8 @@ import java.util.Optional;
 public abstract class ClientPlayerEntityMixin extends PlayerEntity {
     @Shadow @Final protected MinecraftClient client;
 
-    public ClientPlayerEntityMixin(World world, BlockPos pos, float yaw, GameProfile gameProfile) {
-        super(world, pos, yaw, gameProfile);
+    public ClientPlayerEntityMixin(World world, GameProfile profile) {
+        super(world, profile);
     }
 
     @Inject(method = "useBook", at = @At("HEAD"))

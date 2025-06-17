@@ -11,10 +11,8 @@ import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtOps;
-import net.minecraft.registry.RegistryOps;
-import net.minecraft.registry.RegistryWrapper;
+import net.minecraft.storage.ReadView;
+import net.minecraft.storage.WriteView;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -95,22 +93,22 @@ public sealed interface DrawerStorage extends Comparable<DrawerStorage>, Storage
 
     void dumpExcess(World world, BlockPos pos, @Nullable Direction side, @Nullable PlayerEntity player);
 
-    default void readNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
-        settings().locked = nbt.getBoolean("locked", false);
-        settings().voiding = nbt.getBoolean("voiding", false);
-        settings().hidden = nbt.getBoolean("hidden", false);
-        settings().duping = nbt.getBoolean("duping", false);
-        settings().upgrade = nbt.get("capacityUpgrade", ItemVariant.CODEC, RegistryOps.of(NbtOps.INSTANCE, registryLookup)).orElseGet(ItemVariant::blank);
-        settings().limiter = nbt.get("limiter", ItemVariant.CODEC, RegistryOps.of(NbtOps.INSTANCE, registryLookup)).orElseGet(ItemVariant::blank);
+    default void readData(ReadView view) {
+        settings().locked = view.getBoolean("locked", false);
+        settings().voiding = view.getBoolean("voiding", false);
+        settings().hidden = view.getBoolean("hidden", false);
+        settings().duping = view.getBoolean("duping", false);
+        settings().upgrade = view.read("capacityUpgrade", ItemVariant.CODEC).orElseGet(ItemVariant::blank);
+        settings().limiter = view.read("limiter", ItemVariant.CODEC).orElseGet(ItemVariant::blank);
     }
 
-    default void writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
-        nbt.putBoolean("locked", settings().locked);
-        nbt.putBoolean("voiding", settings().voiding);
-        nbt.putBoolean("hidden", settings().hidden);
-        nbt.putBoolean("duping", settings().duping);
-        nbt.put("capacityUpgrade", ItemVariant.CODEC, RegistryOps.of(NbtOps.INSTANCE, registryLookup), settings().upgrade);
-        nbt.put("limiter", ItemVariant.CODEC, RegistryOps.of(NbtOps.INSTANCE, registryLookup), settings().limiter);
+    default void writeData(WriteView view) {
+        view.putBoolean("locked", settings().locked);
+        view.putBoolean("voiding", settings().voiding);
+        view.putBoolean("hidden", settings().hidden);
+        view.putBoolean("duping", settings().duping);
+        view.put("capacityUpgrade", ItemVariant.CODEC, settings().upgrade);
+        view.put("limiter", ItemVariant.CODEC, settings().limiter);
     }
 
     /**

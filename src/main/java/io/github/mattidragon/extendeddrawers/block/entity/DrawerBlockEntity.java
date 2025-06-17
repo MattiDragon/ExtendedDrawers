@@ -15,11 +15,14 @@ import net.minecraft.block.BlockState;
 import net.minecraft.component.ComponentMap;
 import net.minecraft.component.ComponentsAccess;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtList;
 import net.minecraft.network.listener.ClientPlayPacketListener;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.registry.RegistryWrapper;
+import net.minecraft.storage.NbtWriteView;
+import net.minecraft.storage.ReadView;
+import net.minecraft.storage.WriteView;
+import net.minecraft.util.ErrorReporter;
 import net.minecraft.util.math.BlockPos;
 
 import java.util.ArrayList;
@@ -61,10 +64,12 @@ public class DrawerBlockEntity extends StorageDrawerBlockEntity {
 
 
     @Override
-    public NbtCompound toInitialChunkDataNbt(RegistryWrapper.WrapperLookup registryLookup) {
-        var nbt = new NbtCompound();
-        writeNbt(nbt, registryLookup);
-        return nbt;
+    public NbtCompound toInitialChunkDataNbt(RegistryWrapper.WrapperLookup registries) {
+        try (var logging = new ErrorReporter.Logging(this.getReporterContext(), ExtendedDrawers.LOGGER)) {
+            var view = NbtWriteView.create(logging, registries);
+            writeData(view);
+            return view.getNbt();
+        }
     }
 
     @Override
@@ -110,25 +115,18 @@ public class DrawerBlockEntity extends StorageDrawerBlockEntity {
     }
 
     @Override
-    protected void readNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
-        var list = nbt.getList("items")
-                .stream()
-                .flatMap(NbtList::streamCompounds)
-                .toList();
-        for (int i = 0; i < list.size(); i++) {
-            storages[i].readNbt(list.get(i), registryLookup);
+    protected void readData(ReadView view) {
+        var items = view.getListReadView("items").stream().toList();
+        for (int i = 0; i < items.size(); i++) {
+            storages[i].readData(items.get(i));
         }
-        sortSlots();
     }
-    
+
     @Override
-    public void writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
-        var list = new NbtList();
+    public void writeData(WriteView view) {
+        var items = view.getList("items");
         for (var storage : storages) {
-            var storageNbt = new NbtCompound();
-            storage.writeNbt(storageNbt, registryLookup);
-            list.add(storageNbt);
+            storage.writeData(items.add());
         }
-        nbt.put("items", list);
     }
 }

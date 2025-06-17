@@ -15,6 +15,10 @@ import net.minecraft.network.listener.ClientPlayPacketListener;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.registry.RegistryWrapper;
+import net.minecraft.storage.NbtWriteView;
+import net.minecraft.storage.ReadView;
+import net.minecraft.storage.WriteView;
+import net.minecraft.util.ErrorReporter;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -39,10 +43,12 @@ public class CompactingDrawerBlockEntity extends StorageDrawerBlockEntity {
     }
 
     @Override
-    public NbtCompound toInitialChunkDataNbt(RegistryWrapper.WrapperLookup registryLookup) {
-        var nbt = new NbtCompound();
-        writeNbt(nbt, registryLookup);
-        return nbt;
+    public NbtCompound toInitialChunkDataNbt(RegistryWrapper.WrapperLookup registries) {
+        try (var logging = new ErrorReporter.Logging(this.getReporterContext(), ExtendedDrawers.LOGGER)) {
+            var view = NbtWriteView.create(logging, registries);
+            writeData(view);
+            return view.getNbt();
+        }
     }
 
     @Override
@@ -92,15 +98,12 @@ public class CompactingDrawerBlockEntity extends StorageDrawerBlockEntity {
     }
 
     @Override
-    public void readNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
-        nbt.getCompound("storage")
-                .ifPresent(compound -> storage.readNbt(compound, registryLookup));
+    protected void readData(ReadView view) {
+        view.getOptionalReadView("storage").ifPresent(storage::readData);
     }
-    
+
     @Override
-    public void writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
-        var storageNbt = new NbtCompound();
-        storage.writeNbt(storageNbt, registryLookup);
-        nbt.put("storage", storageNbt);
+    public void writeData(WriteView view) {
+        storage.writeData(view.get("storage"));
     }
 }

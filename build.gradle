@@ -6,20 +6,21 @@ plugins {
 def run = System.env.GITHUB_RUN_NUMBER
 def isDev = System.env.DEV_BUILD == "true"
 
-version project.mod_version + (isDev ? "-dev.$run" : "") + "+mc.$minecraft_version"
-group project.maven_group
+version = project.mod_version + (isDev ? "-dev.$run" : "") + "+mc.$minecraft_version"
+group = project.maven_group
 base.archivesName = project.archives_base_name
 
 repositories {
-    maven { url "https://maven.kneelawk.com/releases/" }
-    maven { url "https://maven.alexiil.uk/" }
-    maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
-    maven { url "https://maven.blamejared.com" }
-    maven { url "https://maven.isxander.dev/releases" }
-    maven { url "https://maven.terraformersmc.com" }
-    maven { url 'https://maven.quiltmc.org/repository/release/' }
-    maven { url 'https://maven.cafeteria.dev/releases/' }
-    maven { url "https://jitpack.io" }
+    maven { url = "https://maven.kneelawk.com/releases/" }
+    maven { url = "https://maven.alexiil.uk/" }
+    maven { url = "https://oss.sonatype.org/content/repositories/snapshots" }
+    maven { url = "https://maven.blamejared.com" }
+    maven { url = "https://maven.isxander.dev/releases" }
+    maven { url = "https://maven.terraformersmc.com" }
+    maven { url = "https://maven.quiltmc.org/repository/release/" }
+    maven { url = "https://maven.cafeteria.dev/releases/" }
+    maven { url = "https://jitpack.io" }
+    mavenLocal()
 }
 
 // Has to run before dependencies so that we get access to proper dependency configurations
@@ -69,7 +70,7 @@ clean.delete("src/main/generated")
 
 processResources {
     inputs.property "version", version
-    filteringCharset "UTF-8"
+    filteringCharset = "UTF-8"
 
     filesMatching("fabric.mod.json") {
         expand "version": version

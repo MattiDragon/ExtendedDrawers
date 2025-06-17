@@ -10,10 +10,8 @@ import net.fabricmc.fabric.api.transfer.v1.storage.base.SingleSlotStorage;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.fabricmc.fabric.api.transfer.v1.transaction.base.SnapshotParticipant;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtOps;
-import net.minecraft.registry.RegistryOps;
-import net.minecraft.registry.RegistryWrapper;
+import net.minecraft.storage.ReadView;
+import net.minecraft.storage.WriteView;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
@@ -172,18 +170,18 @@ public final class DrawerSlot extends SnapshotParticipant<DrawerSlot.Snapshot> i
     }
 
     @Override
-    public void readNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
-        DrawerStorage.super.readNbt(nbt, registryLookup);
-        item = nbt.get("item", ItemVariant.CODEC, RegistryOps.of(NbtOps.INSTANCE, registryLookup)).orElseGet(ItemVariant::blank);
-        amount = nbt.getLong("amount", 0);
+    public void readData(ReadView view) {
+        DrawerStorage.super.readData(view);
+        item = view.read("item", ItemVariant.CODEC).orElseGet(ItemVariant::blank);
+        amount = view.getLong("amount", 0);
         if (item.isBlank()) amount = 0; // Avoids dupes with drawers of removed items
     }
 
     @Override
-    public void writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
-        DrawerStorage.super.writeNbt(nbt, registryLookup);
-        nbt.put("item", ItemVariant.CODEC.encodeStart(RegistryOps.of(NbtOps.INSTANCE, registryLookup), item).getOrThrow());
-        nbt.putLong("amount", amount);
+    public void writeData(WriteView view) {
+        DrawerStorage.super.writeData(view);
+        view.put("item", ItemVariant.CODEC, item);
+        view.putLong("amount", amount);
     }
 
     public void setLocked(boolean locked) {

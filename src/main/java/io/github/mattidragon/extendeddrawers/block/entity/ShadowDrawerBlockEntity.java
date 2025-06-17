@@ -1,5 +1,6 @@
 package io.github.mattidragon.extendeddrawers.block.entity;
 
+import io.github.mattidragon.extendeddrawers.ExtendedDrawers;
 import io.github.mattidragon.extendeddrawers.network.cache.NetworkStorageCache;
 import io.github.mattidragon.extendeddrawers.registry.ModBlocks;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
@@ -10,13 +11,15 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.listener.ClientPlayPacketListener;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
-import net.minecraft.registry.RegistryOps;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.storage.NbtWriteView;
+import net.minecraft.storage.ReadView;
+import net.minecraft.storage.WriteView;
+import net.minecraft.util.ErrorReporter;
 import net.minecraft.util.math.BlockPos;
 
 public class ShadowDrawerBlockEntity extends BlockEntity {
@@ -73,24 +76,26 @@ public class ShadowDrawerBlockEntity extends BlockEntity {
     }
     
     @Override
-    public NbtCompound toInitialChunkDataNbt(RegistryWrapper.WrapperLookup registryLookup) {
-        var nbt = new NbtCompound();
-        writeNbt(nbt, registryLookup);
-        nbt.putLong("count", countCache);
-        nbt.putBoolean("hidden", isHidden());
-        return nbt;
+    public NbtCompound toInitialChunkDataNbt(RegistryWrapper.WrapperLookup registries) {
+        try (var logging = new ErrorReporter.Logging(this.getReporterContext(), ExtendedDrawers.LOGGER)) {
+            var view = NbtWriteView.create(logging, registries);
+            writeData(view);
+            view.putLong("count", countCache);
+            return view.getNbt();
+        }
     }
-    
+
     @Override
-    public void readNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
-        countCache = nbt.getLong("count", countCache);
-        item = nbt.get("item", ItemVariant.CODEC, RegistryOps.of(NbtOps.INSTANCE, registryLookup)).orElseGet(ItemVariant::blank);
-        hidden = nbt.getBoolean("hidden", false);
+    protected void readData(ReadView view) {
+        countCache = view.getLong("count", countCache);
+        item = view.read("item", ItemVariant.CODEC).orElseGet(ItemVariant::blank);
+        hidden = view.getBoolean("hidden", false);
     }
-    
+
     @Override
-    public void writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
-        nbt.put("item", ItemVariant.CODEC.encodeStart(RegistryOps.of(NbtOps.INSTANCE, registryLookup), item).getOrThrow());
+    protected void writeData(WriteView view) {
+        view.put("item", ItemVariant.CODEC, item);
+        view.putBoolean("hidden", hidden);
     }
 
     public boolean isHidden() {

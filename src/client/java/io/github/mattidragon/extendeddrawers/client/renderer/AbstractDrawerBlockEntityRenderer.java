@@ -27,7 +27,6 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
-import org.joml.Vector3f;
 
 import java.util.List;
 
@@ -156,22 +155,23 @@ public abstract class AbstractDrawerBlockEntityRenderer<T extends BlockEntity> i
         itemModelManager.clearAndUpdate(itemRenderState, stack, ItemDisplayContext.GUI, world, null, seed);
 
         // Copy existing light configuration
-        var lights = new Vector3f[2];
-        System.arraycopy(RenderSystem.getShaderLights(), 0, lights, 0, 2);
+        var lights = RenderSystem.getShaderLights();
+
+        var diffuseLighting = MinecraftClient.getInstance().gameRenderer.getDiffuseLighting();
 
         // Set up gui lighting
         if (itemRenderState.isSideLit()) {
             matrices.peek().getNormalMatrix().rotate(ITEM_LIGHT_ROTATION_3D);
-            DiffuseLighting.enableGuiDepthLighting();
+            diffuseLighting.setShaderLights(DiffuseLighting.Type.ITEMS_3D);
         } else {
             matrices.peek().getNormalMatrix().rotate(ITEM_LIGHT_ROTATION_FLAT);
-            DiffuseLighting.disableGuiDepthLighting();
+            diffuseLighting.setShaderLights(DiffuseLighting.Type.ITEMS_FLAT);
         }
 
         itemRenderState.render(matrices, vertexConsumers, light, OverlayTexture.DEFAULT_UV);
 
         // Restore light configuration
-        RenderSystem.setShaderLights(lights[0], lights[1]);
+        RenderSystem.setShaderLights(lights);
         
         matrices.pop();
     }
@@ -190,7 +190,7 @@ public abstract class AbstractDrawerBlockEntityRenderer<T extends BlockEntity> i
         matrices.translate(0, config.layout().textOffset() / -4, -0.01);
 
         matrices.scale(0.02f, 0.02f, 0.02f);
-        textRenderer.draw(amount, -textRenderer.getWidth(amount) / 2f, 0, 0xffffff, false, matrices.peek().getPositionMatrix(), vertexConsumers, TextRenderer.TextLayerType.NORMAL, 0x000000, light);
+        textRenderer.draw(amount, -textRenderer.getWidth(amount) / 2f, 0, 0xffffffff, false, matrices.peek().getPositionMatrix(), vertexConsumers, TextRenderer.TextLayerType.NORMAL, 0x00000000, light);
         matrices.pop();
     }
 
