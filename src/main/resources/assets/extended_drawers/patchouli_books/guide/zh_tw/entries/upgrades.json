@@ -1,0 +1,33 @@
+{
+  "name": "抽屜升級",
+  "icon": "extended_drawers:t2_upgrade",
+  "category": "extended_drawers:modifiers",
+  "pages": [
+    "「@item@升級@!」可以使用不同的升級物品套用。 它們會增加$(l:drawers)抽屜@!欄位的容量。 @p@若要安裝一個，只需在潛行時拿著「@item@升級@!」並點選欄位即可。 @p@它們在儲存大量物品時最有用。",
+    {
+      "type": "patchouli:crafting",
+      "recipe": "extended_drawers:upgrade_frame",
+      "text": "$(item)升級框架/$是所有升級的基礎物品。 它本身沒有任何作用。"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "extended_drawers:t1_upgrade",
+      "text": "$(item)抽屜升級 I/$是第一級升級。 它會使抽屜的容量加倍。"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "extended_drawers:t2_upgrade",
+      "text": "$(item)抽屜升級 II/$是第二級升級。 它會使抽屜的容量乘以 4。"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "extended_drawers:t3_upgrade",
+      "text": "$(item)抽屜升級 III/$是第三級升級。 它會使抽屜的容量乘以 8。"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "extended_drawers:t4_upgrade",
+      "text": "$(item)抽屜升級 IV/$是第四級升級。 它會使抽屜的容量乘以 16。"
+    }
+  ]
+}

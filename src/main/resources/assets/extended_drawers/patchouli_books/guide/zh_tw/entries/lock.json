@@ -1,0 +1,13 @@
+{
+  "name": "上鎖",
+  "icon": "extended_drawers:lock",
+  "category": "extended_drawers:modifiers",
+  "pages": [
+    "使用$(item)鎖/$物品完成上鎖和解鎖。 它使得無法變更$(l:drawers)抽屜@!所持有的物品類型，同時允許數量變更。 @p@在建立有條理的分類系統或$(l:mod_interoperability)連結到其他模組@!時非常有用。",
+    {
+      "type": "patchouli:crafting",
+      "recipe": "extended_drawers:lock",
+      "text": "鎖在使用時不會被消耗，因此您不必擔心每個抽屜都要製作一個鎖。 它也可以用於連接點以切換整個網路的鎖。"
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "name": "連接點",
+  "icon": "extended_drawers:access_point",
+  "category": "extended_drawers:blocks",
+  "pages": [
+    "「@item@連接點@!」允許將物品插入整個$(l:simple_networks)網路@!，自動尋找正確的抽屜，請參閱$(l:insertion_order)此處@!以瞭解排序。 @p@它們還充當其他模組存取網路的介面，請參閱$(l:mod_interoperability)此處@!以取得更多資訊。",
+    {
+      "type": "patchouli:crafting",
+      "recipe": "extended_drawers:access_point"
+    }
+  ]
+}

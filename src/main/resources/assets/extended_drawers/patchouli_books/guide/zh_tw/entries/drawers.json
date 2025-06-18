@@ -1,0 +1,17 @@
+{
+  "name": "一般抽屜",
+  "icon": "extended_drawers:single_drawer",
+  "category": "extended_drawers:blocks",
+  "pages": [
+    "@item@抽屜@!是$(l:simple_networks)網路@!的核心組件，因為它們儲存物品。 可以使用$(l:modifiers)修改器@!來改進它們。 @p@它們有不同的配置：1x1、2x1 和 2x2。",
+    {
+      "type": "patchouli:crafting",
+      "recipe": "extended_drawers:single_drawer",
+      "recipe2": "extended_drawers:double_drawer"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "extended_drawers:quad_drawer"
+    }
+  ]
+}

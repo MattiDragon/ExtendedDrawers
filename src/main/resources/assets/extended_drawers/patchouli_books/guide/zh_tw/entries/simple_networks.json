@@ -1,0 +1,23 @@
+{
+  "name": "簡易網路",
+  "icon": "extended_drawers:single_drawer",
+  "category": "extended_drawers:networks",
+  "pages": [
+    "只需將一些$(l:drawers)抽屜@!彼此相鄰放置，您就建立了一個簡易網路。 但是，該網路還沒有做任何事情。 $(br2)我們將從簡單開始，並將$(l:access_points)連接點@!新增到網路中。 它允許您將物品插入它們所屬的抽屜中，而無需走到它們那裡。",
+    {
+      "type": "patchouli:multiblock",
+      "multiblock": {
+        "mapping": {
+          "D": "extended_drawers:single_drawer[facing=west]",
+          "0": "extended_drawers:single_drawer[facing=west]",
+          "A": "extended_drawers:access_point"
+        },
+        "pattern": [
+          ["D0A"]
+        ]
+      },
+      "enable_visualize": false,
+      "text": ""
+    }
+  ]
+}

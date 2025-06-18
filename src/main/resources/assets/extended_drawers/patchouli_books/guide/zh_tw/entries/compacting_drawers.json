@@ -1,0 +1,12 @@
+{
+  "name": "壓縮抽屜",
+  "icon": "extended_drawers:compacting_drawer",
+  "category": "extended_drawers:blocks",
+  "pages": [
+    "雖然製作成本略高，但$(item)壓縮抽屜/$比一般$(l:drawers)抽屜/$提供更多便利性。 它們會自動壓縮和解壓縮您的物品。 它們通常使用合成配方，但某些物品可能會獲得特殊支援。",
+    {
+      "type": "patchouli:crafting",
+      "recipe": "extended_drawers:compacting_drawer"
+    }
+  ]
+}
