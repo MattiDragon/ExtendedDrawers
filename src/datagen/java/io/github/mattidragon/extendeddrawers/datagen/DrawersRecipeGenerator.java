@@ -124,7 +124,7 @@ class DrawersRecipeGenerator extends RecipeGenerator {
     }
 
     private void offerConnectorRecipe(RecipeExporter exporter) {
-        createShaped(RecipeCategory.DECORATIONS, ModItems.CONNECTOR)
+        createShaped(RecipeCategory.DECORATIONS, ModItems.CONNECTOR, 8)
                 .input('L', ItemTags.LOGS)
                 .input('P', ItemTags.PLANKS)
                 .pattern("LPL")
