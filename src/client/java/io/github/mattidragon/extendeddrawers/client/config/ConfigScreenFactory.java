@@ -11,11 +11,11 @@ import io.github.mattidragon.extendeddrawers.config.category.MutableMiscCategory
 import io.github.mattidragon.extendeddrawers.config.category.MutableStorageCategory;
 import io.github.mattidragon.extendeddrawers.misc.CreativeBreakingBehaviour;
 import io.github.mattidragon.extendeddrawers.network.cache.CachingMode;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.texture.SpriteAtlasTexture;
+import net.minecraft.client.util.SpriteIdentifier;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
@@ -284,8 +284,8 @@ public class ConfigScreenFactory {
         @Override
         public int render(DrawContext graphics, int x, int y, int renderWidth, float tickDelta) {
             @SuppressWarnings("deprecation")
-            var blockAtlas = MinecraftClient.getInstance().getSpriteAtlas(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE);
-            var sprite = blockAtlas.apply(id);
+            var blockAtlas = SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE;
+            var sprite = graphics.getSprite(new SpriteIdentifier(blockAtlas, id));
 
             graphics.drawSpriteStretched(RenderPipelines.GUI_TEXTURED, sprite, x + renderWidth / 3, y, renderWidth / 3, renderWidth / 3);
 

@@ -78,7 +78,7 @@ public abstract class StorageDrawerBlock<T extends StorageDrawerBlockEntity> ext
     @Override
     public BlockState onBreak(World world, BlockPos pos, BlockState state, PlayerEntity player) {
         var blockEntity = getBlockEntity(world, pos);
-        if (blockEntity != null && ExtendedDrawers.CONFIG.get().misc().dropDrawersInCreative() && !world.isClient && player.isCreative() && !blockEntity.isEmpty()) {
+        if (blockEntity != null && ExtendedDrawers.CONFIG.get().misc().dropDrawersInCreative() && !world.isClient() && player.isCreative() && !blockEntity.isEmpty()) {
             getDroppedStacks(state, (ServerWorld) world, pos, blockEntity, player, player.getStackInHand(Hand.MAIN_HAND))
                     .forEach(stack -> ItemScatterer.spawn(world, pos.getX(), pos.getY(), pos.getZ(), stack));
         }
@@ -165,7 +165,7 @@ public abstract class StorageDrawerBlock<T extends StorageDrawerBlockEntity> ext
     public abstract StorageView<ItemVariant> getSlot(T drawer, int slot);
 
     @Override
-    public abstract int getComparatorOutput(BlockState state, World world, BlockPos pos);
+    public abstract int getComparatorOutput(BlockState state, World world, BlockPos pos, Direction direction);
 
     protected abstract ModifierAccess getModifierAccess(T drawer, Vec2f facePos);
 
@@ -211,7 +211,7 @@ public abstract class StorageDrawerBlock<T extends StorageDrawerBlockEntity> ext
 
     @Override
     public ActionResult changeUpgrade(BlockState state, World world, BlockPos pos, Vec3d hitPos, Direction side, PlayerEntity player, ItemStack stack) {
-        if (world.isClient) return ActionResult.SUCCESS;
+        if (world.isClient()) return ActionResult.SUCCESS;
 
         var access = tryGetModifierAccess(state, world, pos, hitPos, side);
         if (access == null) return ActionResult.PASS;
@@ -230,7 +230,7 @@ public abstract class StorageDrawerBlock<T extends StorageDrawerBlockEntity> ext
 
     @Override
     public ActionResult changeLimiter(BlockState state, World world, BlockPos pos, Vec3d hitPos, Direction side, PlayerEntity player, ItemStack stack) {
-        if (world.isClient) return ActionResult.SUCCESS;
+        if (world.isClient()) return ActionResult.SUCCESS;
 
         var access = tryGetModifierAccess(state, world, pos, hitPos, side);
         if (access == null) return ActionResult.PASS;

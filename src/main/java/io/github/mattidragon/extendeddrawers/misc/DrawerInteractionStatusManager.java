@@ -20,7 +20,7 @@ public final class DrawerInteractionStatusManager {
      * @return Whether there should be a multi-stack insertion.
      */
     public static boolean getAndResetInsertStatus(PlayerEntity player, BlockPos pos, int slot) {
-        var timestamp = player.getWorld().getTime();
+        var timestamp = player.getEntityWorld().getTime();
         var interaction = INSERTIONS.get().remove(player);
         if (interaction != null && interaction.pos.equals(pos) && timestamp - interaction.timestamp < ExtendedDrawers.CONFIG.get().misc().insertAllTime() && interaction.slot == slot)
             return true;

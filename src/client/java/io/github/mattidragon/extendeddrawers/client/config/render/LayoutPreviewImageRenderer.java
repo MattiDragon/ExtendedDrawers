@@ -5,10 +5,10 @@ import dev.isxander.yacl3.gui.image.ImageRenderer;
 import io.github.mattidragon.extendeddrawers.ExtendedDrawers;
 import io.github.mattidragon.extendeddrawers.config.ConfigData;
 import io.github.mattidragon.extendeddrawers.config.category.ClientCategory;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.texture.SpriteAtlasTexture;
+import net.minecraft.client.util.SpriteIdentifier;
 import org.joml.Matrix3x2f;
 
 import static io.github.mattidragon.extendeddrawers.ExtendedDrawers.id;
@@ -35,7 +35,7 @@ public class LayoutPreviewImageRenderer implements ImageRenderer {
         if (!initialized) return 0;
 
         @SuppressWarnings("deprecation")
-        var atlas = MinecraftClient.getInstance().getSpriteAtlas(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE);
+        var atlas = SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE;
         var size = renderWidth / 3;
         var config = ExtendedDrawers.CONFIG.get();
         var client = config.client();
@@ -55,9 +55,9 @@ public class LayoutPreviewImageRenderer implements ImageRenderer {
 
         var matrices = context.getMatrices();
 
-        context.drawSpriteStretched(RenderPipelines.GUI_TEXTURED, atlas.apply(id("block/single_drawer")), x, y, size, size);
-        context.drawSpriteStretched(RenderPipelines.GUI_TEXTURED, atlas.apply(id("block/quad_drawer")), x + size, y, size, size);
-        context.drawSpriteStretched(RenderPipelines.GUI_TEXTURED, atlas.apply(id("block/compacting_drawer")), x + 2 * size, y, size, size);
+        context.drawSpriteStretched(RenderPipelines.GUI_TEXTURED, context.getSprite(new SpriteIdentifier(atlas, id("block/single_drawer"))), x, y, size, size);
+        context.drawSpriteStretched(RenderPipelines.GUI_TEXTURED, context.getSprite(new SpriteIdentifier(atlas, id("block/quad_drawer"))), x + size, y, size, size);
+        context.drawSpriteStretched(RenderPipelines.GUI_TEXTURED, context.getSprite(new SpriteIdentifier(atlas, id("block/compacting_drawer"))), x + 2 * size, y, size, size);
 
         context.state.addSpecialElement(new LayoutPreviewRenderState(
                 newConfig, size, new Matrix3x2f(matrices), x, y, x + renderWidth, y + size, 1, context.scissorStack.peekLast()

@@ -12,7 +12,6 @@ import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.network.packet.CustomPayload;
 
 import java.util.List;
-import java.util.Objects;
 
 public record CompressionRecipeSyncPayload(List<CompressionLadder> recipes, boolean clearRecipes) implements CustomPayload {
     public static final Id<CompressionRecipeSyncPayload> ID = new Id<>(ExtendedDrawers.id("compression_recipe_sync"));
@@ -25,7 +24,7 @@ public record CompressionRecipeSyncPayload(List<CompressionLadder> recipes, bool
     public static void register() {
         PayloadTypeRegistry.playS2C().register(ID, CODEC);
         ServerLifecycleEvents.SYNC_DATA_PACK_CONTENTS.register((player, joined) -> {
-            var server = Objects.requireNonNull(player.getServer(), "missing server");
+            var server = player.getEntityWorld().getServer();
             ServerPlayNetworking.send(player, new CompressionRecipeSyncPayload(List.copyOf(ServerCompressionRecipeManager.of(server.getRecipeManager()).getLadders()), true));
         });
     }

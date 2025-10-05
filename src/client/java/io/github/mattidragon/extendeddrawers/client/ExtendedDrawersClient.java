@@ -11,7 +11,7 @@ import io.github.mattidragon.extendeddrawers.registry.ModBlocks;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.SpecialGuiElementRegistry;
-import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactories;
 
 public class ExtendedDrawersClient implements ClientModInitializer {
@@ -26,6 +26,6 @@ public class ExtendedDrawersClient implements ClientModInitializer {
 
         SpecialGuiElementRegistry.register(ctx -> new LayoutPreviewRenderer(ctx.vertexConsumers()));
 
-        ExtendedDrawers.SHIFT_ACCESS = Screen::hasShiftDown;
+        ExtendedDrawers.SHIFT_ACCESS = MinecraftClient.getInstance()::isShiftPressed;
     }
 }

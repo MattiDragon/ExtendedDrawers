@@ -11,6 +11,7 @@ import net.fabricmc.fabric.api.transfer.v1.storage.StorageUtil;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec2f;
 import net.minecraft.world.World;
 
@@ -28,7 +29,7 @@ public class DrawerBlock extends StorageDrawerBlock<DrawerBlockEntity> {
     }
 
     @Override
-    public int getComparatorOutput(BlockState state, World world, BlockPos pos) {
+    public int getComparatorOutput(BlockState state, World world, BlockPos pos, Direction direction) {
         var drawer = getBlockEntity(world, pos);
         if (drawer == null) return 0;
         return StorageUtil.calculateComparatorOutput(drawer.combinedStorage);

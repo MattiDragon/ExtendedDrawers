@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '1.10-SNAPSHOT'
+    id 'fabric-loom' version '1.11-SNAPSHOT'
     id 'maven-publish'
 }
 
@@ -20,6 +20,12 @@ repositories {
     maven { url = "https://maven.quiltmc.org/repository/release/" }
     maven { url = "https://maven.cafeteria.dev/releases/" }
     maven { url = "https://jitpack.io" }
+    maven {
+        url = "https://maven.nucleoid.xyz/releases"
+        content {
+            includeGroupAndSubgroups("com.kneelawk.graphlib")
+        }
+    }
     mavenLocal()
 }
 

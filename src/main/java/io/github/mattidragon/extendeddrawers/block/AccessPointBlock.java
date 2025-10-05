@@ -41,7 +41,7 @@ public class AccessPointBlock extends NetworkBlock implements DrawerInteractionH
     }
 
     @Override
-    public int getComparatorOutput(BlockState state, World world, BlockPos pos) {
+    public int getComparatorOutput(BlockState state, World world, BlockPos pos, Direction direction) {
         if (world instanceof ServerWorld serverWorld)
             return StorageUtil.calculateComparatorOutput(NetworkStorageCache.get(serverWorld, pos));
         return 0;

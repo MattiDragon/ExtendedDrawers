@@ -8,6 +8,7 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
+import net.minecraft.client.input.KeyInput;
 import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.OrderedText;
 import net.minecraft.text.Style;
@@ -60,7 +61,7 @@ public class EditLimiterScreen extends Screen {
                 .build());
         
         textField = addDrawableChild(new TextFieldWidget(client.textRenderer, width / 2 - 58, height / 2 - 16, 116, 20, Text.literal("")));
-        textField.setRenderTextProvider((text, index) -> { // Render invalid text as red
+        textField.addFormatter((text, firstCharacterIndex) -> { // Render invalid text as red
             var style = isValid(text) ? Style.EMPTY : Style.EMPTY.withColor(Formatting.RED);
             return OrderedText.styledForwardsVisitedString(text, style);
         });
@@ -70,16 +71,16 @@ public class EditLimiterScreen extends Screen {
     }
 
     @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (keyCode == GLFW.GLFW_KEY_ENTER || keyCode == GLFW.GLFW_KEY_KP_ENTER) {
+    public boolean keyPressed(KeyInput input) {
+        if (input.key() == GLFW.GLFW_KEY_ENTER || input.key() == GLFW.GLFW_KEY_KP_ENTER) {
             if (isValid(textField.getText())) {
-                doneButton.onPress();
+                doneButton.onPress(input);
             } else if (textField.getText().isBlank()) {
-                clearButton.onPress();
+                clearButton.onPress(input);
             }
         }
 
-        return super.keyPressed(keyCode, scanCode, modifiers);
+        return super.keyPressed(input);
     }
 
     private static boolean isValid(String text) {
