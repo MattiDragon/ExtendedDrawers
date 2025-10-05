@@ -43,7 +43,7 @@ class DrawersModelProvider extends FabricModelProvider {
         generator.register(ModItems.LOCK, Models.GENERATED);
         generator.register(ModItems.UPGRADE_FRAME, Models.GENERATED);
         generator.register(ModItems.LIMITER, Models.GENERATED);
-        generator.register(ModItems.DUPE_WAND, Models.GENERATED);
+        generator.register(ModItems.DUPE_WAND, Models.HANDHELD);
     }
 
     private static void generateShadowDrawerModel(BlockStateModelGenerator generator) {
