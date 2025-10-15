@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "id": "extended_drawers_extensions",
+  "version": "${version}",
+  "name": "Extended Drawers: Extensions",
+  "description": "Adds additional utilities that don't fit in the main mod.",
+  "authors": [
+    "MattiDragon"
+  ],
+  "contributors": [],
+  "contact": {
+    "sources": "https://github.com/MattiDragon/ExtendedDrawers",
+    "website": "https://modrinth.com/mod/extended-drawers-extensions",
+    "issues": "https://github.com/MattiDragon/ExtendedDrawers/issues"
+  },
+  "license": "Apache-2.0",
+  "icon": "icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "client": [
+      "io.github.mattidragon.extendeddrawers.extensions.client.ExtendedDrawersExtensionsClient"
+    ],
+    "main": [
+      "io.github.mattidragon.extendeddrawers.extensions.ExtendedDrawersExtensions"
+    ],
+    "modmenu": [
+      "io.github.mattidragon.extendeddrawers.client.config.ModMenuIntegration"
+    ]
+  },
+  "mixins": [
+    "extended_drawers_extensions.mixins.json",
+    {
+      "config": "extended_drawers_extensions.client.mixins.json",
+      "environment": "client"
+    }
+  ],
+  "depends": {
+    "extended_drawers": "${version}"
+  }
+}

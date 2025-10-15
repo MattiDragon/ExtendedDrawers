@@ -1,0 +1,79 @@
+repositories {
+    maven { url = "https://maven.kneelawk.com/releases/" }
+    maven { url = "https://maven.alexiil.uk/" }
+    maven { url = "https://oss.sonatype.org/content/repositories/snapshots" }
+    maven { url = "https://maven.blamejared.com" }
+    maven { url = "https://maven.isxander.dev/releases" }
+    maven { url = "https://maven.terraformersmc.com" }
+    maven { url = "https://maven.quiltmc.org/repository/release/" }
+    maven { url = "https://maven.cafeteria.dev/releases/" }
+    maven { url = "https://jitpack.io" }
+    maven {
+        url = "https://maven.nucleoid.xyz/releases"
+        content {
+            includeGroupAndSubgroups("com.kneelawk.graphlib")
+        }
+    }
+    mavenLocal()
+}
+
+loom.splitEnvironmentSourceSets()
+
+dependencies {
+    minecraft "com.mojang:minecraft:$minecraft_version"
+    mappings "net.fabricmc:yarn:$yarn_mappings:v2"
+    modImplementation "net.fabricmc:fabric-loader:$loader_version"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:$fabric_version"
+
+    // Add generated data to runtime classpath (slightly hacky)
+    runtimeOnly files("src/main/generated")
+}
+
+fabricApi.configureDataGeneration {
+    client = true
+    createSourceSet = true
+    addToResources = false
+}
+
+loom.runs.each {
+    it.ideConfigGenerated = true
+}
+
+// Delete datagen on clean
+clean.delete("src/main/generated")
+
+processResources {
+    inputs.property "version", version
+    filteringCharset = "UTF-8"
+
+    filesMatching("fabric.mod.json") {
+        expand "version": version
+    }
+    filesMatching("**/assets/*/lang/*.json") {
+        expand "version": project.mod_version
+    }
+}
+
+jar {
+    from("LICENSE") {
+        rename { "${it}_${project.archivesBaseName}" }
+    }
+
+    // Copy datagen to jar
+    dependsOn tasks.runDatagen
+    from("src/main/generated") {
+        exclude "README.md"
+        exclude ".cache"
+    }
+}
+
+java {
+    withSourcesJar()
+}
+
+publishing {
+    publications.create("mavenJava", MavenPublication) {
+        from components.java
+    }
+    repositories {}
+}

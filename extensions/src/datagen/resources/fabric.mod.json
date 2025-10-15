@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "id": "extended_drawers_extensions_datagen",
+  "version": "1",
+  "entrypoints": {
+    "fabric-datagen": [
+      "io.github.mattidragon.extendeddrawers.extensions.datagen.ExtendedDrawersExtensionsDatagen"
+    ]
+  }
+}

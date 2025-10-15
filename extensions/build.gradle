@@ -1,0 +1,14 @@
+plugins {
+    id 'fabric-loom'
+    id 'maven-publish'
+    id 'common'
+}
+
+version = rootProject.version
+group = rootProject.group
+base.archivesName = project.archives_base_name + "-Extensions"
+
+dependencies {
+    implementation project(path: ":", configuration: "namedElements")
+    datagenImplementation project(path: ":", configuration: "datagenElements")
+}
