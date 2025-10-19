@@ -23,13 +23,11 @@ dependencies {
     modApi "com.terraformersmc:modmenu:$modmenu_version"
 }
 
-loom {
-    // Apply datagen at runtime
-    mods.register("extended_drawers") {
-        sourceSet sourceSets.main
-        sourceSet sourceSets.client
-        modFiles.from file("src/main/generated")
-    }
+// Apply datagen at runtime
+loom.mods.register("extended_drawers") {
+    sourceSet sourceSets.main
+    sourceSet sourceSets.client
+    modFiles.from file("src/main/generated")
 }
 
 tasks.register("datagenJar", Jar) {

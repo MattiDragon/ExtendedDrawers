@@ -17,7 +17,7 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
-public final class DrawerSlot extends SnapshotParticipant<DrawerSlot.Snapshot> implements SingleSlotStorage<ItemVariant>, DrawerStorage {
+public final class DrawerSlot extends SnapshotParticipant<DrawerSlot.Snapshot> implements SingleSlotStorage<ItemVariant>, ModifierDrawerStorage {
     private final DrawerBlockEntity owner;
     private final Settings settings;
     /**
@@ -171,7 +171,7 @@ public final class DrawerSlot extends SnapshotParticipant<DrawerSlot.Snapshot> i
 
     @Override
     public void readData(ReadView view) {
-        DrawerStorage.super.readData(view);
+        ModifierDrawerStorage.super.readData(view);
         item = view.read("item", ItemVariant.CODEC).orElseGet(ItemVariant::blank);
         amount = view.getLong("amount", 0);
         if (item.isBlank()) amount = 0; // Avoids dupes with drawers of removed items
@@ -179,7 +179,7 @@ public final class DrawerSlot extends SnapshotParticipant<DrawerSlot.Snapshot> i
 
     @Override
     public void writeData(WriteView view) {
-        DrawerStorage.super.writeData(view);
+        ModifierDrawerStorage.super.writeData(view);
         view.put("item", ItemVariant.CODEC, item);
         view.putLong("amount", amount);
     }
@@ -188,7 +188,7 @@ public final class DrawerSlot extends SnapshotParticipant<DrawerSlot.Snapshot> i
         if (!locked && amount == 0) {
             item = ItemVariant.blank();
         }
-        DrawerStorage.super.setLocked(locked);
+        ModifierDrawerStorage.super.setLocked(locked);
     }
 
     @Override

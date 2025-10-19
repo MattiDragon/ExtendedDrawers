@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "B": "minecraft:barrel",
+    "L": "#minecraft:logs",
+    "R": "minecraft:resin_brick"
+  },
+  "pattern": [
+    "LRL",
+    "RBR",
+    "LRL"
+  ],
+  "result": {
+    "count": 1,
+    "id": "extended_drawers_extensions:drawer_barrel"
+  }
+}

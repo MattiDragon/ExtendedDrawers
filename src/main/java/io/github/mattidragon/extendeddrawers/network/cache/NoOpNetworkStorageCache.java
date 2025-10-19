@@ -2,7 +2,7 @@ package io.github.mattidragon.extendeddrawers.network.cache;
 
 import com.kneelawk.graphlib.api.graph.BlockGraph;
 import com.kneelawk.graphlib.api.graph.GraphEntityContext;
-import io.github.mattidragon.extendeddrawers.block.entity.StorageDrawerBlockEntity;
+import io.github.mattidragon.extendeddrawers.block.entity.StorageProvidingDrawerBlockEntity;
 import io.github.mattidragon.extendeddrawers.storage.DrawerStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.base.CombinedStorage;
@@ -23,7 +23,7 @@ public class NoOpNetworkStorageCache implements NetworkStorageCache {
         return new CombinedStorage<>(context.getGraph()
                 .getNodes()
                 .<DrawerStorage>flatMap(node -> {
-                    if (node.getBlockEntity() instanceof StorageDrawerBlockEntity drawer) {
+                    if (node.getBlockEntity() instanceof StorageProvidingDrawerBlockEntity drawer) {
                         return drawer.streamStorages();
                     }
                     return Stream.empty();

@@ -10,6 +10,7 @@ import io.github.mattidragon.extendeddrawers.network.cache.NetworkStorageCache;
 import io.github.mattidragon.extendeddrawers.network.node.AccessPointBlockNode;
 import io.github.mattidragon.extendeddrawers.network.node.DrawerNetworkBlockNode;
 import io.github.mattidragon.extendeddrawers.storage.DrawerStorage;
+import io.github.mattidragon.extendeddrawers.storage.ModifierDrawerStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.item.PlayerInventoryStorage;
@@ -25,6 +26,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 import static io.github.mattidragon.extendeddrawers.misc.DrawerInteractionStatusManager.getAndResetInsertStatus;
 
@@ -56,10 +60,10 @@ public class AccessPointBlock extends NetworkBlock implements DrawerInteractionH
 
         try (var t = Transaction.openOuter()) {
             int inserted;
-    
+
             var playerStack = player.getMainHandStack();
             var isDoubleClick = getAndResetInsertStatus(player, pos, 0);
-            
+
             if (isDoubleClick) {
                 inserted = (int) StorageUtil.move(PlayerInventoryStorage.of(player), storage, itemVariant -> {
                     for (var view : storage) {
@@ -72,34 +76,42 @@ public class AccessPointBlock extends NetworkBlock implements DrawerInteractionH
                 }, Long.MAX_VALUE, t);
             } else {
                 if (playerStack.isEmpty()) return ActionResult.PASS;
-            
+
                 inserted = (int) storage.insert(ItemVariant.of(playerStack), playerStack.getCount(), t);
                 playerStack.decrement(inserted);
             }
             if (inserted == 0) return ActionResult.CONSUME;
-        
+
             t.commit();
             return ActionResult.SUCCESS;
         }
     }
-    
+
+    private static @NotNull List<ModifierDrawerStorage> getModifierStorages(BlockPos pos, ServerWorld serverWorld) {
+        return NetworkStorageCache.get(serverWorld, pos).parts
+                .stream()
+                .filter(ModifierDrawerStorage.class::isInstance)
+                .map(ModifierDrawerStorage.class::cast)
+                .toList();
+    }
+
     @Override
     public ActionResult toggleLock(BlockState state, World world, BlockPos pos, Vec3d hitPos, Direction side) {
         if (!(world instanceof ServerWorld serverWorld)) return ActionResult.PASS;
-        var storages = NetworkStorageCache.get(serverWorld, pos).parts;
+        var storages = getModifierStorages(pos, serverWorld);
         var newState = storages.stream()
                 .map(DrawerStorage::isLocked)
                 .mapToInt(value -> value ? 1 : -1)
                 .sum() <= 0;
         storages.forEach(storage -> storage.setLocked(newState));
-    
+
         return storages.isEmpty() ? ActionResult.PASS : ActionResult.SUCCESS;
     }
 
     @Override
     public ActionResult toggleVoid(BlockState state, World world, BlockPos pos, Vec3d hitPos, Direction side) {
         if (!(world instanceof ServerWorld serverWorld)) return ActionResult.PASS;
-        var storages = NetworkStorageCache.get(serverWorld, pos).parts;
+        var storages = getModifierStorages(pos, serverWorld);
         var newState = storages.stream()
                 .map(DrawerStorage::isVoiding)
                 .mapToInt(value -> value ? 1 : -1)
@@ -112,7 +124,7 @@ public class AccessPointBlock extends NetworkBlock implements DrawerInteractionH
     @Override
     public ActionResult toggleDuping(BlockState state, World world, BlockPos pos, Vec3d hitPos, Direction side) {
         if (!(world instanceof ServerWorld serverWorld)) return ActionResult.PASS;
-        var storages = NetworkStorageCache.get(serverWorld, pos).parts;
+        var storages = getModifierStorages(pos, serverWorld);
         var newState = storages.stream()
                 .map(DrawerStorage::isDuping)
                 .mapToInt(value -> value ? 1 : -1)
@@ -125,7 +137,7 @@ public class AccessPointBlock extends NetworkBlock implements DrawerInteractionH
     @Override
     public ActionResult toggleHide(BlockState state, World world, BlockPos pos, Vec3d hitPos, Direction side) {
         if (!(world instanceof ServerWorld serverWorld)) return ActionResult.PASS;
-        var storages = NetworkStorageCache.get(serverWorld, pos).parts;
+        var storages = getModifierStorages(pos, serverWorld);
         var shadowDrawers = NetworkRegistry.UNIVERSE.getGraphWorld(serverWorld)
                 .getLoadedGraphsAt(pos)
                 .flatMap(BlockGraph::getNodes)

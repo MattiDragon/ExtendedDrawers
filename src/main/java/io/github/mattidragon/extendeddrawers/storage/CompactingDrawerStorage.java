@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Stream;
 
-public final class CompactingDrawerStorage extends SnapshotParticipant<CompactingDrawerStorage.Snapshot> implements DrawerStorage, SlottedStorage<ItemVariant> {
+public final class CompactingDrawerStorage extends SnapshotParticipant<CompactingDrawerStorage.Snapshot> implements ModifierDrawerStorage, SlottedStorage<ItemVariant> {
     private final CompactingDrawerBlockEntity owner;
     private final Settings settings;
     private ItemVariant item = ItemVariant.blank();
@@ -177,12 +177,12 @@ public final class CompactingDrawerStorage extends SnapshotParticipant<Compactin
         if (!locked && amount == 0) {
             clear();
         }
-        DrawerStorage.super.setLocked(locked);
+        ModifierDrawerStorage.super.setLocked(locked);
     }
 
     @Override
     public void readData(ReadView view) {
-        DrawerStorage.super.readData(view);
+        ModifierDrawerStorage.super.readData(view);
         item = view.read("item", ItemVariant.CODEC).orElseGet(ItemVariant::blank);
         amount = view.getLong("amount", 0);
         if (item.isBlank()) amount = 0; // Avoids dupes with drawers of removed items
@@ -191,7 +191,7 @@ public final class CompactingDrawerStorage extends SnapshotParticipant<Compactin
 
     @Override
     public void writeData(WriteView view) {
-        DrawerStorage.super.writeData(view);
+        ModifierDrawerStorage.super.writeData(view);
         view.put("item", ItemVariant.CODEC, item);
         view.putLong("amount", amount);
     }

@@ -1,0 +1,13 @@
+{
+  "name": "Drawer Barrels",
+  "icon": "extended_drawers_extensions:drawer_barrel",
+  "category": "extended_drawers:blocks",
+  "pages": [
+    "@item@Drawer Barrels@! are special storage blocks. Instead of storing large quantities of a single item, they act as regular containers. They connect to $(l:simple_networks)networks@! just like regular drawers, but don't support $(l:modifiers)modifiers@!. @p@Avoid using excessive amounts of these, as they have worse performance compared to regular drawers.",
+    {
+      "type": "patchouli:crafting",
+      "recipe": "extended_drawers_extensions:drawer_barrel_from_resin",
+      "recipe2": "extended_drawers_extensions:drawer_barrel_from_scrap"
+    }
+  ]
+}

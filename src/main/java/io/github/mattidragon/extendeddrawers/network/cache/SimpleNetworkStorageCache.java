@@ -7,7 +7,7 @@ import com.kneelawk.graphlib.api.graph.user.BlockNode;
 import com.kneelawk.graphlib.api.graph.user.LinkEntity;
 import com.kneelawk.graphlib.api.graph.user.NodeEntity;
 import com.kneelawk.graphlib.api.util.LinkPos;
-import io.github.mattidragon.extendeddrawers.block.entity.StorageDrawerBlockEntity;
+import io.github.mattidragon.extendeddrawers.block.entity.StorageProvidingDrawerBlockEntity;
 import io.github.mattidragon.extendeddrawers.storage.DrawerStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.base.CombinedStorage;
@@ -56,7 +56,7 @@ public class SimpleNetworkStorageCache implements NetworkStorageCache {
             context.getGraph()
                     .getNodes()
                     .forEach(node -> {
-                        if (node.getBlockEntity() instanceof StorageDrawerBlockEntity drawer) {
+                        if (node.getBlockEntity() instanceof StorageProvidingDrawerBlockEntity drawer) {
                             drawer.streamStorages().forEach(storage -> cachedStorage.parts.add(storage));
                         }
                     });

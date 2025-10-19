@@ -12,3 +12,10 @@ dependencies {
     implementation project(path: ":", configuration: "namedElements")
     datagenImplementation project(path: ":", configuration: "datagenElements")
 }
+
+// Apply datagen at runtime
+loom.mods.register("extended_drawers_extensions") {
+    sourceSet sourceSets.main
+    sourceSet sourceSets.client
+    modFiles.from file("src/main/generated")
+}

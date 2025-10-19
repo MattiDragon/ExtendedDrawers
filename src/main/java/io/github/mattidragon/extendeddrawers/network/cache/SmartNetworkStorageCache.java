@@ -9,7 +9,7 @@ import com.kneelawk.graphlib.api.graph.user.BlockNode;
 import com.kneelawk.graphlib.api.graph.user.LinkEntity;
 import com.kneelawk.graphlib.api.graph.user.NodeEntity;
 import com.kneelawk.graphlib.api.util.LinkPos;
-import io.github.mattidragon.extendeddrawers.block.entity.StorageDrawerBlockEntity;
+import io.github.mattidragon.extendeddrawers.block.entity.StorageProvidingDrawerBlockEntity;
 import io.github.mattidragon.extendeddrawers.network.node.CompactingDrawerBlockNode;
 import io.github.mattidragon.extendeddrawers.network.node.DrawerBlockNode;
 import io.github.mattidragon.extendeddrawers.storage.DrawerStorage;
@@ -43,7 +43,7 @@ public class SmartNetworkStorageCache implements NetworkStorageCache {
     public void update() {
         if (!missingPositions.isEmpty()) {
             missingPositions.forEach(pos -> {
-                if (context.getBlockWorld().getBlockEntity(pos) instanceof StorageDrawerBlockEntity drawer) {
+                if (context.getBlockWorld().getBlockEntity(pos) instanceof StorageProvidingDrawerBlockEntity drawer) {
                     drawer.streamStorages().forEach(storage -> {
                         cachedStorage.parts.add(storage);
                         positions.put(pos, storage);
