@@ -15,5 +15,6 @@ class ExtensionsBlockLootTableProvider extends FabricBlockLootTableProvider {
     @Override
     public void generate() {
         addDrop(ExtensionBlocks.DRAWER_BARREL);
+        addDrop(ExtensionBlocks.ENDER_CONNECTOR);
     }
 }

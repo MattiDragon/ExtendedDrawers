@@ -15,10 +15,12 @@ class ExtensionsRecipeGenerator extends RecipeGenerator {
 
     @Override
     public void generate() {
-        offerBarrelDrawerRecipe(exporter);
+        offerBarrelDrawerRecipes(exporter);
+        offerEnderConnectorRecipe(exporter);
+        offerLinkerRecipe(exporter);
     }
 
-    private void offerBarrelDrawerRecipe(RecipeExporter exporter) {
+    private void offerBarrelDrawerRecipes(RecipeExporter exporter) {
         createShaped(RecipeCategory.DECORATIONS, ExtensionItems.DRAWER_BARREL)
                 .input('B', Items.BARREL)
                 .input('L', ItemTags.LOGS)
@@ -37,5 +39,28 @@ class ExtensionsRecipeGenerator extends RecipeGenerator {
                 .pattern("LRL")
                 .criterion(hasItem(Items.BARREL), conditionsFromItem(Items.BARREL))
                 .offerTo(exporter, "drawer_barrel_from_scrap");
+    }
+
+    private void offerEnderConnectorRecipe(RecipeExporter exporter) {
+        createShaped(RecipeCategory.DECORATIONS, ExtensionItems.ENDER_CONNECTOR, 2)
+                .input('P', Items.ENDER_PEARL)
+                .input('C', Items.END_CRYSTAL)
+                .input('E', Items.END_STONE_BRICKS)
+                .pattern("PEP")
+                .pattern("ECE")
+                .pattern("PEP")
+                .criterion(hasItem(Items.END_STONE_BRICKS), conditionsFromItem(Items.END_STONE_BRICKS))
+                .offerTo(exporter);
+    }
+
+    private void offerLinkerRecipe(RecipeExporter exporter) {
+        createShaped(RecipeCategory.TOOLS, ExtensionItems.ENDER_CONNECTOR_LINKER)
+                .input('|', Items.BLAZE_ROD)
+                .input('E', Items.ENDER_EYE)
+                .pattern("E")
+                .pattern("|")
+                .pattern("|")
+                .criterion(hasItem(Items.END_STONE_BRICKS), conditionsFromItem(Items.END_STONE_BRICKS))
+                .offerTo(exporter);
     }
 }

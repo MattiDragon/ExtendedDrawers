@@ -1,3 +1,9 @@
 {
-  "block.extended_drawers_extensions.drawer_barrel": "Drawer Barrel"
+  "block.extended_drawers_extensions.drawer_barrel": "Drawer Barrel",
+  "block.extended_drawers_extensions.ender_connector": "Ender Connector",
+  "item.extended_drawers_extensions.ender_connector_linker": "Ender Connector Linker",
+  "item.extended_drawers_extensions.ender_connector_linker.linking": "Linking with ender connector at %s",
+  "item.extended_drawers_extensions.ender_connector_linker.linking_success": "Ender connectors linked",
+  "item.extended_drawers_extensions.ender_connector_linker.linking_clear": "Linking aborted",
+  "item.extended_drawers_extensions.ender_connector_linker.unlink_success": "Ender connectors unlinked"
 }

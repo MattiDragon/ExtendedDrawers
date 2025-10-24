@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "E": "minecraft:ender_eye",
+    "|": "minecraft:blaze_rod"
+  },
+  "pattern": [
+    "E",
+    "|",
+    "|"
+  ],
+  "result": {
+    "count": 1,
+    "id": "extended_drawers_extensions:ender_connector_linker"
+  }
+}

@@ -17,6 +17,7 @@ class ExtensionsBlockTagProvider extends FabricTagProvider.BlockTagProvider {
     @Override
     protected void configure(RegistryWrapper.WrapperLookup arg) {
         valueLookupBuilder(ModTags.BlockTags.DRAWERS).add(ExtensionBlocks.DRAWER_BARREL);
+        valueLookupBuilder(ModTags.BlockTags.NETWORK_COMPONENTS).add(ExtensionBlocks.ENDER_CONNECTOR);
 
         valueLookupBuilder(BlockTags.AXE_MINEABLE).add(ExtensionBlocks.DRAWER_BARREL);
     }

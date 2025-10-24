@@ -2,6 +2,7 @@ package io.github.mattidragon.extendeddrawers.extensions.datagen;
 
 import io.github.mattidragon.extendeddrawers.ExtendedDrawers;
 import io.github.mattidragon.extendeddrawers.extensions.registry.ExtensionBlocks;
+import io.github.mattidragon.extendeddrawers.extensions.registry.ExtensionItems;
 import net.fabricmc.fabric.api.client.datagen.v1.provider.FabricModelProvider;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.minecraft.block.Blocks;
@@ -26,10 +27,12 @@ class ExtensionsModelProvider extends FabricModelProvider {
     @Override
     public void generateBlockStateModels(BlockStateModelGenerator generator) {
         registerDrawerBarrel(generator);
+        generator.registerSimpleState(ExtensionBlocks.ENDER_CONNECTOR);
     }
 
     @Override
     public void generateItemModels(ItemModelGenerator generator) {
+        generator.register(ExtensionItems.ENDER_CONNECTOR_LINKER, Models.HANDHELD);
     }
 
     private void registerDrawerBarrel(BlockStateModelGenerator generator) {

@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "extended_drawers_extensions:block/ender_connector"
+    }
+  }
+}
