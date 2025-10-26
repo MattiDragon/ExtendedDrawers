@@ -1,0 +1,28 @@
+[versions]
+fabric-loom = "1.11-SNAPSHOT"
+mod-publish-plugin = "1.1.0"
+minecraft = "1.21.9"
+yarn = "1.21.9+build.1"
+fabric-loader = "0.17.2"
+fabric-api = "0.133.14+1.21.9"
+graphlib = "2.0.3-beta.0.patbox.test+1.21.9"
+patchouli = "1.20.1-81-FABRIC"
+yacl = "3.8.0+1.21.9-fabric"
+modmenu = "16.0.0-rc.1"
+configtoolkit = "1.1.2"
+
+[libraries]
+minecraft = { module = "com.mojang:minecraft", version.ref = "minecraft" }
+yarn = { module = "net.fabricmc:yarn", version.ref = "yarn" }
+fabric-loader = { module = "net.fabricmc:fabric-loader", version.ref = "fabric-loader" }
+fabric-api = { module = "net.fabricmc.fabric-api:fabric-api", version.ref = "fabric-api" }
+graphlib-core = { module = "com.kneelawk.graphlib:graphlib-core-fabric", version.ref = "graphlib" }
+graphlib-debugrender = { module = "com.kneelawk.graphlib:graphlib-debugrender-fabric", version.ref = "graphlib" }
+configtoolkit = { module = "dev.mattidragon:ConfigToolkit", version.ref = "configtoolkit" }
+yacl = { module = "dev.isxander:yet-another-config-lib", version.ref = "yacl" }
+modmenu = { module = "com.terraformersmc:modmenu", version.ref = "modmenu" }
+patchouli = { module = "vazkii.patchouli:Patchouli", version.ref = "patchouli" }
+
+[plugins]
+fabric-loom = { id = "fabric-loom", version.ref = "fabric-loom" }
+mod-publish = { id = "me.modmuss50.mod-publish-plugin", version.ref = "mod-publish-plugin" }
