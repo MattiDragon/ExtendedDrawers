@@ -52,7 +52,7 @@ class DrawersModelProvider extends FabricModelProvider {
                 VariantsBlockModelDefinitionCreator.of(
                                 ModBlocks.SHADOW_DRAWER,
                                 BlockStateModelGenerator.createWeightedVariant(modelId))
-                        .coordinate(getBlockStateMap()));
+                        .apply(getBlockStateMap()));
     }
 
     private void generateCompactingDrawerModel(BlockStateModelGenerator generator) {
@@ -60,14 +60,14 @@ class DrawersModelProvider extends FabricModelProvider {
                 VariantsBlockModelDefinitionCreator.of(
                                 ModBlocks.COMPACTING_DRAWER,
                                 BlockStateModelGenerator.createWeightedVariant(id("block/compacting_drawer")))
-                        .coordinate(getBlockStateMap()));
+                        .apply(getBlockStateMap()));
     }
 
     private void registerDrawerModel(Block block, BlockStateModelGenerator generator) {
         var template = new Model(Optional.of(id("drawer_template")), Optional.empty(), TextureKey.FRONT);
 
         var model = template.upload(block, TextureMap.of(TextureKey.FRONT, ModelIds.getBlockModelId(block)), generator.modelCollector);
-        generator.blockStateCollector.accept(VariantsBlockModelDefinitionCreator.of(block, BlockStateModelGenerator.createWeightedVariant(model)).coordinate(getBlockStateMap()));
+        generator.blockStateCollector.accept(VariantsBlockModelDefinitionCreator.of(block, BlockStateModelGenerator.createWeightedVariant(model)).apply(getBlockStateMap()));
     }
 
     private static BlockStateVariantMap<ModelVariantOperator> getBlockStateMap() {
