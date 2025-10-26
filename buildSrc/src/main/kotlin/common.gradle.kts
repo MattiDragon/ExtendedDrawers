@@ -109,10 +109,12 @@ publishMods {
         projectDescription = providers.environmentVariable("SYNC_DESCRIPTION")
             .filter { it.lowercase(Locale.ROOT) == "true" }
             .flatMap { providers.fileContents(layout.projectDirectory.file("README.md")).asText }
+        minecraftVersions.add(libs.versions.minecraft.get())
     }
 
     curseforge {
         accessToken.set(providers.environmentVariable("CURSEFORGE_TOKEN"))
+        minecraftVersions.add(libs.versions.minecraft.get())
     }
 
     github {
