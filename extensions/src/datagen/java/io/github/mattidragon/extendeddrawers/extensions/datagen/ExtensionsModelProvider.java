@@ -66,7 +66,7 @@ class ExtensionsModelProvider extends FabricModelProvider {
         generator.blockStateCollector.accept(
                 VariantsBlockModelDefinitionCreator.of(block)
                         .with(BlockStateVariantMap.models(Properties.OPEN).register(false, closedVariant).register(true, openVariant))
-                        .coordinate(UP_DEFAULT_ROTATION_OPERATIONS)
+                        .apply(UP_DEFAULT_ROTATION_OPERATIONS)
         );
     }
 }
