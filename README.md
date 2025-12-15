@@ -15,7 +15,8 @@ overpowered storage systems using simple components.
 ## Features
 ### In-game Guide Book
 Crafted by combining a book with and upgrade frame, the guide book will explain in more detail how the mod works.
-**[Patchouli](https://modrinth.com/mod/patchouli) is required for the guide book to load ingame!**
+**[Patchouli](https://modrinth.com/mod/patchouli) is required for the guide book to load ingame! 
+The book is only available on versions supported by them.**
 
 ### Drawers
 Drawers are blocks that can store a lot of a few items and come in three variants: single-, double- and quad-slot. 
@@ -44,7 +45,7 @@ They apply to individual slots and not the whole drawer, unlike other mods.
 
 ### Locking
 You can use a lock on drawers to make them keep their selected item even when empty.
-This makes sure you don't lose your organisation when you remove items and allows you to block automation from filling up empty drawers.
+This makes sure you don't lose your organization when you remove items and allows you to block automation from filling up empty drawers.
 
 ### Voiding mode
 If sneak clicked with a lava bucket, drawers will start voiding excess items. 
@@ -58,6 +59,10 @@ Applied by sneaking and using black dye or ink sacs on drawers.
 ### Duping mode
 As for 1.20, you can use a by default unobtainable dupe wand to toggle duping mode on drawers.
 They will continue to provide items even when empty. Voiding mode must still be applied separately.
+
+### Addon
+Some features, which have been deemed to powerful or otherwise unsuited to the main mod,
+are available as an [official addon](https://modrinth.com/mod/gDfTLxwP).
 
 ## Customization
 Extended drawers offers two main ways to customize the experience: the configs and datapacks.
@@ -110,7 +115,7 @@ Any other sites are third-party reuploads and should not be trusted.
 ### Porting and Forking
 You can read my policy on [forking and porting mods](https://gist.github.com/MattiDragon/6b9e71e8516447f53f0d5fb296ab8868).
 
-Current target: 1.21.10.
+Current target: 1.21.11.
 
 ### Incompatibilities
 I intend to try and stay compatible with as many mods as possible, but might abandon support for some if it becomes too hard.

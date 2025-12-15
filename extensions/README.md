@@ -38,7 +38,7 @@ Any other sites are third-party reuploads and should not be trusted.
 ### Porting and Forking
 You can read my policy on [forking and porting mods](https://gist.github.com/MattiDragon/6b9e71e8516447f53f0d5fb296ab8868).
 
-Current target: 1.21.10.
+Current target: 1.21.11.
 
 ### Incompatibilities
 I intend to try and stay compatible with as many mods as possible, but might abandon support for some if it becomes too hard.
