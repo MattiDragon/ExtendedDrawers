@@ -54,9 +54,9 @@ public class ShadowDrawerBlockEntityRenderer extends AbstractDrawerBlockEntityRe
 
         var config = ExtendedDrawers.CONFIG.get().client().icons();
         @SuppressWarnings("deprecation")
-        var blockAtlas = SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE;
+        var atlas = SpriteAtlasTexture.ITEMS_ATLAS_TEXTURE;
         var icons = state.isHidden
-                ? List.of(new SpriteIdentifier(blockAtlas, config.hiddenIcon()))
+                ? List.of(new SpriteIdentifier(atlas, config.hiddenIcon()))
                 : List.<SpriteIdentifier>of();
 
         renderSlot(state.item, amount, false, state.isHidden, icons, matrices, queue, cameraState, state.lightmapCoordinates, state.pos);

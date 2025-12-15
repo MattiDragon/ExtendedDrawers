@@ -24,12 +24,12 @@ import net.minecraft.util.dynamic.Codecs;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
-import org.joml.Vector3f;
+import org.joml.Vector3fc;
 
 import java.util.List;
 
 public class EnderConnectorBlockEntity extends BlockEntity {
-    private List<Vector3f> rayDirectionCache = List.of();
+    private List<Vector3fc> rayDirectionCache = List.of();
 
     public EnderConnectorBlockEntity(BlockPos pos, BlockState state) {
         super(ExtensionBlocks.ENDER_CONNECTOR_ENTITY, pos, state);
@@ -81,11 +81,11 @@ public class EnderConnectorBlockEntity extends BlockEntity {
         rayDirectionCache = self.getConnectionsOfType(EnderConnectorLinkKey.class)
                 .map(holder -> holder.other(self).getBlockPos().toCenterPos())
                 .map(pos1 -> pos1.subtract(centerPos).toVector3f())
-                .map(pos1 -> pos1.lengthSquared() > (6 * 6) ? pos1.normalize(3) : pos1.mul(0.5f))
+                .<Vector3fc>map(pos1 -> pos1.lengthSquared() > (6 * 6) ? pos1.normalize(3) : pos1.mul(0.5f))
                 .toList();
     }
 
-    public List<Vector3f> rayDirectionCache() {
+    public List<Vector3fc> rayDirectionCache() {
         return rayDirectionCache;
     }
 }

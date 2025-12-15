@@ -101,14 +101,14 @@ public class DrawerBlockEntityRenderer extends AbstractDrawerBlockEntityRenderer
         var icons = new ArrayList<SpriteIdentifier>();
         var config = ExtendedDrawers.CONFIG.get().client().icons();
         @SuppressWarnings("deprecation")
-        var blockAtlas = SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE;
+        var atlas = SpriteAtlasTexture.ITEMS_ATLAS_TEXTURE;
         
-        if (slotState.isLocked) icons.add(new SpriteIdentifier(blockAtlas, config.lockedIcon()));
-        if (slotState.isVoiding) icons.add(new SpriteIdentifier(blockAtlas, config.voidingIcon()));
-        if (slotState.isHidden) icons.add(new SpriteIdentifier(blockAtlas, config.hiddenIcon()));
-        if (slotState.isDuping) icons.add(new SpriteIdentifier(blockAtlas, config.dupingIcon()));
-        if (slotState.upgrade != null) icons.add(new SpriteIdentifier(blockAtlas, slotState.upgrade.sprite));
-        if (slotState.hasLimiter) icons.add(new SpriteIdentifier(blockAtlas, ExtendedDrawers.id("item/limiter")));
+        if (slotState.isLocked) icons.add(new SpriteIdentifier(atlas, config.lockedIcon()));
+        if (slotState.isVoiding) icons.add(new SpriteIdentifier(atlas, config.voidingIcon()));
+        if (slotState.isHidden) icons.add(new SpriteIdentifier(atlas, config.hiddenIcon()));
+        if (slotState.isDuping) icons.add(new SpriteIdentifier(atlas, config.dupingIcon()));
+        if (slotState.upgrade != null) icons.add(new SpriteIdentifier(atlas, slotState.upgrade.sprite));
+        if (slotState.hasLimiter) icons.add(new SpriteIdentifier(atlas, ExtendedDrawers.id("item/limiter")));
 
         String amount = String.valueOf(slotState.amount);
         if ((slotState.amount == 0) && !ExtendedDrawers.CONFIG.get().client().displayEmptyCount())

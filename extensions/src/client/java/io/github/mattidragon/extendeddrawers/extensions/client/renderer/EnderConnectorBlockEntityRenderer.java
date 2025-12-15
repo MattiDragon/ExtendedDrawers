@@ -4,7 +4,7 @@ import io.github.mattidragon.extendeddrawers.extensions.ExtendedDrawersExtension
 import io.github.mattidragon.extendeddrawers.extensions.block.entity.EnderConnectorBlockEntity;
 import io.github.mattidragon.extendeddrawers.extensions.client.renderer.state.EnderConnectorRenderState;
 import net.minecraft.client.render.OverlayTexture;
-import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.render.RenderLayers;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.block.entity.BlockEntityRenderer;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
@@ -54,7 +54,7 @@ public class EnderConnectorBlockEntityRenderer implements BlockEntityRenderer<En
             matrices.multiply(RotationAxis.POSITIVE_Y.rotation(yaw));
             matrices.multiply(RotationAxis.POSITIVE_X.rotation(-pitch));
 
-            queue.submitCustom(matrices, RenderLayer.getEntityTranslucent(TEXTURE_ID), (matricesEntry, vertexConsumer) -> {
+            queue.submitCustom(matrices, RenderLayers.entityTranslucent(TEXTURE_ID), (matricesEntry, vertexConsumer) -> {
                 quad(matricesEntry, vertexConsumer, light, length, -0.1f, 0.1f, 0.1f, 0.1f, new Vector3f(0, 1, 0));
                 quad(matricesEntry, vertexConsumer, light, length, -0.1f, 0.1f, -0.1f, -0.1f, new Vector3f(0, -1, 0));
                 quad(matricesEntry, vertexConsumer, light, length, -0.1f, -0.1f, -0.1f, 0.1f, new Vector3f(-1, 0, 0));

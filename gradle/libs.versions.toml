@@ -1,14 +1,14 @@
 [versions]
-fabric-loom = "1.11-SNAPSHOT"
+fabric-loom = "1.14-SNAPSHOT"
 mod-publish-plugin = "1.1.0"
-minecraft = "1.21.10"
-yarn = "1.21.10+build.2"
-fabric-loader = "0.17.3"
-fabric-api = "0.136.0+1.21.10"
-graphlib = "2.0.3-beta.0.patbox.test+1.21.9"
+minecraft = "1.21.11"
+yarn = "1.21.11+build.3"
+fabric-loader = "0.18.2"
+fabric-api = "0.139.5+1.21.11"
+graphlib = "2.0.3-beta.0.patbox+1.21.11"
 patchouli = "1.20.1-81-FABRIC"
-yacl = "3.8.0+1.21.9-fabric"
-modmenu = "16.0.0-rc.1"
+yacl = "3.8.1+1.21.11-fabric"
+modmenu = "17.0.0-alpha.1"
 configtoolkit = "1.1.2"
 
 [libraries]
@@ -24,5 +24,5 @@ modmenu = { module = "com.terraformersmc:modmenu", version.ref = "modmenu" }
 patchouli = { module = "vazkii.patchouli:Patchouli", version.ref = "patchouli" }
 
 [plugins]
-fabric-loom = { id = "fabric-loom", version.ref = "fabric-loom" }
+fabric-loom = { id = "net.fabricmc.fabric-loom", version.ref = "fabric-loom" }
 mod-publish = { id = "me.modmuss50.mod-publish-plugin", version.ref = "mod-publish-plugin" }

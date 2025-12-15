@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import io.github.mattidragon.extendeddrawers.compacting.CompressionOverrideLoader;
 import io.github.mattidragon.extendeddrawers.compacting.ServerCompressionRecipeManager;
+import net.minecraft.command.permission.PermissionPredicate;
 import net.minecraft.recipe.ServerRecipeManager;
 import net.minecraft.registry.CombinedDynamicRegistries;
 import net.minecraft.registry.Registry;
@@ -31,7 +32,7 @@ public class DataPackContentsMixin {
     private CompressionOverrideLoader extended_drawers$compressionOverrideLoader;
 
     @Inject(method = "<init>", at = @At("TAIL"))
-    private void extend_drawers$setupCompressionOverrideLoader(CombinedDynamicRegistries<ServerDynamicRegistryType> dynamicRegistries, RegistryWrapper.WrapperLookup registries, FeatureSet enabledFeatures, CommandManager.RegistrationEnvironment environment, List<Registry.PendingTagLoad<?>> pendingTagLoads, int functionPermissionLevel, CallbackInfo ci) {
+    private void extend_drawers$setupCompressionOverrideLoader(CombinedDynamicRegistries<ServerDynamicRegistryType> dynamicRegistries, RegistryWrapper.WrapperLookup registries, FeatureSet enabledFeatures, CommandManager.RegistrationEnvironment environment, List<Registry.PendingTagLoad<?>> pendingTagLoads, PermissionPredicate permissions, CallbackInfo ci) {
         extended_drawers$compressionOverrideLoader = new CompressionOverrideLoader(ServerCompressionRecipeManager.of(recipeManager));
     }
 

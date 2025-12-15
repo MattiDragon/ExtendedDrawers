@@ -8,7 +8,7 @@ import net.minecraft.block.enums.BlockFace;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.item.ItemModelManager;
 import net.minecraft.client.render.OverlayTexture;
-import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.render.RenderLayers;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.WorldRenderer;
 import net.minecraft.client.render.block.entity.BlockEntityRenderer;
@@ -101,7 +101,7 @@ public abstract class AbstractDrawerBlockEntityRenderer<T extends BlockEntity, S
         var spriteId = new SpriteIdentifier(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE, ExtendedDrawers.id("block/drawer_hidden_overlay"));
         var sprite = spriteHolder.getSprite(spriteId);
 
-        queue.submitCustom(matrices, RenderLayer.getCutout(), (matricesEntry, vertexConsumer) ->
+        queue.submitCustom(matrices, RenderLayers.cutout(), (matricesEntry, vertexConsumer) ->
                 renderIcon(sprite, light, matricesEntry, vertexConsumer));
 
         matrices.pop();
@@ -131,7 +131,7 @@ public abstract class AbstractDrawerBlockEntityRenderer<T extends BlockEntity, S
             matrices.scale(0.25f, 0.25f, 0.25f);
 
             var sprite = spriteHolder.getSprite(icon);
-            queue.submitCustom(matrices, RenderLayer.getCutout(), (matricesEntry, vertexConsumer) ->
+            queue.submitCustom(matrices, RenderLayers.entityCutout(sprite.getAtlasId()), (matricesEntry, vertexConsumer) ->
                     renderIcon(sprite, light, matricesEntry, vertexConsumer));
 
             matrices.pop();

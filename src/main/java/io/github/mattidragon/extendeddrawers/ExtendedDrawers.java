@@ -14,8 +14,8 @@ import io.github.mattidragon.extendeddrawers.registry.ModRecipes;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
-import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
-import net.fabricmc.fabric.api.resource.ResourcePackActivationType;
+import net.fabricmc.fabric.api.resource.v1.ResourceLoader;
+import net.fabricmc.fabric.api.resource.v1.pack.PackActivationType;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
 import net.minecraft.registry.Registries;
@@ -51,14 +51,14 @@ public class ExtendedDrawers implements ModInitializer {
         CompressionRecipeSyncPayload.register();
         SetLimiterLimitPayload.register();
         DrawerCacheCommand.register();
-        ResourceManagerHelper.registerBuiltinResourcePack(id("alt"), MOD_CONTAINER, Text.translatable("resourcepack.extended_drawers.alt"), ResourcePackActivationType.NORMAL);
-        ResourceManagerHelper.registerBuiltinResourcePack(id("dev"), MOD_CONTAINER, Text.translatable("resourcepack.extended_drawers.programmer_art"), ResourcePackActivationType.NORMAL);
+        ResourceLoader.registerBuiltinPack(id("alt"), MOD_CONTAINER, Text.translatable("resourcepack.extended_drawers.alt"), PackActivationType.NORMAL);
+        ResourceLoader.registerBuiltinPack(id("dev"), MOD_CONTAINER, Text.translatable("resourcepack.extended_drawers.programmer_art"), PackActivationType.NORMAL);
     }
 
     private static void registerCommand() {
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
             var root = CommandManager.literal("extended_drawers")
-                    .requires(source -> source.hasPermissionLevel(2));
+                    .requires(CommandManager.requirePermissionLevel(CommandManager.ADMINS_CHECK));
 
             root.then(CommandManager.literal("reload")
                     .executes(context -> {

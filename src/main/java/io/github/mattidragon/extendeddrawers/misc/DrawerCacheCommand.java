@@ -18,7 +18,7 @@ public class DrawerCacheCommand {
     public static void register() {
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
             dispatcher.register(CommandManager.literal("drawercache")
-                    .requires(source -> source.hasPermissionLevel(2))
+                    .requires(CommandManager.requirePermissionLevel(CommandManager.GAMEMASTERS_CHECK))
                     .then(CommandManager.argument("pos", BlockPosArgumentType.blockPos())
                             .then(CommandManager.literal("print")
                                     .executes(context -> {

@@ -116,14 +116,14 @@ public class CompactingDrawerBlockEntityRenderer extends AbstractDrawerBlockEnti
         var icons = new ArrayList<SpriteIdentifier>();
         var config = ExtendedDrawers.CONFIG.get().client().icons();
         @SuppressWarnings("deprecation")
-        var blockAtlas = SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE;
+        var atlas = SpriteAtlasTexture.ITEMS_ATLAS_TEXTURE;
 
-        if (state.isLocked) icons.add(new SpriteIdentifier(blockAtlas, config.lockedIcon()));
-        if (state.isVoiding) icons.add(new SpriteIdentifier(blockAtlas, config.voidingIcon()));
-        if (state.isHidden) icons.add(new SpriteIdentifier(blockAtlas, config.hiddenIcon()));
-        if (state.isDuping) icons.add(new SpriteIdentifier(blockAtlas, config.dupingIcon()));
-        if (state.upgrade != null) icons.add(new SpriteIdentifier(blockAtlas, state.upgrade.sprite));
-        if (state.hasLimiter) icons.add(new SpriteIdentifier(blockAtlas, ExtendedDrawers.id("item/limiter")));
+        if (state.isLocked) icons.add(new SpriteIdentifier(atlas, config.lockedIcon()));
+        if (state.isVoiding) icons.add(new SpriteIdentifier(atlas, config.voidingIcon()));
+        if (state.isHidden) icons.add(new SpriteIdentifier(atlas, config.hiddenIcon()));
+        if (state.isDuping) icons.add(new SpriteIdentifier(atlas, config.dupingIcon()));
+        if (state.upgrade != null) icons.add(new SpriteIdentifier(atlas, state.upgrade.sprite));
+        if (state.hasLimiter) icons.add(new SpriteIdentifier(atlas, ExtendedDrawers.id("item/limiter")));
 
         var playerPos = cameraState.entityPos;
         if (state.pos.isWithinDistance(playerPos, ExtendedDrawers.CONFIG.get().client().iconRenderDistance())) {
