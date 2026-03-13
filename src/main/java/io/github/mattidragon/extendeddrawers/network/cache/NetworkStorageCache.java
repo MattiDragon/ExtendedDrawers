@@ -6,7 +6,7 @@ import com.kneelawk.graphlib.api.graph.user.GraphEntityType;
 import io.github.mattidragon.extendeddrawers.network.NetworkRegistry;
 import io.github.mattidragon.extendeddrawers.storage.DrawerStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
-import net.fabricmc.fabric.api.transfer.v1.storage.base.CombinedStorage;
+import net.fabricmc.fabric.api.transfer.v1.storage.base.CombinedSlottedStorage;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
@@ -19,16 +19,16 @@ public interface NetworkStorageCache extends GraphEntity<NetworkStorageCache> {
     /**
      * Helper to easily get the cached storage from a world and pos.
      */
-    static CombinedStorage<ItemVariant, DrawerStorage> get(ServerWorld world, BlockPos pos) {
+    static CombinedSlottedStorage<ItemVariant, DrawerStorage> get(ServerWorld world, BlockPos pos) {
         return NetworkRegistry.UNIVERSE.getGraphWorld(world)
                 .getLoadedGraphsAt(pos)
                 .map(graph -> graph.getGraphEntity(NetworkRegistry.STORAGE_CACHE_TYPE))
                 .map(NetworkStorageCache::get)
                 .findFirst()
-                .orElseGet(() -> new CombinedStorage<>(new ArrayList<>()));
+                .orElseGet(() -> new CombinedSlottedStorage<>(new ArrayList<>()));
     }
 
-    CombinedStorage<ItemVariant, DrawerStorage> get();
+    CombinedSlottedStorage<ItemVariant, DrawerStorage> get();
 
     void update();
 

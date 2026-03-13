@@ -10,7 +10,7 @@ import com.kneelawk.graphlib.api.util.LinkPos;
 import io.github.mattidragon.extendeddrawers.block.entity.StorageProvidingDrawerBlockEntity;
 import io.github.mattidragon.extendeddrawers.storage.DrawerStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
-import net.fabricmc.fabric.api.transfer.v1.storage.base.CombinedStorage;
+import net.fabricmc.fabric.api.transfer.v1.storage.base.CombinedSlottedStorage;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
@@ -27,7 +27,7 @@ import java.util.Map;
 public class SimpleNetworkStorageCache implements NetworkStorageCache {
     private GraphEntityContext context;
     @Nullable
-    private CombinedStorage<ItemVariant, DrawerStorage> cachedStorage = null;
+    private CombinedSlottedStorage<ItemVariant, DrawerStorage> cachedStorage = null;
     /**
      * Stores if an update is currently in progress.
      * This is required as the block entity query in the update can trigger a cancelRemoval call on the block entity which in turn results in a clear which breaks the update.
@@ -36,7 +36,7 @@ public class SimpleNetworkStorageCache implements NetworkStorageCache {
     private boolean updating = false;
 
     @Override
-    public CombinedStorage<ItemVariant, DrawerStorage> get() {
+    public CombinedSlottedStorage<ItemVariant, DrawerStorage> get() {
         if (cachedStorage == null) update();
         return cachedStorage;
     }
@@ -52,7 +52,7 @@ public class SimpleNetworkStorageCache implements NetworkStorageCache {
     public void update() {
         try {
             updating = true;
-            cachedStorage = new CombinedStorage<>(new ArrayList<>());
+            cachedStorage = new CombinedSlottedStorage<>(new ArrayList<>());
             context.getGraph()
                     .getNodes()
                     .forEach(node -> {

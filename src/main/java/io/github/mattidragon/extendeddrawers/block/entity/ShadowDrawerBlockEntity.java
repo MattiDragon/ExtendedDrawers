@@ -3,6 +3,7 @@ package io.github.mattidragon.extendeddrawers.block.entity;
 import io.github.mattidragon.extendeddrawers.ExtendedDrawers;
 import io.github.mattidragon.extendeddrawers.network.cache.NetworkStorageCache;
 import io.github.mattidragon.extendeddrawers.registry.ModBlocks;
+import io.github.mattidragon.extendeddrawers.storage.DrawerSlot;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
@@ -24,27 +25,28 @@ import net.minecraft.util.math.BlockPos;
 
 public class ShadowDrawerBlockEntity extends BlockEntity {
     public static final long INFINITE_COUNT_MARKER = -2;
+
+    static {
+        ItemStorage.SIDED.registerForBlockEntity((drawer, dir) -> drawer.world instanceof ServerWorld serverWorld ? createStorage(serverWorld, drawer.pos) : Storage.empty(), ModBlocks.SHADOW_DRAWER_BLOCK_ENTITY);
+    }
+
     public ItemVariant item = ItemVariant.blank();
     /**
      * Stores the amount of items currently available. On the server this is a cache and on the client it stores the number synced from the server.
      */
     public long countCache = -1;
     private boolean hidden = false;
-    
+
     public ShadowDrawerBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlocks.SHADOW_DRAWER_BLOCK_ENTITY, pos, state);
     }
-    
-    static {
-        ItemStorage.SIDED.registerForBlockEntity((drawer, dir) -> drawer.world instanceof ServerWorld serverWorld ? createStorage(serverWorld, drawer.pos) : Storage.empty(), ModBlocks.SHADOW_DRAWER_BLOCK_ENTITY);
-    }
-    
+
     private static Storage<ItemVariant> createStorage(ServerWorld world, BlockPos pos) {
         if (!(world.getBlockEntity(pos) instanceof ShadowDrawerBlockEntity shadowDrawer)) throw new IllegalStateException();
-        
+
         return shadowDrawer.new ShadowDrawerStorage(NetworkStorageCache.get(world, pos));
     }
-    
+
     public void recalculateContents() {
         if (world == null) return;
 
@@ -52,9 +54,9 @@ public class ShadowDrawerBlockEntity extends BlockEntity {
             var storage = NetworkStorageCache.get(world, pos);
             long amount = 0L;
             outer:
-            for (var slot : storage.parts) {
+            for (var slot : storage.getSlots()) {
                 for (var view : slot) {
-                    if (slot.isDuping()) {
+                    if (((DrawerSlot) slot).isDuping()) {
                         amount = INFINITE_COUNT_MARKER;
                         break outer;
                     }
@@ -69,12 +71,12 @@ public class ShadowDrawerBlockEntity extends BlockEntity {
         world.updateListeners(pos, state, state, Block.NOTIFY_LISTENERS);
         world.updateComparators(pos, state.getBlock());
     }
-    
+
     @Override
     public Packet<ClientPlayPacketListener> toUpdatePacket() {
         return BlockEntityUpdateS2CPacket.create(this);
     }
-    
+
     @Override
     public NbtCompound toInitialChunkDataNbt(RegistryWrapper.WrapperLookup registries) {
         try (var logging = new ErrorReporter.Logging(this.getReporterContext(), ExtendedDrawers.LOGGER)) {
@@ -114,12 +116,12 @@ public class ShadowDrawerBlockEntity extends BlockEntity {
         public ShadowDrawerStorage(Storage<ItemVariant> backingStorage) {
             super(backingStorage);
         }
-    
+
         @Override
         protected boolean canInsert(ItemVariant resource) {
             return resource.isBlank() || resource.equals(item);
         }
-    
+
         @Override
         protected boolean canExtract(ItemVariant resource) {
             return resource.equals(item);

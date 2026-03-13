@@ -1,10 +1,11 @@
 package io.github.mattidragon.extendeddrawers.storage;
 
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
+import net.fabricmc.fabric.api.transfer.v1.storage.SlottedStorage;
 import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
 import org.jetbrains.annotations.NotNull;
 
-public interface DrawerStorage extends Comparable<DrawerStorage>, Storage<ItemVariant> {
+public interface DrawerStorage extends Comparable<DrawerStorage>, Storage<ItemVariant>, SlottedStorage<ItemVariant> {
     boolean isBlank();
 
     @Override

@@ -5,7 +5,7 @@ import com.kneelawk.graphlib.api.graph.GraphEntityContext;
 import io.github.mattidragon.extendeddrawers.block.entity.StorageProvidingDrawerBlockEntity;
 import io.github.mattidragon.extendeddrawers.storage.DrawerStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
-import net.fabricmc.fabric.api.transfer.v1.storage.base.CombinedStorage;
+import net.fabricmc.fabric.api.transfer.v1.storage.base.CombinedSlottedStorage;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
@@ -19,8 +19,8 @@ public class NoOpNetworkStorageCache implements NetworkStorageCache {
     private GraphEntityContext context;
 
     @Override
-    public CombinedStorage<ItemVariant, DrawerStorage> get() {
-        return new CombinedStorage<>(context.getGraph()
+    public CombinedSlottedStorage<ItemVariant, DrawerStorage> get() {
+        return new CombinedSlottedStorage<>(context.getGraph()
                 .getNodes()
                 .<DrawerStorage>flatMap(node -> {
                     if (node.getBlockEntity() instanceof StorageProvidingDrawerBlockEntity drawer) {

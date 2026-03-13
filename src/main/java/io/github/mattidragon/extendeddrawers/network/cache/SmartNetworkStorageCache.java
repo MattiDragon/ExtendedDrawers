@@ -14,7 +14,7 @@ import io.github.mattidragon.extendeddrawers.network.node.CompactingDrawerBlockN
 import io.github.mattidragon.extendeddrawers.network.node.DrawerBlockNode;
 import io.github.mattidragon.extendeddrawers.storage.DrawerStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
-import net.fabricmc.fabric.api.transfer.v1.storage.base.CombinedStorage;
+import net.fabricmc.fabric.api.transfer.v1.storage.base.CombinedSlottedStorage;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
@@ -29,12 +29,12 @@ import java.util.function.Predicate;
  */
 public class SmartNetworkStorageCache implements NetworkStorageCache {
     private GraphEntityContext context;
-    private final CombinedStorage<ItemVariant, DrawerStorage> cachedStorage = new CombinedStorage<>(new ArrayList<>());
+    private final CombinedSlottedStorage<ItemVariant, DrawerStorage> cachedStorage = new CombinedSlottedStorage<>(new ArrayList<>());
     private final Multimap<BlockPos, DrawerStorage> positions = HashMultimap.create();
     private final Set<BlockPos> missingPositions = new HashSet<>();
 
     @Override
-    public CombinedStorage<ItemVariant, DrawerStorage> get() {
+    public CombinedSlottedStorage<ItemVariant, DrawerStorage> get() {
         update();
         return cachedStorage;
     }
