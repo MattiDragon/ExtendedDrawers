@@ -18,8 +18,7 @@ import net.fabricmc.fabric.api.transfer.v1.storage.base.CombinedStorage;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.Predicate;
@@ -28,6 +27,7 @@ import java.util.function.Predicate;
  * Caches storages of all slots in networks to make lookup less expensive.
  */
 public class SmartNetworkStorageCache implements NetworkStorageCache {
+    @SuppressWarnings("NotNullFieldNotInitialized")
     private GraphEntityContext context;
     private final CombinedStorage<ItemVariant, DrawerStorage> cachedStorage = new CombinedStorage<>(new ArrayList<>());
     private final Multimap<BlockPos, DrawerStorage> positions = HashMultimap.create();
@@ -61,24 +61,24 @@ public class SmartNetworkStorageCache implements NetworkStorageCache {
     }
 
     @Override
-    public void onInit(@NotNull GraphEntityContext context) {
+    public void onInit(GraphEntityContext context) {
         this.context = context;
         missingPositions.clear();
         context.getGraph().getNodes().map(NodeHolder::getBlockPos).filter(Predicate.not(positions::containsKey)).forEach(missingPositions::add);
     }
 
     @Override
-    public @NotNull GraphEntityContext getContext() {
+    public GraphEntityContext getContext() {
         return context;
     }
 
     @Override
-    public void onPostNodeCreated(@NotNull NodeHolder<BlockNode> node, @Nullable NodeEntity nodeEntity) {
+    public void onPostNodeCreated(NodeHolder<BlockNode> node, @Nullable NodeEntity nodeEntity) {
         missingPositions.add(node.getBlockPos());
     }
 
     @Override
-    public void onPostNodeDestroyed(@NotNull NodeHolder<BlockNode> node, @Nullable NodeEntity nodeEntity, Map<LinkPos, LinkEntity> linkEntities) {
+    public void onPostNodeDestroyed(NodeHolder<BlockNode> node, @Nullable NodeEntity nodeEntity, Map<LinkPos, LinkEntity> linkEntities) {
         var pos = node.getBlockPos();
 
         // Remove storages from cache
@@ -100,7 +100,7 @@ public class SmartNetworkStorageCache implements NetworkStorageCache {
     }
 
     @Override
-    public void merge(@NotNull NetworkStorageCache other) {
+    public void merge(NetworkStorageCache other) {
         if (!(other instanceof SmartNetworkStorageCache smart)) {
             forceUpdate();
         } else {
@@ -112,7 +112,7 @@ public class SmartNetworkStorageCache implements NetworkStorageCache {
     }
 
     @Override
-    public @NotNull SmartNetworkStorageCache split(@NotNull BlockGraph originalGraph, @NotNull BlockGraph newGraph) {
+    public SmartNetworkStorageCache split(BlockGraph originalGraph, BlockGraph newGraph) {
         var newCache = new SmartNetworkStorageCache();
 
         // Split position based storage cache

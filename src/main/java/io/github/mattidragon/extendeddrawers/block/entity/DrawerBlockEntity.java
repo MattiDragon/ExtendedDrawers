@@ -84,6 +84,7 @@ public class DrawerBlockEntity extends StorageDrawerBlockEntity {
     @Override
     public void preRemoveSideEffects(BlockPos pos, BlockState oldState) {
         if (!ExtendedDrawers.CONFIG.get().misc().drawersDropContentsOnBreak()) return;
+        if (level == null) return;
 
         for (var slot : storages) {
             ItemUtils.offerOrDropStacks(level, pos, null, null, slot.getResource(), slot.getAmount());

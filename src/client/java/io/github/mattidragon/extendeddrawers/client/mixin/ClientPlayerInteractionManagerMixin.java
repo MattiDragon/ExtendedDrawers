@@ -26,7 +26,7 @@ public class ClientPlayerInteractionManagerMixin {
     @Shadow @Final private Minecraft minecraft;
 
     // Makes creative block breaking behave like survival if we are blocking breaking of a drawer. The other injection handles complete blocking
-    @ModifyExpressionValue(method = {"startDestroyBlock", "continueDestroyBlock"}, at = @At(value = "FIELD", target = "Lnet/minecraft/world/entity/player/Abilities;instabuild:Z"))
+    @ModifyExpressionValue(method = {"startDestroyBlock", "continueDestroyBlock"}, at = @At(value = "FIELD", opcode = Opcodes.GETFIELD, target = "Lnet/minecraft/world/entity/player/Abilities;instabuild:Z"))
     private boolean extended_drawers$stopCreativeBreaking(boolean original, BlockPos pos, Direction direction) {
         var world = Minecraft.getInstance().level;
         if (world == null) return original;
@@ -50,11 +50,11 @@ public class ClientPlayerInteractionManagerMixin {
                     shift = At.Shift.AFTER,
                     ordinal = 0),
             slice = @Slice(from = @At(value = "INVOKE",
-                    target = "Lnet/minecraft/world/level/block/state/BlockState;calcBlockBreakingDelta(Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/core/BlockPos;)F")))
+                    target = "Lnet/minecraft/world/level/block/state/BlockState;getDestroyProgress(Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/core/BlockPos;)F")))
     private void extended_drawers$stopCreativeBreaking(BlockPos pos, Direction direction, CallbackInfoReturnable<Boolean> cir) {
         var world = connection.getLevel();
         var player = minecraft.player;
-        if (world == null || player == null || !player.isCreative()) return;
+        if (player == null || !player.isCreative()) return;
         var state = world.getBlockState(pos);
         if (!(state.getBlock() instanceof CreativeBreakBlocker blocker)) return;
 

@@ -4,7 +4,6 @@ import com.kneelawk.graphlib.api.graph.LinkHolder;
 import com.kneelawk.graphlib.api.graph.user.LinkKey;
 import com.kneelawk.graphlib.api.graph.user.LinkKeyType;
 import net.minecraft.resources.Identifier;
-import org.jetbrains.annotations.NotNull;
 
 import static io.github.mattidragon.extendeddrawers.extensions.ExtendedDrawersExtensions.id;
 
@@ -17,12 +16,12 @@ public class EnderConnectorLinkKey implements LinkKey {
     }
 
     @Override
-    public @NotNull LinkKeyType getType() {
+    public LinkKeyType getType() {
         return TYPE;
     }
 
     @Override
-    public boolean isAutomaticRemoval(@NotNull LinkHolder<LinkKey> holder) {
+    public boolean isAutomaticRemoval(LinkHolder<LinkKey> holder) {
         return false;
     }
 }

@@ -7,7 +7,6 @@ import io.github.mattidragon.extendeddrawers.extensions.block.entity.EnderConnec
 import io.github.mattidragon.extendeddrawers.network.node.DrawerNetworkBlockNode;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.Block;
-import org.jetbrains.annotations.NotNull;
 
 import static io.github.mattidragon.extendeddrawers.extensions.ExtendedDrawersExtensions.id;
 
@@ -17,12 +16,12 @@ public class EnderConnectorBlockNode implements DrawerNetworkBlockNode {
     public static final BlockNodeType TYPE = BlockNodeType.of(ID, () -> INSTANCE);
 
     @Override
-    public @NotNull BlockNodeType getType() {
+    public BlockNodeType getType() {
         return TYPE;
     }
 
     @Override
-    public void onConnectionsChanged(@NotNull NodeHolder<BlockNode> self) {
+    public void onConnectionsChanged(NodeHolder<BlockNode> self) {
         if (self.getBlockEntity() instanceof EnderConnectorBlockEntity entity) {
             entity.updateRayCache(self);
             entity.setChanged();

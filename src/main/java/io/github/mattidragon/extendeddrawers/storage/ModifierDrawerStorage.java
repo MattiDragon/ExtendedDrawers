@@ -2,6 +2,7 @@ package io.github.mattidragon.extendeddrawers.storage;
 
 import io.github.mattidragon.extendeddrawers.ExtendedDrawers;
 import io.github.mattidragon.extendeddrawers.block.entity.StorageDrawerBlockEntity;
+import io.github.mattidragon.extendeddrawers.component.DrawerSlotComponent;
 import io.github.mattidragon.extendeddrawers.component.LimiterLimitComponent;
 import io.github.mattidragon.extendeddrawers.item.LimiterItem;
 import io.github.mattidragon.extendeddrawers.item.UpgradeItem;
@@ -16,7 +17,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public interface ModifierDrawerStorage extends ModifierAccess, DrawerStorage {
     StorageDrawerBlockEntity getOwner();
@@ -184,5 +185,14 @@ public interface ModifierDrawerStorage extends ModifierAccess, DrawerStorage {
 
         boolean lockOverridden = false;
         boolean sortingDirty = false;
+
+        public void readComponent(DrawerSlotComponent component) {
+            upgrade = component.upgrade();
+            limiter = component.limiter();
+            locked = component.locked();
+            hidden = component.hidden();
+            voiding = component.voiding();
+            duping = component.duping();
+        }
     }
 }

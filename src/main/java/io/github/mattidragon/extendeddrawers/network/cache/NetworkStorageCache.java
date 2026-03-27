@@ -10,7 +10,6 @@ import net.fabricmc.fabric.api.transfer.v1.storage.base.CombinedStorage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,14 +39,13 @@ public interface NetworkStorageCache extends GraphEntity<NetworkStorageCache> {
 
     void onNodeReloaded(BlockPos pos);
 
-    @NotNull NetworkStorageCache split(@NotNull BlockGraph originalGraph, @NotNull BlockGraph newGraph);
+    NetworkStorageCache split(BlockGraph originalGraph, BlockGraph newGraph);
 
     List<Component> getDebugInfo();
 
     Component getDebugInfo(BlockPos pos);
 
     @Override
-    @NotNull
     default GraphEntityType<?> getType() {
         return NetworkRegistry.STORAGE_CACHE_TYPE;
     }

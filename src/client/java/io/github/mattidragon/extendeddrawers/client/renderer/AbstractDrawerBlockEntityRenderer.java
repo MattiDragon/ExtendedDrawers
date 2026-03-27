@@ -28,7 +28,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.properties.AttachFace;
 import net.minecraft.world.phys.Vec3;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 
@@ -51,7 +51,7 @@ public abstract class AbstractDrawerBlockEntityRenderer<T extends BlockEntity, S
     }
 
     @Override
-    public void extractRenderState(T blockEntity, S state, float tickProgress, Vec3 cameraPos, @Nullable ModelFeatureRenderer.CrumblingOverlay crumblingOverlay) {
+    public void extractRenderState(T blockEntity, S state, float tickProgress, Vec3 cameraPos, ModelFeatureRenderer.@Nullable CrumblingOverlay crumblingOverlay) {
         BlockEntityRenderer.super.extractRenderState(blockEntity, state, tickProgress, cameraPos, crumblingOverlay);
         var dir = StorageDrawerBlock.getFront(blockEntity.getBlockState());
         state.lightCoords = LevelRenderer.getLightColor(Objects.requireNonNull(blockEntity.getLevel()), blockEntity.getBlockPos().relative(dir));
@@ -71,7 +71,7 @@ public abstract class AbstractDrawerBlockEntityRenderer<T extends BlockEntity, S
 //        };
 //    }
 
-    public void renderSlot(ItemStackRenderState item, String amount, boolean small, boolean hidden, Collection<Material> icons, PoseStack matrices, SubmitNodeCollector queue, CameraRenderState cameraState, int light, BlockPos pos) {
+    public void renderSlot(ItemStackRenderState item, @Nullable String amount, boolean small, boolean hidden, Collection<Material> icons, PoseStack matrices, SubmitNodeCollector queue, CameraRenderState cameraState, int light, BlockPos pos) {
         var playerPos = cameraState.pos;
         var config = ExtendedDrawers.CONFIG.get().client();
 

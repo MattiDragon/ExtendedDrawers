@@ -6,9 +6,10 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import org.jspecify.annotations.Nullable;
 
 public class DrawerBlockEntityUtils {
-    public static void handleSlotChanged(boolean sortingChanged, Level world, BlockPos pos) {
+    public static void handleSlotChanged(boolean sortingChanged, @Nullable Level world, BlockPos pos) {
         if (!(world instanceof ServerLevel serverWorld)) return;
 
         var state = world.getBlockState(pos);
@@ -19,7 +20,7 @@ public class DrawerBlockEntityUtils {
         world.updateNeighbourForOutputSignal(pos, state.getBlock());
     }
 
-    public static void handleRemoved(Level world, BlockPos pos) {
+    public static void handleRemoved(@Nullable Level world, BlockPos pos) {
         if (!(world instanceof ServerLevel serverWorld)) return;
 
         NetworkRegistry.UNIVERSE.getGraphWorld(serverWorld)
@@ -28,7 +29,7 @@ public class DrawerBlockEntityUtils {
                 .forEach(cache -> cache.onNodeUnloaded(pos));
     }
 
-    public static void handleRemovalCancelled(Level world, BlockPos pos) {
+    public static void handleRemovalCancelled(@Nullable Level world, BlockPos pos) {
         if (!(world instanceof ServerLevel serverWorld)) return;
 
         NetworkRegistry.UNIVERSE.getGraphWorld(serverWorld)

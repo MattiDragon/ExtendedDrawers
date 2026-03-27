@@ -7,7 +7,7 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public class ItemUtils {
     public static void offerOrDropStacks(Level world, BlockPos pos, @Nullable Direction side, @Nullable Player player, ItemVariant item, long amount) {

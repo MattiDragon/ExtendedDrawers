@@ -4,5 +4,5 @@ import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
 
 public class DrawerRenderState extends BlockEntityRenderState {
     public int slotCount;
-    public DrawerSlotRenderState[] slots;
+    public DrawerSlotRenderState[] slots = new DrawerSlotRenderState[0];
 }

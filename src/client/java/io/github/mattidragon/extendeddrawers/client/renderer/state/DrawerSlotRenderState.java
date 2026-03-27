@@ -2,7 +2,7 @@ package io.github.mattidragon.extendeddrawers.client.renderer.state;
 
 import io.github.mattidragon.extendeddrawers.item.UpgradeItem;
 import net.minecraft.client.renderer.item.ItemStackRenderState;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public class DrawerSlotRenderState {
     public boolean isLocked;
@@ -12,6 +12,6 @@ public class DrawerSlotRenderState {
     public @Nullable UpgradeItem upgrade;
     public boolean hasLimiter;
 
-    public ItemStackRenderState item = new ItemStackRenderState();
+    public final ItemStackRenderState item = new ItemStackRenderState();
     public long amount;
 }

@@ -24,10 +24,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.List;
 
-@Mixin(value = ReloadableServerResources.class)
+@Mixin(ReloadableServerResources.class)
 public class DataPackContentsMixin {
     @Shadow @Final private RecipeManager recipes;
 
+    @SuppressWarnings("NotNullFieldNotInitialized")
     @Unique
     private CompressionOverrideLoader extended_drawers$compressionOverrideLoader;
 

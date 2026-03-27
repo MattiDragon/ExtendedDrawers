@@ -6,6 +6,6 @@ import net.minecraft.client.renderer.item.ItemStackRenderState;
 public class ShadowDrawerRenderState extends BlockEntityRenderState {
     public boolean isHidden;
 
-    public ItemStackRenderState item = new ItemStackRenderState();
+    public final ItemStackRenderState item = new ItemStackRenderState();
     public long count;
 }

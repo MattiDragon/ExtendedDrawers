@@ -24,7 +24,7 @@ public record DrawerContentsComponent(List<DrawerSlotComponent> slots) implement
     public void addToTooltip(Item.TooltipContext context, Consumer<Component> consumer, TooltipFlag type, DataComponentGetter components) {
         var list = slots()
                 .stream()
-                .filter(slot -> !slot.item().isBlank() || slot.upgrade() != null || slot.hidden() || slot.locked() || slot.voiding() || slot.duping())
+                .filter(slot -> !slot.item().isBlank() || !slot.upgrade().isBlank() || slot.hidden() || slot.locked() || slot.voiding() || slot.duping())
                 .toList();
         if (list.isEmpty()) return;
         boolean shift = ExtendedDrawers.SHIFT_ACCESS.isShiftPressed();

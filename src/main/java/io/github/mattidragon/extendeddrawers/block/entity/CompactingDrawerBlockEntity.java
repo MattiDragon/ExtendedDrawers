@@ -67,6 +67,7 @@ public class CompactingDrawerBlockEntity extends StorageDrawerBlockEntity {
     @Override
     public void preRemoveSideEffects(BlockPos pos, BlockState oldState) {
         if (!ExtendedDrawers.CONFIG.get().misc().drawersDropContentsOnBreak()) return;
+        if (level == null) return;
 
         var slots = storage.getSlotArray();
         var amount = storage.getTrueAmount();

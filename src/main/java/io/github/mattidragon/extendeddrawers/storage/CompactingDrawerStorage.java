@@ -20,8 +20,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.Iterator;
@@ -43,12 +42,7 @@ public final class CompactingDrawerStorage extends SnapshotParticipant<Compactin
     }
 
     public void readComponent(DrawerSlotComponent component) {
-        settings.upgrade = component.upgrade();
-        settings.limiter = component.limiter();
-        settings.locked = component.locked();
-        settings.hidden = component.hidden();
-        settings.voiding = component.voiding();
-        settings.duping = component.duping();
+        settings.readComponent(component);
 
         item = component.item();
         amount = component.amount();
@@ -158,7 +152,7 @@ public final class CompactingDrawerStorage extends SnapshotParticipant<Compactin
     }
 
     @Override
-    public @NotNull Iterator<StorageView<ItemVariant>> iterator() {
+    public Iterator<StorageView<ItemVariant>> iterator() {
         return new StorageIterator();
     }
 

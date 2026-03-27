@@ -15,7 +15,7 @@ import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.phys.Vec3;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.joml.Vector3f;
 
 public class EnderConnectorBlockEntityRenderer implements BlockEntityRenderer<EnderConnectorBlockEntity, EnderConnectorRenderState> {
@@ -30,7 +30,7 @@ public class EnderConnectorBlockEntityRenderer implements BlockEntityRenderer<En
     }
 
     @Override
-    public void extractRenderState(EnderConnectorBlockEntity entity, EnderConnectorRenderState state, float tickProgress, Vec3 cameraPos, @Nullable ModelFeatureRenderer.CrumblingOverlay crumblingOverlay) {
+    public void extractRenderState(EnderConnectorBlockEntity entity, EnderConnectorRenderState state, float tickProgress, Vec3 cameraPos, ModelFeatureRenderer.@Nullable CrumblingOverlay crumblingOverlay) {
         BlockEntityRenderer.super.extractRenderState(entity, state, tickProgress, cameraPos, crumblingOverlay);
         state.rays = entity.rayDirectionCache();
     }

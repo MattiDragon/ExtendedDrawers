@@ -7,7 +7,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public interface ModifierAccess {
     boolean changeUpgrade(ItemVariant newUpgrade, Level world, BlockPos pos, Direction side, @Nullable Player player);

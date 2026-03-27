@@ -69,7 +69,7 @@ public class CopyLimiterRecipe extends CustomRecipe {
         for(int i = 0; i < result.size(); ++i) {
             var stack = input.getItem(i);
             var item = stack.getItem();
-            if (item.getCraftingRemainder() != null) {
+            if (!stack.getRecipeRemainder().isEmpty()) {
                 result.set(i, stack.getRecipeRemainder());
             } else {
                 if (item instanceof LimiterItem && stack.get(ModDataComponents.LIMITER_LIMIT) != null) {

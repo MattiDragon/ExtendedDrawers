@@ -3,7 +3,7 @@ package io.github.mattidragon.extendeddrawers.client.config.render;
 import io.github.mattidragon.extendeddrawers.config.ConfigData;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.gui.render.state.pip.PictureInPictureRenderState;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.joml.Matrix3x2f;
 
 public record LayoutPreviewRenderState(
@@ -19,7 +19,7 @@ public record LayoutPreviewRenderState(
         @Nullable ScreenRectangle bounds
 ) implements PictureInPictureRenderState {
 
-    public LayoutPreviewRenderState(ConfigData config, int size, Matrix3x2f pose, int x0, int y0, int x1, int y1, int scale, ScreenRectangle scissorArea) {
+    public LayoutPreviewRenderState(ConfigData config, int size, Matrix3x2f pose, int x0, int y0, int x1, int y1, int scale, @Nullable ScreenRectangle scissorArea) {
         this(config, size, pose, x0, y0, x1, y1, scale, scissorArea, PictureInPictureRenderState.getBounds(x0, y0, x1, y1, scissorArea));
     }
 }

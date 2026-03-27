@@ -2,7 +2,7 @@ package io.github.mattidragon.extendeddrawers.datagen;
 
 import net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public class ExtendedDrawersDatagen implements DataGeneratorEntrypoint {
     @Override

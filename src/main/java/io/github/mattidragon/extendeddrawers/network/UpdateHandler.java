@@ -8,10 +8,10 @@ import io.github.mattidragon.extendeddrawers.network.node.DrawerNetworkBlockNode
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import org.apache.commons.lang3.ObjectUtils;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public class UpdateHandler implements GraphEntity<UpdateHandler> {
+    @SuppressWarnings("NotNullFieldNotInitialized")
     private GraphEntityContext context;
     @Nullable
     private ChangeType queuedUpdate;
@@ -49,17 +49,17 @@ public class UpdateHandler implements GraphEntity<UpdateHandler> {
     }
 
     @Override
-    public void onInit(@NotNull GraphEntityContext context) {
+    public void onInit(GraphEntityContext context) {
         this.context = context;
     }
 
     @Override
-    public @NotNull GraphEntityContext getContext() {
+    public GraphEntityContext getContext() {
         return context;
     }
 
     @Override
-    public @NotNull GraphEntityType<?> getType() {
+    public GraphEntityType<?> getType() {
         return NetworkRegistry.UPDATE_HANDLER_TYPE;
     }
 
@@ -69,7 +69,7 @@ public class UpdateHandler implements GraphEntity<UpdateHandler> {
     }
 
     @Override
-    public void merge(@NotNull UpdateHandler other) {
+    public void merge(UpdateHandler other) {
     }
 
     public enum ChangeType {

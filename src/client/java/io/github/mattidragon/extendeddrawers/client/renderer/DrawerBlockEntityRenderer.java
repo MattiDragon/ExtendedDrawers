@@ -15,9 +15,10 @@ import net.minecraft.client.resources.model.Material;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.phys.Vec3;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class DrawerBlockEntityRenderer extends AbstractDrawerBlockEntityRenderer<DrawerBlockEntity, DrawerRenderState> {
     public DrawerBlockEntityRenderer(BlockEntityRendererProvider.Context context) {
@@ -30,14 +31,17 @@ public class DrawerBlockEntityRenderer extends AbstractDrawerBlockEntityRenderer
     }
 
     @Override
-    public void extractRenderState(DrawerBlockEntity drawer, DrawerRenderState state, float tickProgress, Vec3 cameraPos, @Nullable ModelFeatureRenderer.CrumblingOverlay crumblingOverlay) {
+    public void extractRenderState(DrawerBlockEntity drawer, DrawerRenderState state, float tickProgress, Vec3 cameraPos, ModelFeatureRenderer.@Nullable CrumblingOverlay crumblingOverlay) {
         super.extractRenderState(drawer, state, tickProgress, cameraPos, crumblingOverlay);
+
         state.slotCount = drawer.slots;
-        if (state.slots == null || state.slots.length != drawer.slots) {
-            state.slots = new DrawerSlotRenderState[drawer.slots];
+        @Nullable DrawerSlotRenderState[] slots = state.slots;
+        if (state.slots.length != drawer.slots) {
+            slots = state.slots = new DrawerSlotRenderState[drawer.slots];
         }
+
         for (var i = 0; i < drawer.storages.length; i++) {
-            var slotState = state.slots[i];
+            var slotState = slots[i];
             if (slotState == null) slotState = new DrawerSlotRenderState();
             var slot = drawer.storages[i];
 
@@ -98,17 +102,7 @@ public class DrawerBlockEntityRenderer extends AbstractDrawerBlockEntityRenderer
     }
     
     private void renderSlot(DrawerSlotRenderState slotState, boolean small, int light, PoseStack matrices, SubmitNodeCollector queue, CameraRenderState cameraState, BlockPos pos) {
-        var icons = new ArrayList<Material>();
-        var config = ExtendedDrawers.CONFIG.get().client().icons();
-        @SuppressWarnings("deprecation")
-        var atlas = TextureAtlas.LOCATION_ITEMS;
-        
-        if (slotState.isLocked) icons.add(new Material(atlas, config.lockedIcon()));
-        if (slotState.isVoiding) icons.add(new Material(atlas, config.voidingIcon()));
-        if (slotState.isHidden) icons.add(new Material(atlas, config.hiddenIcon()));
-        if (slotState.isDuping) icons.add(new Material(atlas, config.dupingIcon()));
-        if (slotState.upgrade != null) icons.add(new Material(atlas, slotState.upgrade.sprite));
-        if (slotState.hasLimiter) icons.add(new Material(atlas, ExtendedDrawers.id("item/limiter")));
+        var icons = getIconsForSlot(slotState);
 
         String amount = String.valueOf(slotState.amount);
         if ((slotState.amount == 0) && !ExtendedDrawers.CONFIG.get().client().displayEmptyCount())
@@ -117,5 +111,20 @@ public class DrawerBlockEntityRenderer extends AbstractDrawerBlockEntityRenderer
             amount = "∞";
 
         renderSlot(slotState.item, amount, small, slotState.isHidden, icons, matrices, queue, cameraState, light, pos);
+    }
+
+    private static List<Material> getIconsForSlot(DrawerSlotRenderState slotState) {
+        var icons = new ArrayList<Material>();
+        var config = ExtendedDrawers.CONFIG.get().client().icons();
+        @SuppressWarnings("deprecation")
+        var atlas = TextureAtlas.LOCATION_ITEMS;
+
+        if (slotState.isLocked) icons.add(new Material(atlas, config.lockedIcon()));
+        if (slotState.isVoiding) icons.add(new Material(atlas, config.voidingIcon()));
+        if (slotState.isHidden) icons.add(new Material(atlas, config.hiddenIcon()));
+        if (slotState.isDuping) icons.add(new Material(atlas, config.dupingIcon()));
+        if (slotState.upgrade != null) icons.add(new Material(atlas, slotState.upgrade.sprite));
+        if (slotState.hasLimiter) icons.add(new Material(atlas, ExtendedDrawers.id("item/limiter")));
+        return icons;
     }
 }

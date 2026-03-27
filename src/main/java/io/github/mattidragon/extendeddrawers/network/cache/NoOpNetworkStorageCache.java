@@ -9,13 +9,13 @@ import net.fabricmc.fabric.api.transfer.v1.storage.base.CombinedStorage;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
 public class NoOpNetworkStorageCache implements NetworkStorageCache {
+    @SuppressWarnings("NotNullFieldNotInitialized")
     private GraphEntityContext context;
 
     @Override
@@ -34,31 +34,26 @@ public class NoOpNetworkStorageCache implements NetworkStorageCache {
 
     @Override
     public void update() {
-
     }
 
     @Override
     public void forceUpdate() {
-
     }
 
     @Override
     public void onSortingChanged() {
-
     }
 
     @Override
     public void onNodeUnloaded(BlockPos pos) {
-
     }
 
     @Override
     public void onNodeReloaded(BlockPos pos) {
-
     }
 
     @Override
-    public @NotNull NetworkStorageCache split(@NotNull BlockGraph originalGraph, @NotNull BlockGraph newGraph) {
+    public NetworkStorageCache split(BlockGraph originalGraph, BlockGraph newGraph) {
         return new NoOpNetworkStorageCache();
     }
 
@@ -75,17 +70,16 @@ public class NoOpNetworkStorageCache implements NetworkStorageCache {
     }
 
     @Override
-    public void onInit(@NotNull GraphEntityContext ctx) {
+    public void onInit(GraphEntityContext ctx) {
         this.context = ctx;
     }
 
     @Override
-    public @NotNull GraphEntityContext getContext() {
+    public GraphEntityContext getContext() {
         return context;
     }
 
     @Override
-    public void merge(@NotNull NetworkStorageCache other) {
-
+    public void merge(NetworkStorageCache other) {
     }
 }

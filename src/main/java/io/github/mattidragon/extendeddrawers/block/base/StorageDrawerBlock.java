@@ -35,7 +35,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public abstract class StorageDrawerBlock<T extends StorageDrawerBlockEntity> extends NetworkBlockWithEntity<T> implements DrawerInteractionHandler, CreativeBreakBlocker {
     public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
@@ -214,7 +214,7 @@ public abstract class StorageDrawerBlock<T extends StorageDrawerBlockEntity> ext
     }
 
     @Override
-    public InteractionResult changeUpgrade(BlockState state, Level world, BlockPos pos, Vec3 hitPos, Direction side, Player player, ItemStack stack) {
+    public InteractionResult changeUpgrade(BlockState state, Level world, BlockPos pos, Vec3 hitPos, Direction side, @Nullable Player player, ItemStack stack) {
         if (world.isClientSide()) return InteractionResult.SUCCESS;
 
         var access = tryGetModifierAccess(state, world, pos, hitPos, side);
@@ -233,7 +233,7 @@ public abstract class StorageDrawerBlock<T extends StorageDrawerBlockEntity> ext
     }
 
     @Override
-    public InteractionResult changeLimiter(BlockState state, Level world, BlockPos pos, Vec3 hitPos, Direction side, Player player, ItemStack stack) {
+    public InteractionResult changeLimiter(BlockState state, Level world, BlockPos pos, Vec3 hitPos, Direction side, @Nullable Player player, ItemStack stack) {
         if (world.isClientSide()) return InteractionResult.SUCCESS;
 
         var access = tryGetModifierAccess(state, world, pos, hitPos, side);

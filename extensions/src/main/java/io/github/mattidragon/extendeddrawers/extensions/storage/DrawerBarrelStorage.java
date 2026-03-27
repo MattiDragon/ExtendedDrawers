@@ -8,7 +8,6 @@ import net.fabricmc.fabric.api.transfer.v1.storage.SlottedStorage;
 import net.fabricmc.fabric.api.transfer.v1.storage.StorageView;
 import net.fabricmc.fabric.api.transfer.v1.storage.base.SingleSlotStorage;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;
 
@@ -75,7 +74,7 @@ public class DrawerBarrelStorage implements DrawerStorage, SlottedStorage<ItemVa
     }
 
     @Override
-    public @NotNull Iterator<StorageView<ItemVariant>> iterator() {
+    public Iterator<StorageView<ItemVariant>> iterator() {
         return delegate.iterator();
     }
 }

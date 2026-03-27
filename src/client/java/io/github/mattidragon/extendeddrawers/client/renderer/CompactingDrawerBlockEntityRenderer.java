@@ -16,7 +16,7 @@ import net.minecraft.client.resources.model.Material;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -137,7 +137,6 @@ public class CompactingDrawerBlockEntityRenderer extends AbstractDrawerBlockEnti
     private void renderSlot(CompactingDrawerRenderState state, CompactingSlotRenderState slot, PoseStack matrices, int light, SubmitNodeCollector queue, CameraRenderState cameraState) {
         if (slot.disabled) return;
 
-        @Nullable
         String amount = String.valueOf(slot.amount);
         if ((slot.amount == 0) && !ExtendedDrawers.CONFIG.get().client().displayEmptyCount())
             amount = null;

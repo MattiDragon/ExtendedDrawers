@@ -14,8 +14,7 @@ import net.fabricmc.fabric.api.transfer.v1.storage.base.CombinedStorage;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +24,7 @@ import java.util.Map;
  * A simple implementation of {@link NetworkStorageCache} that clears itself on any change.
  */
 public class SimpleNetworkStorageCache implements NetworkStorageCache {
+    @SuppressWarnings("NotNullFieldNotInitialized")
     private GraphEntityContext context;
     @Nullable
     private CombinedStorage<ItemVariant, DrawerStorage> cachedStorage = null;
@@ -78,12 +78,12 @@ public class SimpleNetworkStorageCache implements NetworkStorageCache {
     }
 
     @Override
-    public void onPostNodeCreated(@NotNull NodeHolder<BlockNode> node, @Nullable NodeEntity nodeEntity) {
+    public void onPostNodeCreated(NodeHolder<BlockNode> node, @Nullable NodeEntity nodeEntity) {
         clear();
     }
 
     @Override
-    public void onPostNodeDestroyed(@NotNull NodeHolder<BlockNode> node, @Nullable NodeEntity nodeEntity, Map<LinkPos, LinkEntity> linkEntities) {
+    public void onPostNodeDestroyed(NodeHolder<BlockNode> node, @Nullable NodeEntity nodeEntity, Map<LinkPos, LinkEntity> linkEntities) {
         clear();
     }
 
@@ -98,7 +98,7 @@ public class SimpleNetworkStorageCache implements NetworkStorageCache {
     }
 
     @Override
-    public @NotNull NetworkStorageCache split(@NotNull BlockGraph originalGraph, @NotNull BlockGraph newGraph) {
+    public NetworkStorageCache split(BlockGraph originalGraph, BlockGraph newGraph) {
         clear();
         return new SimpleNetworkStorageCache();
     }
@@ -117,17 +117,17 @@ public class SimpleNetworkStorageCache implements NetworkStorageCache {
     }
 
     @Override
-    public void onInit(@NotNull GraphEntityContext ctx) {
+    public void onInit(GraphEntityContext ctx) {
         this.context = ctx;
     }
 
     @Override
-    public @NotNull GraphEntityContext getContext() {
+    public GraphEntityContext getContext() {
         return context;
     }
 
     @Override
-    public void merge(@NotNull NetworkStorageCache other) {
+    public void merge(NetworkStorageCache other) {
         clear();
     }
 }

@@ -6,7 +6,6 @@ import com.kneelawk.graphlib.api.graph.user.BlockNodeType;
 import io.github.mattidragon.extendeddrawers.block.entity.ShadowDrawerBlockEntity;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
-import org.jetbrains.annotations.NotNull;
 
 import static io.github.mattidragon.extendeddrawers.ExtendedDrawers.id;
 
@@ -19,7 +18,7 @@ public class ShadowDrawerBlockNode implements DrawerNetworkBlockNode {
     }
 
     @Override
-    public @NotNull BlockNodeType getType() {
+    public BlockNodeType getType() {
         return TYPE;
     }
 

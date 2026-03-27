@@ -6,7 +6,7 @@ import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public abstract class NetworkBlockWithEntity<T extends BlockEntity> extends NetworkBlock implements EntityBlock {
     protected NetworkBlockWithEntity(Properties settings) {
@@ -15,8 +15,7 @@ public abstract class NetworkBlockWithEntity<T extends BlockEntity> extends Netw
     
     protected abstract BlockEntityType<T> getType();
 
-    @Nullable
-    protected final T getBlockEntity(Level world, BlockPos pos) {
+    protected final @Nullable T getBlockEntity(Level world, BlockPos pos) {
         return getType().getBlockEntity(world, pos);
     }
     

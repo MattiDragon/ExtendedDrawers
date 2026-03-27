@@ -15,17 +15,22 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.FormattedCharSequence;
+import org.jspecify.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 
 public class EditLimiterScreen extends Screen {
     private static final Identifier TEXTURE = ExtendedDrawers.id("textures/gui/limiter.png");
     private final int slot;
-    private final Long previous;
+    private final @Nullable Long previous;
+
+    @SuppressWarnings("NotNullFieldNotInitialized")
     private EditBox textField;
+    @SuppressWarnings("NotNullFieldNotInitialized")
     private Button doneButton;
+    @SuppressWarnings("NotNullFieldNotInitialized")
     private Button clearButton;
 
-    public EditLimiterScreen(Component title, int slot, Long previous) {
+    public EditLimiterScreen(Component title, int slot, @Nullable Long previous) {
         super(title);
         this.slot = slot;
         this.previous = previous;
@@ -33,8 +38,6 @@ public class EditLimiterScreen extends Screen {
 
     @Override
     protected void init() {
-        if (minecraft == null) return;
-
         doneButton = addRenderableWidget(Button.builder(CommonComponents.GUI_DONE, button -> {
                     try {
                         var limit = Long.parseLong(textField.getValue());
@@ -102,7 +105,6 @@ public class EditLimiterScreen extends Screen {
     @Override
     public void render(GuiGraphics context, int mouseX, int mouseY, float delta) {
         super.render(context, mouseX, mouseY, delta);
-        if (minecraft == null) return;
         context.drawString(minecraft.font, getTitle(), width / 2 - 58, height / 2 - 16 - 10, 0xff404040, false);
     }
 

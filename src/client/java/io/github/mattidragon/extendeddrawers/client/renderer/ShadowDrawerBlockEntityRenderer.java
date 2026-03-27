@@ -13,7 +13,7 @@ import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.resources.model.Material;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.phys.Vec3;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 
@@ -28,7 +28,7 @@ public class ShadowDrawerBlockEntityRenderer extends AbstractDrawerBlockEntityRe
     }
 
     @Override
-    public void extractRenderState(ShadowDrawerBlockEntity drawer, ShadowDrawerRenderState state, float tickProgress, Vec3 cameraPos, @Nullable ModelFeatureRenderer.CrumblingOverlay crumblingOverlay) {
+    public void extractRenderState(ShadowDrawerBlockEntity drawer, ShadowDrawerRenderState state, float tickProgress, Vec3 cameraPos, ModelFeatureRenderer.@Nullable CrumblingOverlay crumblingOverlay) {
         super.extractRenderState(drawer, state, tickProgress, cameraPos, crumblingOverlay);
         state.isHidden = drawer.isHidden();
         state.count = drawer.countCache;
@@ -43,7 +43,6 @@ public class ShadowDrawerBlockEntityRenderer extends AbstractDrawerBlockEntityRe
         matrices.pushPose();
         alignMatrices(matrices, horizontalDir, face);
 
-        @Nullable
         String amount = String.valueOf(state.count);
         if (state.count == ShadowDrawerBlockEntity.INFINITE_COUNT_MARKER)
             amount = "∞";

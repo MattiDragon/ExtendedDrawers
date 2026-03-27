@@ -8,6 +8,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.network.protocol.game.ServerboundPlayerActionPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayerGameMode;
+import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -16,9 +17,8 @@ import org.spongepowered.asm.mixin.injection.At;
 public class ServerPlayerInteractionManagerMixin {
     @Shadow protected ServerLevel level;
     
-    @ModifyExpressionValue(method = "handleBlockBreakAction", at = @At(value = "FIELD", target = "Lnet/minecraft/world/entity/player/Abilities;instabuild:Z"))
+    @ModifyExpressionValue(method = "handleBlockBreakAction", at = @At(value = "FIELD", opcode = Opcodes.GETFIELD, target = "Lnet/minecraft/world/entity/player/Abilities;instabuild:Z"))
     private boolean extended_drawers$stopCreativeBreaking(boolean original, BlockPos pos, ServerboundPlayerActionPacket.Action action, Direction direction, int worldHeight) {
-        if (level == null) return original;
         var state = level.getBlockState(pos);
         if (!(state.getBlock() instanceof CreativeBreakBlocker blocker)) return original;
 

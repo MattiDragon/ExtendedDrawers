@@ -13,12 +13,13 @@ import org.joml.Matrix3x2f;
 
 import static io.github.mattidragon.extendeddrawers.ExtendedDrawers.id;
 
+@SuppressWarnings("NotNullFieldNotInitialized")
 public class LayoutPreviewImageRenderer implements ImageRenderer {
-    private Option<Float> smallItemScale = null;
-    private Option<Float> largeItemScale = null;
-    private Option<Float> smallTextScale = null;
-    private Option<Float> largeTextScale = null;
-    private Option<Float> textOffset = null;
+    private Option<Float> smallItemScale;
+    private Option<Float> largeItemScale;
+    private Option<Float> smallTextScale;
+    private Option<Float> largeTextScale;
+    private Option<Float> textOffset;
     private boolean initialized = false;
 
     public void init(Option<Float> smallItemScale, Option<Float> largeItemScale, Option<Float> smallTextScale, Option<Float> largeTextScale, Option<Float> textOffset) {

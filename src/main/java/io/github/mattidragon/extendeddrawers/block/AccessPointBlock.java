@@ -26,7 +26,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -87,7 +86,7 @@ public class AccessPointBlock extends NetworkBlock implements DrawerInteractionH
         }
     }
 
-    private static @NotNull List<ModifierDrawerStorage> getModifierStorages(BlockPos pos, ServerLevel serverWorld) {
+    private static List<ModifierDrawerStorage> getModifierStorages(BlockPos pos, ServerLevel serverWorld) {
         return NetworkStorageCache.get(serverWorld, pos).parts
                 .stream()
                 .filter(ModifierDrawerStorage.class::isInstance)
