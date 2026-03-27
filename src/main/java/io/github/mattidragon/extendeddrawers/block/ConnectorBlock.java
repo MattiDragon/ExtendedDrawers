@@ -5,7 +5,7 @@ import io.github.mattidragon.extendeddrawers.network.node.ConnectorBlockNode;
 import io.github.mattidragon.extendeddrawers.network.node.DrawerNetworkBlockNode;
 
 public class ConnectorBlock extends NetworkBlock {
-    public ConnectorBlock(Settings settings) {
+    public ConnectorBlock(Properties settings) {
         super(settings);
     }
     

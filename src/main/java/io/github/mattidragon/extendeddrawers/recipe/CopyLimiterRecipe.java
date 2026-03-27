@@ -5,29 +5,29 @@ import io.github.mattidragon.extendeddrawers.item.LimiterItem;
 import io.github.mattidragon.extendeddrawers.registry.ModDataComponents;
 import io.github.mattidragon.extendeddrawers.registry.ModItems;
 import io.github.mattidragon.extendeddrawers.registry.ModRecipes;
-import net.minecraft.item.ItemStack;
-import net.minecraft.recipe.RecipeSerializer;
-import net.minecraft.recipe.SpecialCraftingRecipe;
-import net.minecraft.recipe.book.CraftingRecipeCategory;
-import net.minecraft.recipe.input.CraftingRecipeInput;
-import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.util.collection.DefaultedList;
-import net.minecraft.world.World;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.NonNullList;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.CraftingBookCategory;
+import net.minecraft.world.item.crafting.CraftingInput;
+import net.minecraft.world.item.crafting.CustomRecipe;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.level.Level;
 
-public class CopyLimiterRecipe extends SpecialCraftingRecipe {
-    public CopyLimiterRecipe(CraftingRecipeCategory category) {
+public class CopyLimiterRecipe extends CustomRecipe {
+    public CopyLimiterRecipe(CraftingBookCategory category) {
         super(category);
     }
 
     @Override
-    public boolean matches(CraftingRecipeInput input, World world) {
-        var stacks = input.getStacks();
+    public boolean matches(CraftingInput input, Level world) {
+        var stacks = input.items();
         boolean setLimiterFound = false;
         boolean unsetLimiterFound = false;
 
         for (var stack : stacks) {
             if (stack.isEmpty()) continue;
-            if (!stack.isOf(ModItems.LIMITER)) return false;
+            if (!stack.is(ModItems.LIMITER)) return false;
             var limit = stack.get(ModDataComponents.LIMITER_LIMIT);
             if (limit == null) {
                 if (!unsetLimiterFound) unsetLimiterFound = true;
@@ -42,8 +42,8 @@ public class CopyLimiterRecipe extends SpecialCraftingRecipe {
     }
 
     @Override
-    public ItemStack craft(CraftingRecipeInput input, RegistryWrapper.WrapperLookup registryLookup) {
-        var stacks = input.getStacks();
+    public ItemStack assemble(CraftingInput input, HolderLookup.Provider provider) {
+        var stacks = input.items();
         Long limit = null;
 
         for (var stack : stacks) {
@@ -57,19 +57,19 @@ public class CopyLimiterRecipe extends SpecialCraftingRecipe {
         if (limit == null) // something went wrong
             return ItemStack.EMPTY;
 
-        var stack = ModItems.LIMITER.getDefaultStack();
+        var stack = ModItems.LIMITER.getDefaultInstance();
         stack.set(ModDataComponents.LIMITER_LIMIT, new LimiterLimitComponent(limit));
         return stack;
     }
 
     @Override
-    public DefaultedList<ItemStack> getRecipeRemainders(CraftingRecipeInput input) {
-        var result = DefaultedList.ofSize(input.size(), ItemStack.EMPTY);
+    public NonNullList<ItemStack> getRemainingItems(CraftingInput input) {
+        var result = NonNullList.withSize(input.size(), ItemStack.EMPTY);
 
         for(int i = 0; i < result.size(); ++i) {
-            var stack = input.getStackInSlot(i);
+            var stack = input.getItem(i);
             var item = stack.getItem();
-            if (item.getRecipeRemainder() != null) {
+            if (item.getCraftingRemainder() != null) {
                 result.set(i, stack.getRecipeRemainder());
             } else {
                 if (item instanceof LimiterItem && stack.get(ModDataComponents.LIMITER_LIMIT) != null) {

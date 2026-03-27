@@ -5,7 +5,7 @@ import com.kneelawk.graphlib.api.graph.user.BlockNode;
 import com.kneelawk.graphlib.api.wire.FullWireBlockNode;
 import io.github.mattidragon.extendeddrawers.network.NetworkRegistry;
 import io.github.mattidragon.extendeddrawers.network.UpdateHandler;
-import net.minecraft.server.world.ServerWorld;
+import net.minecraft.server.level.ServerLevel;
 import org.jetbrains.annotations.NotNull;
 
 public interface DrawerNetworkBlockNode extends FullWireBlockNode {
@@ -17,6 +17,6 @@ public interface DrawerNetworkBlockNode extends FullWireBlockNode {
         }
     }
 
-    default void update(ServerWorld world, NodeHolder<BlockNode> node) {
+    default void update(ServerLevel world, NodeHolder<BlockNode> node) {
     }
 }

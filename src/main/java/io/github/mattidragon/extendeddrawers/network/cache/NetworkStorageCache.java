@@ -7,9 +7,9 @@ import io.github.mattidragon.extendeddrawers.network.NetworkRegistry;
 import io.github.mattidragon.extendeddrawers.storage.DrawerStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.base.CombinedStorage;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.text.Text;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -19,7 +19,7 @@ public interface NetworkStorageCache extends GraphEntity<NetworkStorageCache> {
     /**
      * Helper to easily get the cached storage from a world and pos.
      */
-    static CombinedStorage<ItemVariant, DrawerStorage> get(ServerWorld world, BlockPos pos) {
+    static CombinedStorage<ItemVariant, DrawerStorage> get(ServerLevel world, BlockPos pos) {
         return NetworkRegistry.UNIVERSE.getGraphWorld(world)
                 .getLoadedGraphsAt(pos)
                 .map(graph -> graph.getGraphEntity(NetworkRegistry.STORAGE_CACHE_TYPE))
@@ -42,9 +42,9 @@ public interface NetworkStorageCache extends GraphEntity<NetworkStorageCache> {
 
     @NotNull NetworkStorageCache split(@NotNull BlockGraph originalGraph, @NotNull BlockGraph newGraph);
 
-    List<Text> getDebugInfo();
+    List<Component> getDebugInfo();
 
-    Text getDebugInfo(BlockPos pos);
+    Component getDebugInfo(BlockPos pos);
 
     @Override
     @NotNull

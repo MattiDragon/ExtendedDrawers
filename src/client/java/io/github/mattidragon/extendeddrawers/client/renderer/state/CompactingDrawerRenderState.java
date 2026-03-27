@@ -1,7 +1,7 @@
 package io.github.mattidragon.extendeddrawers.client.renderer.state;
 
 import io.github.mattidragon.extendeddrawers.item.UpgradeItem;
-import net.minecraft.client.render.block.entity.state.BlockEntityRenderState;
+import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
 import org.jetbrains.annotations.Nullable;
 
 public class CompactingDrawerRenderState extends BlockEntityRenderState {

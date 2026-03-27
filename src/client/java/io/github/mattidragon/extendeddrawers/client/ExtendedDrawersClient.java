@@ -11,21 +11,21 @@ import io.github.mattidragon.extendeddrawers.registry.ModBlocks;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.SpecialGuiElementRegistry;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.render.block.entity.BlockEntityRendererFactories;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 
 public class ExtendedDrawersClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
-        BlockEntityRendererFactories.register(ModBlocks.DRAWER_BLOCK_ENTITY, DrawerBlockEntityRenderer::new);
-        BlockEntityRendererFactories.register(ModBlocks.SHADOW_DRAWER_BLOCK_ENTITY, ShadowDrawerBlockEntityRenderer::new);
-        BlockEntityRendererFactories.register(ModBlocks.COMPACTING_DRAWER_BLOCK_ENTITY, CompactingDrawerBlockEntityRenderer::new);
+        BlockEntityRenderers.register(ModBlocks.DRAWER_BLOCK_ENTITY, DrawerBlockEntityRenderer::new);
+        BlockEntityRenderers.register(ModBlocks.SHADOW_DRAWER_BLOCK_ENTITY, ShadowDrawerBlockEntityRenderer::new);
+        BlockEntityRenderers.register(ModBlocks.COMPACTING_DRAWER_BLOCK_ENTITY, CompactingDrawerBlockEntityRenderer::new);
 
         ClientPlayNetworking.registerGlobalReceiver(CompressionRecipeSyncPayload.ID, (packet, context) ->
-                ClientCompressionRecipeManager.of(context.player().networkHandler).addLadders(packet.recipes()));
+                ClientCompressionRecipeManager.of(context.player().connection).addLadders(packet.recipes()));
 
         SpecialGuiElementRegistry.register(ctx -> new LayoutPreviewRenderer(ctx.vertexConsumers()));
 
-        ExtendedDrawers.SHIFT_ACCESS = MinecraftClient.getInstance()::isShiftPressed;
+        ExtendedDrawers.SHIFT_ACCESS = Minecraft.getInstance()::hasShiftDown;
     }
 }

@@ -14,49 +14,49 @@ import net.fabricmc.fabric.api.transfer.v1.item.PlayerInventoryStorage;
 import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
 import net.fabricmc.fabric.api.transfer.v1.storage.StorageUtil;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.block.enums.BlockFace;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemPlacementContext;
-import net.minecraft.item.ItemStack;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.state.StateManager;
-import net.minecraft.state.property.EnumProperty;
-import net.minecraft.state.property.Properties;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.BlockMirror;
-import net.minecraft.util.BlockRotation;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.hit.HitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Mirror;
+import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.AttachFace;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
 import static io.github.mattidragon.extendeddrawers.misc.DrawerInteractionStatusManager.getAndResetInsertStatus;
 
 public class ShadowDrawerBlock extends NetworkBlockWithEntity<ShadowDrawerBlockEntity> implements CreativeBreakBlocker, DrawerInteractionHandler {
-    public static final EnumProperty<Direction> FACING = Properties.HORIZONTAL_FACING;
-    public static final EnumProperty<BlockFace> FACE = Properties.BLOCK_FACE;
+    public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
+    public static final EnumProperty<AttachFace> FACE = BlockStateProperties.ATTACH_FACE;
     
-    public ShadowDrawerBlock(Settings settings) {
+    public ShadowDrawerBlock(Properties settings) {
         super(settings);
-        setDefaultState(stateManager.getDefaultState().with(FACING, Direction.NORTH).with(FACE, BlockFace.WALL));
+        registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(FACE, AttachFace.WALL));
     }
 
     @Override
-    public void onPlaced(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
-        super.onPlaced(world, pos, state, placer, itemStack);
+    public void setPlacedBy(Level world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
+        super.setPlacedBy(world, pos, state, placer, itemStack);
         var drawer = getBlockEntity(world, pos);
         if (drawer == null) return;
         drawer.recalculateContents();
     }
 
-    private static Storage<ItemVariant> createStorage(ServerWorld world, BlockPos pos) {
+    private static Storage<ItemVariant> createStorage(ServerLevel world, BlockPos pos) {
         if (!(world.getBlockEntity(pos) instanceof ShadowDrawerBlockEntity shadowDrawer)) throw new IllegalStateException();
 
         return shadowDrawer.new ShadowDrawerStorage(NetworkStorageCache.get(world, pos));
@@ -68,47 +68,47 @@ public class ShadowDrawerBlock extends NetworkBlockWithEntity<ShadowDrawerBlockE
     }
 
     @Override
-    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(FACING, FACE);
     }
 
     @Override
-    public BlockState getPlacementState(ItemPlacementContext ctx) {
-        var face = switch (ctx.getPlayerLookDirection().getOpposite()) {
-            case DOWN -> BlockFace.CEILING;
-            case UP -> BlockFace.FLOOR;
-            default -> BlockFace.WALL;
+    public BlockState getStateForPlacement(BlockPlaceContext ctx) {
+        var face = switch (ctx.getNearestLookingDirection().getOpposite()) {
+            case DOWN -> AttachFace.CEILING;
+            case UP -> AttachFace.FLOOR;
+            default -> AttachFace.WALL;
         };
 
-        return this.getDefaultState()
-                .with(FACE, face)
-                .with(FACING, ctx.getHorizontalPlayerFacing().getOpposite());
+        return this.defaultBlockState()
+                .setValue(FACE, face)
+                .setValue(FACING, ctx.getHorizontalDirection().getOpposite());
     }
 
     @Override
-    public BlockState rotate(BlockState state, BlockRotation rotation) {
-        return state.with(FACING, rotation.rotate(state.get(FACING)));
+    public BlockState rotate(BlockState state, Rotation rotation) {
+        return state.setValue(FACING, rotation.rotate(state.getValue(FACING)));
     }
     
     @Override
-    public BlockState mirror(BlockState state, BlockMirror mirror) {
-        return state.rotate(mirror.getRotation(state.get(FACING)));
+    public BlockState mirror(BlockState state, Mirror mirror) {
+        return state.rotate(mirror.getRotation(state.getValue(FACING)));
     }
     
     @Override
-    public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, BlockHitResult hit) {
-        if (!isFront(state, hit.getSide()) || !player.canModifyBlocks()) return ActionResult.PASS;
-        if (!(world instanceof ServerWorld serverWorld)) return ActionResult.CONSUME;
+    public InteractionResult useWithoutItem(BlockState state, Level world, BlockPos pos, Player player, BlockHitResult hit) {
+        if (!isFront(state, hit.getDirection()) || !player.mayBuild()) return InteractionResult.PASS;
+        if (!(world instanceof ServerLevel serverWorld)) return InteractionResult.CONSUME;
 
         var drawer = getBlockEntity(world, pos);
-        if (drawer == null) return ActionResult.PASS;
-        var playerStack = player.getMainHandStack();
+        if (drawer == null) return InteractionResult.PASS;
+        var playerStack = player.getMainHandItem();
         
-        if (player.isSneaking() || drawer.item.isBlank()) {
+        if (player.isShiftKeyDown() || drawer.item.isBlank()) {
             drawer.item = ItemVariant.of(playerStack);
-            drawer.markDirty();
+            drawer.setChanged();
             drawer.recalculateContents();
-            return ActionResult.SUCCESS;
+            return InteractionResult.SUCCESS;
         }
         
         var isDoubleClick = getAndResetInsertStatus(player, pos, 0);
@@ -119,25 +119,25 @@ public class ShadowDrawerBlock extends NetworkBlockWithEntity<ShadowDrawerBlockE
             var storage = createStorage(serverWorld, pos);
     
             if (isDoubleClick) {
-                if (drawer.item.isBlank()) return ActionResult.PASS;
+                if (drawer.item.isBlank()) return InteractionResult.PASS;
                 inserted = (int) StorageUtil.move(PlayerInventoryStorage.of(player), storage, itemVariant -> true, Long.MAX_VALUE, t);
             } else {
-                if (playerStack.isEmpty()) return ActionResult.PASS;
+                if (playerStack.isEmpty()) return InteractionResult.PASS;
     
                 inserted = (int) storage.insert(ItemVariant.of(playerStack), playerStack.getCount(), t);
-                playerStack.decrement(inserted);
+                playerStack.shrink(inserted);
             }
-            if (inserted == 0) return ActionResult.CONSUME;
+            if (inserted == 0) return InteractionResult.CONSUME;
             
             t.commit();
-            return ActionResult.SUCCESS;
+            return InteractionResult.SUCCESS;
         }
     }
     
     @Override
-    public void onBlockBreakStart(BlockState state, World world, BlockPos pos, PlayerEntity player) {
-        if (!player.canModifyBlocks()) return;
-        if (!(world instanceof ServerWorld serverWorld)) return;
+    public void attack(BlockState state, Level world, BlockPos pos, Player player) {
+        if (!player.mayBuild()) return;
+        if (!(world instanceof ServerLevel serverWorld)) return;
 
         var drawer = getBlockEntity(world, pos);
         if (drawer == null) return;
@@ -145,26 +145,26 @@ public class ShadowDrawerBlock extends NetworkBlockWithEntity<ShadowDrawerBlockE
         var hit = DrawerRaycastUtil.getTarget(player, pos);
         if (hit.getType() == HitResult.Type.MISS) return;
         
-        var internalPos = DrawerRaycastUtil.calculateFaceLocation(pos, hit.getPos(), hit.getSide(), state.get(FACING), state.get(FACE));
+        var internalPos = DrawerRaycastUtil.calculateFaceLocation(pos, hit.getLocation(), hit.getDirection(), state.getValue(FACING), state.getValue(FACE));
         if (internalPos == null) return;
     
         var storage = createStorage(serverWorld, pos);
         
         try (var t = Transaction.openOuter()) {
-            var extracted = (int) storage.extract(drawer.item, player.isSneaking() ? drawer.item.getItem().getMaxCount() : 1, t);
+            var extracted = (int) storage.extract(drawer.item, player.isShiftKeyDown() ? drawer.item.getItem().getDefaultMaxStackSize() : 1, t);
             if (extracted == 0) return;
             
-            player.getInventory().offerOrDrop(drawer.item.toStack(extracted));
+            player.getInventory().placeItemBackInInventory(drawer.item.toStack(extracted));
             t.commit();
         }
     }
     
     @Override
     public boolean isFront(BlockState state, Direction direction) {
-        return switch (state.get(FACE)) {
+        return switch (state.getValue(FACE)) {
             case FLOOR -> direction == Direction.UP;
             case CEILING -> direction == Direction.DOWN;
-            case WALL -> direction == state.get(FACING);
+            case WALL -> direction == state.getValue(FACING);
         };
     }
 
@@ -174,11 +174,11 @@ public class ShadowDrawerBlock extends NetworkBlockWithEntity<ShadowDrawerBlockE
     }
 
     @Override
-    public ActionResult toggleHide(BlockState state, World world, BlockPos pos, Vec3d hitPos, Direction side) {
-        if (side != state.get(FACING)) return ActionResult.PASS;
+    public InteractionResult toggleHide(BlockState state, Level world, BlockPos pos, Vec3 hitPos, Direction side) {
+        if (side != state.getValue(FACING)) return InteractionResult.PASS;
         var drawer = getBlockEntity(world, pos);
-        if (drawer == null) return ActionResult.PASS;
+        if (drawer == null) return InteractionResult.PASS;
         drawer.setHidden(!drawer.isHidden());
-        return ActionResult.SUCCESS;
+        return InteractionResult.SUCCESS;
     }
 }

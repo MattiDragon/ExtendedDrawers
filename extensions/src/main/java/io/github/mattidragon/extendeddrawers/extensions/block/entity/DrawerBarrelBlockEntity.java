@@ -7,10 +7,10 @@ import io.github.mattidragon.extendeddrawers.extensions.registry.ExtensionBlocks
 import io.github.mattidragon.extendeddrawers.extensions.storage.DrawerBarrelStorage;
 import io.github.mattidragon.extendeddrawers.storage.DrawerStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.BarrelBlockEntity;
-import net.minecraft.text.Text;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.level.block.entity.BarrelBlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.stream.Stream;
 
@@ -28,20 +28,20 @@ public class DrawerBarrelBlockEntity extends BarrelBlockEntity implements Storag
     }
 
     @Override
-    protected Text getContainerName() {
+    protected Component getDefaultName() {
         return ExtensionBlocks.DRAWER_BARREL.getName();
     }
 
     @Override
-    public void markRemoved() {
-        super.markRemoved();
-        DrawerBlockEntityUtils.handleRemoved(world, pos);
+    public void setRemoved() {
+        super.setRemoved();
+        DrawerBlockEntityUtils.handleRemoved(level, worldPosition);
     }
 
     @Override
-    public void cancelRemoval() {
-        super.cancelRemoval();
-        DrawerBlockEntityUtils.handleRemovalCancelled(world, pos);
+    public void clearRemoved() {
+        super.clearRemoved();
+        DrawerBlockEntityUtils.handleRemovalCancelled(level, worldPosition);
     }
 
     @Override
@@ -50,8 +50,8 @@ public class DrawerBarrelBlockEntity extends BarrelBlockEntity implements Storag
     }
 
     @Override
-    public void markDirty() {
-        super.markDirty();
-        DrawerBlockEntityUtils.handleSlotChanged(false, world, pos);
+    public void setChanged() {
+        super.setChanged();
+        DrawerBlockEntityUtils.handleSlotChanged(false, level, worldPosition);
     }
 }

@@ -3,11 +3,11 @@ package io.github.mattidragon.extendeddrawers.client.mixin;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import io.github.mattidragon.extendeddrawers.ExtendedDrawers;
 import io.github.mattidragon.extendeddrawers.block.base.CreativeBreakBlocker;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayNetworkHandler;
-import net.minecraft.client.network.ClientPlayerInteractionManager;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientPacketListener;
+import net.minecraft.client.multiplayer.MultiPlayerGameMode;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -17,18 +17,18 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Slice;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(ClientPlayerInteractionManager.class)
+@Mixin(MultiPlayerGameMode.class)
 public class ClientPlayerInteractionManagerMixin {
-    @Shadow private float currentBreakingProgress;
+    @Shadow private float destroyProgress;
 
-    @Shadow @Final private ClientPlayNetworkHandler networkHandler;
+    @Shadow @Final private ClientPacketListener connection;
 
-    @Shadow @Final private MinecraftClient client;
+    @Shadow @Final private Minecraft minecraft;
 
     // Makes creative block breaking behave like survival if we are blocking breaking of a drawer. The other injection handles complete blocking
-    @ModifyExpressionValue(method = {"attackBlock", "updateBlockBreakingProgress"}, at = @At(value = "FIELD", target = "Lnet/minecraft/entity/player/PlayerAbilities;creativeMode:Z"))
+    @ModifyExpressionValue(method = {"startDestroyBlock", "continueDestroyBlock"}, at = @At(value = "FIELD", target = "Lnet/minecraft/world/entity/player/Abilities;instabuild:Z"))
     private boolean extended_drawers$stopCreativeBreaking(boolean original, BlockPos pos, Direction direction) {
-        var world = MinecraftClient.getInstance().world;
+        var world = Minecraft.getInstance().level;
         if (world == null) return original;
         var state = world.getBlockState(pos);
         if (!(state.getBlock() instanceof CreativeBreakBlocker blocker)) return original;
@@ -43,17 +43,17 @@ public class ClientPlayerInteractionManagerMixin {
     }
 
     // Prevents breaking of blocks in creative mod if config is set to do that
-    @Inject(method = "updateBlockBreakingProgress",
+    @Inject(method = "continueDestroyBlock",
             at = @At(value = "FIELD",
                     opcode = Opcodes.PUTFIELD,
-                    target = "Lnet/minecraft/client/network/ClientPlayerInteractionManager;currentBreakingProgress:F",
+                    target = "Lnet/minecraft/client/multiplayer/MultiPlayerGameMode;destroyProgress:F",
                     shift = At.Shift.AFTER,
                     ordinal = 0),
             slice = @Slice(from = @At(value = "INVOKE",
-                    target = "Lnet/minecraft/block/BlockState;calcBlockBreakingDelta(Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/world/BlockView;Lnet/minecraft/util/math/BlockPos;)F")))
+                    target = "Lnet/minecraft/world/level/block/state/BlockState;calcBlockBreakingDelta(Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/core/BlockPos;)F")))
     private void extended_drawers$stopCreativeBreaking(BlockPos pos, Direction direction, CallbackInfoReturnable<Boolean> cir) {
-        var world = networkHandler.getWorld();
-        var player = client.player;
+        var world = connection.getLevel();
+        var player = minecraft.player;
         if (world == null || player == null || !player.isCreative()) return;
         var state = world.getBlockState(pos);
         if (!(state.getBlock() instanceof CreativeBreakBlocker blocker)) return;
@@ -63,7 +63,7 @@ public class ClientPlayerInteractionManagerMixin {
 
         switch (behaviour) {
             case BREAK, MINE -> {}
-            case NO_BREAK -> currentBreakingProgress = 0;
+            case NO_BREAK -> destroyProgress = 0;
         }
     }
 }

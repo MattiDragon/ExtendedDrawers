@@ -1,28 +1,28 @@
 package io.github.mattidragon.extendeddrawers.extensions.registry;
 
 import io.github.mattidragon.extendeddrawers.extensions.item.EnderConnectorLinkerItem;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.RegistryKeys;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
 
 import static io.github.mattidragon.extendeddrawers.extensions.ExtendedDrawersExtensions.id;
 
 public class ExtensionItems {
-    public static final BlockItem DRAWER_BARREL = new BlockItem(ExtensionBlocks.DRAWER_BARREL, new Item.Settings().registryKey(key("drawer_barrel")).useBlockPrefixedTranslationKey());
-    public static final BlockItem ENDER_CONNECTOR = new BlockItem(ExtensionBlocks.ENDER_CONNECTOR, new Item.Settings().registryKey(key("ender_connector")).useBlockPrefixedTranslationKey());
+    public static final BlockItem DRAWER_BARREL = new BlockItem(ExtensionBlocks.DRAWER_BARREL, new Item.Properties().setId(key("drawer_barrel")).useBlockDescriptionPrefix());
+    public static final BlockItem ENDER_CONNECTOR = new BlockItem(ExtensionBlocks.ENDER_CONNECTOR, new Item.Properties().setId(key("ender_connector")).useBlockDescriptionPrefix());
 
-    public static final Item ENDER_CONNECTOR_LINKER = new EnderConnectorLinkerItem(new Item.Settings().registryKey(key("ender_connector_linker")));
+    public static final Item ENDER_CONNECTOR_LINKER = new EnderConnectorLinkerItem(new Item.Properties().setId(key("ender_connector_linker")));
 
     public static void register() {
-        Registry.register(Registries.ITEM, id("drawer_barrel"), DRAWER_BARREL);
-        Registry.register(Registries.ITEM, id("ender_connector"), ENDER_CONNECTOR);
-        Registry.register(Registries.ITEM, id("ender_connector_linker"), ENDER_CONNECTOR_LINKER);
+        Registry.register(BuiltInRegistries.ITEM, id("drawer_barrel"), DRAWER_BARREL);
+        Registry.register(BuiltInRegistries.ITEM, id("ender_connector"), ENDER_CONNECTOR);
+        Registry.register(BuiltInRegistries.ITEM, id("ender_connector_linker"), ENDER_CONNECTOR_LINKER);
     }
 
-    private static RegistryKey<Item> key(String path) {
-        return RegistryKey.of(RegistryKeys.ITEM, id(path));
+    private static ResourceKey<Item> key(String path) {
+        return ResourceKey.create(Registries.ITEM, id(path));
     }
 }

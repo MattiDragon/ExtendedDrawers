@@ -11,27 +11,27 @@ import io.github.mattidragon.extendeddrawers.storage.CombinedDrawerStorage;
 import io.github.mattidragon.extendeddrawers.storage.DrawerSlot;
 import io.github.mattidragon.extendeddrawers.storage.DrawerStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
-import net.minecraft.block.BlockState;
-import net.minecraft.component.ComponentMap;
-import net.minecraft.component.ComponentsAccess;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.network.listener.ClientPlayPacketListener;
-import net.minecraft.network.packet.Packet;
-import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
-import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.storage.NbtWriteView;
-import net.minecraft.storage.ReadView;
-import net.minecraft.storage.WriteView;
-import net.minecraft.util.ErrorReporter;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.component.DataComponentGetter;
+import net.minecraft.core.component.DataComponentMap;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.util.ProblemReporter;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.TagValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.stream.Stream;
 
 public class DrawerBlockEntity extends StorageDrawerBlockEntity {
-    public final int slots = ((DrawerBlock)this.getCachedState().getBlock()).slots;
-    public final DrawerSlot[] storages = new DrawerSlot[((DrawerBlock)this.getCachedState().getBlock()).slots];
+    public final int slots = ((DrawerBlock)this.getBlockState().getBlock()).slots;
+    public final DrawerSlot[] storages = new DrawerSlot[((DrawerBlock)this.getBlockState().getBlock()).slots];
     public final CombinedDrawerStorage combinedStorage;
     
     static {
@@ -58,22 +58,22 @@ public class DrawerBlockEntity extends StorageDrawerBlockEntity {
     }
     
     @Override
-    public Packet<ClientPlayPacketListener> toUpdatePacket() {
-        return BlockEntityUpdateS2CPacket.create(this);
+    public Packet<ClientGamePacketListener> getUpdatePacket() {
+        return ClientboundBlockEntityDataPacket.create(this);
     }
 
 
     @Override
-    public NbtCompound toInitialChunkDataNbt(RegistryWrapper.WrapperLookup registries) {
-        try (var logging = new ErrorReporter.Logging(this.getReporterContext(), ExtendedDrawers.LOGGER)) {
-            var view = NbtWriteView.create(logging, registries);
-            writeData(view);
-            return view.getNbt();
+    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+        try (var logging = new ProblemReporter.ScopedCollector(this.problemPath(), ExtendedDrawers.LOGGER)) {
+            var view = TagValueOutput.createWithContext(logging, registries);
+            saveAdditional(view);
+            return view.buildResult();
         }
     }
 
     @Override
-    protected void readComponents(ComponentsAccess components) {
+    protected void applyImplicitComponents(DataComponentGetter components) {
         var component = components.get(ModDataComponents.DRAWER_CONTENTS);
         if (component == null) return;
         for (int i = 0; i < component.slots().size(); i++) {
@@ -82,22 +82,22 @@ public class DrawerBlockEntity extends StorageDrawerBlockEntity {
     }
 
     @Override
-    public void onBlockReplaced(BlockPos pos, BlockState oldState) {
+    public void preRemoveSideEffects(BlockPos pos, BlockState oldState) {
         if (!ExtendedDrawers.CONFIG.get().misc().drawersDropContentsOnBreak()) return;
 
         for (var slot : storages) {
-            ItemUtils.offerOrDropStacks(world, pos, null, null, slot.getResource(), slot.getAmount());
+            ItemUtils.offerOrDropStacks(level, pos, null, null, slot.getResource(), slot.getAmount());
         }
     }
 
     @Override
-    protected void addComponents(ComponentMap.Builder componentMapBuilder) {
+    protected void collectImplicitComponents(DataComponentMap.Builder componentMapBuilder) {
         if (isEmpty()) return;
         var slotComponents = new ArrayList<DrawerSlotComponent>();
         for (var storage : storages) {
             slotComponents.add(storage.toComponent());
         }
-        componentMapBuilder.add(ModDataComponents.DRAWER_CONTENTS, new DrawerContentsComponent(slotComponents));
+        componentMapBuilder.set(ModDataComponents.DRAWER_CONTENTS, new DrawerContentsComponent(slotComponents));
     }
 
     @Override
@@ -115,18 +115,18 @@ public class DrawerBlockEntity extends StorageDrawerBlockEntity {
     }
 
     @Override
-    protected void readData(ReadView view) {
-        var items = view.getListReadView("items").stream().toList();
+    protected void loadAdditional(ValueInput view) {
+        var items = view.childrenListOrEmpty("items").stream().toList();
         for (int i = 0; i < items.size(); i++) {
             storages[i].readData(items.get(i));
         }
     }
 
     @Override
-    public void writeData(WriteView view) {
-        var items = view.getList("items");
+    public void saveAdditional(ValueOutput view) {
+        var items = view.childrenList("items");
         for (var storage : storages) {
-            storage.writeData(items.add());
+            storage.writeData(items.addChild());
         }
     }
 }

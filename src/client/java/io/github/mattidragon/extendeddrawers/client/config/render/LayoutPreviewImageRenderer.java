@@ -5,10 +5,10 @@ import dev.isxander.yacl3.gui.image.ImageRenderer;
 import io.github.mattidragon.extendeddrawers.ExtendedDrawers;
 import io.github.mattidragon.extendeddrawers.config.ConfigData;
 import io.github.mattidragon.extendeddrawers.config.category.ClientCategory;
-import net.minecraft.client.gl.RenderPipelines;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.texture.SpriteAtlasTexture;
-import net.minecraft.client.util.SpriteIdentifier;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.client.renderer.texture.TextureAtlas;
+import net.minecraft.client.resources.model.Material;
 import org.joml.Matrix3x2f;
 
 import static io.github.mattidragon.extendeddrawers.ExtendedDrawers.id;
@@ -31,11 +31,11 @@ public class LayoutPreviewImageRenderer implements ImageRenderer {
     }
 
     @Override
-    public int render(DrawContext context, int x, int y, int renderWidth, float tickDelta) {
+    public int render(GuiGraphics context, int x, int y, int renderWidth, float tickDelta) {
         if (!initialized) return 0;
 
         @SuppressWarnings("deprecation")
-        var atlas = SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE;
+        var atlas = TextureAtlas.LOCATION_BLOCKS;
         var size = renderWidth / 3;
         var config = ExtendedDrawers.CONFIG.get();
         var client = config.client();
@@ -53,14 +53,14 @@ public class LayoutPreviewImageRenderer implements ImageRenderer {
                 config.storage(),
                 config.misc());
 
-        var matrices = context.getMatrices();
+        var matrices = context.pose();
 
-        context.drawSpriteStretched(RenderPipelines.GUI_TEXTURED, context.getSprite(new SpriteIdentifier(atlas, id("block/single_drawer"))), x, y, size, size);
-        context.drawSpriteStretched(RenderPipelines.GUI_TEXTURED, context.getSprite(new SpriteIdentifier(atlas, id("block/quad_drawer"))), x + size, y, size, size);
-        context.drawSpriteStretched(RenderPipelines.GUI_TEXTURED, context.getSprite(new SpriteIdentifier(atlas, id("block/compacting_drawer"))), x + 2 * size, y, size, size);
+        context.blitSprite(RenderPipelines.GUI_TEXTURED, context.getSprite(new Material(atlas, id("block/single_drawer"))), x, y, size, size);
+        context.blitSprite(RenderPipelines.GUI_TEXTURED, context.getSprite(new Material(atlas, id("block/quad_drawer"))), x + size, y, size, size);
+        context.blitSprite(RenderPipelines.GUI_TEXTURED, context.getSprite(new Material(atlas, id("block/compacting_drawer"))), x + 2 * size, y, size, size);
 
-        context.state.addSpecialElement(new LayoutPreviewRenderState(
-                newConfig, size, new Matrix3x2f(matrices), x, y, x + renderWidth, y + size, 1, context.scissorStack.peekLast()
+        context.guiRenderState.submitPicturesInPictureState(new LayoutPreviewRenderState(
+                newConfig, size, new Matrix3x2f(matrices), x, y, x + renderWidth, y + size, 1, context.scissorStack.peek()
         ));
 
         return size;

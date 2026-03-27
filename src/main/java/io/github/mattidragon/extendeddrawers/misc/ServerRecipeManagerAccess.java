@@ -1,7 +1,7 @@
 package io.github.mattidragon.extendeddrawers.misc;
 
-import net.minecraft.recipe.PreparedRecipes;
+import net.minecraft.world.item.crafting.RecipeMap;
 
 public interface ServerRecipeManagerAccess {
-    PreparedRecipes getPreparedRecipes();
+    RecipeMap getRecipes();
 }

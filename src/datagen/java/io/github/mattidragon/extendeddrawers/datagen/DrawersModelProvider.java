@@ -4,12 +4,16 @@ import io.github.mattidragon.extendeddrawers.registry.ModBlocks;
 import io.github.mattidragon.extendeddrawers.registry.ModItems;
 import net.fabricmc.fabric.api.client.datagen.v1.provider.FabricModelProvider;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
-import net.minecraft.block.Block;
-import net.minecraft.block.enums.BlockFace;
-import net.minecraft.client.data.*;
-import net.minecraft.client.render.model.json.ModelVariantOperator;
-import net.minecraft.state.property.Properties;
-import net.minecraft.util.math.Direction;
+import net.minecraft.client.data.models.BlockModelGenerators;
+import net.minecraft.client.data.models.ItemModelGenerators;
+import net.minecraft.client.data.models.blockstates.MultiVariantGenerator;
+import net.minecraft.client.data.models.blockstates.PropertyDispatch;
+import net.minecraft.client.data.models.model.*;
+import net.minecraft.client.renderer.block.model.VariantMutator;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.properties.AttachFace;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 
 import java.util.Optional;
 
@@ -21,9 +25,9 @@ class DrawersModelProvider extends FabricModelProvider {
     }
 
     @Override
-    public void generateBlockStateModels(BlockStateModelGenerator generator) {
-        generator.registerSimpleCubeAll(ModBlocks.ACCESS_POINT);
-        generator.registerSingleton(ModBlocks.CONNECTOR, block -> TexturedModel.getCubeAll(id("block/drawer_base")));
+    public void generateBlockStateModels(BlockModelGenerators generator) {
+        generator.createTrivialCube(ModBlocks.ACCESS_POINT);
+        generator.createTrivialBlock(ModBlocks.CONNECTOR, block -> TexturedModel.createAllSame(id("block/drawer_base")));
 
         registerDrawerModel(ModBlocks.SINGLE_DRAWER, generator);
         registerDrawerModel(ModBlocks.DOUBLE_DRAWER, generator);
@@ -34,55 +38,55 @@ class DrawersModelProvider extends FabricModelProvider {
     }
 
     @Override
-    public void generateItemModels(ItemModelGenerator generator) {
-        generator.register(ModItems.T1_UPGRADE, Models.GENERATED);
-        generator.register(ModItems.T2_UPGRADE, Models.GENERATED);
-        generator.register(ModItems.T3_UPGRADE, Models.GENERATED);
-        generator.register(ModItems.T4_UPGRADE, Models.GENERATED);
-        generator.register(ModItems.CREATIVE_UPGRADE, Models.GENERATED);
-        generator.register(ModItems.LOCK, Models.GENERATED);
-        generator.register(ModItems.UPGRADE_FRAME, Models.GENERATED);
-        generator.register(ModItems.LIMITER, Models.GENERATED);
-        generator.register(ModItems.DUPE_WAND, Models.HANDHELD);
+    public void generateItemModels(ItemModelGenerators generator) {
+        generator.generateFlatItem(ModItems.T1_UPGRADE, ModelTemplates.FLAT_ITEM);
+        generator.generateFlatItem(ModItems.T2_UPGRADE, ModelTemplates.FLAT_ITEM);
+        generator.generateFlatItem(ModItems.T3_UPGRADE, ModelTemplates.FLAT_ITEM);
+        generator.generateFlatItem(ModItems.T4_UPGRADE, ModelTemplates.FLAT_ITEM);
+        generator.generateFlatItem(ModItems.CREATIVE_UPGRADE, ModelTemplates.FLAT_ITEM);
+        generator.generateFlatItem(ModItems.LOCK, ModelTemplates.FLAT_ITEM);
+        generator.generateFlatItem(ModItems.UPGRADE_FRAME, ModelTemplates.FLAT_ITEM);
+        generator.generateFlatItem(ModItems.LIMITER, ModelTemplates.FLAT_ITEM);
+        generator.generateFlatItem(ModItems.DUPE_WAND, ModelTemplates.FLAT_HANDHELD_ITEM);
     }
 
-    private static void generateShadowDrawerModel(BlockStateModelGenerator generator) {
-        var modelId = Models.ORIENTABLE.upload(ModBlocks.SHADOW_DRAWER, TextureMap.sideEnd(id("block/shadow_drawer_side"), id("block/shadow_drawer_side")).copyAndAdd(TextureKey.FRONT, TextureMap.getId(ModBlocks.SHADOW_DRAWER)), generator.modelCollector);
-        generator.blockStateCollector.accept(
-                VariantsBlockModelDefinitionCreator.of(
+    private static void generateShadowDrawerModel(BlockModelGenerators generator) {
+        var modelId = ModelTemplates.CUBE_ORIENTABLE.create(ModBlocks.SHADOW_DRAWER, TextureMapping.column(id("block/shadow_drawer_side"), id("block/shadow_drawer_side")).copyAndUpdate(TextureSlot.FRONT, TextureMapping.getBlockTexture(ModBlocks.SHADOW_DRAWER)), generator.modelOutput);
+        generator.blockStateOutput.accept(
+                MultiVariantGenerator.dispatch(
                                 ModBlocks.SHADOW_DRAWER,
-                                BlockStateModelGenerator.createWeightedVariant(modelId))
-                        .apply(getBlockStateMap()));
+                                BlockModelGenerators.plainVariant(modelId))
+                        .with(getBlockStateMap()));
     }
 
-    private void generateCompactingDrawerModel(BlockStateModelGenerator generator) {
-        generator.blockStateCollector.accept(
-                VariantsBlockModelDefinitionCreator.of(
+    private void generateCompactingDrawerModel(BlockModelGenerators generator) {
+        generator.blockStateOutput.accept(
+                MultiVariantGenerator.dispatch(
                                 ModBlocks.COMPACTING_DRAWER,
-                                BlockStateModelGenerator.createWeightedVariant(id("block/compacting_drawer")))
-                        .apply(getBlockStateMap()));
+                                BlockModelGenerators.plainVariant(id("block/compacting_drawer")))
+                        .with(getBlockStateMap()));
     }
 
-    private void registerDrawerModel(Block block, BlockStateModelGenerator generator) {
-        var template = new Model(Optional.of(id("drawer_template")), Optional.empty(), TextureKey.FRONT);
+    private void registerDrawerModel(Block block, BlockModelGenerators generator) {
+        var template = new ModelTemplate(Optional.of(id("drawer_template")), Optional.empty(), TextureSlot.FRONT);
 
-        var model = template.upload(block, TextureMap.of(TextureKey.FRONT, ModelIds.getBlockModelId(block)), generator.modelCollector);
-        generator.blockStateCollector.accept(VariantsBlockModelDefinitionCreator.of(block, BlockStateModelGenerator.createWeightedVariant(model)).apply(getBlockStateMap()));
+        var model = template.create(block, TextureMapping.singleSlot(TextureSlot.FRONT, ModelLocationUtils.getModelLocation(block)), generator.modelOutput);
+        generator.blockStateOutput.accept(MultiVariantGenerator.dispatch(block, BlockModelGenerators.plainVariant(model)).with(getBlockStateMap()));
     }
 
-    private static BlockStateVariantMap<ModelVariantOperator> getBlockStateMap() {
-        return BlockStateVariantMap.operations(Properties.BLOCK_FACE, Properties.HORIZONTAL_FACING)
-                .register(BlockFace.FLOOR, Direction.EAST, BlockStateModelGenerator.ROTATE_Y_90.then(BlockStateModelGenerator.ROTATE_X_270))
-                .register(BlockFace.FLOOR, Direction.WEST, BlockStateModelGenerator.ROTATE_Y_270.then(BlockStateModelGenerator.ROTATE_X_270))
-                .register(BlockFace.FLOOR, Direction.SOUTH, BlockStateModelGenerator.ROTATE_Y_180.then(BlockStateModelGenerator.ROTATE_X_270))
-                .register(BlockFace.FLOOR, Direction.NORTH, BlockStateModelGenerator.ROTATE_X_270)
-                .register(BlockFace.WALL, Direction.EAST, BlockStateModelGenerator.ROTATE_Y_90)
-                .register(BlockFace.WALL, Direction.WEST, BlockStateModelGenerator.ROTATE_Y_270)
-                .register(BlockFace.WALL, Direction.SOUTH, BlockStateModelGenerator.ROTATE_Y_180)
-                .register(BlockFace.WALL, Direction.NORTH, BlockStateModelGenerator.NO_OP)
-                .register(BlockFace.CEILING, Direction.EAST, BlockStateModelGenerator.ROTATE_Y_90.then(BlockStateModelGenerator.ROTATE_X_90))
-                .register(BlockFace.CEILING, Direction.WEST, BlockStateModelGenerator.ROTATE_Y_270.then(BlockStateModelGenerator.ROTATE_X_90))
-                .register(BlockFace.CEILING, Direction.SOUTH, BlockStateModelGenerator.ROTATE_Y_180.then(BlockStateModelGenerator.ROTATE_X_90))
-                .register(BlockFace.CEILING, Direction.NORTH, BlockStateModelGenerator.ROTATE_X_90);
+    private static PropertyDispatch<VariantMutator> getBlockStateMap() {
+        return PropertyDispatch.modify(BlockStateProperties.ATTACH_FACE, BlockStateProperties.HORIZONTAL_FACING)
+                .select(AttachFace.FLOOR, Direction.EAST, BlockModelGenerators.Y_ROT_90.then(BlockModelGenerators.X_ROT_270))
+                .select(AttachFace.FLOOR, Direction.WEST, BlockModelGenerators.Y_ROT_270.then(BlockModelGenerators.X_ROT_270))
+                .select(AttachFace.FLOOR, Direction.SOUTH, BlockModelGenerators.Y_ROT_180.then(BlockModelGenerators.X_ROT_270))
+                .select(AttachFace.FLOOR, Direction.NORTH, BlockModelGenerators.X_ROT_270)
+                .select(AttachFace.WALL, Direction.EAST, BlockModelGenerators.Y_ROT_90)
+                .select(AttachFace.WALL, Direction.WEST, BlockModelGenerators.Y_ROT_270)
+                .select(AttachFace.WALL, Direction.SOUTH, BlockModelGenerators.Y_ROT_180)
+                .select(AttachFace.WALL, Direction.NORTH, BlockModelGenerators.NOP)
+                .select(AttachFace.CEILING, Direction.EAST, BlockModelGenerators.Y_ROT_90.then(BlockModelGenerators.X_ROT_90))
+                .select(AttachFace.CEILING, Direction.WEST, BlockModelGenerators.Y_ROT_270.then(BlockModelGenerators.X_ROT_90))
+                .select(AttachFace.CEILING, Direction.SOUTH, BlockModelGenerators.Y_ROT_180.then(BlockModelGenerators.X_ROT_90))
+                .select(AttachFace.CEILING, Direction.NORTH, BlockModelGenerators.X_ROT_90);
     }
 }

@@ -4,16 +4,16 @@ import com.google.common.collect.ImmutableList;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import io.github.mattidragon.extendeddrawers.compacting.CompressionOverrideLoader;
 import io.github.mattidragon.extendeddrawers.compacting.ServerCompressionRecipeManager;
-import net.minecraft.command.permission.PermissionPredicate;
-import net.minecraft.recipe.ServerRecipeManager;
-import net.minecraft.registry.CombinedDynamicRegistries;
-import net.minecraft.registry.Registry;
-import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.registry.ServerDynamicRegistryType;
-import net.minecraft.resource.ResourceReloader;
-import net.minecraft.resource.featuretoggle.FeatureSet;
-import net.minecraft.server.DataPackContents;
-import net.minecraft.server.command.CommandManager;
+import net.minecraft.commands.Commands;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.LayeredRegistryAccess;
+import net.minecraft.core.Registry;
+import net.minecraft.server.RegistryLayer;
+import net.minecraft.server.ReloadableServerResources;
+import net.minecraft.server.packs.resources.PreparableReloadListener;
+import net.minecraft.server.permissions.PermissionSet;
+import net.minecraft.world.flag.FeatureFlagSet;
+import net.minecraft.world.item.crafting.RecipeManager;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -24,20 +24,20 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.List;
 
-@Mixin(value = DataPackContents.class)
+@Mixin(value = ReloadableServerResources.class)
 public class DataPackContentsMixin {
-    @Shadow @Final private ServerRecipeManager recipeManager;
+    @Shadow @Final private RecipeManager recipes;
 
     @Unique
     private CompressionOverrideLoader extended_drawers$compressionOverrideLoader;
 
     @Inject(method = "<init>", at = @At("TAIL"))
-    private void extend_drawers$setupCompressionOverrideLoader(CombinedDynamicRegistries<ServerDynamicRegistryType> dynamicRegistries, RegistryWrapper.WrapperLookup registries, FeatureSet enabledFeatures, CommandManager.RegistrationEnvironment environment, List<Registry.PendingTagLoad<?>> pendingTagLoads, PermissionPredicate permissions, CallbackInfo ci) {
-        extended_drawers$compressionOverrideLoader = new CompressionOverrideLoader(ServerCompressionRecipeManager.of(recipeManager));
+    private void extend_drawers$setupCompressionOverrideLoader(LayeredRegistryAccess<RegistryLayer> dynamicRegistries, HolderLookup.Provider registries, FeatureFlagSet enabledFeatures, Commands.CommandSelection environment, List<Registry.PendingTags<?>> pendingTagLoads, PermissionSet permissions, CallbackInfo ci) {
+        extended_drawers$compressionOverrideLoader = new CompressionOverrideLoader(ServerCompressionRecipeManager.of(recipes));
     }
 
-    @ModifyReturnValue(method = "getContents", at = @At("RETURN"))
-    private List<ResourceReloader> extend_drawers$injectCompressionOverrideLoader(List<ResourceReloader> original) {
-        return ImmutableList.<ResourceReloader>builder().addAll(original).add(extended_drawers$compressionOverrideLoader).build();
+    @ModifyReturnValue(method = "listeners", at = @At("RETURN"))
+    private List<PreparableReloadListener> extend_drawers$injectCompressionOverrideLoader(List<PreparableReloadListener> original) {
+        return ImmutableList.<PreparableReloadListener>builder().addAll(original).add(extended_drawers$compressionOverrideLoader).build();
     }
 }

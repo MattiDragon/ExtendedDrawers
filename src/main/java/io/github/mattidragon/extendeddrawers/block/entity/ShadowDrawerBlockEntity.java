@@ -7,20 +7,20 @@ import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
 import net.fabricmc.fabric.api.transfer.v1.storage.base.FilteringStorage;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.network.listener.ClientPlayPacketListener;
-import net.minecraft.network.packet.Packet;
-import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
-import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.storage.NbtWriteView;
-import net.minecraft.storage.ReadView;
-import net.minecraft.storage.WriteView;
-import net.minecraft.util.ErrorReporter;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.ProblemReporter;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.TagValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 
 public class ShadowDrawerBlockEntity extends BlockEntity {
     public static final long INFINITE_COUNT_MARKER = -2;
@@ -36,20 +36,20 @@ public class ShadowDrawerBlockEntity extends BlockEntity {
     }
     
     static {
-        ItemStorage.SIDED.registerForBlockEntity((drawer, dir) -> drawer.world instanceof ServerWorld serverWorld ? createStorage(serverWorld, drawer.pos) : Storage.empty(), ModBlocks.SHADOW_DRAWER_BLOCK_ENTITY);
+        ItemStorage.SIDED.registerForBlockEntity((drawer, dir) -> drawer.level instanceof ServerLevel serverWorld ? createStorage(serverWorld, drawer.worldPosition) : Storage.empty(), ModBlocks.SHADOW_DRAWER_BLOCK_ENTITY);
     }
     
-    private static Storage<ItemVariant> createStorage(ServerWorld world, BlockPos pos) {
+    private static Storage<ItemVariant> createStorage(ServerLevel world, BlockPos pos) {
         if (!(world.getBlockEntity(pos) instanceof ShadowDrawerBlockEntity shadowDrawer)) throw new IllegalStateException();
         
         return shadowDrawer.new ShadowDrawerStorage(NetworkStorageCache.get(world, pos));
     }
     
     public void recalculateContents() {
-        if (world == null) return;
+        if (level == null) return;
 
-        if (this.world instanceof ServerWorld world && !item.isBlank()) {
-            var storage = NetworkStorageCache.get(world, pos);
+        if (this.level instanceof ServerLevel world && !item.isBlank()) {
+            var storage = NetworkStorageCache.get(world, worldPosition);
             long amount = 0L;
             outer:
             for (var slot : storage.parts) {
@@ -65,36 +65,36 @@ public class ShadowDrawerBlockEntity extends BlockEntity {
             }
             countCache = amount;
         }
-        var state = getCachedState();
-        world.updateListeners(pos, state, state, Block.NOTIFY_LISTENERS);
-        world.updateComparators(pos, state.getBlock());
+        var state = getBlockState();
+        level.sendBlockUpdated(worldPosition, state, state, Block.UPDATE_CLIENTS);
+        level.updateNeighbourForOutputSignal(worldPosition, state.getBlock());
     }
     
     @Override
-    public Packet<ClientPlayPacketListener> toUpdatePacket() {
-        return BlockEntityUpdateS2CPacket.create(this);
+    public Packet<ClientGamePacketListener> getUpdatePacket() {
+        return ClientboundBlockEntityDataPacket.create(this);
     }
     
     @Override
-    public NbtCompound toInitialChunkDataNbt(RegistryWrapper.WrapperLookup registries) {
-        try (var logging = new ErrorReporter.Logging(this.getReporterContext(), ExtendedDrawers.LOGGER)) {
-            var view = NbtWriteView.create(logging, registries);
-            writeData(view);
+    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+        try (var logging = new ProblemReporter.ScopedCollector(this.problemPath(), ExtendedDrawers.LOGGER)) {
+            var view = TagValueOutput.createWithContext(logging, registries);
+            saveAdditional(view);
             view.putLong("count", countCache);
-            return view.getNbt();
+            return view.buildResult();
         }
     }
 
     @Override
-    protected void readData(ReadView view) {
-        countCache = view.getLong("count", countCache);
+    protected void loadAdditional(ValueInput view) {
+        countCache = view.getLongOr("count", countCache);
         item = view.read("item", ItemVariant.CODEC).orElseGet(ItemVariant::blank);
-        hidden = view.getBoolean("hidden", false);
+        hidden = view.getBooleanOr("hidden", false);
     }
 
     @Override
-    protected void writeData(WriteView view) {
-        view.put("item", ItemVariant.CODEC, item);
+    protected void saveAdditional(ValueOutput view) {
+        view.store("item", ItemVariant.CODEC, item);
         view.putBoolean("hidden", hidden);
     }
 
@@ -104,9 +104,9 @@ public class ShadowDrawerBlockEntity extends BlockEntity {
 
     public void setHidden(boolean hidden) {
         this.hidden = hidden;
-        var state = getCachedState();
-        if (world != null) {
-            world.updateListeners(pos, state, state, Block.NOTIFY_LISTENERS);
+        var state = getBlockState();
+        if (level != null) {
+            level.sendBlockUpdated(worldPosition, state, state, Block.UPDATE_CLIENTS);
         }
     }
 

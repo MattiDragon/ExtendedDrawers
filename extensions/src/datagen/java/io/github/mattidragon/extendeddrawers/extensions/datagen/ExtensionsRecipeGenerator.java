@@ -1,66 +1,66 @@
 package io.github.mattidragon.extendeddrawers.extensions.datagen;
 
 import io.github.mattidragon.extendeddrawers.extensions.registry.ExtensionItems;
-import net.minecraft.data.recipe.RecipeExporter;
-import net.minecraft.data.recipe.RecipeGenerator;
-import net.minecraft.item.Items;
-import net.minecraft.recipe.book.RecipeCategory;
-import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.registry.tag.ItemTags;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.data.recipes.RecipeCategory;
+import net.minecraft.data.recipes.RecipeOutput;
+import net.minecraft.data.recipes.RecipeProvider;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.world.item.Items;
 
-class ExtensionsRecipeGenerator extends RecipeGenerator {
-    public ExtensionsRecipeGenerator(RegistryWrapper.WrapperLookup registries, RecipeExporter exporter) {
+class ExtensionsRecipeGenerator extends RecipeProvider {
+    public ExtensionsRecipeGenerator(HolderLookup.Provider registries, RecipeOutput exporter) {
         super(registries, exporter);
     }
 
     @Override
-    public void generate() {
-        offerBarrelDrawerRecipes(exporter);
-        offerEnderConnectorRecipe(exporter);
-        offerLinkerRecipe(exporter);
+    public void buildRecipes() {
+        offerBarrelDrawerRecipes(output);
+        offerEnderConnectorRecipe(output);
+        offerLinkerRecipe(output);
     }
 
-    private void offerBarrelDrawerRecipes(RecipeExporter exporter) {
-        createShaped(RecipeCategory.DECORATIONS, ExtensionItems.DRAWER_BARREL)
-                .input('B', Items.BARREL)
-                .input('L', ItemTags.LOGS)
-                .input('R', Items.RESIN_BRICK)
+    private void offerBarrelDrawerRecipes(RecipeOutput exporter) {
+        shaped(RecipeCategory.DECORATIONS, ExtensionItems.DRAWER_BARREL)
+                .define('B', Items.BARREL)
+                .define('L', ItemTags.LOGS)
+                .define('R', Items.RESIN_BRICK)
                 .pattern("LRL")
                 .pattern("RBR")
                 .pattern("LRL")
-                .criterion(hasItem(Items.BARREL), conditionsFromItem(Items.BARREL))
-                .offerTo(exporter, "drawer_barrel_from_resin");
-        createShaped(RecipeCategory.DECORATIONS, ExtensionItems.DRAWER_BARREL)
-                .input('B', Items.BARREL)
-                .input('L', ItemTags.LOGS)
-                .input('R', Items.NETHERITE_SCRAP)
+                .unlockedBy(getHasName(Items.BARREL), has(Items.BARREL))
+                .save(exporter, "drawer_barrel_from_resin");
+        shaped(RecipeCategory.DECORATIONS, ExtensionItems.DRAWER_BARREL)
+                .define('B', Items.BARREL)
+                .define('L', ItemTags.LOGS)
+                .define('R', Items.NETHERITE_SCRAP)
                 .pattern("LRL")
                 .pattern("RBR")
                 .pattern("LRL")
-                .criterion(hasItem(Items.BARREL), conditionsFromItem(Items.BARREL))
-                .offerTo(exporter, "drawer_barrel_from_scrap");
+                .unlockedBy(getHasName(Items.BARREL), has(Items.BARREL))
+                .save(exporter, "drawer_barrel_from_scrap");
     }
 
-    private void offerEnderConnectorRecipe(RecipeExporter exporter) {
-        createShaped(RecipeCategory.DECORATIONS, ExtensionItems.ENDER_CONNECTOR, 2)
-                .input('P', Items.ENDER_PEARL)
-                .input('C', Items.END_CRYSTAL)
-                .input('E', Items.END_STONE_BRICKS)
+    private void offerEnderConnectorRecipe(RecipeOutput exporter) {
+        shaped(RecipeCategory.DECORATIONS, ExtensionItems.ENDER_CONNECTOR, 2)
+                .define('P', Items.ENDER_PEARL)
+                .define('C', Items.END_CRYSTAL)
+                .define('E', Items.END_STONE_BRICKS)
                 .pattern("PEP")
                 .pattern("ECE")
                 .pattern("PEP")
-                .criterion(hasItem(Items.END_STONE_BRICKS), conditionsFromItem(Items.END_STONE_BRICKS))
-                .offerTo(exporter);
+                .unlockedBy(getHasName(Items.END_STONE_BRICKS), has(Items.END_STONE_BRICKS))
+                .save(exporter);
     }
 
-    private void offerLinkerRecipe(RecipeExporter exporter) {
-        createShaped(RecipeCategory.TOOLS, ExtensionItems.ENDER_CONNECTOR_LINKER)
-                .input('|', Items.BLAZE_ROD)
-                .input('E', Items.ENDER_EYE)
+    private void offerLinkerRecipe(RecipeOutput exporter) {
+        shaped(RecipeCategory.TOOLS, ExtensionItems.ENDER_CONNECTOR_LINKER)
+                .define('|', Items.BLAZE_ROD)
+                .define('E', Items.ENDER_EYE)
                 .pattern("E")
                 .pattern("|")
                 .pattern("|")
-                .criterion(hasItem(Items.END_STONE_BRICKS), conditionsFromItem(Items.END_STONE_BRICKS))
-                .offerTo(exporter);
+                .unlockedBy(getHasName(Items.END_STONE_BRICKS), has(Items.END_STONE_BRICKS))
+                .save(exporter);
     }
 }

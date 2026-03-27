@@ -2,25 +2,25 @@ package io.github.mattidragon.extendeddrawers.block.entity;
 
 import io.github.mattidragon.extendeddrawers.network.NetworkRegistry;
 import io.github.mattidragon.extendeddrawers.network.UpdateHandler;
-import net.minecraft.block.Block;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 
 public class DrawerBlockEntityUtils {
-    public static void handleSlotChanged(boolean sortingChanged, World world, BlockPos pos) {
-        if (!(world instanceof ServerWorld serverWorld)) return;
+    public static void handleSlotChanged(boolean sortingChanged, Level world, BlockPos pos) {
+        if (!(world instanceof ServerLevel serverWorld)) return;
 
         var state = world.getBlockState(pos);
         // Using this instead of markDirty to handle cases where drawer is in unloaded chunks (why doesn't minecraft save in unloaded chunks?)
-        world.getWorldChunk(pos).markNeedsSaving();
+        world.getChunkAt(pos).markUnsaved();
         UpdateHandler.scheduleUpdate(serverWorld, pos, sortingChanged ? UpdateHandler.ChangeType.CONTENT : UpdateHandler.ChangeType.COUNT);
-        world.updateListeners(pos, state, state, Block.NOTIFY_LISTENERS);
-        world.updateComparators(pos, state.getBlock());
+        world.sendBlockUpdated(pos, state, state, Block.UPDATE_CLIENTS);
+        world.updateNeighbourForOutputSignal(pos, state.getBlock());
     }
 
-    public static void handleRemoved(World world, BlockPos pos) {
-        if (!(world instanceof ServerWorld serverWorld)) return;
+    public static void handleRemoved(Level world, BlockPos pos) {
+        if (!(world instanceof ServerLevel serverWorld)) return;
 
         NetworkRegistry.UNIVERSE.getGraphWorld(serverWorld)
                 .getAllGraphsAt(pos)
@@ -28,8 +28,8 @@ public class DrawerBlockEntityUtils {
                 .forEach(cache -> cache.onNodeUnloaded(pos));
     }
 
-    public static void handleRemovalCancelled(World world, BlockPos pos) {
-        if (!(world instanceof ServerWorld serverWorld)) return;
+    public static void handleRemovalCancelled(Level world, BlockPos pos) {
+        if (!(world instanceof ServerLevel serverWorld)) return;
 
         NetworkRegistry.UNIVERSE.getGraphWorld(serverWorld)
                 .getAllGraphsAt(pos)

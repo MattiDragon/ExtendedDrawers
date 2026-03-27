@@ -2,23 +2,23 @@ package io.github.mattidragon.extendeddrawers.item;
 
 import io.github.mattidragon.extendeddrawers.block.base.DrawerInteractionHandler;
 import io.github.mattidragon.extendeddrawers.registry.ModDataComponents;
-import net.minecraft.component.type.TooltipDisplayComponent;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemUsageContext;
-import net.minecraft.item.tooltip.TooltipType;
-import net.minecraft.stat.Stats;
-import net.minecraft.text.Text;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Formatting;
-import net.minecraft.util.Hand;
-import net.minecraft.world.World;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
+import net.minecraft.stats.Stats;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.TooltipDisplay;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.Level;
 
 import java.util.function.Consumer;
 
 public class LimiterItem extends Item {
-    public LimiterItem(Settings settings) {
+    public LimiterItem(Properties settings) {
         super(settings);
     }
 
@@ -26,25 +26,25 @@ public class LimiterItem extends Item {
     // This does not work here as we need a tooltip from the lack of a component.
     @SuppressWarnings("deprecation")
     @Override
-    public void appendTooltip(ItemStack stack, TooltipContext context, TooltipDisplayComponent displayComponent, Consumer<Text> textConsumer, TooltipType type) {
-        if (displayComponent.shouldDisplay(ModDataComponents.LIMITER_LIMIT) && stack.get(ModDataComponents.LIMITER_LIMIT) == null) {
-            textConsumer.accept(Text.translatable("item.extended_drawers.limiter.unset").formatted(Formatting.ITALIC, Formatting.GRAY));
+    public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay displayComponent, Consumer<Component> textConsumer, TooltipFlag type) {
+        if (displayComponent.shows(ModDataComponents.LIMITER_LIMIT) && stack.get(ModDataComponents.LIMITER_LIMIT) == null) {
+            textConsumer.accept(Component.translatable("item.extended_drawers.limiter.unset").withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));
         }
     }
 
     @Override
-    public ActionResult use(World world, PlayerEntity user, Hand hand) {
-        var itemStack = user.getStackInHand(hand);
-        user.useBook(itemStack, hand);
-        user.incrementStat(Stats.USED.getOrCreateStat(this));
-        return ActionResult.SUCCESS;
+    public InteractionResult use(Level world, Player user, InteractionHand hand) {
+        var itemStack = user.getItemInHand(hand);
+        user.openItemGui(itemStack, hand);
+        user.awardStat(Stats.ITEM_USED.get(this));
+        return InteractionResult.SUCCESS;
     }
 
     @Override
-    public ActionResult useOnBlock(ItemUsageContext context) {
-        if (context.getWorld().getBlockState(context.getBlockPos()).getBlock() instanceof DrawerInteractionHandler drawer) {
-            return drawer.changeLimiter(context.getWorld().getBlockState(context.getBlockPos()), context.getWorld(), context.getBlockPos(), context.getHitPos(), context.getSide(), context.getPlayer(), context.getStack());
+    public InteractionResult useOn(UseOnContext context) {
+        if (context.getLevel().getBlockState(context.getClickedPos()).getBlock() instanceof DrawerInteractionHandler drawer) {
+            return drawer.changeLimiter(context.getLevel().getBlockState(context.getClickedPos()), context.getLevel(), context.getClickedPos(), context.getClickLocation(), context.getClickedFace(), context.getPlayer(), context.getItemInHand());
         }
-        return ActionResult.PASS;
+        return InteractionResult.PASS;
     }
 }

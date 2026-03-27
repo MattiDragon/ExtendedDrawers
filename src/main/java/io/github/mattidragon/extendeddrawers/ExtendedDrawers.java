@@ -18,13 +18,13 @@ import net.fabricmc.fabric.api.resource.v1.ResourceLoader;
 import net.fabricmc.fabric.api.resource.v1.pack.PackActivationType;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.server.command.CommandManager;
-import net.minecraft.text.HoverEvent;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import net.minecraft.commands.Commands;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.HoverEvent;
+import net.minecraft.network.chat.Style;
+import net.minecraft.resources.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,7 +36,7 @@ public class ExtendedDrawers implements ModInitializer {
     public static ShiftAccess SHIFT_ACCESS = () -> false;
 
     public static Identifier id(String path) {
-        return Identifier.of(MOD_ID, path);
+        return Identifier.fromNamespaceAndPath(MOD_ID, path);
     }
 
     @Override
@@ -51,25 +51,25 @@ public class ExtendedDrawers implements ModInitializer {
         CompressionRecipeSyncPayload.register();
         SetLimiterLimitPayload.register();
         DrawerCacheCommand.register();
-        ResourceLoader.registerBuiltinPack(id("alt"), MOD_CONTAINER, Text.translatable("resourcepack.extended_drawers.alt"), PackActivationType.NORMAL);
-        ResourceLoader.registerBuiltinPack(id("dev"), MOD_CONTAINER, Text.translatable("resourcepack.extended_drawers.programmer_art"), PackActivationType.NORMAL);
+        ResourceLoader.registerBuiltinPack(id("alt"), MOD_CONTAINER, Component.translatable("resourcepack.extended_drawers.alt"), PackActivationType.NORMAL);
+        ResourceLoader.registerBuiltinPack(id("dev"), MOD_CONTAINER, Component.translatable("resourcepack.extended_drawers.programmer_art"), PackActivationType.NORMAL);
     }
 
     private static void registerCommand() {
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
-            var root = CommandManager.literal("extended_drawers")
-                    .requires(CommandManager.requirePermissionLevel(CommandManager.ADMINS_CHECK));
+            var root = Commands.literal("extended_drawers")
+                    .requires(Commands.hasPermission(Commands.LEVEL_ADMINS));
 
-            root.then(CommandManager.literal("reload")
+            root.then(Commands.literal("reload")
                     .executes(context -> {
                         var error = CONFIG.reload();
                         if (error.isEmpty()) {
-                            context.getSource().sendFeedback(() -> Text.translatable("command.extended_drawers.reload.success"), true);
+                            context.getSource().sendSuccess(() -> Component.translatable("command.extended_drawers.reload.success"), true);
                             return 1;
                         }
-                        var message = Text.translatable("command.extended_drawers.reload.fail")
-                                .fillStyle(Style.EMPTY.withHoverEvent(new HoverEvent.ShowText(Text.literal(error.get().toString()))));
-                        context.getSource().sendError(message);
+                        var message = Component.translatable("command.extended_drawers.reload.fail")
+                                .withStyle(Style.EMPTY.withHoverEvent(new HoverEvent.ShowText(Component.literal(error.get().toString()))));
+                        context.getSource().sendFailure(message);
                         LOGGER.error("Failed to reload config", error.get());
                         return 0;
                     }));
@@ -79,27 +79,27 @@ public class ExtendedDrawers implements ModInitializer {
     }
 
     private void registerItemGroup() {
-        Registry.register(Registries.ITEM_GROUP, id("main"), FabricItemGroup.builder()
-                .icon(ModItems.SHADOW_DRAWER::getDefaultStack)
-                .displayName(Text.translatable("itemGroup.extended_drawers.main"))
-                .entries((context, entries) -> {
-                    entries.add(ModBlocks.SINGLE_DRAWER);
-                    entries.add(ModBlocks.DOUBLE_DRAWER);
-                    entries.add(ModBlocks.QUAD_DRAWER);
-                    entries.add(ModBlocks.CONNECTOR);
-                    entries.add(ModBlocks.SHADOW_DRAWER);
-                    entries.add(ModBlocks.COMPACTING_DRAWER);
-                    entries.add(ModBlocks.ACCESS_POINT);
+        Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, id("main"), FabricItemGroup.builder()
+                .icon(ModItems.SHADOW_DRAWER::getDefaultInstance)
+                .title(Component.translatable("itemGroup.extended_drawers.main"))
+                .displayItems((context, entries) -> {
+                    entries.accept(ModBlocks.SINGLE_DRAWER);
+                    entries.accept(ModBlocks.DOUBLE_DRAWER);
+                    entries.accept(ModBlocks.QUAD_DRAWER);
+                    entries.accept(ModBlocks.CONNECTOR);
+                    entries.accept(ModBlocks.SHADOW_DRAWER);
+                    entries.accept(ModBlocks.COMPACTING_DRAWER);
+                    entries.accept(ModBlocks.ACCESS_POINT);
 
-                    entries.add(ModItems.T1_UPGRADE);
-                    entries.add(ModItems.T2_UPGRADE);
-                    entries.add(ModItems.T3_UPGRADE);
-                    entries.add(ModItems.T4_UPGRADE);
-                    entries.add(ModItems.CREATIVE_UPGRADE);
-                    entries.add(ModItems.UPGRADE_FRAME);
-                    entries.add(ModItems.LOCK);
-                    entries.add(ModItems.LIMITER);
-                    entries.add(ModItems.DUPE_WAND);
+                    entries.accept(ModItems.T1_UPGRADE);
+                    entries.accept(ModItems.T2_UPGRADE);
+                    entries.accept(ModItems.T3_UPGRADE);
+                    entries.accept(ModItems.T4_UPGRADE);
+                    entries.accept(ModItems.CREATIVE_UPGRADE);
+                    entries.accept(ModItems.UPGRADE_FRAME);
+                    entries.accept(ModItems.LOCK);
+                    entries.accept(ModItems.LIMITER);
+                    entries.accept(ModItems.DUPE_WAND);
                 })
                 .build());
     }

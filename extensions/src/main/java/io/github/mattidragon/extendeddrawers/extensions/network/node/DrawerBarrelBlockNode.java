@@ -2,7 +2,7 @@ package io.github.mattidragon.extendeddrawers.extensions.network.node;
 
 import com.kneelawk.graphlib.api.graph.user.BlockNodeType;
 import io.github.mattidragon.extendeddrawers.network.node.DrawerNetworkBlockNode;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 import static io.github.mattidragon.extendeddrawers.ExtendedDrawers.id;

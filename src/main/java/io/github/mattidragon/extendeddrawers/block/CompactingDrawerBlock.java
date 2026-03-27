@@ -8,15 +8,15 @@ import io.github.mattidragon.extendeddrawers.registry.ModBlocks;
 import io.github.mattidragon.extendeddrawers.storage.CompactingDrawerStorage;
 import io.github.mattidragon.extendeddrawers.storage.ModifierAccess;
 import net.fabricmc.fabric.api.transfer.v1.storage.StorageUtil;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Vec2f;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec2;
 
 public class CompactingDrawerBlock extends StorageDrawerBlock<CompactingDrawerBlockEntity> {
-    public CompactingDrawerBlock(Settings settings) {
+    public CompactingDrawerBlock(Properties settings) {
         super(settings);
     }
 
@@ -26,19 +26,19 @@ public class CompactingDrawerBlock extends StorageDrawerBlock<CompactingDrawerBl
     }
 
     @Override
-    public int getComparatorOutput(BlockState state, World world, BlockPos pos, Direction direction) {
+    public int getAnalogOutputSignal(BlockState state, Level world, BlockPos pos, Direction direction) {
         var drawer = getBlockEntity(world, pos);
         if (drawer == null) return 0;
         return StorageUtil.calculateComparatorOutput(drawer.storage);
     }
 
     @Override
-    protected ModifierAccess getModifierAccess(CompactingDrawerBlockEntity drawer, Vec2f facePos) {
+    protected ModifierAccess getModifierAccess(CompactingDrawerBlockEntity drawer, Vec2 facePos) {
         return drawer.storage;
     }
 
     @SuppressWarnings("DuplicateBranchesInSwitch") // It's clearer like this
-    public int getSlotIndex(CompactingDrawerBlockEntity drawer, Vec2f facePos) {
+    public int getSlotIndex(CompactingDrawerBlockEntity drawer, Vec2 facePos) {
         var slotCount = drawer.storage.getActiveSlotCount();
         int topSlot = switch (slotCount) {
             case 1 -> 0;

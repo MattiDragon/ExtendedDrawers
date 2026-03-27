@@ -1,18 +1,18 @@
 package io.github.mattidragon.extendeddrawers.network.cache;
 
 import com.mojang.serialization.Codec;
-import net.minecraft.text.Text;
-import net.minecraft.util.StringIdentifiable;
+import net.minecraft.network.chat.Component;
+import net.minecraft.util.StringRepresentable;
 
 import java.util.Locale;
 import java.util.function.Supplier;
 
-public enum CachingMode implements StringIdentifiable {
+public enum CachingMode implements StringRepresentable {
     NONE(NoOpNetworkStorageCache::new),
     SIMPLE(SimpleNetworkStorageCache::new),
     SMART(SmartNetworkStorageCache::new);
 
-    public static final Codec<CachingMode> CODEC = StringIdentifiable.createCodec(CachingMode::values);
+    public static final Codec<CachingMode> CODEC = StringRepresentable.fromEnum(CachingMode::values);
 
     private final Supplier<NetworkStorageCache> cacheSupplier;
 
@@ -25,11 +25,11 @@ public enum CachingMode implements StringIdentifiable {
     }
 
     @Override
-    public String asString() {
+    public String getSerializedName() {
         return name().toLowerCase(Locale.ROOT);
     }
 
-    public Text getDisplayName() {
-        return Text.translatable("config.extended_drawers.cachingMode." + asString());
+    public Component getDisplayName() {
+        return Component.translatable("config.extended_drawers.cachingMode." + getSerializedName());
     }
 }

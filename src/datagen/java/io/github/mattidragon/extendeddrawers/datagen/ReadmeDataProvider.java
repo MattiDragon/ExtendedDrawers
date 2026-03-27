@@ -3,8 +3,8 @@ package io.github.mattidragon.extendeddrawers.datagen;
 import com.google.common.hash.HashCode;
 import com.google.common.hash.Hashing;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
+import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
-import net.minecraft.data.DataWriter;
 import net.minecraft.util.Util;
 
 import java.io.IOException;
@@ -28,15 +28,15 @@ public class ReadmeDataProvider implements DataProvider {
     }
 
     @Override
-    public CompletableFuture<?> run(DataWriter writer) {
-        var path = output.getPath().resolve("README.md");
+    public CompletableFuture<?> run(CachedOutput writer) {
+        var path = output.getOutputFolder().resolve("README.md");
         return CompletableFuture.runAsync(() -> {
             try {
-                writer.write(path, README.getBytes(StandardCharsets.UTF_8), HASH);
+                writer.writeIfNeeded(path, README.getBytes(StandardCharsets.UTF_8), HASH);
             } catch (IOException e) {
                 throw new CompletionException(e);
             }
-        }, Util.getMainWorkerExecutor());
+        }, Util.backgroundExecutor());
     }
     
     @Override

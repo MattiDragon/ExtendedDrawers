@@ -1,8 +1,8 @@
 package io.github.mattidragon.extendeddrawers.client.config.render;
 
 import io.github.mattidragon.extendeddrawers.config.ConfigData;
-import net.minecraft.client.gui.ScreenRect;
-import net.minecraft.client.gui.render.state.special.SpecialGuiElementRenderState;
+import net.minecraft.client.gui.navigation.ScreenRectangle;
+import net.minecraft.client.gui.render.state.pip.PictureInPictureRenderState;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix3x2f;
 
@@ -10,16 +10,16 @@ public record LayoutPreviewRenderState(
         ConfigData config,
         float size,
         Matrix3x2f pose,
+        int x0,
+        int y0,
         int x1,
         int y1,
-        int x2,
-        int y2,
         float scale,
-        @Nullable ScreenRect scissorArea,
-        @Nullable ScreenRect bounds
-) implements SpecialGuiElementRenderState {
+        @Nullable ScreenRectangle scissorArea,
+        @Nullable ScreenRectangle bounds
+) implements PictureInPictureRenderState {
 
-    public LayoutPreviewRenderState(ConfigData config, int size, Matrix3x2f pose, int x1, int y1, int x2, int y2, int scale, ScreenRect scissorArea) {
-        this(config, size, pose, x1, y1, x2, y2, scale, scissorArea, SpecialGuiElementRenderState.createBounds(x1, y1, x2, y2, scissorArea));
+    public LayoutPreviewRenderState(ConfigData config, int size, Matrix3x2f pose, int x0, int y0, int x1, int y1, int scale, ScreenRectangle scissorArea) {
+        this(config, size, pose, x0, y0, x1, y1, scale, scissorArea, PictureInPictureRenderState.getBounds(x0, y0, x1, y1, scissorArea));
     }
 }

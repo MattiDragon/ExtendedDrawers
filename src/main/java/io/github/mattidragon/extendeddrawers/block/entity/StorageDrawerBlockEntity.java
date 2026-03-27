@@ -1,9 +1,9 @@
 package io.github.mattidragon.extendeddrawers.block.entity;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
 
 public abstract class StorageDrawerBlockEntity extends BlockEntity implements StorageProvidingDrawerBlockEntity {
     public StorageDrawerBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
@@ -11,18 +11,18 @@ public abstract class StorageDrawerBlockEntity extends BlockEntity implements St
     }
 
     public void onSlotChanged(boolean sortingChanged) {
-        DrawerBlockEntityUtils.handleSlotChanged(sortingChanged, world, pos);
+        DrawerBlockEntityUtils.handleSlotChanged(sortingChanged, level, worldPosition);
     }
 
     @Override
-    public void markRemoved() {
-        super.markRemoved();
-        DrawerBlockEntityUtils.handleRemoved(world, pos);
+    public void setRemoved() {
+        super.setRemoved();
+        DrawerBlockEntityUtils.handleRemoved(level, worldPosition);
     }
 
     @Override
-    public void cancelRemoval() {
-        super.cancelRemoval();
-        DrawerBlockEntityUtils.handleRemovalCancelled(world, pos);
+    public void clearRemoved() {
+        super.clearRemoved();
+        DrawerBlockEntityUtils.handleRemovalCancelled(level, worldPosition);
     }
 }

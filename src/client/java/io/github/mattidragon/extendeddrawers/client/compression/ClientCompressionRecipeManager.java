@@ -3,8 +3,8 @@ package io.github.mattidragon.extendeddrawers.client.compression;
 import io.github.mattidragon.extendeddrawers.compacting.CompressionLadder;
 import io.github.mattidragon.extendeddrawers.compacting.CompressionRecipeManager;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
-import net.minecraft.client.network.ClientPlayNetworkHandler;
-import net.minecraft.world.World;
+import net.minecraft.client.multiplayer.ClientPacketListener;
+import net.minecraft.world.level.Level;
 
 import java.util.HashMap;
 import java.util.List;
@@ -13,7 +13,7 @@ import java.util.Map;
 public class ClientCompressionRecipeManager implements CompressionRecipeManager {
     private final Map<ItemVariant, CompressionLadder> ladders = new HashMap<>();
 
-    public static ClientCompressionRecipeManager of(ClientPlayNetworkHandler handler) {
+    public static ClientCompressionRecipeManager of(ClientPacketListener handler) {
         return ((Provider) handler).extended_drawers$getCompactingManager();
     }
 
@@ -24,7 +24,7 @@ public class ClientCompressionRecipeManager implements CompressionRecipeManager 
     }
 
     @Override
-    public CompressionLadder getLadder(ItemVariant item, World world) {
+    public CompressionLadder getLadder(ItemVariant item, Level world) {
         if (ladders.containsKey(item)) {
             return ladders.get(item);
         }

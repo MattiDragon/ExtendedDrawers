@@ -6,9 +6,9 @@ import io.github.mattidragon.extendeddrawers.block.entity.StorageProvidingDrawer
 import io.github.mattidragon.extendeddrawers.storage.DrawerStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.base.CombinedStorage;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -63,15 +63,15 @@ public class NoOpNetworkStorageCache implements NetworkStorageCache {
     }
 
     @Override
-    public List<Text> getDebugInfo() {
-        var list = new ArrayList<Text>();
-        list.add(Text.literal("No-Op Storage Cache Debug Info").formatted(Formatting.BOLD, Formatting.YELLOW));
+    public List<Component> getDebugInfo() {
+        var list = new ArrayList<Component>();
+        list.add(Component.literal("No-Op Storage Cache Debug Info").withStyle(ChatFormatting.BOLD, ChatFormatting.YELLOW));
         return list;
     }
 
     @Override
-    public Text getDebugInfo(BlockPos pos) {
-        return Text.literal("-");
+    public Component getDebugInfo(BlockPos pos) {
+        return Component.literal("-");
     }
 
     @Override

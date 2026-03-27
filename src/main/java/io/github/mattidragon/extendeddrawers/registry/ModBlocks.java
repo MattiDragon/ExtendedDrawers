@@ -5,46 +5,46 @@ import io.github.mattidragon.extendeddrawers.block.entity.CompactingDrawerBlockE
 import io.github.mattidragon.extendeddrawers.block.entity.DrawerBlockEntity;
 import io.github.mattidragon.extendeddrawers.block.entity.ShadowDrawerBlockEntity;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
-import net.minecraft.block.AbstractBlock;
-import net.minecraft.block.Block;
-import net.minecraft.block.MapColor;
-import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.sound.BlockSoundGroup;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.material.MapColor;
 
 import static io.github.mattidragon.extendeddrawers.ExtendedDrawers.id;
 
 public class ModBlocks {
-    public static final DrawerBlock SINGLE_DRAWER = new DrawerBlock(AbstractBlock.Settings.create().registryKey(key("single_drawer")).mapColor(MapColor.SPRUCE_BROWN).burnable().strength(2f, 3f).sounds(BlockSoundGroup.WOOD), 1);
-    public static final DrawerBlock DOUBLE_DRAWER = new DrawerBlock(AbstractBlock.Settings.create().registryKey(key("double_drawer")).mapColor(MapColor.SPRUCE_BROWN).burnable().strength(2f, 3f).sounds(BlockSoundGroup.WOOD), 2);
-    public static final DrawerBlock QUAD_DRAWER = new DrawerBlock(AbstractBlock.Settings.create().registryKey(key("quad_drawer")).mapColor(MapColor.SPRUCE_BROWN).burnable().strength(2f, 3f).sounds(BlockSoundGroup.WOOD), 4);
-    public static final ConnectorBlock CONNECTOR = new ConnectorBlock(AbstractBlock.Settings.create().registryKey(key("connector")).mapColor(MapColor.SPRUCE_BROWN).burnable().strength(2f, 3f).sounds(BlockSoundGroup.WOOD));
-    public static final AccessPointBlock ACCESS_POINT = new AccessPointBlock(AbstractBlock.Settings.create().registryKey(key("access_point")).mapColor(MapColor.STONE_GRAY).strength(3f, 9f).sounds(BlockSoundGroup.STONE));
-    public static final ShadowDrawerBlock SHADOW_DRAWER = new ShadowDrawerBlock(AbstractBlock.Settings.create().registryKey(key("shadow_drawer")).mapColor(MapColor.PALE_YELLOW).strength(3f, 9f).sounds(BlockSoundGroup.STONE));
-    public static final CompactingDrawerBlock COMPACTING_DRAWER = new CompactingDrawerBlock(AbstractBlock.Settings.create().registryKey(key("compacting_drawer")).mapColor(MapColor.STONE_GRAY).strength(3f, 9f).sounds(BlockSoundGroup.STONE));
+    public static final DrawerBlock SINGLE_DRAWER = new DrawerBlock(BlockBehaviour.Properties.of().setId(key("single_drawer")).mapColor(MapColor.PODZOL).ignitedByLava().strength(2f, 3f).sound(SoundType.WOOD), 1);
+    public static final DrawerBlock DOUBLE_DRAWER = new DrawerBlock(BlockBehaviour.Properties.of().setId(key("double_drawer")).mapColor(MapColor.PODZOL).ignitedByLava().strength(2f, 3f).sound(SoundType.WOOD), 2);
+    public static final DrawerBlock QUAD_DRAWER = new DrawerBlock(BlockBehaviour.Properties.of().setId(key("quad_drawer")).mapColor(MapColor.PODZOL).ignitedByLava().strength(2f, 3f).sound(SoundType.WOOD), 4);
+    public static final ConnectorBlock CONNECTOR = new ConnectorBlock(BlockBehaviour.Properties.of().setId(key("connector")).mapColor(MapColor.PODZOL).ignitedByLava().strength(2f, 3f).sound(SoundType.WOOD));
+    public static final AccessPointBlock ACCESS_POINT = new AccessPointBlock(BlockBehaviour.Properties.of().setId(key("access_point")).mapColor(MapColor.STONE).strength(3f, 9f).sound(SoundType.STONE));
+    public static final ShadowDrawerBlock SHADOW_DRAWER = new ShadowDrawerBlock(BlockBehaviour.Properties.of().setId(key("shadow_drawer")).mapColor(MapColor.SAND).strength(3f, 9f).sound(SoundType.STONE));
+    public static final CompactingDrawerBlock COMPACTING_DRAWER = new CompactingDrawerBlock(BlockBehaviour.Properties.of().setId(key("compacting_drawer")).mapColor(MapColor.STONE).strength(3f, 9f).sound(SoundType.STONE));
 
     public static final BlockEntityType<DrawerBlockEntity> DRAWER_BLOCK_ENTITY = FabricBlockEntityTypeBuilder.create(DrawerBlockEntity::new, SINGLE_DRAWER, DOUBLE_DRAWER, QUAD_DRAWER).build();
     public static final BlockEntityType<CompactingDrawerBlockEntity> COMPACTING_DRAWER_BLOCK_ENTITY = FabricBlockEntityTypeBuilder.create(CompactingDrawerBlockEntity::new, COMPACTING_DRAWER).build();
     public static final BlockEntityType<ShadowDrawerBlockEntity> SHADOW_DRAWER_BLOCK_ENTITY = FabricBlockEntityTypeBuilder.create(ShadowDrawerBlockEntity::new, SHADOW_DRAWER).build();
     
     public static void register() {
-        Registry.register(Registries.BLOCK, id("single_drawer"), SINGLE_DRAWER);
-        Registry.register(Registries.BLOCK, id("double_drawer"), DOUBLE_DRAWER);
-        Registry.register(Registries.BLOCK, id("quad_drawer"), QUAD_DRAWER);
-        Registry.register(Registries.BLOCK, id("connector"), CONNECTOR);
-        Registry.register(Registries.BLOCK, id("access_point"), ACCESS_POINT);
-        Registry.register(Registries.BLOCK, id("shadow_drawer"), SHADOW_DRAWER);
-        Registry.register(Registries.BLOCK, id("compacting_drawer"), COMPACTING_DRAWER);
+        Registry.register(BuiltInRegistries.BLOCK, id("single_drawer"), SINGLE_DRAWER);
+        Registry.register(BuiltInRegistries.BLOCK, id("double_drawer"), DOUBLE_DRAWER);
+        Registry.register(BuiltInRegistries.BLOCK, id("quad_drawer"), QUAD_DRAWER);
+        Registry.register(BuiltInRegistries.BLOCK, id("connector"), CONNECTOR);
+        Registry.register(BuiltInRegistries.BLOCK, id("access_point"), ACCESS_POINT);
+        Registry.register(BuiltInRegistries.BLOCK, id("shadow_drawer"), SHADOW_DRAWER);
+        Registry.register(BuiltInRegistries.BLOCK, id("compacting_drawer"), COMPACTING_DRAWER);
 
-        Registry.register(Registries.BLOCK_ENTITY_TYPE, id("drawer"), DRAWER_BLOCK_ENTITY);
-        Registry.register(Registries.BLOCK_ENTITY_TYPE, id("compacting_drawer"), COMPACTING_DRAWER_BLOCK_ENTITY);
-        Registry.register(Registries.BLOCK_ENTITY_TYPE, id("shadow_drawer"), SHADOW_DRAWER_BLOCK_ENTITY);
+        Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("drawer"), DRAWER_BLOCK_ENTITY);
+        Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("compacting_drawer"), COMPACTING_DRAWER_BLOCK_ENTITY);
+        Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id("shadow_drawer"), SHADOW_DRAWER_BLOCK_ENTITY);
     }
     
-    private static RegistryKey<Block> key(String path) {
-        return RegistryKey.of(RegistryKeys.BLOCK, id(path));
+    private static ResourceKey<Block> key(String path) {
+        return ResourceKey.create(Registries.BLOCK, id(path));
     } 
 }

@@ -1,32 +1,32 @@
 package io.github.mattidragon.extendeddrawers.extensions.block;
 
+import com.mojang.math.OctahedralGroup;
 import io.github.mattidragon.extendeddrawers.block.base.NetworkBlockWithEntity;
 import io.github.mattidragon.extendeddrawers.extensions.block.entity.EnderConnectorBlockEntity;
 import io.github.mattidragon.extendeddrawers.extensions.network.node.EnderConnectorBlockNode;
 import io.github.mattidragon.extendeddrawers.extensions.registry.ExtensionBlocks;
 import io.github.mattidragon.extendeddrawers.network.node.DrawerNetworkBlockNode;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.ShapeContext;
-import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.DirectionTransformation;
-import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.util.shape.VoxelShapes;
-import net.minecraft.world.BlockView;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class EnderConnectorBlock extends NetworkBlockWithEntity<EnderConnectorBlockEntity> {
-    private static final VoxelShape VOXEL_SHAPE = VoxelShapes.union(
-            createColumnShape(6, 0, 16),
-            VoxelShapes.transform(createColumnShape(6, 0, 16), DirectionTransformation.ROT_90_X_POS),
-            VoxelShapes.transform(createColumnShape(6, 0, 16), DirectionTransformation.ROT_90_Z_POS)
+    private static final VoxelShape VOXEL_SHAPE = Shapes.or(
+            column(6, 0, 16),
+            Shapes.rotate(column(6, 0, 16), OctahedralGroup.ROT_90_X_POS),
+            Shapes.rotate(column(6, 0, 16), OctahedralGroup.ROT_90_Z_POS)
     );
 
-    public EnderConnectorBlock(Settings settings) {
+    public EnderConnectorBlock(Properties settings) {
         super(settings);
     }
 
     @Override
-    protected VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
+    protected VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
         return VOXEL_SHAPE;
     }
 
@@ -41,7 +41,7 @@ public class EnderConnectorBlock extends NetworkBlockWithEntity<EnderConnectorBl
     }
 
     @Override
-    protected boolean isTransparent(BlockState state) {
+    protected boolean propagatesSkylightDown(BlockState state) {
         return true;
     }
 }

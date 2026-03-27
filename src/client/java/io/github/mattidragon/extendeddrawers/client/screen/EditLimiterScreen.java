@@ -3,29 +3,29 @@ package io.github.mattidragon.extendeddrawers.client.screen;
 import io.github.mattidragon.extendeddrawers.ExtendedDrawers;
 import io.github.mattidragon.extendeddrawers.networking.SetLimiterLimitPayload;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.minecraft.client.gl.RenderPipelines;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.client.input.KeyInput;
-import net.minecraft.screen.ScreenTexts;
-import net.minecraft.text.OrderedText;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
-import net.minecraft.util.Identifier;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.network.chat.CommonComponents;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
+import net.minecraft.resources.Identifier;
+import net.minecraft.util.FormattedCharSequence;
 import org.lwjgl.glfw.GLFW;
 
 public class EditLimiterScreen extends Screen {
     private static final Identifier TEXTURE = ExtendedDrawers.id("textures/gui/limiter.png");
     private final int slot;
     private final Long previous;
-    private TextFieldWidget textField;
-    private ButtonWidget doneButton;
-    private ButtonWidget clearButton;
+    private EditBox textField;
+    private Button doneButton;
+    private Button clearButton;
 
-    public EditLimiterScreen(Text title, int slot, Long previous) {
+    public EditLimiterScreen(Component title, int slot, Long previous) {
         super(title);
         this.slot = slot;
         this.previous = previous;
@@ -33,49 +33,49 @@ public class EditLimiterScreen extends Screen {
 
     @Override
     protected void init() {
-        if (client == null) return;
+        if (minecraft == null) return;
 
-        doneButton = addDrawableChild(ButtonWidget.builder(ScreenTexts.DONE, button -> {
+        doneButton = addRenderableWidget(Button.builder(CommonComponents.GUI_DONE, button -> {
                     try {
-                        var limit = Long.parseLong(textField.getText());
+                        var limit = Long.parseLong(textField.getValue());
                         if (limit <= 0) throw new NumberFormatException();
                         ClientPlayNetworking.send(new SetLimiterLimitPayload(slot, limit));
                     } catch (NumberFormatException ignored) {}
-                    close();
+                    onClose();
                 })
-                .position(width / 2 - 58, height / 2 + 6)
+                .pos(width / 2 - 58, height / 2 + 6)
                 .width(38)
                 .build());
 
-        clearButton = addDrawableChild(ButtonWidget.builder(Text.translatable("item.extended_drawers.limiter.clear"), button -> {
+        clearButton = addRenderableWidget(Button.builder(Component.translatable("item.extended_drawers.limiter.clear"), button -> {
                     ClientPlayNetworking.send(new SetLimiterLimitPayload(slot, -1));
-                    close();
+                    onClose();
                 })
-                .position(width / 2 - 19, height / 2 + 6)
+                .pos(width / 2 - 19, height / 2 + 6)
                 .width(38)
                 .build());
 
-        addDrawableChild(ButtonWidget.builder(ScreenTexts.CANCEL, button -> close())
-                .position(width / 2 + 20, height / 2 + 6)
+        addRenderableWidget(Button.builder(CommonComponents.GUI_CANCEL, button -> onClose())
+                .pos(width / 2 + 20, height / 2 + 6)
                 .width(38)
                 .build());
         
-        textField = addDrawableChild(new TextFieldWidget(client.textRenderer, width / 2 - 58, height / 2 - 16, 116, 20, Text.literal("")));
+        textField = addRenderableWidget(new EditBox(minecraft.font, width / 2 - 58, height / 2 - 16, 116, 20, Component.literal("")));
         textField.addFormatter((text, firstCharacterIndex) -> { // Render invalid text as red
-            var style = isValid(text) ? Style.EMPTY : Style.EMPTY.withColor(Formatting.RED);
-            return OrderedText.styledForwardsVisitedString(text, style);
+            var style = isValid(text) ? Style.EMPTY : Style.EMPTY.withColor(ChatFormatting.RED);
+            return FormattedCharSequence.forward(text, style);
         });
-        textField.setChangedListener(value -> doneButton.active = isValid(textField.getText()));
-        if (previous != null) textField.setText(String.valueOf(previous));
+        textField.setResponder(value -> doneButton.active = isValid(textField.getValue()));
+        if (previous != null) textField.setValue(String.valueOf(previous));
         setFocused(textField);
     }
 
     @Override
-    public boolean keyPressed(KeyInput input) {
+    public boolean keyPressed(KeyEvent input) {
         if (input.key() == GLFW.GLFW_KEY_ENTER || input.key() == GLFW.GLFW_KEY_KP_ENTER) {
-            if (isValid(textField.getText())) {
+            if (isValid(textField.getValue())) {
                 doneButton.onPress(input);
-            } else if (textField.getText().isBlank()) {
+            } else if (textField.getValue().isBlank()) {
                 clearButton.onPress(input);
             }
         }
@@ -94,20 +94,20 @@ public class EditLimiterScreen extends Screen {
     }
 
     @Override
-    public void renderBackground(DrawContext context, int mouseX, int mouseY, float delta) {
-        renderInGameBackground(context);
-        context.drawTexture(RenderPipelines.GUI_TEXTURED, TEXTURE, width / 2 - 64, height / 2 - 32, 0, 0, 128, 64, 128, 64);
+    public void renderBackground(GuiGraphics context, int mouseX, int mouseY, float delta) {
+        renderTransparentBackground(context);
+        context.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, width / 2 - 64, height / 2 - 32, 0, 0, 128, 64, 128, 64);
     }
 
     @Override
-    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+    public void render(GuiGraphics context, int mouseX, int mouseY, float delta) {
         super.render(context, mouseX, mouseY, delta);
-        if (client == null) return;
-        context.drawText(client.textRenderer, getTitle(), width / 2 - 58, height / 2 - 16 - 10, 0xff404040, false);
+        if (minecraft == null) return;
+        context.drawString(minecraft.font, getTitle(), width / 2 - 58, height / 2 - 16 - 10, 0xff404040, false);
     }
 
     @Override
-    public boolean shouldPause() {
+    public boolean isPauseScreen() {
         return false;
     }
 }

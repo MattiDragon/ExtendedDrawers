@@ -9,20 +9,20 @@ import io.github.mattidragon.extendeddrawers.misc.ItemUtils;
 import io.github.mattidragon.extendeddrawers.registry.ModDataComponents;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.storage.ReadView;
-import net.minecraft.storage.WriteView;
-import net.minecraft.text.Text;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.jetbrains.annotations.Nullable;
 
 public interface ModifierDrawerStorage extends ModifierAccess, DrawerStorage {
     StorageDrawerBlockEntity getOwner();
 
     @Override
-    default boolean changeUpgrade(ItemVariant newUpgrade, World world, BlockPos pos, Direction side, @Nullable PlayerEntity player) {
+    default boolean changeUpgrade(ItemVariant newUpgrade, Level world, BlockPos pos, Direction side, @Nullable Player player) {
         if (!(newUpgrade.getItem() instanceof UpgradeItem) && !newUpgrade.isBlank()) return false;
 
         var oldUpgrade = settings().upgrade;
@@ -32,7 +32,7 @@ public interface ModifierDrawerStorage extends ModifierAccess, DrawerStorage {
         if (getTrueAmount() > getCapacity() && ExtendedDrawers.CONFIG.get().misc().blockUpgradeRemovalsWithOverflow()) {
             settings().upgrade = oldUpgrade;
             if (player != null)
-                player.sendMessage(Text.translatable("extended_drawer.drawer.upgrade_fail"), true);
+                player.displayClientMessage(Component.translatable("extended_drawer.drawer.upgrade_fail"), true);
             return false;
         }
 
@@ -42,7 +42,7 @@ public interface ModifierDrawerStorage extends ModifierAccess, DrawerStorage {
     }
 
     @Override
-    default boolean changeLimiter(ItemVariant newLimiter, World world, BlockPos pos, Direction side, @Nullable PlayerEntity player) {
+    default boolean changeLimiter(ItemVariant newLimiter, Level world, BlockPos pos, Direction side, @Nullable Player player) {
         if (!(newLimiter.getItem() instanceof LimiterItem) && !newLimiter.isBlank()) return false;
 
         var oldLimiter = settings().limiter;
@@ -52,7 +52,7 @@ public interface ModifierDrawerStorage extends ModifierAccess, DrawerStorage {
         if (getTrueAmount() > getCapacity() && ExtendedDrawers.CONFIG.get().misc().blockUpgradeRemovalsWithOverflow()) {
             settings().limiter = oldLimiter;
             if (player != null)
-                player.sendMessage(Text.translatable("extended_drawer.drawer.limiter_fail"), true);
+                player.displayClientMessage(Component.translatable("extended_drawer.drawer.limiter_fail"), true);
             return false;
         }
 
@@ -66,29 +66,29 @@ public interface ModifierDrawerStorage extends ModifierAccess, DrawerStorage {
         settings().sortingDirty = false;
     }
 
-    void dumpExcess(World world, BlockPos pos, @Nullable Direction side, @Nullable PlayerEntity player);
+    void dumpExcess(Level world, BlockPos pos, @Nullable Direction side, @Nullable Player player);
 
-    default void readData(ReadView view) {
-        settings().locked = view.getBoolean("locked", false);
-        settings().voiding = view.getBoolean("voiding", false);
-        settings().hidden = view.getBoolean("hidden", false);
-        settings().duping = view.getBoolean("duping", false);
+    default void readData(ValueInput view) {
+        settings().locked = view.getBooleanOr("locked", false);
+        settings().voiding = view.getBooleanOr("voiding", false);
+        settings().hidden = view.getBooleanOr("hidden", false);
+        settings().duping = view.getBooleanOr("duping", false);
         settings().upgrade = view.read("capacityUpgrade", ItemVariant.CODEC).orElseGet(ItemVariant::blank);
         settings().limiter = view.read("limiter", ItemVariant.CODEC).orElseGet(ItemVariant::blank);
     }
 
-    default void writeData(WriteView view) {
+    default void writeData(ValueOutput view) {
         view.putBoolean("locked", settings().locked);
         view.putBoolean("voiding", settings().voiding);
         view.putBoolean("hidden", settings().hidden);
         view.putBoolean("duping", settings().duping);
-        view.put("capacityUpgrade", ItemVariant.CODEC, settings().upgrade);
-        view.put("limiter", ItemVariant.CODEC, settings().limiter);
+        view.store("capacityUpgrade", ItemVariant.CODEC, settings().upgrade);
+        view.store("limiter", ItemVariant.CODEC, settings().limiter);
     }
 
     /**
      * Temporarily overrides the lock of the slot for inserting.
-     * Used by {@link io.github.mattidragon.extendeddrawers.block.DrawerBlock#onUse DrawerBlock#onUse} to allow adding items to locked drawers manually.
+     * Used by {@link io.github.mattidragon.extendeddrawers.block.DrawerBlock#useWithoutItem DrawerBlock#onUse} to allow adding items to locked drawers manually.
      * Should not be used multiple times within the same transaction.
      * @param transaction The transaction for which the lock stays overridden. When closed
      */

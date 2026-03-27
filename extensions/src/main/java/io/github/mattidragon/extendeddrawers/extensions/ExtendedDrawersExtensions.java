@@ -12,11 +12,11 @@ import io.github.mattidragon.extendeddrawers.registry.ModItems;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.item.v1.ComponentTooltipAppenderRegistry;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
-import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.util.Identifier;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,7 +25,7 @@ public class ExtendedDrawersExtensions implements ModInitializer {
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
     public static Identifier id(String path) {
-        return Identifier.of(MOD_ID, path);
+        return Identifier.fromNamespaceAndPath(MOD_ID, path);
     }
 
     @Override
@@ -36,7 +36,7 @@ public class ExtendedDrawersExtensions implements ModInitializer {
 
         BlockEntityType.BARREL.addSupportedBlock(ExtensionBlocks.DRAWER_BARREL);
 
-        ItemGroupEvents.modifyEntriesEvent(RegistryKey.of(RegistryKeys.ITEM_GROUP, ExtendedDrawers.id("main")))
+        ItemGroupEvents.modifyEntriesEvent(ResourceKey.create(Registries.CREATIVE_MODE_TAB, ExtendedDrawers.id("main")))
                 .register(entries -> {
                     entries.addAfter(ModItems.ACCESS_POINT, ExtensionItems.DRAWER_BARREL, ExtensionItems.ENDER_CONNECTOR);
                     entries.addAfter(ModItems.DUPE_WAND, ExtensionItems.ENDER_CONNECTOR_LINKER);
@@ -44,6 +44,6 @@ public class ExtendedDrawersExtensions implements ModInitializer {
         NetworkRegistry.UNIVERSE.addNodeTypes(DrawerBarrelBlockNode.TYPE, EnderConnectorBlockNode.TYPE);
         NetworkRegistry.UNIVERSE.addLinkKeyType(EnderConnectorLinkKey.TYPE);
 
-        ComponentTooltipAppenderRegistry.addBefore(DataComponentTypes.LORE, ExtensionDataComponents.LINKING_ENDER_CONNECTOR);
+        ComponentTooltipAppenderRegistry.addBefore(DataComponents.LORE, ExtensionDataComponents.LINKING_ENDER_CONNECTOR);
     }
 }

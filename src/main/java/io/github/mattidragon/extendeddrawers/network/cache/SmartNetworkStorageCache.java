@@ -15,9 +15,9 @@ import io.github.mattidragon.extendeddrawers.network.node.DrawerBlockNode;
 import io.github.mattidragon.extendeddrawers.storage.DrawerStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.base.CombinedStorage;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -146,32 +146,32 @@ public class SmartNetworkStorageCache implements NetworkStorageCache {
     }
 
     @Override
-    public List<Text> getDebugInfo() {
-        var list = new ArrayList<Text>();
-        list.add(Text.literal("Smart Storage Cache Debug Info").formatted(Formatting.BOLD, Formatting.YELLOW));
-        list.add(Text.literal("  %s uncached positions".formatted(missingPositions.size())));
-        list.add(Text.literal("  %s cached positions".formatted(positions.size())));
-        list.add(Text.literal("  %s storages".formatted(cachedStorage.parts.size())));
-        list.add(Text.empty());
+    public List<Component> getDebugInfo() {
+        var list = new ArrayList<Component>();
+        list.add(Component.literal("Smart Storage Cache Debug Info").withStyle(ChatFormatting.BOLD, ChatFormatting.YELLOW));
+        list.add(Component.literal("  %s uncached positions".formatted(missingPositions.size())));
+        list.add(Component.literal("  %s cached positions".formatted(positions.size())));
+        list.add(Component.literal("  %s storages".formatted(cachedStorage.parts.size())));
+        list.add(Component.empty());
 
         context.getGraph()
                 .getNodes()
                 .filter(holder -> holder.getNode() instanceof DrawerBlockNode || holder.getNode() instanceof CompactingDrawerBlockNode)
                 .map(NodeHolder::getBlockPos)
                 .forEach(pos -> {
-                    list.add(Text.literal("%s".formatted(pos.toShortString())).formatted(Formatting.YELLOW));
+                    list.add(Component.literal("%s".formatted(pos.toShortString())).withStyle(ChatFormatting.YELLOW));
                     var isValid = false;
                     if (missingPositions.contains(pos)) {
-                        list.add(Text.literal("  Not cached").formatted(Formatting.RED));
+                        list.add(Component.literal("  Not cached").withStyle(ChatFormatting.RED));
                         isValid = true;
                     }
                     if (positions.containsKey(pos)) {
-                        list.add(Text.literal("  Cached: %s storage(s)".formatted(positions.get(pos).size())).formatted(Formatting.GREEN));
+                        list.add(Component.literal("  Cached: %s storage(s)".formatted(positions.get(pos).size())).withStyle(ChatFormatting.GREEN));
                         isValid = true;
                     }
 
                     if (!isValid) {
-                        list.add(Text.literal("  Missing from cache").formatted(Formatting.DARK_RED));
+                        list.add(Component.literal("  Missing from cache").withStyle(ChatFormatting.DARK_RED));
                     }
                 });
 
@@ -191,14 +191,14 @@ public class SmartNetworkStorageCache implements NetworkStorageCache {
     }
 
     @Override
-    public Text getDebugInfo(BlockPos pos) {
+    public Component getDebugInfo(BlockPos pos) {
         if (missingPositions.contains(pos)) {
-            return Text.literal("Not cached").formatted(Formatting.GREEN);
+            return Component.literal("Not cached").withStyle(ChatFormatting.GREEN);
         }
         if (positions.containsKey(pos)) {
-            return Text.literal("Cached: %s storage(s)".formatted(positions.get(pos).size())).formatted(Formatting.GREEN);
+            return Component.literal("Cached: %s storage(s)".formatted(positions.get(pos).size())).withStyle(ChatFormatting.GREEN);
         }
-        return Text.literal("Missing from cache").formatted(Formatting.RED);
+        return Component.literal("Missing from cache").withStyle(ChatFormatting.RED);
     }
 }
 

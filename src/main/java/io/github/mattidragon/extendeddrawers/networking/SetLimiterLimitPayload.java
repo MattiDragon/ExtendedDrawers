@@ -6,17 +6,17 @@ import io.github.mattidragon.extendeddrawers.registry.ModDataComponents;
 import io.github.mattidragon.extendeddrawers.registry.ModItems;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.codec.PacketCodecs;
-import net.minecraft.network.packet.CustomPayload;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.world.entity.player.Inventory;
 
-public record SetLimiterLimitPayload(int slot, long limit) implements CustomPayload {
-    public static final Id<SetLimiterLimitPayload> ID = new Id<>(ExtendedDrawers.id("set_limiter_limit"));
-    private static final PacketCodec<PacketByteBuf, SetLimiterLimitPayload> CODEC = PacketCodec.tuple(
-            PacketCodecs.VAR_INT, SetLimiterLimitPayload::slot,
-            PacketCodecs.VAR_LONG, SetLimiterLimitPayload::limit,
+public record SetLimiterLimitPayload(int slot, long limit) implements CustomPacketPayload {
+    public static final Type<SetLimiterLimitPayload> ID = new Type<>(ExtendedDrawers.id("set_limiter_limit"));
+    private static final StreamCodec<FriendlyByteBuf, SetLimiterLimitPayload> CODEC = StreamCodec.composite(
+            ByteBufCodecs.VAR_INT, SetLimiterLimitPayload::slot,
+            ByteBufCodecs.VAR_LONG, SetLimiterLimitPayload::limit,
             SetLimiterLimitPayload::new
     );
 
@@ -29,9 +29,9 @@ public record SetLimiterLimitPayload(int slot, long limit) implements CustomPayl
         ServerPlayNetworking.registerGlobalReceiver(ID, (packet, context) -> {
             var slot = packet.slot;
             var player = context.player();
-            if (!PlayerInventory.isValidHotbarIndex(slot) && slot != 40) return;
-            var stack = player.getInventory().getStack(slot);
-            if (!stack.isOf(ModItems.LIMITER)) return;
+            if (!Inventory.isHotbarSlot(slot) && slot != 40) return;
+            var stack = player.getInventory().getItem(slot);
+            if (!stack.is(ModItems.LIMITER)) return;
             if (packet.limit == -1) {
                 stack.remove(ModDataComponents.LIMITER_LIMIT);
             } else {
@@ -41,7 +41,7 @@ public record SetLimiterLimitPayload(int slot, long limit) implements CustomPayl
     }
 
     @Override
-    public Id<? extends CustomPayload> getId() {
+    public Type<? extends CustomPacketPayload> type() {
         return ID;
     }
 }

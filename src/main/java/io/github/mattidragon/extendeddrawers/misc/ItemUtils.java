@@ -1,17 +1,17 @@
 package io.github.mattidragon.extendeddrawers.misc;
 
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
-import net.minecraft.entity.ItemEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
 public class ItemUtils {
-    public static void offerOrDropStacks(World world, BlockPos pos, @Nullable Direction side, @Nullable PlayerEntity player, ItemVariant item, long amount) {
-        var maxCount = item.getItem().getMaxCount();
+    public static void offerOrDropStacks(Level world, BlockPos pos, @Nullable Direction side, @Nullable Player player, ItemVariant item, long amount) {
+        var maxCount = item.getItem().getDefaultMaxStackSize();
         while (amount > 0) {
             int dropped = (int) Math.min(maxCount, amount);
             offerOrDrop(world, pos, side, player, item.toStack(dropped));
@@ -19,12 +19,12 @@ public class ItemUtils {
         }
     }
     
-    public static void offerOrDrop(World world, BlockPos pos, @Nullable Direction side, @Nullable PlayerEntity player, ItemStack stack) {
+    public static void offerOrDrop(Level world, BlockPos pos, @Nullable Direction side, @Nullable Player player, ItemStack stack) {
         if (player == null) {
-            int x = pos.getX() + (side == null ? 0 : side.getOffsetX());
-            int z = pos.getZ() + (side == null ? 0 : side.getOffsetZ());
-            world.spawnEntity(new ItemEntity(world, x, pos.getY(), z, stack));
+            int x = pos.getX() + (side == null ? 0 : side.getStepX());
+            int z = pos.getZ() + (side == null ? 0 : side.getStepZ());
+            world.addFreshEntity(new ItemEntity(world, x, pos.getY(), z, stack));
         } else
-            player.getInventory().offerOrDrop(stack);
+            player.getInventory().placeItemBackInInventory(stack);
     }
 }

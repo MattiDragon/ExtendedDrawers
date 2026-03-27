@@ -1,26 +1,26 @@
 package io.github.mattidragon.extendeddrawers.client.renderer;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import io.github.mattidragon.extendeddrawers.ExtendedDrawers;
 import io.github.mattidragon.extendeddrawers.block.base.StorageDrawerBlock;
 import io.github.mattidragon.extendeddrawers.block.entity.DrawerBlockEntity;
 import io.github.mattidragon.extendeddrawers.client.renderer.state.DrawerRenderState;
 import io.github.mattidragon.extendeddrawers.client.renderer.state.DrawerSlotRenderState;
-import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
-import net.minecraft.client.render.command.ModelCommandRenderer;
-import net.minecraft.client.render.command.OrderedRenderCommandQueue;
-import net.minecraft.client.render.state.CameraRenderState;
-import net.minecraft.client.texture.SpriteAtlasTexture;
-import net.minecraft.client.util.SpriteIdentifier;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.item.ItemDisplayContext;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
+import net.minecraft.client.renderer.state.CameraRenderState;
+import net.minecraft.client.renderer.texture.TextureAtlas;
+import net.minecraft.client.resources.model.Material;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.item.ItemDisplayContext;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 
 public class DrawerBlockEntityRenderer extends AbstractDrawerBlockEntityRenderer<DrawerBlockEntity, DrawerRenderState> {
-    public DrawerBlockEntityRenderer(BlockEntityRendererFactory.Context context) {
+    public DrawerBlockEntityRenderer(BlockEntityRendererProvider.Context context) {
         super(context);
     }
 
@@ -30,8 +30,8 @@ public class DrawerBlockEntityRenderer extends AbstractDrawerBlockEntityRenderer
     }
 
     @Override
-    public void updateRenderState(DrawerBlockEntity drawer, DrawerRenderState state, float tickProgress, Vec3d cameraPos, @Nullable ModelCommandRenderer.CrumblingOverlayCommand crumblingOverlay) {
-        super.updateRenderState(drawer, state, tickProgress, cameraPos, crumblingOverlay);
+    public void extractRenderState(DrawerBlockEntity drawer, DrawerRenderState state, float tickProgress, Vec3 cameraPos, @Nullable ModelFeatureRenderer.CrumblingOverlay crumblingOverlay) {
+        super.extractRenderState(drawer, state, tickProgress, cameraPos, crumblingOverlay);
         state.slotCount = drawer.slots;
         if (state.slots == null || state.slots.length != drawer.slots) {
             state.slots = new DrawerSlotRenderState[drawer.slots];
@@ -47,7 +47,7 @@ public class DrawerBlockEntityRenderer extends AbstractDrawerBlockEntityRenderer
             slotState.isDuping = slot.isDuping();
             slotState.upgrade = slot.getUpgrade();
             slotState.hasLimiter = slot.hasLimiter();
-            itemModelManager.update(slotState.item, slot.getResource().toStack(), ItemDisplayContext.GUI, drawer.getWorld(), null, drawer.getPos().hashCode() * i);
+            itemModelManager.appendItemLayers(slotState.item, slot.getResource().toStack(), ItemDisplayContext.GUI, drawer.getLevel(), null, drawer.getBlockPos().hashCode() * i);
             slotState.amount = slot.getAmount();
 
             state.slots[i] = slotState;
@@ -55,17 +55,17 @@ public class DrawerBlockEntityRenderer extends AbstractDrawerBlockEntityRenderer
     }
 
     @Override
-    public void render(DrawerRenderState state, MatrixStack matrices, OrderedRenderCommandQueue queue, CameraRenderState cameraState) {
-        var horizontalDir = state.blockState.get(StorageDrawerBlock.FACING);
-        var face = state.blockState.get(StorageDrawerBlock.FACE);
+    public void submit(DrawerRenderState state, PoseStack matrices, SubmitNodeCollector queue, CameraRenderState cameraState) {
+        var horizontalDir = state.blockState.getValue(StorageDrawerBlock.FACING);
+        var face = state.blockState.getValue(StorageDrawerBlock.FACE);
 
         // TODO: shouldRender()
 
-        matrices.push();
+        matrices.pushPose();
         alignMatrices(matrices, horizontalDir, face);
-        var light = state.lightmapCoordinates;
+        var light = state.lightCoords;
         var slots = state.slotCount;
-        var pos = state.pos;
+        var pos = state.blockPos;
 
         switch (slots) {
             case 1 -> renderSlot(state.slots[0], false, light, matrices, queue, cameraState, pos);
@@ -88,27 +88,27 @@ public class DrawerBlockEntityRenderer extends AbstractDrawerBlockEntityRenderer
             default -> ExtendedDrawers.LOGGER.error("Unexpected drawer slot count, skipping rendering. Are you an addon dev adding more configurations? If so please mixin into DrawerBlockEntityRenderer and add your layout.");
         }
 
-        matrices.pop();
+        matrices.popPose();
     }
 
     @Override
-    public int getRenderDistance() {
+    public int getViewDistance() {
         var config = ExtendedDrawers.CONFIG.get().client();
         return Math.max(config.iconRenderDistance(), Math.max(config.textRenderDistance(), config.itemRenderDistance()));
     }
     
-    private void renderSlot(DrawerSlotRenderState slotState, boolean small, int light, MatrixStack matrices, OrderedRenderCommandQueue queue, CameraRenderState cameraState, BlockPos pos) {
-        var icons = new ArrayList<SpriteIdentifier>();
+    private void renderSlot(DrawerSlotRenderState slotState, boolean small, int light, PoseStack matrices, SubmitNodeCollector queue, CameraRenderState cameraState, BlockPos pos) {
+        var icons = new ArrayList<Material>();
         var config = ExtendedDrawers.CONFIG.get().client().icons();
         @SuppressWarnings("deprecation")
-        var atlas = SpriteAtlasTexture.ITEMS_ATLAS_TEXTURE;
+        var atlas = TextureAtlas.LOCATION_ITEMS;
         
-        if (slotState.isLocked) icons.add(new SpriteIdentifier(atlas, config.lockedIcon()));
-        if (slotState.isVoiding) icons.add(new SpriteIdentifier(atlas, config.voidingIcon()));
-        if (slotState.isHidden) icons.add(new SpriteIdentifier(atlas, config.hiddenIcon()));
-        if (slotState.isDuping) icons.add(new SpriteIdentifier(atlas, config.dupingIcon()));
-        if (slotState.upgrade != null) icons.add(new SpriteIdentifier(atlas, slotState.upgrade.sprite));
-        if (slotState.hasLimiter) icons.add(new SpriteIdentifier(atlas, ExtendedDrawers.id("item/limiter")));
+        if (slotState.isLocked) icons.add(new Material(atlas, config.lockedIcon()));
+        if (slotState.isVoiding) icons.add(new Material(atlas, config.voidingIcon()));
+        if (slotState.isHidden) icons.add(new Material(atlas, config.hiddenIcon()));
+        if (slotState.isDuping) icons.add(new Material(atlas, config.dupingIcon()));
+        if (slotState.upgrade != null) icons.add(new Material(atlas, slotState.upgrade.sprite));
+        if (slotState.hasLimiter) icons.add(new Material(atlas, ExtendedDrawers.id("item/limiter")));
 
         String amount = String.valueOf(slotState.amount);
         if ((slotState.amount == 0) && !ExtendedDrawers.CONFIG.get().client().displayEmptyCount())

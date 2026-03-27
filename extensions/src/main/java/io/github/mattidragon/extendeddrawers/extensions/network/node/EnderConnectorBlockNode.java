@@ -5,8 +5,8 @@ import com.kneelawk.graphlib.api.graph.user.BlockNode;
 import com.kneelawk.graphlib.api.graph.user.BlockNodeType;
 import io.github.mattidragon.extendeddrawers.extensions.block.entity.EnderConnectorBlockEntity;
 import io.github.mattidragon.extendeddrawers.network.node.DrawerNetworkBlockNode;
-import net.minecraft.block.Block;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.level.block.Block;
 import org.jetbrains.annotations.NotNull;
 
 import static io.github.mattidragon.extendeddrawers.extensions.ExtendedDrawersExtensions.id;
@@ -25,9 +25,9 @@ public class EnderConnectorBlockNode implements DrawerNetworkBlockNode {
     public void onConnectionsChanged(@NotNull NodeHolder<BlockNode> self) {
         if (self.getBlockEntity() instanceof EnderConnectorBlockEntity entity) {
             entity.updateRayCache(self);
-            entity.markDirty();
+            entity.setChanged();
             var state = self.getBlockState();
-            self.getBlockWorld().updateListeners(self.getBlockPos(), state, state, Block.NOTIFY_ALL);
+            self.getBlockWorld().sendBlockUpdated(self.getBlockPos(), state, state, Block.UPDATE_ALL);
         }
     }
 }

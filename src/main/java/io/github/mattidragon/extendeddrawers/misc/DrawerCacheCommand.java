@@ -7,44 +7,44 @@ import io.github.mattidragon.extendeddrawers.network.cache.NetworkStorageCache;
 import io.github.mattidragon.extendeddrawers.network.node.CompactingDrawerBlockNode;
 import io.github.mattidragon.extendeddrawers.network.node.DrawerBlockNode;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
-import net.minecraft.command.argument.BlockPosArgumentType;
-import net.minecraft.server.command.CommandManager;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
+import net.minecraft.ChatFormatting;
+import net.minecraft.commands.Commands;
+import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
+import net.minecraft.network.chat.Component;
 
 import java.util.List;
 
 public class DrawerCacheCommand {
     public static void register() {
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
-            dispatcher.register(CommandManager.literal("drawercache")
-                    .requires(CommandManager.requirePermissionLevel(CommandManager.GAMEMASTERS_CHECK))
-                    .then(CommandManager.argument("pos", BlockPosArgumentType.blockPos())
-                            .then(CommandManager.literal("print")
+            dispatcher.register(Commands.literal("drawercache")
+                    .requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS))
+                    .then(Commands.argument("pos", BlockPosArgument.blockPos())
+                            .then(Commands.literal("print")
                                     .executes(context -> {
                                         var source = context.getSource();
-                                        var pos = BlockPosArgumentType.getBlockPos(context, "pos");
-                                        NetworkRegistry.UNIVERSE.getGraphWorld(source.getWorld())
+                                        var pos = BlockPosArgument.getBlockPos(context, "pos");
+                                        NetworkRegistry.UNIVERSE.getGraphWorld(source.getLevel())
                                                 .getAllGraphsAt(pos)
                                                 .map(graph -> graph.getGraphEntity(NetworkRegistry.STORAGE_CACHE_TYPE))
                                                 .map(NetworkStorageCache::getDebugInfo)
                                                 .flatMap(List::stream)
-                                                .forEach(line -> source.sendFeedback(() -> line, false));
+                                                .forEach(line -> source.sendSuccess(() -> line, false));
                                         return 1;
                                     }))
-                            .then(CommandManager.literal("check")
+                            .then(Commands.literal("check")
                                     .executes(context -> {
                                         var source = context.getSource();
-                                        var pos = BlockPosArgumentType.getBlockPos(context, "pos");
-                                        var graphs = NetworkRegistry.UNIVERSE.getGraphWorld(source.getWorld())
+                                        var pos = BlockPosArgument.getBlockPos(context, "pos");
+                                        var graphs = NetworkRegistry.UNIVERSE.getGraphWorld(source.getLevel())
                                                 .getAllGraphsAt(pos)
                                                 .toList();
                                         if (graphs.isEmpty()) {
-                                            source.sendFeedback(() -> Text.literal("No graph found").formatted(Formatting.RED), false);
+                                            source.sendSuccess(() -> Component.literal("No graph found").withStyle(ChatFormatting.RED), false);
                                             return 0;
                                         }
                                         if (graphs.size() > 1) {
-                                            source.sendFeedback(() -> Text.literal("Multiple graphs found").formatted(Formatting.RED), false);
+                                            source.sendSuccess(() -> Component.literal("Multiple graphs found").withStyle(ChatFormatting.RED), false);
                                             return 0;
                                         }
 
@@ -56,38 +56,38 @@ public class DrawerCacheCommand {
                                                 .map(NodeHolder::getPos)
                                                 .map(NodePos::pos)
                                                 .forEach(nodePos -> {
-                                                    source.sendFeedback(() -> Text.literal("Node at " + nodePos.toShortString() + ": ").formatted(Formatting.YELLOW).append(cache.getDebugInfo(nodePos)), false);
+                                                    source.sendSuccess(() -> Component.literal("Node at " + nodePos.toShortString() + ": ").withStyle(ChatFormatting.YELLOW).append(cache.getDebugInfo(nodePos)), false);
                                                 });
 
-                                        source.sendFeedback(() -> Text.literal("Checked cache").formatted(Formatting.GREEN), false);
+                                        source.sendSuccess(() -> Component.literal("Checked cache").withStyle(ChatFormatting.GREEN), false);
                                         return 1;
                                     }))
-                            .then(CommandManager.literal("update")
+                            .then(Commands.literal("update")
                                     .executes(context -> {
                                         var source = context.getSource();
-                                        var pos = BlockPosArgumentType.getBlockPos(context, "pos");
-                                        var caches = NetworkRegistry.UNIVERSE.getGraphWorld(source.getWorld())
+                                        var pos = BlockPosArgument.getBlockPos(context, "pos");
+                                        var caches = NetworkRegistry.UNIVERSE.getGraphWorld(source.getLevel())
                                                 .getAllGraphsAt(pos)
                                                 .map(graph -> graph.getGraphEntity(NetworkRegistry.STORAGE_CACHE_TYPE))
                                                 .toList();
 
                                         caches.forEach(NetworkStorageCache::update);
 
-                                        source.sendFeedback(() -> Text.literal("Updated cache").formatted(Formatting.GREEN), false);
+                                        source.sendSuccess(() -> Component.literal("Updated cache").withStyle(ChatFormatting.GREEN), false);
                                         return 1;
                                     })
-                                    .then(CommandManager.literal("force")
+                                    .then(Commands.literal("force")
                                             .executes(context -> {
                                                 var source = context.getSource();
-                                                var pos = BlockPosArgumentType.getBlockPos(context, "pos");
-                                                var caches = NetworkRegistry.UNIVERSE.getGraphWorld(source.getWorld())
+                                                var pos = BlockPosArgument.getBlockPos(context, "pos");
+                                                var caches = NetworkRegistry.UNIVERSE.getGraphWorld(source.getLevel())
                                                         .getAllGraphsAt(pos)
                                                         .map(graph -> graph.getGraphEntity(NetworkRegistry.STORAGE_CACHE_TYPE))
                                                         .toList();
 
                                                 caches.forEach(NetworkStorageCache::forceUpdate);
 
-                                                source.sendFeedback(() -> Text.literal("Force updated cache").formatted(Formatting.GREEN), false);
+                                                source.sendSuccess(() -> Component.literal("Force updated cache").withStyle(ChatFormatting.GREEN), false);
                                                 return 1;
                                             })))));
         });

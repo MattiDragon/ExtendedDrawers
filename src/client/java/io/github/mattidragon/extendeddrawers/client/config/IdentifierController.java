@@ -6,7 +6,7 @@ import dev.isxander.yacl3.gui.AbstractWidget;
 import dev.isxander.yacl3.gui.YACLScreen;
 import dev.isxander.yacl3.gui.controllers.string.IStringController;
 import dev.isxander.yacl3.gui.controllers.string.StringControllerElement;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.Identifier;
 
 import java.util.Objects;
 
@@ -18,12 +18,12 @@ public record IdentifierController(Option<Identifier> option) implements IString
 
     @Override
     public void setFromString(String value) {
-        option.requestSet(Objects.requireNonNullElse(Identifier.tryParse(value), Identifier.ofVanilla("air")));
+        option.requestSet(Objects.requireNonNullElse(Identifier.tryParse(value), Identifier.withDefaultNamespace("air")));
     }
 
     @Override
     public boolean isInputValid(String input) {
-        return !Identifier.validate(input).isError();
+        return !Identifier.read(input).isError();
     }
 
     @Override

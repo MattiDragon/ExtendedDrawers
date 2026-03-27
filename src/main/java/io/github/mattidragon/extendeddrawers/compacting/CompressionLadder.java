@@ -4,10 +4,10 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
-import net.minecraft.item.Item;
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.codec.PacketCodecs;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.world.item.Item;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,7 +21,7 @@ public record CompressionLadder(List<Step> steps) {
     public static final Codec<CompressionLadder> CODEC = Codec.unboundedMap(
                     Codec.withAlternative(
                             ItemVariant.CODEC.validate(variant -> variant.isBlank() ? DataResult.error(() -> "Cannot use air") : DataResult.success(variant)),
-                            Item.ENTRY_CODEC.flatComapMap(
+                            Item.CODEC.flatComapMap(
                                     entry -> ItemVariant.of(entry.value()),
                                     variant -> variant.hasComponents() ? DataResult.error(() -> "Cannot serialize components") : DataResult.success(variant.getRegistryEntry()))
                     ),
@@ -39,8 +39,8 @@ public record CompressionLadder(List<Step> steps) {
                 }
                 return DataResult.success(ladder);
             });
-    public static final PacketCodec<RegistryByteBuf, CompressionLadder> PACKET_CODEC = PacketCodec.tuple(
-            Step.PACKET_CODEC.collect(PacketCodecs.toList()), CompressionLadder::steps,
+    public static final StreamCodec<RegistryFriendlyByteBuf, CompressionLadder> PACKET_CODEC = StreamCodec.composite(
+            Step.PACKET_CODEC.apply(ByteBufCodecs.list()), CompressionLadder::steps,
             CompressionLadder::new);
 
     public CompressionLadder(List<Step> steps) {
@@ -52,9 +52,9 @@ public record CompressionLadder(List<Step> steps) {
      * @param size The amount of the first step required to craft this one.
      */
     public record Step(ItemVariant item, int size) {
-        public static final PacketCodec<RegistryByteBuf, Step> PACKET_CODEC = PacketCodec.tuple(
+        public static final StreamCodec<RegistryFriendlyByteBuf, Step> PACKET_CODEC = StreamCodec.composite(
                 ItemVariant.PACKET_CODEC, Step::item,
-                PacketCodecs.VAR_INT, Step::size,
+                ByteBufCodecs.VAR_INT, Step::size,
                 Step::new
         );
     }

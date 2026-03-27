@@ -9,12 +9,12 @@ import net.fabricmc.fabric.api.transfer.v1.storage.base.ResourceAmount;
 import net.fabricmc.fabric.api.transfer.v1.storage.base.SingleSlotStorage;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.fabricmc.fabric.api.transfer.v1.transaction.base.SnapshotParticipant;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.storage.ReadView;
-import net.minecraft.storage.WriteView;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.jetbrains.annotations.Nullable;
 
 public final class DrawerSlot extends SnapshotParticipant<DrawerSlot.Snapshot> implements SingleSlotStorage<ItemVariant>, ModifierDrawerStorage {
@@ -73,7 +73,7 @@ public final class DrawerSlot extends SnapshotParticipant<DrawerSlot.Snapshot> i
     @Override
     public long insert(ItemVariant resource, long maxAmount, TransactionContext transaction) {
         if (!resource.equals(item) && !item.isBlank()) return 0;
-        if (!ExtendedDrawers.CONFIG.get().misc().allowRecursion() && !resource.getItem().canBeNested()) return 0;
+        if (!ExtendedDrawers.CONFIG.get().misc().allowRecursion() && !resource.getItem().canFitInsideContainerItems()) return 0;
         if (item.isBlank() && settings.locked && !settings.lockOverridden) return 0;
 
         var inserted = Math.min(getCapacity() - amount, maxAmount);
@@ -136,7 +136,7 @@ public final class DrawerSlot extends SnapshotParticipant<DrawerSlot.Snapshot> i
         var config = ExtendedDrawers.CONFIG.get().storage();
         var capacity = (long) (config.drawerCapacity() * this.capacityMultiplier);
         if (config.stackSizeAffectsCapacity())
-            capacity = (long) (capacity / (64.0 / item.getItem().getMaxCount()));
+            capacity = (long) (capacity / (64.0 / item.getItem().getDefaultMaxStackSize()));
         if (getUpgrade() != null)
             capacity = getUpgrade().modifier.applyAsLong(capacity);
         capacity = Math.min(capacity, getLimiter());
@@ -161,7 +161,7 @@ public final class DrawerSlot extends SnapshotParticipant<DrawerSlot.Snapshot> i
     }
 
     @Override
-    public void dumpExcess(World world, BlockPos pos, @Nullable Direction side, @Nullable PlayerEntity player) {
+    public void dumpExcess(Level world, BlockPos pos, @Nullable Direction side, @Nullable Player player) {
         if (amount > getCapacity()) {
             ItemUtils.offerOrDropStacks(world, pos, side, player, item, amount - getCapacity());
             amount = getCapacity();
@@ -170,17 +170,17 @@ public final class DrawerSlot extends SnapshotParticipant<DrawerSlot.Snapshot> i
     }
 
     @Override
-    public void readData(ReadView view) {
+    public void readData(ValueInput view) {
         ModifierDrawerStorage.super.readData(view);
         item = view.read("item", ItemVariant.CODEC).orElseGet(ItemVariant::blank);
-        amount = view.getLong("amount", 0);
+        amount = view.getLongOr("amount", 0);
         if (item.isBlank()) amount = 0; // Avoids dupes with drawers of removed items
     }
 
     @Override
-    public void writeData(WriteView view) {
+    public void writeData(ValueOutput view) {
         ModifierDrawerStorage.super.writeData(view);
-        view.put("item", ItemVariant.CODEC, item);
+        view.store("item", ItemVariant.CODEC, item);
         view.putLong("amount", amount);
     }
 

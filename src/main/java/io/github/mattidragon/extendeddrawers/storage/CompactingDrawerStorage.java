@@ -14,12 +14,12 @@ import net.fabricmc.fabric.api.transfer.v1.storage.StorageView;
 import net.fabricmc.fabric.api.transfer.v1.storage.base.SingleSlotStorage;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.fabricmc.fabric.api.transfer.v1.transaction.base.SnapshotParticipant;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.storage.ReadView;
-import net.minecraft.storage.WriteView;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -70,7 +70,7 @@ public final class CompactingDrawerStorage extends SnapshotParticipant<Compactin
     }
 
     @Override
-    public void dumpExcess(World world, BlockPos pos, @Nullable Direction side, @Nullable PlayerEntity player) {
+    public void dumpExcess(Level world, BlockPos pos, @Nullable Direction side, @Nullable Player player) {
         if (amount > getCapacity()) {
             var slots = getSlotArray();
             // Iterate slots in reverse order
@@ -95,7 +95,7 @@ public final class CompactingDrawerStorage extends SnapshotParticipant<Compactin
         var config = ExtendedDrawers.CONFIG.get().storage();
         long capacity = config.compactingCapacity();
         if (config.stackSizeAffectsCapacity())
-            capacity /= (long) (64.0 / item.getItem().getMaxCount());
+            capacity /= (long) (64.0 / item.getItem().getDefaultMaxStackSize());
         if (getUpgrade() != null)
             capacity = getUpgrade().modifier.applyAsLong(capacity);
         capacity *= getTotalCompression();
@@ -181,18 +181,18 @@ public final class CompactingDrawerStorage extends SnapshotParticipant<Compactin
     }
 
     @Override
-    public void readData(ReadView view) {
+    public void readData(ValueInput view) {
         ModifierDrawerStorage.super.readData(view);
         item = view.read("item", ItemVariant.CODEC).orElseGet(ItemVariant::blank);
-        amount = view.getLong("amount", 0);
+        amount = view.getLongOr("amount", 0);
         if (item.isBlank()) amount = 0; // Avoids dupes with drawers of removed items
         updatePending = true;
     }
 
     @Override
-    public void writeData(WriteView view) {
+    public void writeData(ValueOutput view) {
         ModifierDrawerStorage.super.writeData(view);
-        view.put("item", ItemVariant.CODEC, item);
+        view.store("item", ItemVariant.CODEC, item);
         view.putLong("amount", amount);
     }
 
@@ -241,9 +241,9 @@ public final class CompactingDrawerStorage extends SnapshotParticipant<Compactin
             slot.reset(true);
         }
 
-        var ladder = owner.getWorld() == null
+        var ladder = owner.getLevel() == null
                 ? new CompressionLadder(List.of(new CompressionLadder.Step(item, 1)))
-                : CompressionRecipeManager.of(owner.getWorld()).getLadder(item, owner.getWorld());
+                : CompressionRecipeManager.of(owner.getLevel()).getLadder(item, owner.getLevel());
         var ladderSize = ladder.steps().size();
         var initialPosition = ladder.getPosition(item);
         if (initialPosition == -1) throw new IllegalStateException("Item is not on it's own recipe ladder. Did we lookup mid-reload?");
@@ -364,7 +364,7 @@ public final class CompactingDrawerStorage extends SnapshotParticipant<Compactin
             StoragePreconditions.notBlankNotNegative(item, maxAmount);
             if (blocked) return 0;
             if (!this.item.equals(item) && !this.item.isBlank()) return 0;
-            if (!ExtendedDrawers.CONFIG.get().misc().allowRecursion() && !item.getItem().canBeNested()) return 0;
+            if (!ExtendedDrawers.CONFIG.get().misc().allowRecursion() && !item.getItem().canFitInsideContainerItems()) return 0;
             if (this.item.isBlank() && settings.locked && !settings.lockOverridden) return 0;
 
             if (this.item.isBlank()) { // Special case for when drawer doesn't have item

@@ -1,21 +1,21 @@
 package io.github.mattidragon.extendeddrawers.client.config.render;
 
-import net.minecraft.client.gui.render.SpecialGuiElementRenderer;
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.util.math.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
+import net.minecraft.client.renderer.MultiBufferSource;
 
-public class LayoutPreviewRenderer extends SpecialGuiElementRenderer<LayoutPreviewRenderState> {
-    public LayoutPreviewRenderer(VertexConsumerProvider.Immediate vertexConsumers) {
+public class LayoutPreviewRenderer extends PictureInPictureRenderer<LayoutPreviewRenderState> {
+    public LayoutPreviewRenderer(MultiBufferSource.BufferSource vertexConsumers) {
         super(vertexConsumers);
     }
 
     @Override
-    public Class<LayoutPreviewRenderState> getElementClass() {
+    public Class<LayoutPreviewRenderState> getRenderStateClass() {
         return LayoutPreviewRenderState.class;
     }
 
     @Override
-    protected void render(LayoutPreviewRenderState state, MatrixStack matrices) {
+    protected void renderToTexture(LayoutPreviewRenderState state, PoseStack matrices) {
         // TODO: update
 //        var renderer = AbstractDrawerBlockEntityRenderer.createRendererTool();
 //
@@ -59,7 +59,7 @@ public class LayoutPreviewRenderer extends SpecialGuiElementRenderer<LayoutPrevi
     }
 
     @Override
-    protected String getName() {
+    protected String getTextureLabel() {
         return "drawer layout preview";
     }
 }

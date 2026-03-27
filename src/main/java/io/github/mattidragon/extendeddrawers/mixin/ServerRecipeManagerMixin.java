@@ -2,10 +2,10 @@ package io.github.mattidragon.extendeddrawers.mixin;
 
 import io.github.mattidragon.extendeddrawers.compacting.ServerCompressionRecipeManager;
 import io.github.mattidragon.extendeddrawers.misc.ServerRecipeManagerAccess;
-import net.minecraft.recipe.PreparedRecipes;
-import net.minecraft.recipe.ServerRecipeManager;
-import net.minecraft.resource.ResourceManager;
-import net.minecraft.util.profiler.Profiler;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.util.profiling.ProfilerFiller;
+import net.minecraft.world.item.crafting.RecipeManager;
+import net.minecraft.world.item.crafting.RecipeMap;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.gen.Accessor;
@@ -13,22 +13,22 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(ServerRecipeManager.class)
+@Mixin(RecipeManager.class)
 public abstract class ServerRecipeManagerMixin implements ServerCompressionRecipeManager.Provider, ServerRecipeManagerAccess {
     @Unique
-    private final ServerCompressionRecipeManager compactingManager = new ServerCompressionRecipeManager((ServerRecipeManager) (Object) this);
+    private final ServerCompressionRecipeManager compactingManager = new ServerCompressionRecipeManager((RecipeManager) (Object) this);
 
     @Override
     public ServerCompressionRecipeManager extended_drawers$getCompactingManager() {
         return compactingManager;
     }
 
-    @Inject(method = "apply(Lnet/minecraft/recipe/PreparedRecipes;Lnet/minecraft/resource/ResourceManager;Lnet/minecraft/util/profiler/Profiler;)V", at = @At("TAIL"))
-    private void extended_drawers$reloadCompactingManager(PreparedRecipes preparedRecipes, ResourceManager resourceManager, Profiler profiler, CallbackInfo ci) {
+    @Inject(method = "apply(Lnet/minecraft/world/item/crafting/RecipeMap;Lnet/minecraft/server/packs/resources/ResourceManager;Lnet/minecraft/util/profiling/ProfilerFiller;)V", at = @At("TAIL"))
+    private void extended_drawers$reloadCompactingManager(RecipeMap preparedRecipes, ResourceManager resourceManager, ProfilerFiller profiler, CallbackInfo ci) {
         compactingManager.reload();
     }
 
     @Accessor
     @Override
-    public abstract PreparedRecipes getPreparedRecipes();
+    public abstract RecipeMap getRecipes();
 }

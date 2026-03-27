@@ -1,4 +1,4 @@
-import java.util.Locale
+import java.util.*
 
 plugins {
     // Can't use catalog here, hack isn't good enough
@@ -32,7 +32,7 @@ val libs = the<org.gradle.accessors.dm.LibrariesForLibs>()
 
 dependencies {
     minecraft(libs.minecraft)
-    mappings(variantOf(libs.yarn) { classifier("v2") })
+    mappings(loom.officialMojangMappings())
     modImplementation(libs.fabric.loader)
     modImplementation(libs.fabric.api)
 

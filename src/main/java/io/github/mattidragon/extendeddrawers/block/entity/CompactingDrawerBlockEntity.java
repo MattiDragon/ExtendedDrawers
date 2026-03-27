@@ -7,20 +7,20 @@ import io.github.mattidragon.extendeddrawers.registry.ModDataComponents;
 import io.github.mattidragon.extendeddrawers.storage.CompactingDrawerStorage;
 import io.github.mattidragon.extendeddrawers.storage.DrawerStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
-import net.minecraft.block.BlockState;
-import net.minecraft.component.ComponentMap;
-import net.minecraft.component.ComponentsAccess;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.network.listener.ClientPlayPacketListener;
-import net.minecraft.network.packet.Packet;
-import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
-import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.storage.NbtWriteView;
-import net.minecraft.storage.ReadView;
-import net.minecraft.storage.WriteView;
-import net.minecraft.util.ErrorReporter;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.component.DataComponentGetter;
+import net.minecraft.core.component.DataComponentMap;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.util.ProblemReporter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.TagValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 
 import java.util.stream.Stream;
 
@@ -38,21 +38,21 @@ public class CompactingDrawerBlockEntity extends StorageDrawerBlockEntity {
     }
 
     @Override
-    public Packet<ClientPlayPacketListener> toUpdatePacket() {
-        return BlockEntityUpdateS2CPacket.create(this);
+    public Packet<ClientGamePacketListener> getUpdatePacket() {
+        return ClientboundBlockEntityDataPacket.create(this);
     }
 
     @Override
-    public NbtCompound toInitialChunkDataNbt(RegistryWrapper.WrapperLookup registries) {
-        try (var logging = new ErrorReporter.Logging(this.getReporterContext(), ExtendedDrawers.LOGGER)) {
-            var view = NbtWriteView.create(logging, registries);
-            writeData(view);
-            return view.getNbt();
+    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+        try (var logging = new ProblemReporter.ScopedCollector(this.problemPath(), ExtendedDrawers.LOGGER)) {
+            var view = TagValueOutput.createWithContext(logging, registries);
+            saveAdditional(view);
+            return view.buildResult();
         }
     }
 
     @Override
-    protected void readComponents(ComponentsAccess components) {
+    protected void applyImplicitComponents(DataComponentGetter components) {
         var component = components.get(ModDataComponents.COMPACTING_DRAWER_CONTENTS);
         if (component != null) {
             storage.readComponent(component);
@@ -60,12 +60,12 @@ public class CompactingDrawerBlockEntity extends StorageDrawerBlockEntity {
     }
 
     @Override
-    protected void addComponents(ComponentMap.Builder componentMapBuilder) {
-        componentMapBuilder.add(ModDataComponents.COMPACTING_DRAWER_CONTENTS, storage.toComponent());
+    protected void collectImplicitComponents(DataComponentMap.Builder componentMapBuilder) {
+        componentMapBuilder.set(ModDataComponents.COMPACTING_DRAWER_CONTENTS, storage.toComponent());
     }
 
     @Override
-    public void onBlockReplaced(BlockPos pos, BlockState oldState) {
+    public void preRemoveSideEffects(BlockPos pos, BlockState oldState) {
         if (!ExtendedDrawers.CONFIG.get().misc().drawersDropContentsOnBreak()) return;
 
         var slots = storage.getSlotArray();
@@ -76,7 +76,7 @@ public class CompactingDrawerBlockEntity extends StorageDrawerBlockEntity {
             if (slot.isBlocked()) continue;
 
             var toDrop = amount / slot.getCompression();
-            ItemUtils.offerOrDropStacks(world, pos, null, null, slot.getResource(), toDrop);
+            ItemUtils.offerOrDropStacks(level, pos, null, null, slot.getResource(), toDrop);
             amount -= toDrop * slot.getCompression();
         }
     }
@@ -92,18 +92,18 @@ public class CompactingDrawerBlockEntity extends StorageDrawerBlockEntity {
     }
 
     @Override
-    public void setWorld(World world) {
-        super.setWorld(world);
+    public void setLevel(Level world) {
+        super.setLevel(world);
         storage.updateSlots(); // Force compression ladders to load
     }
 
     @Override
-    protected void readData(ReadView view) {
-        view.getOptionalReadView("storage").ifPresent(storage::readData);
+    protected void loadAdditional(ValueInput view) {
+        view.child("storage").ifPresent(storage::readData);
     }
 
     @Override
-    public void writeData(WriteView view) {
-        storage.writeData(view.get("storage"));
+    public void saveAdditional(ValueOutput view) {
+        storage.writeData(view.child("storage"));
     }
 }

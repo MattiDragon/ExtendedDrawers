@@ -5,15 +5,15 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.github.mattidragon.extendeddrawers.ExtendedDrawers;
 import io.github.mattidragon.extendeddrawers.item.UpgradeItem;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
-import net.minecraft.component.ComponentsAccess;
-import net.minecraft.item.Item;
-import net.minecraft.item.tooltip.TooltipAppender;
-import net.minecraft.item.tooltip.TooltipType;
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.codec.PacketCodecs;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.component.DataComponentGetter;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.TooltipProvider;
 
 import java.util.function.Consumer;
 
@@ -26,7 +26,7 @@ public record DrawerSlotComponent(
         boolean duping,
         ItemVariant item,
         long amount
-) implements TooltipAppender {
+) implements TooltipProvider {
     public static final Codec<DrawerSlotComponent> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             ItemVariant.CODEC.fieldOf("upgrade").forGetter(DrawerSlotComponent::upgrade),
             ItemVariant.CODEC.fieldOf("limiter").forGetter(DrawerSlotComponent::limiter),
@@ -37,35 +37,35 @@ public record DrawerSlotComponent(
             ItemVariant.CODEC.fieldOf("item").forGetter(DrawerSlotComponent::item),
             Codec.LONG.fieldOf("amount").forGetter(DrawerSlotComponent::amount)
     ).apply(instance, DrawerSlotComponent::new));
-    public static final PacketCodec<RegistryByteBuf, DrawerSlotComponent> PACKET_CODEC = PacketCodecs.registryCodec(CODEC);
+    public static final StreamCodec<RegistryFriendlyByteBuf, DrawerSlotComponent> PACKET_CODEC = ByteBufCodecs.fromCodecWithRegistries(CODEC);
 
     @Override
-    public void appendTooltip(Item.TooltipContext context, Consumer<Text> consumer, TooltipType type, ComponentsAccess components) {
+    public void addToTooltip(Item.TooltipContext context, Consumer<Component> consumer, TooltipFlag type, DataComponentGetter components) {
         if (ExtendedDrawers.SHIFT_ACCESS.isShiftPressed()) {
             if (upgrade().getItem() instanceof UpgradeItem upgradeItem) {
-                consumer.accept(upgradeItem.getName().copy().formatted(Formatting.AQUA));
+                consumer.accept(upgradeItem.getName().copy().withStyle(ChatFormatting.AQUA));
             }
 
-            var modifierText = Text.empty()
-                    .append(Text.literal("V").formatted(voiding() ? Formatting.WHITE : Formatting.DARK_GRAY))
-                    .append(Text.literal("L").formatted(locked() ? Formatting.WHITE : Formatting.DARK_GRAY))
-                    .append(Text.literal("H").formatted(hidden() ? Formatting.WHITE : Formatting.DARK_GRAY));
+            var modifierText = Component.empty()
+                    .append(Component.literal("V").withStyle(voiding() ? ChatFormatting.WHITE : ChatFormatting.DARK_GRAY))
+                    .append(Component.literal("L").withStyle(locked() ? ChatFormatting.WHITE : ChatFormatting.DARK_GRAY))
+                    .append(Component.literal("H").withStyle(hidden() ? ChatFormatting.WHITE : ChatFormatting.DARK_GRAY));
             if (duping()) {
-                modifierText.append(Text.literal("D").formatted(Formatting.WHITE));
+                modifierText.append(Component.literal("D").withStyle(ChatFormatting.WHITE));
             }
 
-            consumer.accept(Text.translatable("tooltip.extended_drawers.modifiers", modifierText).formatted(Formatting.GRAY));
+            consumer.accept(Component.translatable("tooltip.extended_drawers.modifiers", modifierText).withStyle(ChatFormatting.GRAY));
         } else {
-            consumer.accept(Text.translatable("tooltip.extended_drawers.shift_for_modifiers").formatted(Formatting.GRAY));
+            consumer.accept(Component.translatable("tooltip.extended_drawers.shift_for_modifiers").withStyle(ChatFormatting.GRAY));
         }
-        consumer.accept(Text.empty());
+        consumer.accept(Component.empty());
 
-        consumer.accept(Text.translatable("tooltip.extended_drawers.drawer_contents").formatted(Formatting.GRAY));
-        consumer.accept(Text.literal(" - ")
-                .append(Text.literal(String.valueOf(amount())))
+        consumer.accept(Component.translatable("tooltip.extended_drawers.drawer_contents").withStyle(ChatFormatting.GRAY));
+        consumer.accept(Component.literal(" - ")
+                .append(Component.literal(String.valueOf(amount())))
                 .append(" ")
-                .append(item().toStack().getName())
-                .formatted(Formatting.GRAY));
+                .append(item().toStack().getHoverName())
+                .withStyle(ChatFormatting.GRAY));
 
     }
 }

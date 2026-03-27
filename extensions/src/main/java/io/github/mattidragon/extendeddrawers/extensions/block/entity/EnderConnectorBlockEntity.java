@@ -8,21 +8,21 @@ import io.github.mattidragon.extendeddrawers.extensions.network.link.EnderConnec
 import io.github.mattidragon.extendeddrawers.extensions.network.node.EnderConnectorBlockNode;
 import io.github.mattidragon.extendeddrawers.extensions.registry.ExtensionBlocks;
 import io.github.mattidragon.extendeddrawers.network.NetworkRegistry;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.network.listener.ClientPlayPacketListener;
-import net.minecraft.network.packet.Packet;
-import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
-import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.storage.NbtWriteView;
-import net.minecraft.storage.ReadView;
-import net.minecraft.storage.WriteView;
-import net.minecraft.util.ErrorReporter;
-import net.minecraft.util.dynamic.Codecs;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.ExtraCodecs;
+import net.minecraft.util.ProblemReporter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.TagValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3fc;
 
@@ -36,40 +36,40 @@ public class EnderConnectorBlockEntity extends BlockEntity {
     }
 
     @Override
-    public @Nullable Packet<ClientPlayPacketListener> toUpdatePacket() {
-        return BlockEntityUpdateS2CPacket.create(this);
+    public @Nullable Packet<ClientGamePacketListener> getUpdatePacket() {
+        return ClientboundBlockEntityDataPacket.create(this);
     }
 
     @Override
-    public NbtCompound toInitialChunkDataNbt(RegistryWrapper.WrapperLookup registries) {
-        NbtWriteView writeView;
-        try (var errorReporter = new ErrorReporter.Logging(getReporterContext(), ExtendedDrawersExtensions.LOGGER)) {
-            writeView = NbtWriteView.create(errorReporter);
-            writeView.put("ray_directions", Codecs.VECTOR_3F.listOf(), rayDirectionCache);
+    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+        TagValueOutput writeView;
+        try (var errorReporter = new ProblemReporter.ScopedCollector(problemPath(), ExtendedDrawersExtensions.LOGGER)) {
+            writeView = TagValueOutput.createWithoutContext(errorReporter);
+            writeView.store("ray_directions", ExtraCodecs.VECTOR3F.listOf(), rayDirectionCache);
         }
-        return writeView.getNbt();
+        return writeView.buildResult();
     }
 
     @Override
-    protected void readData(ReadView view) {
-        super.readData(view);
-        view.read("ray_directions", Codecs.VECTOR_3F.listOf()).ifPresentOrElse(
+    protected void loadAdditional(ValueInput view) {
+        super.loadAdditional(view);
+        view.read("ray_directions", ExtraCodecs.VECTOR3F.listOf()).ifPresentOrElse(
             rays -> rayDirectionCache = rays,
             () -> rayDirectionCache = List.of()
         );
     }
 
     @Override
-    protected void writeData(WriteView view) {
-        super.writeData(view);
+    protected void saveAdditional(ValueOutput view) {
+        super.saveAdditional(view);
     }
 
     @Override
-    public void setWorld(World world) {
-        super.setWorld(world);
-        if (world instanceof ServerWorld serverWorld) {
+    public void setLevel(Level world) {
+        super.setLevel(world);
+        if (world instanceof ServerLevel serverWorld) {
             var nodeHolder = NetworkRegistry.UNIVERSE.getGraphWorld(serverWorld)
-                    .getNodeAt(new NodePos(pos, EnderConnectorBlockNode.INSTANCE));
+                    .getNodeAt(new NodePos(worldPosition, EnderConnectorBlockNode.INSTANCE));
             if (nodeHolder != null) {
                 updateRayCache(nodeHolder);
             }
@@ -77,9 +77,9 @@ public class EnderConnectorBlockEntity extends BlockEntity {
     }
 
     public void updateRayCache(NodeHolder<BlockNode> self) {
-        var centerPos = self.getBlockPos().toCenterPos();
+        var centerPos = self.getBlockPos().getCenter();
         rayDirectionCache = self.getConnectionsOfType(EnderConnectorLinkKey.class)
-                .map(holder -> holder.other(self).getBlockPos().toCenterPos())
+                .map(holder -> holder.other(self).getBlockPos().getCenter())
                 .map(pos1 -> pos1.subtract(centerPos).toVector3f())
                 .<Vector3fc>map(pos1 -> pos1.lengthSquared() > (6 * 6) ? pos1.normalize(3) : pos1.mul(0.5f))
                 .toList();

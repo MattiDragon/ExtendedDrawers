@@ -1,24 +1,24 @@
 package io.github.mattidragon.extendeddrawers.client.renderer;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import io.github.mattidragon.extendeddrawers.ExtendedDrawers;
 import io.github.mattidragon.extendeddrawers.block.base.StorageDrawerBlock;
 import io.github.mattidragon.extendeddrawers.block.entity.ShadowDrawerBlockEntity;
 import io.github.mattidragon.extendeddrawers.client.renderer.state.ShadowDrawerRenderState;
-import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
-import net.minecraft.client.render.command.ModelCommandRenderer;
-import net.minecraft.client.render.command.OrderedRenderCommandQueue;
-import net.minecraft.client.render.state.CameraRenderState;
-import net.minecraft.client.texture.SpriteAtlasTexture;
-import net.minecraft.client.util.SpriteIdentifier;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.item.ItemDisplayContext;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
+import net.minecraft.client.renderer.state.CameraRenderState;
+import net.minecraft.client.renderer.texture.TextureAtlas;
+import net.minecraft.client.resources.model.Material;
+import net.minecraft.world.item.ItemDisplayContext;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
 public class ShadowDrawerBlockEntityRenderer extends AbstractDrawerBlockEntityRenderer<ShadowDrawerBlockEntity, ShadowDrawerRenderState> {
-    public ShadowDrawerBlockEntityRenderer(BlockEntityRendererFactory.Context context) {
+    public ShadowDrawerBlockEntityRenderer(BlockEntityRendererProvider.Context context) {
         super(context);
     }
 
@@ -28,19 +28,19 @@ public class ShadowDrawerBlockEntityRenderer extends AbstractDrawerBlockEntityRe
     }
 
     @Override
-    public void updateRenderState(ShadowDrawerBlockEntity drawer, ShadowDrawerRenderState state, float tickProgress, Vec3d cameraPos, @Nullable ModelCommandRenderer.CrumblingOverlayCommand crumblingOverlay) {
-        super.updateRenderState(drawer, state, tickProgress, cameraPos, crumblingOverlay);
+    public void extractRenderState(ShadowDrawerBlockEntity drawer, ShadowDrawerRenderState state, float tickProgress, Vec3 cameraPos, @Nullable ModelFeatureRenderer.CrumblingOverlay crumblingOverlay) {
+        super.extractRenderState(drawer, state, tickProgress, cameraPos, crumblingOverlay);
         state.isHidden = drawer.isHidden();
         state.count = drawer.countCache;
-        itemModelManager.update(state.item, drawer.item.toStack(), ItemDisplayContext.GUI, drawer.getWorld(), null, drawer.getPos().hashCode());
+        itemModelManager.appendItemLayers(state.item, drawer.item.toStack(), ItemDisplayContext.GUI, drawer.getLevel(), null, drawer.getBlockPos().hashCode());
     }
 
     @Override
-    public void render(ShadowDrawerRenderState state, MatrixStack matrices, OrderedRenderCommandQueue queue, CameraRenderState cameraState) {
-        var horizontalDir = state.blockState.get(StorageDrawerBlock.FACING);
-        var face = state.blockState.get(StorageDrawerBlock.FACE);
+    public void submit(ShadowDrawerRenderState state, PoseStack matrices, SubmitNodeCollector queue, CameraRenderState cameraState) {
+        var horizontalDir = state.blockState.getValue(StorageDrawerBlock.FACING);
+        var face = state.blockState.getValue(StorageDrawerBlock.FACE);
 
-        matrices.push();
+        matrices.pushPose();
         alignMatrices(matrices, horizontalDir, face);
 
         @Nullable
@@ -54,17 +54,17 @@ public class ShadowDrawerBlockEntityRenderer extends AbstractDrawerBlockEntityRe
 
         var config = ExtendedDrawers.CONFIG.get().client().icons();
         @SuppressWarnings("deprecation")
-        var atlas = SpriteAtlasTexture.ITEMS_ATLAS_TEXTURE;
+        var atlas = TextureAtlas.LOCATION_ITEMS;
         var icons = state.isHidden
-                ? List.of(new SpriteIdentifier(atlas, config.hiddenIcon()))
-                : List.<SpriteIdentifier>of();
+                ? List.of(new Material(atlas, config.hiddenIcon()))
+                : List.<Material>of();
 
-        renderSlot(state.item, amount, false, state.isHidden, icons, matrices, queue, cameraState, state.lightmapCoordinates, state.pos);
-        matrices.pop();
+        renderSlot(state.item, amount, false, state.isHidden, icons, matrices, queue, cameraState, state.lightCoords, state.blockPos);
+        matrices.popPose();
     }
 
     @Override
-    public int getRenderDistance() {
+    public int getViewDistance() {
         var config = ExtendedDrawers.CONFIG.get().client();
         return Math.max(config.textRenderDistance(), config.itemRenderDistance());
     }

@@ -8,82 +8,82 @@ import io.github.mattidragon.extendeddrawers.extensions.network.node.EnderConnec
 import io.github.mattidragon.extendeddrawers.extensions.registry.ExtensionBlocks;
 import io.github.mattidragon.extendeddrawers.extensions.registry.ExtensionDataComponents;
 import io.github.mattidragon.extendeddrawers.network.NetworkRegistry;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemUsageContext;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.text.Text;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.world.World;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
 public class EnderConnectorLinkerItem extends Item {
-    public EnderConnectorLinkerItem(Settings settings) {
+    public EnderConnectorLinkerItem(Properties settings) {
         super(settings);
     }
 
     @Override
-    public ActionResult useOnBlock(ItemUsageContext context) {
-        var state = context.getWorld().getBlockState(context.getBlockPos());
-        if (!state.isOf(ExtensionBlocks.ENDER_CONNECTOR)) return ActionResult.FAIL;
+    public InteractionResult useOn(UseOnContext context) {
+        var state = context.getLevel().getBlockState(context.getClickedPos());
+        if (!state.is(ExtensionBlocks.ENDER_CONNECTOR)) return InteractionResult.FAIL;
 
-        var component = context.getStack().get(ExtensionDataComponents.LINKING_ENDER_CONNECTOR);
+        var component = context.getItemInHand().get(ExtensionDataComponents.LINKING_ENDER_CONNECTOR);
         if (component == null) {
-            context.getStack().set(ExtensionDataComponents.LINKING_ENDER_CONNECTOR, new LinkingEnderConnectorComponent(context.getBlockPos()));
-            sendMessage(context.getPlayer(), Text.translatable("item.extended_drawers_extensions.ender_connector_linker.linking", context.getBlockPos().toShortString()));
-            return ActionResult.SUCCESS;
+            context.getItemInHand().set(ExtensionDataComponents.LINKING_ENDER_CONNECTOR, new LinkingEnderConnectorComponent(context.getClickedPos()));
+            sendMessage(context.getPlayer(), Component.translatable("item.extended_drawers_extensions.ender_connector_linker.linking", context.getClickedPos().toShortString()));
+            return InteractionResult.SUCCESS;
         }
         var prevPos = component.pos();
-        if (prevPos == context.getBlockPos()) {
-            context.getStack().remove(ExtensionDataComponents.LINKING_ENDER_CONNECTOR);
-            sendMessage(context.getPlayer(), Text.translatable("item.extended_drawers_extensions.ender_connector_linker.linking_clear"));
-            return ActionResult.SUCCESS;
+        if (prevPos == context.getClickedPos()) {
+            context.getItemInHand().remove(ExtensionDataComponents.LINKING_ENDER_CONNECTOR);
+            sendMessage(context.getPlayer(), Component.translatable("item.extended_drawers_extensions.ender_connector_linker.linking_clear"));
+            return InteractionResult.SUCCESS;
         }
 
-        context.getStack().remove(ExtensionDataComponents.LINKING_ENDER_CONNECTOR);
-        if (context.getWorld() instanceof ServerWorld serverWorld) {
+        context.getItemInHand().remove(ExtensionDataComponents.LINKING_ENDER_CONNECTOR);
+        if (context.getLevel() instanceof ServerLevel serverWorld) {
             var graphWorld = NetworkRegistry.UNIVERSE.getGraphWorld(serverWorld);
             var node1 = graphWorld.getNodeAt(new NodePos(prevPos, EnderConnectorBlockNode.INSTANCE));
-            var node2 = graphWorld.getNodeAt(new NodePos(context.getBlockPos(), EnderConnectorBlockNode.INSTANCE));
+            var node2 = graphWorld.getNodeAt(new NodePos(context.getClickedPos(), EnderConnectorBlockNode.INSTANCE));
 
             if (node1 == null || node2 == null) {
-                return ActionResult.FAIL;
+                return InteractionResult.FAIL;
             }
 
             var linkPos = new LinkPos(node1.getPos(), node2.getPos(), EnderConnectorLinkKey.INSTANCE);
             if (graphWorld.linkExistsAt(linkPos)) {
                 graphWorld.disconnectNodes(linkPos);
-                sendMessage(context.getPlayer(), Text.translatable("item.extended_drawers_extensions.ender_connector_linker.unlink_success"));
+                sendMessage(context.getPlayer(), Component.translatable("item.extended_drawers_extensions.ender_connector_linker.unlink_success"));
             } else {
                 graphWorld.connectNodes(linkPos);
-                sendMessage(context.getPlayer(), Text.translatable("item.extended_drawers_extensions.ender_connector_linker.linking_success"));
+                sendMessage(context.getPlayer(), Component.translatable("item.extended_drawers_extensions.ender_connector_linker.linking_success"));
             }
         }
 
-        return ActionResult.SUCCESS;
+        return InteractionResult.SUCCESS;
     }
 
-    private static void sendMessage(@Nullable PlayerEntity player, Text text) {
+    private static void sendMessage(@Nullable Player player, Component text) {
         if (player != null) {
-            player.sendMessage(text, true);
+            player.displayClientMessage(text, true);
         }
     }
 
     @Override
-    public ActionResult use(World world, PlayerEntity user, Hand hand) {
-        if (user.isSneaking()) {
-            var stack = user.getStackInHand(hand);
+    public InteractionResult use(Level world, Player user, InteractionHand hand) {
+        if (user.isShiftKeyDown()) {
+            var stack = user.getItemInHand(hand);
             stack.remove(ExtensionDataComponents.LINKING_ENDER_CONNECTOR);
-            sendMessage(user, Text.translatable("item.extended_drawers_extensions.ender_connector_linker.linking_clear"));
-            return ActionResult.SUCCESS;
+            sendMessage(user, Component.translatable("item.extended_drawers_extensions.ender_connector_linker.linking_clear"));
+            return InteractionResult.SUCCESS;
         }
-        return ActionResult.PASS;
+        return InteractionResult.PASS;
     }
 
     @Override
-    public boolean hasGlint(ItemStack stack) {
-        return super.hasGlint(stack) || stack.contains(ExtensionDataComponents.LINKING_ENDER_CONNECTOR);
+    public boolean isFoil(ItemStack stack) {
+        return super.isFoil(stack) || stack.has(ExtensionDataComponents.LINKING_ENDER_CONNECTOR);
     }
 }

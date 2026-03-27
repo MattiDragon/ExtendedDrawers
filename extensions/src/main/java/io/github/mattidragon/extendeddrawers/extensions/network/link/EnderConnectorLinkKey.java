@@ -3,7 +3,7 @@ package io.github.mattidragon.extendeddrawers.extensions.network.link;
 import com.kneelawk.graphlib.api.graph.LinkHolder;
 import com.kneelawk.graphlib.api.graph.user.LinkKey;
 import com.kneelawk.graphlib.api.graph.user.LinkKeyType;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 import static io.github.mattidragon.extendeddrawers.extensions.ExtendedDrawersExtensions.id;

@@ -3,10 +3,10 @@ package io.github.mattidragon.extendeddrawers.item;
 import io.github.mattidragon.extendeddrawers.ExtendedDrawers;
 import io.github.mattidragon.extendeddrawers.block.base.DrawerInteractionHandler;
 import it.unimi.dsi.fastutil.longs.Long2LongFunction;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemUsageContext;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.context.UseOnContext;
 
 import java.util.function.LongUnaryOperator;
 
@@ -14,11 +14,11 @@ public class UpgradeItem extends Item {
     public final Identifier sprite;
     public final LongUnaryOperator modifier;
     
-    public UpgradeItem(Settings settings, Identifier sprite, int tier) {
+    public UpgradeItem(Properties settings, Identifier sprite, int tier) {
         this(settings, sprite, value -> value * getMultiplier(tier));
     }
     
-    public UpgradeItem(Settings settings, Identifier sprite, Long2LongFunction modifier) {
+    public UpgradeItem(Properties settings, Identifier sprite, Long2LongFunction modifier) {
         super(settings);
         this.sprite = sprite;
         this.modifier = modifier;
@@ -36,10 +36,10 @@ public class UpgradeItem extends Item {
     }
     
     @Override
-    public ActionResult useOnBlock(ItemUsageContext context) {
-        if (context.getWorld().getBlockState(context.getBlockPos()).getBlock() instanceof DrawerInteractionHandler drawer) {
-            return drawer.changeUpgrade(context.getWorld().getBlockState(context.getBlockPos()), context.getWorld(), context.getBlockPos(), context.getHitPos(), context.getSide(), context.getPlayer(), context.getStack());
+    public InteractionResult useOn(UseOnContext context) {
+        if (context.getLevel().getBlockState(context.getClickedPos()).getBlock() instanceof DrawerInteractionHandler drawer) {
+            return drawer.changeUpgrade(context.getLevel().getBlockState(context.getClickedPos()), context.getLevel(), context.getClickedPos(), context.getClickLocation(), context.getClickedFace(), context.getPlayer(), context.getItemInHand());
         }
-        return ActionResult.PASS;
+        return InteractionResult.PASS;
     }
 }
