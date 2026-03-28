@@ -8,6 +8,7 @@ import net.minecraft.commands.Commands;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.LayeredRegistryAccess;
 import net.minecraft.core.Registry;
+import net.minecraft.core.component.DataComponentInitializers;
 import net.minecraft.server.RegistryLayer;
 import net.minecraft.server.ReloadableServerResources;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
@@ -25,7 +26,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.List;
 
 @Mixin(ReloadableServerResources.class)
-public class DataPackContentsMixin {
+public class ReloadableServerResourcesMixin {
     @Shadow @Final private RecipeManager recipes;
 
     @SuppressWarnings("NotNullFieldNotInitialized")
@@ -33,12 +34,12 @@ public class DataPackContentsMixin {
     private CompressionOverrideLoader extended_drawers$compressionOverrideLoader;
 
     @Inject(method = "<init>", at = @At("TAIL"))
-    private void extend_drawers$setupCompressionOverrideLoader(LayeredRegistryAccess<RegistryLayer> dynamicRegistries, HolderLookup.Provider registries, FeatureFlagSet enabledFeatures, Commands.CommandSelection environment, List<Registry.PendingTags<?>> pendingTagLoads, PermissionSet permissions, CallbackInfo ci) {
+    private void setupCompressionOverrideLoader(LayeredRegistryAccess<RegistryLayer> fullLayers, HolderLookup.Provider loadingContext, FeatureFlagSet enabledFeatures, Commands.CommandSelection commandSelection, List<Registry.PendingTags<?>> postponedTags, PermissionSet functionCompilationPermissions, List<DataComponentInitializers.PendingComponents<?>> newComponents, CallbackInfo ci) {
         extended_drawers$compressionOverrideLoader = new CompressionOverrideLoader(ServerCompressionRecipeManager.of(recipes));
     }
 
     @ModifyReturnValue(method = "listeners", at = @At("RETURN"))
-    private List<PreparableReloadListener> extend_drawers$injectCompressionOverrideLoader(List<PreparableReloadListener> original) {
+    private List<PreparableReloadListener> injectCompressionOverrideLoader(List<PreparableReloadListener> original) {
         return ImmutableList.<PreparableReloadListener>builder().addAll(original).add(extended_drawers$compressionOverrideLoader).build();
     }
 }

@@ -7,7 +7,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(value = DrawerStorage.class, remap = false)
+@Mixin(DrawerStorage.class)
 public interface DrawerStorageMixin {
     @Inject(method = "compareTo(Lio/github/mattidragon/extendeddrawers/storage/DrawerStorage;)I",
             at = @At("HEAD"),

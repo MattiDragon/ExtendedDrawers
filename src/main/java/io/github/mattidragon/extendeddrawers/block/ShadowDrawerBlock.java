@@ -49,17 +49,17 @@ public class ShadowDrawerBlock extends NetworkBlockWithEntity<ShadowDrawerBlockE
     }
 
     @Override
-    public void setPlacedBy(Level world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
-        super.setPlacedBy(world, pos, state, placer, itemStack);
-        var drawer = getBlockEntity(world, pos);
+    public void setPlacedBy(Level level, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
+        super.setPlacedBy(level, pos, state, placer, itemStack);
+        var drawer = getBlockEntity(level, pos);
         if (drawer == null) return;
         drawer.recalculateContents();
     }
 
-    private static Storage<ItemVariant> createStorage(ServerLevel world, BlockPos pos) {
-        if (!(world.getBlockEntity(pos) instanceof ShadowDrawerBlockEntity shadowDrawer)) throw new IllegalStateException();
+    private static Storage<ItemVariant> createStorage(ServerLevel level, BlockPos pos) {
+        if (!(level.getBlockEntity(pos) instanceof ShadowDrawerBlockEntity shadowDrawer)) throw new IllegalStateException();
 
-        return shadowDrawer.new ShadowDrawerStorage(NetworkStorageCache.get(world, pos));
+        return shadowDrawer.new ShadowDrawerStorage(NetworkStorageCache.get(level, pos));
     }
 
     @Override
@@ -73,8 +73,8 @@ public class ShadowDrawerBlock extends NetworkBlockWithEntity<ShadowDrawerBlockE
     }
 
     @Override
-    public BlockState getStateForPlacement(BlockPlaceContext ctx) {
-        var face = switch (ctx.getNearestLookingDirection().getOpposite()) {
+    public BlockState getStateForPlacement(BlockPlaceContext context) {
+        var face = switch (context.getNearestLookingDirection().getOpposite()) {
             case DOWN -> AttachFace.CEILING;
             case UP -> AttachFace.FLOOR;
             default -> AttachFace.WALL;
@@ -82,7 +82,7 @@ public class ShadowDrawerBlock extends NetworkBlockWithEntity<ShadowDrawerBlockE
 
         return this.defaultBlockState()
                 .setValue(FACE, face)
-                .setValue(FACING, ctx.getHorizontalDirection().getOpposite());
+                .setValue(FACING, context.getHorizontalDirection().getOpposite());
     }
 
     @Override
@@ -96,11 +96,11 @@ public class ShadowDrawerBlock extends NetworkBlockWithEntity<ShadowDrawerBlockE
     }
     
     @Override
-    public InteractionResult useWithoutItem(BlockState state, Level world, BlockPos pos, Player player, BlockHitResult hit) {
-        if (!isFront(state, hit.getDirection()) || !player.mayBuild()) return InteractionResult.PASS;
-        if (!(world instanceof ServerLevel serverWorld)) return InteractionResult.CONSUME;
+    public InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
+        if (!isFront(state, hitResult.getDirection()) || !player.mayBuild()) return InteractionResult.PASS;
+        if (!(level instanceof ServerLevel serverLevel)) return InteractionResult.CONSUME;
 
-        var drawer = getBlockEntity(world, pos);
+        var drawer = getBlockEntity(level, pos);
         if (drawer == null) return InteractionResult.PASS;
         var playerStack = player.getMainHandItem();
         
@@ -116,11 +116,11 @@ public class ShadowDrawerBlock extends NetworkBlockWithEntity<ShadowDrawerBlockE
         try (var t = Transaction.openOuter()) {
             int inserted;
     
-            var storage = createStorage(serverWorld, pos);
+            var storage = createStorage(serverLevel, pos);
     
             if (isDoubleClick) {
                 if (drawer.item.isBlank()) return InteractionResult.PASS;
-                inserted = (int) StorageUtil.move(PlayerInventoryStorage.of(player), storage, itemVariant -> true, Long.MAX_VALUE, t);
+                inserted = (int) StorageUtil.move(PlayerInventoryStorage.of(player), storage, _ -> true, Long.MAX_VALUE, t);
             } else {
                 if (playerStack.isEmpty()) return InteractionResult.PASS;
     
@@ -135,11 +135,11 @@ public class ShadowDrawerBlock extends NetworkBlockWithEntity<ShadowDrawerBlockE
     }
     
     @Override
-    public void attack(BlockState state, Level world, BlockPos pos, Player player) {
+    public void attack(BlockState state, Level level, BlockPos pos, Player player) {
         if (!player.mayBuild()) return;
-        if (!(world instanceof ServerLevel serverWorld)) return;
+        if (!(level instanceof ServerLevel serverLevel)) return;
 
-        var drawer = getBlockEntity(world, pos);
+        var drawer = getBlockEntity(level, pos);
         if (drawer == null) return;
         
         var hit = DrawerRaycastUtil.getTarget(player, pos);
@@ -148,10 +148,10 @@ public class ShadowDrawerBlock extends NetworkBlockWithEntity<ShadowDrawerBlockE
         var internalPos = DrawerRaycastUtil.calculateFaceLocation(pos, hit.getLocation(), hit.getDirection(), state.getValue(FACING), state.getValue(FACE));
         if (internalPos == null) return;
     
-        var storage = createStorage(serverWorld, pos);
+        var storage = createStorage(serverLevel, pos);
         
         try (var t = Transaction.openOuter()) {
-            var extracted = (int) storage.extract(drawer.item, player.isShiftKeyDown() ? drawer.item.getItem().getDefaultMaxStackSize() : 1, t);
+            var extracted = (int) storage.extract(drawer.item, player.isShiftKeyDown() ? drawer.item.toStack().getMaxStackSize() : 1, t);
             if (extracted == 0) return;
             
             player.getInventory().placeItemBackInInventory(drawer.item.toStack(extracted));
@@ -174,9 +174,9 @@ public class ShadowDrawerBlock extends NetworkBlockWithEntity<ShadowDrawerBlockE
     }
 
     @Override
-    public InteractionResult toggleHide(BlockState state, Level world, BlockPos pos, Vec3 hitPos, Direction side) {
+    public InteractionResult toggleHide(BlockState state, Level level, BlockPos pos, Vec3 hitPos, Direction side) {
         if (side != state.getValue(FACING)) return InteractionResult.PASS;
-        var drawer = getBlockEntity(world, pos);
+        var drawer = getBlockEntity(level, pos);
         if (drawer == null) return InteractionResult.PASS;
         drawer.setHidden(!drawer.isHidden());
         return InteractionResult.SUCCESS;

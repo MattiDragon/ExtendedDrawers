@@ -18,11 +18,11 @@ public class DrawerBarrelBlockEntity extends BarrelBlockEntity implements Storag
     private final DrawerBarrelStorage storage;
 
     static {
-        ItemStorage.SIDED.registerForBlockEntity((entity, direction) -> entity.storage, ExtensionBlocks.DRAWER_BARREL_ENTITY);
+        ItemStorage.SIDED.registerForBlockEntity((entity, _) -> entity.storage, ExtensionBlocks.DRAWER_BARREL_ENTITY);
     }
 
-    public DrawerBarrelBlockEntity(BlockPos pos, BlockState state) {
-        super(pos, state);
+    public DrawerBarrelBlockEntity(BlockPos worldPosition, BlockState blockState) {
+        super(worldPosition, blockState);
         ((BlockEntityAccess) this).extended_drawers_extensions$setType(ExtensionBlocks.DRAWER_BARREL_ENTITY);
         storage = new DrawerBarrelStorage(this);
     }

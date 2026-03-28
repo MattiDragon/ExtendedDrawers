@@ -15,12 +15,12 @@ public abstract class NetworkBlockWithEntity<T extends BlockEntity> extends Netw
     
     protected abstract BlockEntityType<T> getType();
 
-    protected final @Nullable T getBlockEntity(Level world, BlockPos pos) {
-        return getType().getBlockEntity(world, pos);
+    protected final @Nullable T getBlockEntity(Level level, BlockPos pos) {
+        return getType().getBlockEntity(level, pos);
     }
     
     @Override
-    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        return getType().create(pos, state);
+    public BlockEntity newBlockEntity(BlockPos worldPosition, BlockState blockState) {
+        return getType().create(worldPosition, blockState);
     }
 }

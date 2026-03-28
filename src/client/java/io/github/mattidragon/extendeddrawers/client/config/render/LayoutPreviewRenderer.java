@@ -5,8 +5,8 @@ import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 
 public class LayoutPreviewRenderer extends PictureInPictureRenderer<LayoutPreviewRenderState> {
-    public LayoutPreviewRenderer(MultiBufferSource.BufferSource vertexConsumers) {
-        super(vertexConsumers);
+    public LayoutPreviewRenderer(MultiBufferSource.BufferSource bufferSource) {
+        super(bufferSource);
     }
 
     @Override
@@ -15,7 +15,7 @@ public class LayoutPreviewRenderer extends PictureInPictureRenderer<LayoutPrevie
     }
 
     @Override
-    protected void renderToTexture(LayoutPreviewRenderState state, PoseStack matrices) {
+    protected void renderToTexture(LayoutPreviewRenderState state, PoseStack poseStack) {
         // TODO: update
 //        var renderer = AbstractDrawerBlockEntityRenderer.createRendererTool();
 //

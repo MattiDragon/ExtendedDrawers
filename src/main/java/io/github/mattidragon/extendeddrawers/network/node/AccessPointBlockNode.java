@@ -23,7 +23,7 @@ public class AccessPointBlockNode implements DrawerNetworkBlockNode {
     }
 
     @Override
-    public void update(ServerLevel world, NodeHolder<BlockNode> node) {
-        world.updateNeighbourForOutputSignal(node.getBlockPos(), ModBlocks.ACCESS_POINT);
+    public void update(ServerLevel level, NodeHolder<BlockNode> node) {
+        level.updateNeighbourForOutputSignal(node.getBlockPos(), ModBlocks.ACCESS_POINT);
     }
 }

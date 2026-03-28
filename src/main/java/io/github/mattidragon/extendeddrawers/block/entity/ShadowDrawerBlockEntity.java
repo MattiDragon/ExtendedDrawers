@@ -31,25 +31,29 @@ public class ShadowDrawerBlockEntity extends BlockEntity {
     public long countCache = -1;
     private boolean hidden = false;
     
-    public ShadowDrawerBlockEntity(BlockPos pos, BlockState state) {
-        super(ModBlocks.SHADOW_DRAWER_BLOCK_ENTITY, pos, state);
+    public ShadowDrawerBlockEntity(BlockPos worldPosition, BlockState blockState) {
+        super(ModBlocks.SHADOW_DRAWER_BLOCK_ENTITY, worldPosition, blockState);
     }
     
     static {
-        ItemStorage.SIDED.registerForBlockEntity((drawer, dir) -> drawer.level instanceof ServerLevel serverWorld ? createStorage(serverWorld, drawer.worldPosition) : Storage.empty(), ModBlocks.SHADOW_DRAWER_BLOCK_ENTITY);
+        ItemStorage.SIDED.registerForBlockEntity((drawer, _) ->
+                        drawer.level instanceof ServerLevel serverLevel
+                                ? createStorage(serverLevel, drawer.worldPosition)
+                                : Storage.empty(),
+                ModBlocks.SHADOW_DRAWER_BLOCK_ENTITY);
     }
     
-    private static Storage<ItemVariant> createStorage(ServerLevel world, BlockPos pos) {
-        if (!(world.getBlockEntity(pos) instanceof ShadowDrawerBlockEntity shadowDrawer)) throw new IllegalStateException();
+    private static Storage<ItemVariant> createStorage(ServerLevel level, BlockPos pos) {
+        if (!(level.getBlockEntity(pos) instanceof ShadowDrawerBlockEntity shadowDrawer)) throw new IllegalStateException();
         
-        return shadowDrawer.new ShadowDrawerStorage(NetworkStorageCache.get(world, pos));
+        return shadowDrawer.new ShadowDrawerStorage(NetworkStorageCache.get(level, pos));
     }
     
     public void recalculateContents() {
         if (level == null) return;
 
-        if (this.level instanceof ServerLevel world && !item.isBlank()) {
-            var storage = NetworkStorageCache.get(world, worldPosition);
+        if (this.level instanceof ServerLevel serverLevel && !item.isBlank()) {
+            var storage = NetworkStorageCache.get(serverLevel, worldPosition);
             long amount = 0L;
             outer:
             for (var slot : storage.parts) {
@@ -86,16 +90,16 @@ public class ShadowDrawerBlockEntity extends BlockEntity {
     }
 
     @Override
-    protected void loadAdditional(ValueInput view) {
-        countCache = view.getLongOr("count", countCache);
-        item = view.read("item", ItemVariant.CODEC).orElseGet(ItemVariant::blank);
-        hidden = view.getBooleanOr("hidden", false);
+    protected void loadAdditional(ValueInput input) {
+        countCache = input.getLongOr("count", countCache);
+        item = input.read("item", ItemVariant.CODEC).orElseGet(ItemVariant::blank);
+        hidden = input.getBooleanOr("hidden", false);
     }
 
     @Override
-    protected void saveAdditional(ValueOutput view) {
-        view.store("item", ItemVariant.CODEC, item);
-        view.putBoolean("hidden", hidden);
+    protected void saveAdditional(ValueOutput output) {
+        output.store("item", ItemVariant.CODEC, item);
+        output.putBoolean("hidden", hidden);
     }
 
     public boolean isHidden() {

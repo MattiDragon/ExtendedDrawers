@@ -10,9 +10,9 @@ import net.minecraft.world.level.Level;
 import org.jspecify.annotations.Nullable;
 
 public interface ModifierAccess {
-    boolean changeUpgrade(ItemVariant newUpgrade, Level world, BlockPos pos, Direction side, @Nullable Player player);
+    boolean changeUpgrade(ItemVariant newUpgrade, Level level, BlockPos pos, Direction side, @Nullable Player player);
 
-    boolean changeLimiter(ItemVariant newLimiter, Level world, BlockPos pos, Direction side, @Nullable Player player);
+    boolean changeLimiter(ItemVariant newLimiter, Level level, BlockPos pos, Direction side, @Nullable Player player);
 
     /**
      * Temporarily overrides the lock of the slot for inserting.

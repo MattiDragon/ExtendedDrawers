@@ -26,7 +26,7 @@ public class EnderConnectorBlock extends NetworkBlockWithEntity<EnderConnectorBl
     }
 
     @Override
-    protected VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
+    protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return VOXEL_SHAPE;
     }
 

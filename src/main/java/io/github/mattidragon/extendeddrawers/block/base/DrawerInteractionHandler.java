@@ -11,27 +11,27 @@ import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
 public interface DrawerInteractionHandler {
-    default InteractionResult toggleLock(BlockState state, Level world, BlockPos pos, Vec3 hitPos, Direction side) {
+    default InteractionResult toggleLock(BlockState state, Level level, BlockPos pos, Vec3 hitPos, Direction side) {
         return InteractionResult.PASS;
     }
 
-    default InteractionResult toggleVoid(BlockState state, Level world, BlockPos pos, Vec3 hitPos, Direction side) {
+    default InteractionResult toggleVoid(BlockState state, Level level, BlockPos pos, Vec3 hitPos, Direction side) {
         return InteractionResult.PASS;
     }
 
-    default InteractionResult toggleHide(BlockState state, Level world, BlockPos pos, Vec3 hitPos, Direction side) {
+    default InteractionResult toggleHide(BlockState state, Level level, BlockPos pos, Vec3 hitPos, Direction side) {
         return InteractionResult.PASS;
     }
 
-    default InteractionResult toggleDuping(BlockState state, Level world, BlockPos pos, Vec3 hitPos, Direction side) {
+    default InteractionResult toggleDuping(BlockState state, Level level, BlockPos pos, Vec3 hitPos, Direction side) {
         return InteractionResult.PASS;
     }
 
-    default InteractionResult changeUpgrade(BlockState state, Level world, BlockPos pos, Vec3 hitPos, Direction side, @Nullable Player player, ItemStack stack) {
+    default InteractionResult changeUpgrade(BlockState state, Level level, BlockPos pos, Vec3 hitPos, Direction side, @Nullable Player player, ItemStack stack) {
         return InteractionResult.PASS;
     }
 
-    default InteractionResult changeLimiter(BlockState state, Level world, BlockPos pos, Vec3 hitPos, Direction side, @Nullable Player player, ItemStack stack) {
+    default InteractionResult changeLimiter(BlockState state, Level level, BlockPos pos, Vec3 hitPos, Direction side, @Nullable Player player, ItemStack stack) {
         return InteractionResult.PASS;
     }
 }

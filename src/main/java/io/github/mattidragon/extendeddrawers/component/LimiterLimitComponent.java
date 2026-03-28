@@ -21,7 +21,7 @@ public record LimiterLimitComponent(long limit) implements TooltipProvider {
     public static final LimiterLimitComponent NO_LIMIT = new LimiterLimitComponent(Long.MAX_VALUE);
 
     @Override
-    public void addToTooltip(Item.TooltipContext context, Consumer<Component> textConsumer, TooltipFlag type, DataComponentGetter components) {
-        textConsumer.accept(Component.translatable("item.extended_drawers.limiter.limit", String.valueOf(limit)).withStyle(ChatFormatting.GRAY));
+    public void addToTooltip(Item.TooltipContext context, Consumer<Component> consumer, TooltipFlag flag, DataComponentGetter components) {
+        consumer.accept(Component.translatable("item.extended_drawers.limiter.limit", String.valueOf(limit)).withStyle(ChatFormatting.GRAY));
     }
 }

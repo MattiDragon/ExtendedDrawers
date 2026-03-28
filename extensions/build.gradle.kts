@@ -7,7 +7,7 @@ group = rootProject.group
 base.archivesName.set(rootProject.base.archivesName.map { it + "Extensions" })
 
 dependencies {
-    implementation(project(path = ":", configuration = "namedElements"))
+    implementation(project(":"))
     datagenImplementation(project(path = ":", configuration = "datagenElements"))
 }
 
@@ -16,6 +16,28 @@ loom.mods.register("extended_drawers_extensions") {
     sourceSet(sourceSets["main"])
     sourceSet(sourceSets["client"])
     modFiles.from(file("src/main/generated"))
+}
+
+fabricApi.configureTests {
+    createSourceSet = true
+    eula = true
+}
+
+loom.runs {
+    register("testClient") {
+        inherit(named("client").get())
+        source("gametest")
+        runDir("runTest")
+        configName = "Testing Client"
+    }
+
+    named("gameTest") {
+        configName = "Server GameTest"
+    }
+
+    named("clientGameTest") {
+        configName = "Client GameTest"
+    }
 }
 
 publishMods {

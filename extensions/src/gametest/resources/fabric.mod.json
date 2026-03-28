@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "id": "extended_drawers_extensions_gametest",
+  "version": "1",
+  "entrypoints": {
+    "fabric-gametest": [
+      "io.github.mattidragon.extendeddrawers.gametest.ExtendedDrawersGameTest"
+    ]
+  }
+}

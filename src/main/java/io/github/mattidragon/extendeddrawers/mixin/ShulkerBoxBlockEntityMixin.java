@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(ShulkerBoxBlockEntity.class)
 public class ShulkerBoxBlockEntityMixin {
     @Inject(method = "canPlaceItemThroughFace", at = @At("HEAD"), cancellable = true)
-    private void extended_drawers$fixShulkerBoxInsertion(int slot, ItemStack stack, Direction dir, CallbackInfoReturnable<Boolean> cir) {
+    private void fixShulkerBoxInsertion(int slot, ItemStack stack, Direction dir, CallbackInfoReturnable<Boolean> cir) {
         if (stack.getItem() instanceof DrawerItem item && !item.canFitInsideContainerItems()) {
             cir.setReturnValue(false);
         }

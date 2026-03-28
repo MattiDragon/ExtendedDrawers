@@ -18,25 +18,25 @@ import net.minecraft.world.level.Level;
 import java.util.function.Consumer;
 
 public class LimiterItem extends Item {
-    public LimiterItem(Properties settings) {
-        super(settings);
+    public LimiterItem(Properties properties) {
+        super(properties);
     }
 
     // Mojang have deprecated tooltips from items in favour of tooltips from components.
     // This does not work here as we need a tooltip from the lack of a component.
     @SuppressWarnings("deprecation")
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay displayComponent, Consumer<Component> textConsumer, TooltipFlag type) {
-        if (displayComponent.shows(ModDataComponents.LIMITER_LIMIT) && stack.get(ModDataComponents.LIMITER_LIMIT) == null) {
-            textConsumer.accept(Component.translatable("item.extended_drawers.limiter.unset").withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));
+    public void appendHoverText(ItemStack itemStack, TooltipContext context, TooltipDisplay display, Consumer<Component> builder, TooltipFlag tooltipFlag) {
+        if (display.shows(ModDataComponents.LIMITER_LIMIT) && itemStack.get(ModDataComponents.LIMITER_LIMIT) == null) {
+            builder.accept(Component.translatable("item.extended_drawers.limiter.unset").withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));
         }
     }
 
     @Override
-    public InteractionResult use(Level world, Player user, InteractionHand hand) {
-        var itemStack = user.getItemInHand(hand);
-        user.openItemGui(itemStack, hand);
-        user.awardStat(Stats.ITEM_USED.get(this));
+    public InteractionResult use(Level level, Player player, InteractionHand hand) {
+        var itemStack = player.getItemInHand(hand);
+        player.openItemGui(itemStack, hand);
+        player.awardStat(Stats.ITEM_USED.get(this));
         return InteractionResult.SUCCESS;
     }
 

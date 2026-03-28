@@ -18,7 +18,7 @@ import org.spongepowered.asm.mixin.injection.Slice;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(MultiPlayerGameMode.class)
-public class ClientPlayerInteractionManagerMixin {
+public class MultiPlayerGameModeMixin {
     @Shadow private float destroyProgress;
 
     @Shadow @Final private ClientPacketListener connection;
@@ -28,9 +28,9 @@ public class ClientPlayerInteractionManagerMixin {
     // Makes creative block breaking behave like survival if we are blocking breaking of a drawer. The other injection handles complete blocking
     @ModifyExpressionValue(method = {"startDestroyBlock", "continueDestroyBlock"}, at = @At(value = "FIELD", opcode = Opcodes.GETFIELD, target = "Lnet/minecraft/world/entity/player/Abilities;instabuild:Z"))
     private boolean extended_drawers$stopCreativeBreaking(boolean original, BlockPos pos, Direction direction) {
-        var world = Minecraft.getInstance().level;
-        if (world == null) return original;
-        var state = world.getBlockState(pos);
+        var level = Minecraft.getInstance().level;
+        if (level == null) return original;
+        var state = level.getBlockState(pos);
         if (!(state.getBlock() instanceof CreativeBreakBlocker blocker)) return original;
 
         var config = ExtendedDrawers.CONFIG.get().misc();
@@ -52,10 +52,10 @@ public class ClientPlayerInteractionManagerMixin {
             slice = @Slice(from = @At(value = "INVOKE",
                     target = "Lnet/minecraft/world/level/block/state/BlockState;getDestroyProgress(Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/core/BlockPos;)F")))
     private void extended_drawers$stopCreativeBreaking(BlockPos pos, Direction direction, CallbackInfoReturnable<Boolean> cir) {
-        var world = connection.getLevel();
+        var level = connection.getLevel();
         var player = minecraft.player;
         if (player == null || !player.isCreative()) return;
-        var state = world.getBlockState(pos);
+        var state = level.getBlockState(pos);
         if (!(state.getBlock() instanceof CreativeBreakBlocker blocker)) return;
 
         var config = ExtendedDrawers.CONFIG.get().misc();

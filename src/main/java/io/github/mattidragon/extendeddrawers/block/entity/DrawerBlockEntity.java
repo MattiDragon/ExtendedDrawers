@@ -35,7 +35,7 @@ public class DrawerBlockEntity extends StorageDrawerBlockEntity {
     public final CombinedDrawerStorage combinedStorage;
     
     static {
-        ItemStorage.SIDED.registerForBlockEntity((drawer, dir) -> drawer.combinedStorage, ModBlocks.DRAWER_BLOCK_ENTITY);
+        ItemStorage.SIDED.registerForBlockEntity((drawer, _) -> drawer.combinedStorage, ModBlocks.DRAWER_BLOCK_ENTITY);
     }
     
     public DrawerBlockEntity(BlockPos pos, BlockState state) {
@@ -82,7 +82,7 @@ public class DrawerBlockEntity extends StorageDrawerBlockEntity {
     }
 
     @Override
-    public void preRemoveSideEffects(BlockPos pos, BlockState oldState) {
+    public void preRemoveSideEffects(BlockPos pos, BlockState state) {
         if (!ExtendedDrawers.CONFIG.get().misc().drawersDropContentsOnBreak()) return;
         if (level == null) return;
 
@@ -92,13 +92,13 @@ public class DrawerBlockEntity extends StorageDrawerBlockEntity {
     }
 
     @Override
-    protected void collectImplicitComponents(DataComponentMap.Builder componentMapBuilder) {
+    protected void collectImplicitComponents(DataComponentMap.Builder components) {
         if (isEmpty()) return;
         var slotComponents = new ArrayList<DrawerSlotComponent>();
         for (var storage : storages) {
             slotComponents.add(storage.toComponent());
         }
-        componentMapBuilder.set(ModDataComponents.DRAWER_CONTENTS, new DrawerContentsComponent(slotComponents));
+        components.set(ModDataComponents.DRAWER_CONTENTS, new DrawerContentsComponent(slotComponents));
     }
 
     @Override
@@ -116,16 +116,16 @@ public class DrawerBlockEntity extends StorageDrawerBlockEntity {
     }
 
     @Override
-    protected void loadAdditional(ValueInput view) {
-        var items = view.childrenListOrEmpty("items").stream().toList();
+    protected void loadAdditional(ValueInput input) {
+        var items = input.childrenListOrEmpty("items").stream().toList();
         for (int i = 0; i < items.size(); i++) {
             storages[i].readData(items.get(i));
         }
     }
 
     @Override
-    public void saveAdditional(ValueOutput view) {
-        var items = view.childrenList("items");
+    public void saveAdditional(ValueOutput output) {
+        var items = output.childrenList("items");
         for (var storage : storages) {
             storage.writeData(items.addChild());
         }

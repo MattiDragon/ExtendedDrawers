@@ -10,9 +10,9 @@ import io.github.mattidragon.extendeddrawers.registry.ModBlocks;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
-import net.minecraft.client.renderer.state.CameraRenderState;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.client.renderer.texture.TextureAtlas;
-import net.minecraft.client.resources.model.Material;
+import net.minecraft.client.resources.model.sprite.SpriteId;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
@@ -34,6 +34,8 @@ public class CompactingDrawerBlockEntityRenderer extends AbstractDrawerBlockEnti
     @Override
     public void extractRenderState(CompactingDrawerBlockEntity drawer, CompactingDrawerRenderState state, float tickProgress, Vec3 cameraPos, ModelFeatureRenderer.@Nullable CrumblingOverlay crumblingOverlay) {
         super.extractRenderState(drawer, state, tickProgress, cameraPos, crumblingOverlay);
+        state.blockState = drawer.getBlockState();
+
         state.isLocked = drawer.storage.isLocked();
         state.isVoiding = drawer.storage.isVoiding();
         state.isHidden = drawer.storage.isHidden();
@@ -50,7 +52,7 @@ public class CompactingDrawerBlockEntityRenderer extends AbstractDrawerBlockEnti
             var slot = block.getSlot(drawer, block.getSlotIndex(drawer, new Vec2(0.5f, 0.25f)));
             slotState.disabled = slot.isBlocked();
             slotState.amount = slot.getAmount();
-            itemModelManager.appendItemLayers(slotState.item, slot.getResource().toStack(), ItemDisplayContext.GUI, drawer.getLevel(), null, drawer.getBlockPos().hashCode());
+            itemModelResolver.appendItemLayers(slotState.item, slot.getResource().toStack(), ItemDisplayContext.GUI, drawer.getLevel(), null, drawer.getBlockPos().hashCode());
         } else {
             slotState.disabled = true;
             slotState.item.clear();
@@ -61,7 +63,7 @@ public class CompactingDrawerBlockEntityRenderer extends AbstractDrawerBlockEnti
             var slot = block.getSlot(drawer, block.getSlotIndex(drawer, new Vec2(0.75f, 0.75f)));
             slotState.disabled = slot.isBlocked();
             slotState.amount = slot.getAmount();
-            itemModelManager.appendItemLayers(slotState.item, slot.getResource().toStack(), ItemDisplayContext.GUI, drawer.getLevel(), null, drawer.getBlockPos().hashCode());
+            itemModelResolver.appendItemLayers(slotState.item, slot.getResource().toStack(), ItemDisplayContext.GUI, drawer.getLevel(), null, drawer.getBlockPos().hashCode());
         } else {
             slotState.disabled = true;
             slotState.item.clear();
@@ -72,7 +74,7 @@ public class CompactingDrawerBlockEntityRenderer extends AbstractDrawerBlockEnti
             var slot = block.getSlot(drawer, block.getSlotIndex(drawer, new Vec2(0.25f, 0.75f)));
             slotState.disabled = slot.isBlocked();
             slotState.amount = slot.getAmount();
-            itemModelManager.appendItemLayers(slotState.item, slot.getResource().toStack(), ItemDisplayContext.GUI, drawer.getLevel(), null, drawer.getBlockPos().hashCode());
+            itemModelResolver.appendItemLayers(slotState.item, slot.getResource().toStack(), ItemDisplayContext.GUI, drawer.getLevel(), null, drawer.getBlockPos().hashCode());
         } else {
             slotState.disabled = true;
             slotState.item.clear();
@@ -80,30 +82,30 @@ public class CompactingDrawerBlockEntityRenderer extends AbstractDrawerBlockEnti
     }
 
     @Override
-    public void submit(CompactingDrawerRenderState state, PoseStack matrices, SubmitNodeCollector queue, CameraRenderState cameraState) {
+    public void submit(CompactingDrawerRenderState state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState camera) {
         var horizontalDir = state.blockState.getValue(StorageDrawerBlock.FACING);
         var face = state.blockState.getValue(StorageDrawerBlock.FACE);
 
-        matrices.pushPose();
-        alignMatrices(matrices, horizontalDir, face);
+        poseStack.pushPose();
+        alignMatrices(poseStack, horizontalDir, face);
         var light = state.lightCoords;
 
         if (state.isHidden) {
-            renderHiddenOverlay(false, light, matrices, queue);
-            matrices.popPose();
+            renderHiddenOverlay(false, light, poseStack, submitNodeCollector);
+            poseStack.popPose();
             return;
         }
 
-        renderIcons(state, matrices, light, queue, cameraState);
+        renderIcons(state, poseStack, light, submitNodeCollector, camera);
 
-        matrices.translate(0, 0.25, 0);
-        renderSlot(state, state.slots[0], matrices, light, queue, cameraState);
-        matrices.translate(0.25, -0.5, 0);
-        renderSlot(state, state.slots[1], matrices, light, queue, cameraState);
-        matrices.translate(-0.5, 0, 0);
-        renderSlot(state, state.slots[2], matrices, light, queue, cameraState);
+        poseStack.translate(0, 0.25, 0);
+        renderSlot(state, state.slots[0], poseStack, light, submitNodeCollector, camera);
+        poseStack.translate(0.25, -0.5, 0);
+        renderSlot(state, state.slots[1], poseStack, light, submitNodeCollector, camera);
+        poseStack.translate(-0.5, 0, 0);
+        renderSlot(state, state.slots[2], poseStack, light, submitNodeCollector, camera);
 
-        matrices.popPose();
+        poseStack.popPose();
     }
 
     @Override
@@ -113,19 +115,19 @@ public class CompactingDrawerBlockEntityRenderer extends AbstractDrawerBlockEnti
     }
 
     private void renderIcons(CompactingDrawerRenderState state, PoseStack matrices, int light, SubmitNodeCollector queue, CameraRenderState cameraState) {
-        var icons = new ArrayList<Material>();
+        var icons = new ArrayList<SpriteId>();
         var config = ExtendedDrawers.CONFIG.get().client().icons();
         @SuppressWarnings("deprecation")
         var atlas = TextureAtlas.LOCATION_ITEMS;
 
-        if (state.isLocked) icons.add(new Material(atlas, config.lockedIcon()));
-        if (state.isVoiding) icons.add(new Material(atlas, config.voidingIcon()));
-        if (state.isHidden) icons.add(new Material(atlas, config.hiddenIcon()));
-        if (state.isDuping) icons.add(new Material(atlas, config.dupingIcon()));
-        if (state.upgrade != null) icons.add(new Material(atlas, state.upgrade.sprite));
-        if (state.hasLimiter) icons.add(new Material(atlas, ExtendedDrawers.id("item/limiter")));
+        if (state.isLocked) icons.add(new SpriteId(atlas, config.lockedIcon()));
+        if (state.isVoiding) icons.add(new SpriteId(atlas, config.voidingIcon()));
+        if (state.isHidden) icons.add(new SpriteId(atlas, config.hiddenIcon()));
+        if (state.isDuping) icons.add(new SpriteId(atlas, config.dupingIcon()));
+        if (state.upgrade != null) icons.add(new SpriteId(atlas, state.upgrade.sprite));
+        if (state.hasLimiter) icons.add(new SpriteId(atlas, ExtendedDrawers.id("item/limiter")));
 
-        var playerPos = cameraState.entityPos;
+        var playerPos = cameraState.pos;
         if (state.blockPos.closerToCenterThan(playerPos, ExtendedDrawers.CONFIG.get().client().iconRenderDistance())) {
             matrices.pushPose(); // Render icons like the top slot
             matrices.translate(0, 0.25, 0);

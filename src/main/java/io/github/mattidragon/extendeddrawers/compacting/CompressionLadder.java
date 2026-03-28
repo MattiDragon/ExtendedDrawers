@@ -23,11 +23,11 @@ public record CompressionLadder(List<Step> steps) {
                             ItemVariant.CODEC.validate(variant -> variant.isBlank() ? DataResult.error(() -> "Cannot use air") : DataResult.success(variant)),
                             Item.CODEC.flatComapMap(
                                     entry -> ItemVariant.of(entry.value()),
-                                    variant -> variant.hasComponents() ? DataResult.error(() -> "Cannot serialize components") : DataResult.success(variant.getRegistryEntry()))
+                                    variant -> variant.hasComponents() ? DataResult.error(() -> "Cannot serialize components") : DataResult.success(variant.typeHolder()))
                     ),
                     Codec.intRange(1, Integer.MAX_VALUE))
             .xmap(map -> new CompressionLadder(map.entrySet().stream().map(entry -> new Step(entry.getKey(), entry.getValue())).toList()),
-                    ladder -> ladder.steps.stream().collect(Collectors.toMap(Step::item, Step::size, (a, b) -> a, Object2ObjectArrayMap::new)))
+                    ladder -> ladder.steps.stream().collect(Collectors.toMap(Step::item, Step::size, (a, _) -> a, Object2ObjectArrayMap::new)))
             .validate(ladder -> {
                 var prevSize = 1;
                 for (var step : ladder.steps) {

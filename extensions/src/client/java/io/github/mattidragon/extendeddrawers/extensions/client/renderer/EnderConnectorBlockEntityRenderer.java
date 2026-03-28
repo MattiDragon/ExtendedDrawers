@@ -11,7 +11,7 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
-import net.minecraft.client.renderer.state.CameraRenderState;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.phys.Vec3;
@@ -30,15 +30,15 @@ public class EnderConnectorBlockEntityRenderer implements BlockEntityRenderer<En
     }
 
     @Override
-    public void extractRenderState(EnderConnectorBlockEntity entity, EnderConnectorRenderState state, float tickProgress, Vec3 cameraPos, ModelFeatureRenderer.@Nullable CrumblingOverlay crumblingOverlay) {
-        BlockEntityRenderer.super.extractRenderState(entity, state, tickProgress, cameraPos, crumblingOverlay);
+    public void extractRenderState(EnderConnectorBlockEntity entity, EnderConnectorRenderState state, float partialTicks, Vec3 cameraPosition, ModelFeatureRenderer.@Nullable CrumblingOverlay breakProgress) {
+        BlockEntityRenderer.super.extractRenderState(entity, state, partialTicks, cameraPosition, breakProgress);
         state.rays = entity.rayDirectionCache();
     }
 
     @Override
-    public void submit(EnderConnectorRenderState state, PoseStack matrices, SubmitNodeCollector queue, CameraRenderState cameraState) {
-        matrices.pushPose();
-        matrices.translate(0.5, 0.5, 0.5);
+    public void submit(EnderConnectorRenderState state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState camera) {
+        poseStack.pushPose();
+        poseStack.translate(0.5, 0.5, 0.5);
         
         var light = state.lightCoords;
 
@@ -48,23 +48,23 @@ public class EnderConnectorBlockEntityRenderer implements BlockEntityRenderer<En
             var pitch = (float) Math.asin(ray.y() / length);
 
             // Anti-z-fighting
-            matrices.translate(0.001, 0.001, 0.001);
+            poseStack.translate(0.001, 0.001, 0.001);
 
-            matrices.pushPose();
-            matrices.mulPose(Axis.YP.rotation(yaw));
-            matrices.mulPose(Axis.XP.rotation(-pitch));
+            poseStack.pushPose();
+            poseStack.mulPose(Axis.YP.rotation(yaw));
+            poseStack.mulPose(Axis.XP.rotation(-pitch));
 
-            queue.submitCustomGeometry(matrices, RenderTypes.entityTranslucent(TEXTURE_ID), (matricesEntry, vertexConsumer) -> {
+            submitNodeCollector.submitCustomGeometry(poseStack, RenderTypes.entityTranslucent(TEXTURE_ID), (matricesEntry, vertexConsumer) -> {
                 quad(matricesEntry, vertexConsumer, light, length, -0.1f, 0.1f, 0.1f, 0.1f, new Vector3f(0, 1, 0));
                 quad(matricesEntry, vertexConsumer, light, length, -0.1f, 0.1f, -0.1f, -0.1f, new Vector3f(0, -1, 0));
                 quad(matricesEntry, vertexConsumer, light, length, -0.1f, -0.1f, -0.1f, 0.1f, new Vector3f(-1, 0, 0));
                 quad(matricesEntry, vertexConsumer, light, length, 0.1f, 0.1f, -0.1f, 0.1f, new Vector3f(1, 0, 0));
             });
 
-            matrices.popPose();
+            poseStack.popPose();
         }
 
-        matrices.popPose();
+        poseStack.popPose();
     }
 
     private static void quad(PoseStack.Pose matricesEntry, VertexConsumer vertexConsumer, int light, float length, float x1, float x2, float y1, float y2, Vector3f normal) {

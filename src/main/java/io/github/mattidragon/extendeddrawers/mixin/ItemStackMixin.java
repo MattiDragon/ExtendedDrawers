@@ -3,12 +3,13 @@ package io.github.mattidragon.extendeddrawers.mixin;
 import io.github.mattidragon.extendeddrawers.block.base.DrawerInteractionHandler;
 import io.github.mattidragon.extendeddrawers.registry.ModDataComponents;
 import io.github.mattidragon.extendeddrawers.registry.ModTags;
+import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.network.chat.Component;
-import net.minecraft.tags.TagKey;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemInstance;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.TooltipDisplay;
@@ -22,36 +23,38 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 @Mixin(ItemStack.class)
-public abstract class ItemStackMixin {
-    @Shadow public abstract boolean is(TagKey<Item> tag);
-
+public abstract class ItemStackMixin implements ItemInstance {
     @Shadow public abstract <T extends TooltipProvider> void addToTooltip(DataComponentType<T> componentType, Item.TooltipContext context, TooltipDisplay displayComponent, Consumer<Component> textConsumer, TooltipFlag type);
+
+    @Shadow
+    public abstract boolean is(Predicate<Holder<Item>> item);
 
     @Inject(method = "useOn", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/Item;useOn(Lnet/minecraft/world/item/context/UseOnContext;)Lnet/minecraft/world/InteractionResult;"), cancellable = true)
     private void extended_drawers$applyModifiers(UseOnContext context, CallbackInfoReturnable<InteractionResult> cir) {
-        var world = context.getLevel();
-        var state = world.getBlockState(context.getClickedPos());
+        var level = context.getLevel();
+        var state = level.getBlockState(context.getClickedPos());
 
         if (state.getBlock() instanceof DrawerInteractionHandler handler) {
             if (is(ModTags.ItemTags.TOGGLE_VOIDING)) {
-                var result = handler.toggleVoid(state, world, context.getClickedPos(), context.getClickLocation(), context.getClickedFace());
+                var result = handler.toggleVoid(state, level, context.getClickedPos(), context.getClickLocation(), context.getClickedFace());
                 if (result != InteractionResult.PASS)
                     cir.setReturnValue(result);
             }
             if (is(ModTags.ItemTags.TOGGLE_HIDDEN)) {
-                var result = handler.toggleHide(state, world, context.getClickedPos(), context.getClickLocation(), context.getClickedFace());
+                var result = handler.toggleHide(state, level, context.getClickedPos(), context.getClickLocation(), context.getClickedFace());
                 if (result != InteractionResult.PASS)
                     cir.setReturnValue(result);
             }
             if (is(ModTags.ItemTags.TOGGLE_LOCK)) {
-                var result = handler.toggleLock(state, world, context.getClickedPos(), context.getClickLocation(), context.getClickedFace());
+                var result = handler.toggleLock(state, level, context.getClickedPos(), context.getClickLocation(), context.getClickedFace());
                 if (result != InteractionResult.PASS)
                     cir.setReturnValue(result);
             }
             if (is(ModTags.ItemTags.TOGGLE_DUPING)) {
-                var result = handler.toggleDuping(state, world, context.getClickedPos(), context.getClickLocation(), context.getClickedFace());
+                var result = handler.toggleDuping(state, level, context.getClickedPos(), context.getClickLocation(), context.getClickedFace());
                 if (result != InteractionResult.PASS)
                     cir.setReturnValue(result);
             }

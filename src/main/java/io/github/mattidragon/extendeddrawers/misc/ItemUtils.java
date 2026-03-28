@@ -10,20 +10,20 @@ import net.minecraft.world.level.Level;
 import org.jspecify.annotations.Nullable;
 
 public class ItemUtils {
-    public static void offerOrDropStacks(Level world, BlockPos pos, @Nullable Direction side, @Nullable Player player, ItemVariant item, long amount) {
+    public static void offerOrDropStacks(Level level, BlockPos pos, @Nullable Direction side, @Nullable Player player, ItemVariant item, long amount) {
         var maxCount = item.getItem().getDefaultMaxStackSize();
         while (amount > 0) {
             int dropped = (int) Math.min(maxCount, amount);
-            offerOrDrop(world, pos, side, player, item.toStack(dropped));
+            offerOrDrop(level, pos, side, player, item.toStack(dropped));
             amount -= dropped;
         }
     }
     
-    public static void offerOrDrop(Level world, BlockPos pos, @Nullable Direction side, @Nullable Player player, ItemStack stack) {
+    public static void offerOrDrop(Level level, BlockPos pos, @Nullable Direction side, @Nullable Player player, ItemStack stack) {
         if (player == null) {
             int x = pos.getX() + (side == null ? 0 : side.getStepX());
             int z = pos.getZ() + (side == null ? 0 : side.getStepZ());
-            world.addFreshEntity(new ItemEntity(world, x, pos.getY(), z, stack));
+            level.addFreshEntity(new ItemEntity(level, x, pos.getY(), z, stack));
         } else
             player.getInventory().placeItemBackInInventory(stack);
     }

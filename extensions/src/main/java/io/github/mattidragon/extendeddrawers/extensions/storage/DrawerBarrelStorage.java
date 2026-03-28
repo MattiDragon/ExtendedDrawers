@@ -2,7 +2,7 @@ package io.github.mattidragon.extendeddrawers.extensions.storage;
 
 import io.github.mattidragon.extendeddrawers.extensions.block.entity.DrawerBarrelBlockEntity;
 import io.github.mattidragon.extendeddrawers.storage.DrawerStorage;
-import net.fabricmc.fabric.api.transfer.v1.item.InventoryStorage;
+import net.fabricmc.fabric.api.transfer.v1.item.ContainerStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.SlottedStorage;
 import net.fabricmc.fabric.api.transfer.v1.storage.StorageView;
@@ -12,10 +12,10 @@ import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import java.util.Iterator;
 
 public class DrawerBarrelStorage implements DrawerStorage, SlottedStorage<ItemVariant> {
-    private final InventoryStorage delegate;
+    private final ContainerStorage delegate;
 
     public DrawerBarrelStorage(DrawerBarrelBlockEntity blockEntity) {
-        this.delegate = InventoryStorage.of(blockEntity, null);
+        this.delegate = ContainerStorage.of(blockEntity, null);
     }
 
     @Override

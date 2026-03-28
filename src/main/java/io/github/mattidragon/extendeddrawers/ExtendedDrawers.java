@@ -13,7 +13,7 @@ import io.github.mattidragon.extendeddrawers.registry.ModItems;
 import io.github.mattidragon.extendeddrawers.registry.ModRecipes;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
-import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
+import net.fabricmc.fabric.api.creativetab.v1.FabricCreativeModeTab;
 import net.fabricmc.fabric.api.resource.v1.ResourceLoader;
 import net.fabricmc.fabric.api.resource.v1.pack.PackActivationType;
 import net.fabricmc.loader.api.FabricLoader;
@@ -56,7 +56,7 @@ public class ExtendedDrawers implements ModInitializer {
     }
 
     private static void registerCommand() {
-        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
+        CommandRegistrationCallback.EVENT.register((dispatcher, _, _) -> {
             var root = Commands.literal("extended_drawers")
                     .requires(Commands.hasPermission(Commands.LEVEL_ADMINS));
 
@@ -79,10 +79,10 @@ public class ExtendedDrawers implements ModInitializer {
     }
 
     private void registerItemGroup() {
-        Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, id("main"), FabricItemGroup.builder()
+        Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, id("main"), FabricCreativeModeTab.builder()
                 .icon(ModItems.SHADOW_DRAWER::getDefaultInstance)
                 .title(Component.translatable("itemGroup.extended_drawers.main"))
-                .displayItems((context, entries) -> {
+                .displayItems((_, entries) -> {
                     entries.accept(ModBlocks.SINGLE_DRAWER);
                     entries.accept(ModBlocks.DOUBLE_DRAWER);
                     entries.accept(ModBlocks.QUAD_DRAWER);

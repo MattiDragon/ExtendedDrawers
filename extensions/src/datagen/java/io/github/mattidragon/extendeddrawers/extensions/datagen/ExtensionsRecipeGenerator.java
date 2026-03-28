@@ -9,8 +9,8 @@ import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.Items;
 
 class ExtensionsRecipeGenerator extends RecipeProvider {
-    public ExtensionsRecipeGenerator(HolderLookup.Provider registries, RecipeOutput exporter) {
-        super(registries, exporter);
+    public ExtensionsRecipeGenerator(HolderLookup.Provider registries, RecipeOutput output) {
+        super(registries, output);
     }
 
     @Override

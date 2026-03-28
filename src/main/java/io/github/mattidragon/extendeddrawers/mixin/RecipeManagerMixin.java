@@ -1,7 +1,7 @@
 package io.github.mattidragon.extendeddrawers.mixin;
 
 import io.github.mattidragon.extendeddrawers.compacting.ServerCompressionRecipeManager;
-import io.github.mattidragon.extendeddrawers.misc.ServerRecipeManagerAccess;
+import io.github.mattidragon.extendeddrawers.misc.RecipeManagerAccess;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.item.crafting.RecipeManager;
@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(RecipeManager.class)
-public abstract class ServerRecipeManagerMixin implements ServerCompressionRecipeManager.Provider, ServerRecipeManagerAccess {
+public abstract class RecipeManagerMixin implements ServerCompressionRecipeManager.Provider, RecipeManagerAccess {
     @Unique
     private final ServerCompressionRecipeManager compactingManager = new ServerCompressionRecipeManager((RecipeManager) (Object) this);
 

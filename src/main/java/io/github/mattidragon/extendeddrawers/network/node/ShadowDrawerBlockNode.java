@@ -23,10 +23,10 @@ public class ShadowDrawerBlockNode implements DrawerNetworkBlockNode {
     }
 
     @Override
-    public void update(ServerLevel world, NodeHolder<BlockNode> node) {
+    public void update(ServerLevel level, NodeHolder<BlockNode> node) {
         var pos = node.getBlockPos();
 
-        if (world.getBlockEntity(pos) instanceof ShadowDrawerBlockEntity drawer)
+        if (level.getBlockEntity(pos) instanceof ShadowDrawerBlockEntity drawer)
             drawer.recalculateContents();
     }
 }

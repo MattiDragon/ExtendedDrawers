@@ -2,7 +2,7 @@ import java.util.*
 
 plugins {
     // Can't use catalog here, hack isn't good enough
-    id("fabric-loom")
+    id("net.fabricmc.fabric-loom")
     id("me.modmuss50.mod-publish-plugin")
     id("maven-publish")
 }
@@ -20,6 +20,7 @@ repositories {
     maven("https://maven.nucleoid.xyz/releases") {
         content {
             includeGroupAndSubgroups("com.kneelawk.graphlib")
+            includeGroupAndSubgroups("eu.pb4")
         }
     }
     mavenLocal()
@@ -32,9 +33,8 @@ val libs = the<org.gradle.accessors.dm.LibrariesForLibs>()
 
 dependencies {
     minecraft(libs.minecraft)
-    mappings(loom.officialMojangMappings())
-    modImplementation(libs.fabric.loader)
-    modImplementation(libs.fabric.api)
+    implementation(libs.fabric.loader)
+    implementation(libs.fabric.api)
 
     // Add generated data to runtime classpath (slightly hacky)
     runtimeOnly(files("src/main/generated"))
@@ -48,6 +48,13 @@ fabricApi.configureDataGeneration {
 
 loom.runs.configureEach {
     ideConfigGenerated(true)
+
+    // If we're running datagen and other runs at the same time, datagen must run first to make gradle happy
+    if (name != "datagen") {
+        tasks.named("run${name.replaceFirstChar { it.uppercaseChar() }}") {
+            mustRunAfter(tasks["runDatagen"])
+        }
+    }
 }
 
 // Delete datagen on clean
@@ -93,7 +100,7 @@ publishing {
 
 
 publishMods {
-    file.set(tasks.remapJar.get().archiveFile)
+    file.set(tasks.jar.get().archiveFile)
     additionalFiles.from(tasks["sourcesJar"])
 
     displayName = "v${mod_version} [${libs.versions.minecraft.get()}]"

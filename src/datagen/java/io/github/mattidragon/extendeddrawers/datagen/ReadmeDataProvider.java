@@ -2,7 +2,7 @@ package io.github.mattidragon.extendeddrawers.datagen;
 
 import com.google.common.hash.HashCode;
 import com.google.common.hash.Hashing;
-import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
+import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
 import net.minecraft.util.Util;
@@ -21,18 +21,18 @@ public class ReadmeDataProvider implements DataProvider {
     @SuppressWarnings({"deprecation"})
     private static final HashCode HASH = Hashing.sha1().hashUnencodedChars(README);
     
-    private final FabricDataOutput output;
+    private final FabricPackOutput output;
     
-    public ReadmeDataProvider(FabricDataOutput output) {
+    public ReadmeDataProvider(FabricPackOutput output) {
         this.output = output;
     }
 
     @Override
-    public CompletableFuture<?> run(CachedOutput writer) {
+    public CompletableFuture<?> run(CachedOutput cache) {
         var path = output.getOutputFolder().resolve("README.md");
         return CompletableFuture.runAsync(() -> {
             try {
-                writer.writeIfNeeded(path, README.getBytes(StandardCharsets.UTF_8), HASH);
+                cache.writeIfNeeded(path, README.getBytes(StandardCharsets.UTF_8), HASH);
             } catch (IOException e) {
                 throw new CompletionException(e);
             }

@@ -28,7 +28,7 @@ public class CompactingDrawerBlockEntity extends StorageDrawerBlockEntity {
     public final CompactingDrawerStorage storage;
 
     static {
-        ItemStorage.SIDED.registerForBlockEntity((drawer, dir) -> drawer.storage, ModBlocks.COMPACTING_DRAWER_BLOCK_ENTITY);
+        ItemStorage.SIDED.registerForBlockEntity((drawer, _) -> drawer.storage, ModBlocks.COMPACTING_DRAWER_BLOCK_ENTITY);
     }
 
     public CompactingDrawerBlockEntity(BlockPos pos, BlockState state) {
@@ -60,12 +60,12 @@ public class CompactingDrawerBlockEntity extends StorageDrawerBlockEntity {
     }
 
     @Override
-    protected void collectImplicitComponents(DataComponentMap.Builder componentMapBuilder) {
-        componentMapBuilder.set(ModDataComponents.COMPACTING_DRAWER_CONTENTS, storage.toComponent());
+    protected void collectImplicitComponents(DataComponentMap.Builder components) {
+        components.set(ModDataComponents.COMPACTING_DRAWER_CONTENTS, storage.toComponent());
     }
 
     @Override
-    public void preRemoveSideEffects(BlockPos pos, BlockState oldState) {
+    public void preRemoveSideEffects(BlockPos pos, BlockState state) {
         if (!ExtendedDrawers.CONFIG.get().misc().drawersDropContentsOnBreak()) return;
         if (level == null) return;
 
@@ -93,18 +93,18 @@ public class CompactingDrawerBlockEntity extends StorageDrawerBlockEntity {
     }
 
     @Override
-    public void setLevel(Level world) {
-        super.setLevel(world);
+    public void setLevel(Level level) {
+        super.setLevel(level);
         storage.updateSlots(); // Force compression ladders to load
     }
 
     @Override
-    protected void loadAdditional(ValueInput view) {
-        view.child("storage").ifPresent(storage::readData);
+    protected void loadAdditional(ValueInput input) {
+        input.child("storage").ifPresent(storage::readData);
     }
 
     @Override
-    public void saveAdditional(ValueOutput view) {
-        storage.writeData(view.child("storage"));
+    public void saveAdditional(ValueOutput output) {
+        storage.writeData(output.child("storage"));
     }
 }

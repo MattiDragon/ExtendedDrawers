@@ -24,7 +24,7 @@ public class ClientCompressionRecipeManager implements CompressionRecipeManager 
     }
 
     @Override
-    public CompressionLadder getLadder(ItemVariant item, Level world) {
+    public CompressionLadder getLadder(ItemVariant item, Level level) {
         if (ladders.containsKey(item)) {
             return ladders.get(item);
         }

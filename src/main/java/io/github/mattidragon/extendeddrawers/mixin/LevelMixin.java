@@ -5,5 +5,5 @@ import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(Level.class)
-public abstract class WorldMixin implements CompressionRecipeManager.Provider {
+public abstract class LevelMixin implements CompressionRecipeManager.Provider {
 }

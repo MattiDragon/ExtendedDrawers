@@ -1,6 +1,6 @@
 package io.github.mattidragon.extendeddrawers.compacting;
 
-import io.github.mattidragon.extendeddrawers.misc.ServerRecipeManagerAccess;
+import io.github.mattidragon.extendeddrawers.misc.RecipeManagerAccess;
 import io.github.mattidragon.extendeddrawers.networking.CompressionRecipeSyncPayload;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
@@ -49,14 +49,14 @@ public final class ServerCompressionRecipeManager implements CompressionRecipeMa
     }
 
     @Override
-    public CompressionLadder getLadder(ItemVariant item, Level world) {
+    public CompressionLadder getLadder(ItemVariant item, Level level) {
         if (ladders.containsKey(item))
             return ladders.get(item);
-        var ladder = buildLadder(item, world);
+        var ladder = buildLadder(item, level);
         // Put ladder in map for all items
         addLadder(ladder);
-        if (world instanceof ServerLevel serverWorld) {
-            for (var player : serverWorld.players()) {
+        if (level instanceof ServerLevel serverLevel) {
+            for (var player : serverLevel.players()) {
                 ServerPlayNetworking.send(player, new CompressionRecipeSyncPayload(List.of(ladder), false));
             }
         }
@@ -67,8 +67,8 @@ public final class ServerCompressionRecipeManager implements CompressionRecipeMa
         ladder.steps().forEach(step -> ladders.put(step.item(), ladder));
     }
 
-    private CompressionLadder buildLadder(ItemVariant item, Level world) {
-        var bottom = findBottom(item, world);
+    private CompressionLadder buildLadder(ItemVariant item, Level level) {
+        var bottom = findBottom(item, level);
         var ladder = new ArrayList<CompressionLadder.Step>();
         var visited = new HashSet<ItemVariant>();
         var currentItem = bottom;
@@ -77,7 +77,7 @@ public final class ServerCompressionRecipeManager implements CompressionRecipeMa
         ladder.add(new CompressionLadder.Step(currentItem, currentSize));
 
         while (true) {
-            var pair = findCompressionRecipe(currentItem, world);
+            var pair = findCompressionRecipe(currentItem, level);
             if (pair == null) break; // Reached top of ladder
             currentItem = pair.compressed;
             currentSize *= pair.scale;
@@ -87,11 +87,11 @@ public final class ServerCompressionRecipeManager implements CompressionRecipeMa
         return new CompressionLadder(List.copyOf(ladder));
     }
 
-    private ItemVariant findBottom(ItemVariant item, Level world) {
+    private ItemVariant findBottom(ItemVariant item, Level level) {
         var visited = new HashSet<ItemVariant>();
         var candidate = item;
         while (true) {
-            var pair = findDecompressionRecipe(candidate, world);
+            var pair = findDecompressionRecipe(candidate, level);
             if (pair == null) break; // Reached bottom
             if (visited.contains(pair.decompressed)) break; // Next item would be a cycle, this is the bottom now
             candidate = pair.decompressed;
@@ -101,38 +101,38 @@ public final class ServerCompressionRecipeManager implements CompressionRecipeMa
     }
 
     @Nullable
-    private RecipePair findCompressionRecipe(ItemVariant decompressed, Level world) {
+    private RecipePair findCompressionRecipe(ItemVariant decompressed, Level level) {
         return IntStream.of(3, 2, 1)
-                .mapToObj(size -> findCompressionRecipeForSize(decompressed, world, size))
+                .mapToObj(size -> findCompressionRecipeForSize(decompressed, level, size))
                 .flatMap(Function.identity())
                 .findFirst()
                 .orElse(null);
     }
 
-    private Stream<RecipePair> findCompressionRecipeForSize(ItemVariant decompressed, Level world, int size) {
+    private Stream<RecipePair> findCompressionRecipeForSize(ItemVariant decompressed, Level level, int size) {
         var decompressedStack = decompressed.toStack(size * size);
-        return findRecipes(decompressed.toStack(), size, world) // Find compression recipes
-                .filter(compressed -> findRecipes(compressed, 1, world).anyMatch(decompressed2 -> ItemStack.matches(decompressed2, decompressedStack))) // Find matching decompression recipe
+        return findRecipes(decompressed.toStack(), size, level) // Find compression recipes
+                .filter(compressed -> findRecipes(compressed, 1, level).anyMatch(decompressed2 -> ItemStack.matches(decompressed2, decompressedStack))) // Find matching decompression recipe
                 .map(compressed -> new RecipePair(ItemVariant.of(compressed), decompressed, size * size));
     }
 
     @Nullable
-    private RecipePair findDecompressionRecipe(ItemVariant compressed, Level world) {
+    private RecipePair findDecompressionRecipe(ItemVariant compressed, Level level) {
         var compressedStack = compressed.toStack();
-        return findRecipes(compressedStack, 1, world) // Find decompression recipe
+        return findRecipes(compressedStack, 1, level) // Find decompression recipe
                 .flatMap(decompressed -> IntStream.of(3, 2, 1) // Check each size from largest to smallest for matching compression recipes
-                        .filter(size -> findRecipes(decompressed, size, world).anyMatch(compressed2 -> ItemStack.matches(compressedStack, compressed2)))
+                        .filter(size -> findRecipes(decompressed, size, level).anyMatch(compressed2 -> ItemStack.matches(compressedStack, compressed2)))
                         .mapToObj(size -> new RecipePair(compressed, ItemVariant.of(decompressed), size * size)))
                 .findFirst()
                 .orElse(null);
     }
 
-    private Stream<ItemStack> findRecipes(ItemStack stack, int size, Level world) {
+    private Stream<ItemStack> findRecipes(ItemStack stack, int size, Level level) {
         var inventory = createInventory(stack, size);
-        return ((ServerRecipeManagerAccess) recipeManager).getRecipes().getRecipesFor(RecipeType.CRAFTING, inventory, world)
+        return ((RecipeManagerAccess) recipeManager).getRecipes().getRecipesFor(RecipeType.CRAFTING, inventory, level)
                 .map(RecipeHolder::value)
                 .filter(recipe -> recipe.getRemainingItems(inventory).stream().allMatch(ItemStack::isEmpty)) // We can't deal with remainders, so we just prevent recipe with them from being used
-                .map(recipe -> recipe.assemble(inventory, world.registryAccess()))
+                .map(recipe -> recipe.assemble(inventory))
                 .filter(result -> !result.isEmpty());
     }
 

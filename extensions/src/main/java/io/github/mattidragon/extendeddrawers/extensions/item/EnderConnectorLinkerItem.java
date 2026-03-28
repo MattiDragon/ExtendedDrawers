@@ -20,8 +20,8 @@ import net.minecraft.world.level.Level;
 import org.jspecify.annotations.Nullable;
 
 public class EnderConnectorLinkerItem extends Item {
-    public EnderConnectorLinkerItem(Properties settings) {
-        super(settings);
+    public EnderConnectorLinkerItem(Properties properties) {
+        super(properties);
     }
 
     @Override
@@ -43,8 +43,8 @@ public class EnderConnectorLinkerItem extends Item {
         }
 
         context.getItemInHand().remove(ExtensionDataComponents.LINKING_ENDER_CONNECTOR);
-        if (context.getLevel() instanceof ServerLevel serverWorld) {
-            var graphWorld = NetworkRegistry.UNIVERSE.getGraphWorld(serverWorld);
+        if (context.getLevel() instanceof ServerLevel serverLevel) {
+            var graphWorld = NetworkRegistry.UNIVERSE.getGraphWorld(serverLevel);
             var node1 = graphWorld.getNodeAt(new NodePos(prevPos, EnderConnectorBlockNode.INSTANCE));
             var node2 = graphWorld.getNodeAt(new NodePos(context.getClickedPos(), EnderConnectorBlockNode.INSTANCE));
 
@@ -65,25 +65,25 @@ public class EnderConnectorLinkerItem extends Item {
         return InteractionResult.SUCCESS;
     }
 
-    private static void sendMessage(@Nullable Player player, Component text) {
+    private static void sendMessage(@Nullable Player player, Component message) {
         if (player != null) {
-            player.displayClientMessage(text, true);
+            player.sendOverlayMessage(message);
         }
     }
 
     @Override
-    public InteractionResult use(Level world, Player user, InteractionHand hand) {
-        if (user.isShiftKeyDown()) {
-            var stack = user.getItemInHand(hand);
+    public InteractionResult use(Level level, Player player, InteractionHand hand) {
+        if (player.isShiftKeyDown()) {
+            var stack = player.getItemInHand(hand);
             stack.remove(ExtensionDataComponents.LINKING_ENDER_CONNECTOR);
-            sendMessage(user, Component.translatable("item.extended_drawers_extensions.ender_connector_linker.linking_clear"));
+            sendMessage(player, Component.translatable("item.extended_drawers_extensions.ender_connector_linker.linking_clear"));
             return InteractionResult.SUCCESS;
         }
         return InteractionResult.PASS;
     }
 
     @Override
-    public boolean isFoil(ItemStack stack) {
-        return super.isFoil(stack) || stack.has(ExtensionDataComponents.LINKING_ENDER_CONNECTOR);
+    public boolean isFoil(ItemStack itemStack) {
+        return super.isFoil(itemStack) || itemStack.has(ExtensionDataComponents.LINKING_ENDER_CONNECTOR);
     }
 }

@@ -34,8 +34,12 @@ import static io.github.mattidragon.extendeddrawers.misc.DrawerInteractionStatus
 public class AccessPointBlock extends NetworkBlock implements DrawerInteractionHandler {
     public AccessPointBlock(Properties settings) {
         super(settings);
-    
-        ItemStorage.SIDED.registerForBlocks((world, pos, state, entity, dir) -> world instanceof ServerLevel serverWorld ? NetworkStorageCache.get(serverWorld, pos) : Storage.empty(), this);
+
+        ItemStorage.SIDED.registerForBlocks((level, pos, _, _, _) ->
+                        level instanceof ServerLevel serverWorld
+                                ? NetworkStorageCache.get(serverWorld, pos)
+                                : Storage.empty(),
+                this);
     }
 
     @Override
@@ -44,18 +48,18 @@ public class AccessPointBlock extends NetworkBlock implements DrawerInteractionH
     }
 
     @Override
-    public int getAnalogOutputSignal(BlockState state, Level world, BlockPos pos, Direction direction) {
-        if (world instanceof ServerLevel serverWorld)
-            return StorageUtil.calculateComparatorOutput(NetworkStorageCache.get(serverWorld, pos));
+    public int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos, Direction direction) {
+        if (level instanceof ServerLevel serverLevel)
+            return StorageUtil.getRedstoneSignal(NetworkStorageCache.get(serverLevel, pos));
         return 0;
     }
 
     @Override
-    protected InteractionResult useWithoutItem(BlockState state, Level world, BlockPos pos, Player player, BlockHitResult hit) {
+    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
         if (!player.mayBuild()) return InteractionResult.PASS;
-        if (!(world instanceof ServerLevel serverWorld)) return InteractionResult.CONSUME;
+        if (!(level instanceof ServerLevel serverLevel)) return InteractionResult.CONSUME;
 
-        var storage = NetworkStorageCache.get(serverWorld, pos);
+        var storage = NetworkStorageCache.get(serverLevel, pos);
 
         try (var t = Transaction.openOuter()) {
             int inserted;
@@ -86,8 +90,8 @@ public class AccessPointBlock extends NetworkBlock implements DrawerInteractionH
         }
     }
 
-    private static List<ModifierDrawerStorage> getModifierStorages(BlockPos pos, ServerLevel serverWorld) {
-        return NetworkStorageCache.get(serverWorld, pos).parts
+    private static List<ModifierDrawerStorage> getModifierStorages(BlockPos pos, ServerLevel level) {
+        return NetworkStorageCache.get(level, pos).parts
                 .stream()
                 .filter(ModifierDrawerStorage.class::isInstance)
                 .map(ModifierDrawerStorage.class::cast)
@@ -95,9 +99,9 @@ public class AccessPointBlock extends NetworkBlock implements DrawerInteractionH
     }
 
     @Override
-    public InteractionResult toggleLock(BlockState state, Level world, BlockPos pos, Vec3 hitPos, Direction side) {
-        if (!(world instanceof ServerLevel serverWorld)) return InteractionResult.PASS;
-        var storages = getModifierStorages(pos, serverWorld);
+    public InteractionResult toggleLock(BlockState state, Level level, BlockPos pos, Vec3 hitPos, Direction side) {
+        if (!(level instanceof ServerLevel serverLevel)) return InteractionResult.PASS;
+        var storages = getModifierStorages(pos, serverLevel);
         var newState = storages.stream()
                 .map(DrawerStorage::isLocked)
                 .mapToInt(value -> value ? 1 : -1)
@@ -108,9 +112,9 @@ public class AccessPointBlock extends NetworkBlock implements DrawerInteractionH
     }
 
     @Override
-    public InteractionResult toggleVoid(BlockState state, Level world, BlockPos pos, Vec3 hitPos, Direction side) {
-        if (!(world instanceof ServerLevel serverWorld)) return InteractionResult.PASS;
-        var storages = getModifierStorages(pos, serverWorld);
+    public InteractionResult toggleVoid(BlockState state, Level level, BlockPos pos, Vec3 hitPos, Direction side) {
+        if (!(level instanceof ServerLevel serverLevel)) return InteractionResult.PASS;
+        var storages = getModifierStorages(pos, serverLevel);
         var newState = storages.stream()
                 .map(DrawerStorage::isVoiding)
                 .mapToInt(value -> value ? 1 : -1)
@@ -121,9 +125,9 @@ public class AccessPointBlock extends NetworkBlock implements DrawerInteractionH
     }
 
     @Override
-    public InteractionResult toggleDuping(BlockState state, Level world, BlockPos pos, Vec3 hitPos, Direction side) {
-        if (!(world instanceof ServerLevel serverWorld)) return InteractionResult.PASS;
-        var storages = getModifierStorages(pos, serverWorld);
+    public InteractionResult toggleDuping(BlockState state, Level level, BlockPos pos, Vec3 hitPos, Direction side) {
+        if (!(level instanceof ServerLevel serverLevel)) return InteractionResult.PASS;
+        var storages = getModifierStorages(pos, serverLevel);
         var newState = storages.stream()
                 .map(DrawerStorage::isDuping)
                 .mapToInt(value -> value ? 1 : -1)
@@ -134,14 +138,14 @@ public class AccessPointBlock extends NetworkBlock implements DrawerInteractionH
     }
 
     @Override
-    public InteractionResult toggleHide(BlockState state, Level world, BlockPos pos, Vec3 hitPos, Direction side) {
-        if (!(world instanceof ServerLevel serverWorld)) return InteractionResult.PASS;
-        var storages = getModifierStorages(pos, serverWorld);
-        var shadowDrawers = NetworkRegistry.UNIVERSE.getGraphWorld(serverWorld)
+    public InteractionResult toggleHide(BlockState state, Level level, BlockPos pos, Vec3 hitPos, Direction side) {
+        if (!(level instanceof ServerLevel serverLevel)) return InteractionResult.PASS;
+        var storages = getModifierStorages(pos, serverLevel);
+        var shadowDrawers = NetworkRegistry.UNIVERSE.getGraphWorld(serverLevel)
                 .getLoadedGraphsAt(pos)
                 .flatMap(BlockGraph::getNodes)
                 .map(NodeHolder::getBlockPos)
-                .map(serverWorld::getBlockEntity)
+                .map(serverLevel::getBlockEntity)
                 .filter(ShadowDrawerBlockEntity.class::isInstance)
                 .map(ShadowDrawerBlockEntity.class::cast)
                 .toList();

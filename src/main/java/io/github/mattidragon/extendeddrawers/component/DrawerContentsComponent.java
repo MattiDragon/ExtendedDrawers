@@ -21,7 +21,7 @@ public record DrawerContentsComponent(List<DrawerSlotComponent> slots) implement
     public static final StreamCodec<RegistryFriendlyByteBuf, DrawerContentsComponent> PACKET_CODEC = DrawerSlotComponent.PACKET_CODEC.apply(ByteBufCodecs.list(4)).map(DrawerContentsComponent::new, DrawerContentsComponent::slots);
 
     @Override
-    public void addToTooltip(Item.TooltipContext context, Consumer<Component> consumer, TooltipFlag type, DataComponentGetter components) {
+    public void addToTooltip(Item.TooltipContext context, Consumer<Component> consumer, TooltipFlag flag, DataComponentGetter components) {
         var list = slots()
                 .stream()
                 .filter(slot -> !slot.item().isBlank() || !slot.upgrade().isBlank() || slot.hidden() || slot.locked() || slot.voiding() || slot.duping())
@@ -58,7 +58,7 @@ public record DrawerContentsComponent(List<DrawerSlotComponent> slots) implement
                     text.append(Component.literal("D").withStyle(ChatFormatting.WHITE));
 
                 if (!slot.upgrade().isBlank()) {
-                    text.append(" ").append(slot.upgrade().getItem().getName().copy().withStyle(ChatFormatting.AQUA));
+                    text.append(" ").append(slot.upgrade().toStack().getDisplayName().copy().withStyle(ChatFormatting.AQUA));
                 }
             }
             consumer.accept(text.withStyle(ChatFormatting.GRAY));

@@ -21,11 +21,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.Optional;
 
 @Mixin(LocalPlayer.class)
-public abstract class ClientPlayerEntityMixin extends Player {
+public abstract class LocalPlayerMixin extends Player {
     @Shadow @Final protected Minecraft minecraft;
 
-    public ClientPlayerEntityMixin(Level world, GameProfile profile) {
-        super(world, profile);
+    public LocalPlayerMixin(Level level, GameProfile gameProfile) {
+        super(level, gameProfile);
     }
 
     @Inject(method = "openItemGui", at = @At("HEAD"))

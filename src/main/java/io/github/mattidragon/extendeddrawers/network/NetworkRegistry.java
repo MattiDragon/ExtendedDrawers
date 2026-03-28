@@ -25,8 +25,8 @@ public class NetworkRegistry {
 
     public static void register() {
         UNIVERSE.register();
-        UNIVERSE.addDiscoverer((world, pos) -> {
-            if (world.getBlockState(pos).getBlock() instanceof NetworkComponent component) {
+        UNIVERSE.addDiscoverer((level, pos) -> {
+            if (level.getBlockState(pos).getBlock() instanceof NetworkComponent component) {
                 return List.of(component.getNode());
             }
             return List.of();

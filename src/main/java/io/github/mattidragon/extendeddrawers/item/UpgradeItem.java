@@ -18,8 +18,8 @@ public class UpgradeItem extends Item {
         this(settings, sprite, value -> value * getMultiplier(tier));
     }
     
-    public UpgradeItem(Properties settings, Identifier sprite, Long2LongFunction modifier) {
-        super(settings);
+    public UpgradeItem(Properties properties, Identifier sprite, Long2LongFunction modifier) {
+        super(properties);
         this.sprite = sprite;
         this.modifier = modifier;
     }

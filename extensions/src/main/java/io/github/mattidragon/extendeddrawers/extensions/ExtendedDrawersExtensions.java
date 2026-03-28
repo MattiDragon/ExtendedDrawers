@@ -10,8 +10,8 @@ import io.github.mattidragon.extendeddrawers.extensions.registry.ExtensionItems;
 import io.github.mattidragon.extendeddrawers.network.NetworkRegistry;
 import io.github.mattidragon.extendeddrawers.registry.ModItems;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.item.v1.ComponentTooltipAppenderRegistry;
-import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
+import net.fabricmc.fabric.api.item.v1.ItemComponentTooltipProviderRegistry;
+import net.fabricmc.fabric.api.creativetab.v1.CreativeModeTabEvents;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
@@ -34,16 +34,16 @@ public class ExtendedDrawersExtensions implements ModInitializer {
         ExtensionItems.register();
         ExtensionDataComponents.register();
 
-        BlockEntityType.BARREL.addSupportedBlock(ExtensionBlocks.DRAWER_BARREL);
+        BlockEntityType.BARREL.addValidBlock(ExtensionBlocks.DRAWER_BARREL);
 
-        ItemGroupEvents.modifyEntriesEvent(ResourceKey.create(Registries.CREATIVE_MODE_TAB, ExtendedDrawers.id("main")))
-                .register(entries -> {
-                    entries.addAfter(ModItems.ACCESS_POINT, ExtensionItems.DRAWER_BARREL, ExtensionItems.ENDER_CONNECTOR);
-                    entries.addAfter(ModItems.DUPE_WAND, ExtensionItems.ENDER_CONNECTOR_LINKER);
+        CreativeModeTabEvents.modifyOutputEvent(ResourceKey.create(Registries.CREATIVE_MODE_TAB, ExtendedDrawers.id("main")))
+                .register(output -> {
+                    output.insertAfter(ModItems.ACCESS_POINT, ExtensionItems.DRAWER_BARREL, ExtensionItems.ENDER_CONNECTOR);
+                    output.insertAfter(ModItems.DUPE_WAND, ExtensionItems.ENDER_CONNECTOR_LINKER);
                 });
         NetworkRegistry.UNIVERSE.addNodeTypes(DrawerBarrelBlockNode.TYPE, EnderConnectorBlockNode.TYPE);
         NetworkRegistry.UNIVERSE.addLinkKeyType(EnderConnectorLinkKey.TYPE);
 
-        ComponentTooltipAppenderRegistry.addBefore(DataComponents.LORE, ExtensionDataComponents.LINKING_ENDER_CONNECTOR);
+        ItemComponentTooltipProviderRegistry.addBefore(DataComponents.LORE, ExtensionDataComponents.LINKING_ENDER_CONNECTOR);
     }
 }

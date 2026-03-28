@@ -14,14 +14,14 @@ base.archivesName = project.property("archives_base_name") as String
 configurations.consumable("datagenElements")
 
 dependencies {
-    libs.graphlib.core.let { modApi(it); include(it) }
+    libs.graphlib.core.let { api(it); include(it) }
     //modLocalRuntime(libs.graphlib.debugrender)
     //modImplementation(libs.patchouli)
 
-    libs.configtoolkit.let { modApi(it); include(it); annotationProcessor(it) }
-    libs.yacl.let { modApi(it); include(it) }
+    libs.configtoolkit.let { api(it); include(it); annotationProcessor(it) }
+    libs.yacl.let { api(it); include(it) }
 
-    modApi(libs.modmenu)
+    api(libs.modmenu)
 }
 
 // Apply datagen at runtime
@@ -33,7 +33,7 @@ loom.mods.register("extended_drawers") {
 
 tasks.register<Jar>("datagenJar") {
     from(sourceSets["datagen"].output)
-    archiveClassifier = "dev-datagen"
+    archiveClassifier = "datagen"
     destinationDirectory = layout.buildDirectory.dir("devlibs")
 }
 

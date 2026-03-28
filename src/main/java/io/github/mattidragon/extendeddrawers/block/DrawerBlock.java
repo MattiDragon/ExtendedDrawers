@@ -29,10 +29,10 @@ public class DrawerBlock extends StorageDrawerBlock<DrawerBlockEntity> {
     }
 
     @Override
-    public int getAnalogOutputSignal(BlockState state, Level world, BlockPos pos, Direction direction) {
-        var drawer = getBlockEntity(world, pos);
+    public int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos, Direction direction) {
+        var drawer = getBlockEntity(level, pos);
         if (drawer == null) return 0;
-        return StorageUtil.calculateComparatorOutput(drawer.combinedStorage);
+        return StorageUtil.getRedstoneSignal(drawer.combinedStorage);
     }
 
     @Override

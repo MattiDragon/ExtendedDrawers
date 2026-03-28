@@ -4,7 +4,7 @@ import io.github.mattidragon.extendeddrawers.ExtendedDrawers;
 import io.github.mattidragon.extendeddrawers.networking.SetLimiterLimitPayload;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
@@ -38,7 +38,7 @@ public class EditLimiterScreen extends Screen {
 
     @Override
     protected void init() {
-        doneButton = addRenderableWidget(Button.builder(CommonComponents.GUI_DONE, button -> {
+        doneButton = addRenderableWidget(Button.builder(CommonComponents.GUI_DONE, _ -> {
                     try {
                         var limit = Long.parseLong(textField.getValue());
                         if (limit <= 0) throw new NumberFormatException();
@@ -50,7 +50,7 @@ public class EditLimiterScreen extends Screen {
                 .width(38)
                 .build());
 
-        clearButton = addRenderableWidget(Button.builder(Component.translatable("item.extended_drawers.limiter.clear"), button -> {
+        clearButton = addRenderableWidget(Button.builder(Component.translatable("item.extended_drawers.limiter.clear"), _ -> {
                     ClientPlayNetworking.send(new SetLimiterLimitPayload(slot, -1));
                     onClose();
                 })
@@ -58,32 +58,32 @@ public class EditLimiterScreen extends Screen {
                 .width(38)
                 .build());
 
-        addRenderableWidget(Button.builder(CommonComponents.GUI_CANCEL, button -> onClose())
+        addRenderableWidget(Button.builder(CommonComponents.GUI_CANCEL, _ -> onClose())
                 .pos(width / 2 + 20, height / 2 + 6)
                 .width(38)
                 .build());
         
         textField = addRenderableWidget(new EditBox(minecraft.font, width / 2 - 58, height / 2 - 16, 116, 20, Component.literal("")));
-        textField.addFormatter((text, firstCharacterIndex) -> { // Render invalid text as red
+        textField.addFormatter((text, _) -> { // Render invalid text as red
             var style = isValid(text) ? Style.EMPTY : Style.EMPTY.withColor(ChatFormatting.RED);
             return FormattedCharSequence.forward(text, style);
         });
-        textField.setResponder(value -> doneButton.active = isValid(textField.getValue()));
+        textField.setResponder(_ -> doneButton.active = isValid(textField.getValue()));
         if (previous != null) textField.setValue(String.valueOf(previous));
         setFocused(textField);
     }
 
     @Override
-    public boolean keyPressed(KeyEvent input) {
-        if (input.key() == GLFW.GLFW_KEY_ENTER || input.key() == GLFW.GLFW_KEY_KP_ENTER) {
+    public boolean keyPressed(KeyEvent event) {
+        if (event.key() == GLFW.GLFW_KEY_ENTER || event.key() == GLFW.GLFW_KEY_KP_ENTER) {
             if (isValid(textField.getValue())) {
-                doneButton.onPress(input);
+                doneButton.onPress(event);
             } else if (textField.getValue().isBlank()) {
-                clearButton.onPress(input);
+                clearButton.onPress(event);
             }
         }
 
-        return super.keyPressed(input);
+        return super.keyPressed(event);
     }
 
     private static boolean isValid(String text) {
@@ -97,15 +97,15 @@ public class EditLimiterScreen extends Screen {
     }
 
     @Override
-    public void renderBackground(GuiGraphics context, int mouseX, int mouseY, float delta) {
-        renderTransparentBackground(context);
-        context.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, width / 2 - 64, height / 2 - 32, 0, 0, 128, 64, 128, 64);
+    public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
+        super.extractBackground(graphics, mouseX, mouseY, a);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, width / 2 - 64, height / 2 - 32, 0, 0, 128, 64, 128, 64);
     }
 
     @Override
-    public void render(GuiGraphics context, int mouseX, int mouseY, float delta) {
-        super.render(context, mouseX, mouseY, delta);
-        context.drawString(minecraft.font, getTitle(), width / 2 - 58, height / 2 - 16 - 10, 0xff404040, false);
+    public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
+        super.extractRenderState(graphics, mouseX, mouseY, a);
+        graphics.text(minecraft.font, getTitle(), width / 2 - 58, height / 2 - 16 - 10, 0xff404040, false);
     }
 
     @Override

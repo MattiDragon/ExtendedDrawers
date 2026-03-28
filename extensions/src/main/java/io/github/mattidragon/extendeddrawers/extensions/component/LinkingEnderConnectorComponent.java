@@ -20,8 +20,8 @@ public record LinkingEnderConnectorComponent(BlockPos pos) implements TooltipPro
             = BlockPos.STREAM_CODEC.map(LinkingEnderConnectorComponent::new, LinkingEnderConnectorComponent::pos);
 
     @Override
-    public void addToTooltip(Item.TooltipContext context, Consumer<Component> textConsumer, TooltipFlag type, DataComponentGetter components) {
-        textConsumer.accept(Component.translatable("item.extended_drawers_extensions.ender_connector_linker.linking", pos.toShortString())
+    public void addToTooltip(Item.TooltipContext context, Consumer<Component> consumer, TooltipFlag flag, DataComponentGetter components) {
+        consumer.accept(Component.translatable("item.extended_drawers_extensions.ender_connector_linker.linking", pos.toShortString())
                 .withStyle(ChatFormatting.GRAY));
     }
 }

@@ -31,8 +31,8 @@ import java.util.List;
 public class EnderConnectorBlockEntity extends BlockEntity {
     private List<Vector3fc> rayDirectionCache = List.of();
 
-    public EnderConnectorBlockEntity(BlockPos pos, BlockState state) {
-        super(ExtensionBlocks.ENDER_CONNECTOR_ENTITY, pos, state);
+    public EnderConnectorBlockEntity(BlockPos worldPosition, BlockState blockState) {
+        super(ExtensionBlocks.ENDER_CONNECTOR_ENTITY, worldPosition, blockState);
     }
 
     @Override
@@ -51,24 +51,24 @@ public class EnderConnectorBlockEntity extends BlockEntity {
     }
 
     @Override
-    protected void loadAdditional(ValueInput view) {
-        super.loadAdditional(view);
-        view.read("ray_directions", ExtraCodecs.VECTOR3F.listOf()).ifPresentOrElse(
+    protected void loadAdditional(ValueInput input) {
+        super.loadAdditional(input);
+        input.read("ray_directions", ExtraCodecs.VECTOR3F.listOf()).ifPresentOrElse(
             rays -> rayDirectionCache = rays,
             () -> rayDirectionCache = List.of()
         );
     }
 
     @Override
-    protected void saveAdditional(ValueOutput view) {
-        super.saveAdditional(view);
+    protected void saveAdditional(ValueOutput output) {
+        super.saveAdditional(output);
     }
 
     @Override
-    public void setLevel(Level world) {
-        super.setLevel(world);
-        if (world instanceof ServerLevel serverWorld) {
-            var nodeHolder = NetworkRegistry.UNIVERSE.getGraphWorld(serverWorld)
+    public void setLevel(Level level) {
+        super.setLevel(level);
+        if (level instanceof ServerLevel serverLevel) {
+            var nodeHolder = NetworkRegistry.UNIVERSE.getGraphWorld(serverLevel)
                     .getNodeAt(new NodePos(worldPosition, EnderConnectorBlockNode.INSTANCE));
             if (nodeHolder != null) {
                 updateRayCache(nodeHolder);

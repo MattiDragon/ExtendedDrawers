@@ -156,27 +156,27 @@ public final class DrawerSlot extends SnapshotParticipant<DrawerSlot.Snapshot> i
     }
 
     @Override
-    public void dumpExcess(Level world, BlockPos pos, @Nullable Direction side, @Nullable Player player) {
+    public void dumpExcess(Level level, BlockPos pos, @Nullable Direction side, @Nullable Player player) {
         if (amount > getCapacity()) {
-            ItemUtils.offerOrDropStacks(world, pos, side, player, item, amount - getCapacity());
+            ItemUtils.offerOrDropStacks(level, pos, side, player, item, amount - getCapacity());
             amount = getCapacity();
         }
         update();
     }
 
     @Override
-    public void readData(ValueInput view) {
-        ModifierDrawerStorage.super.readData(view);
-        item = view.read("item", ItemVariant.CODEC).orElseGet(ItemVariant::blank);
-        amount = view.getLongOr("amount", 0);
+    public void readData(ValueInput input) {
+        ModifierDrawerStorage.super.readData(input);
+        item = input.read("item", ItemVariant.CODEC).orElseGet(ItemVariant::blank);
+        amount = input.getLongOr("amount", 0);
         if (item.isBlank()) amount = 0; // Avoids dupes with drawers of removed items
     }
 
     @Override
-    public void writeData(ValueOutput view) {
-        ModifierDrawerStorage.super.writeData(view);
-        view.store("item", ItemVariant.CODEC, item);
-        view.putLong("amount", amount);
+    public void writeData(ValueOutput output) {
+        ModifierDrawerStorage.super.writeData(output);
+        output.store("item", ItemVariant.CODEC, item);
+        output.putLong("amount", amount);
     }
 
     public void setLocked(boolean locked) {

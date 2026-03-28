@@ -16,8 +16,8 @@ public class UpdateHandler implements GraphEntity<UpdateHandler> {
     @Nullable
     private ChangeType queuedUpdate;
 
-    public static void scheduleUpdate(ServerLevel world, BlockPos pos, ChangeType type) {
-        NetworkRegistry.UNIVERSE.getGraphWorld(world)
+    public static void scheduleUpdate(ServerLevel level, BlockPos pos, ChangeType type) {
+        NetworkRegistry.UNIVERSE.getGraphWorld(level)
                 .getLoadedGraphsAt(pos)
                 .map(graph -> graph.getGraphEntity(NetworkRegistry.UPDATE_HANDLER_TYPE))
                 .forEach(updateHandler -> updateHandler.scheduleUpdate(type));
@@ -30,7 +30,7 @@ public class UpdateHandler implements GraphEntity<UpdateHandler> {
     @Override
     public void onTick() {
         if (queuedUpdate == null) return;
-        if (!(context.getBlockWorld() instanceof ServerLevel world)) return;
+        if (!(context.getBlockWorld() instanceof ServerLevel level)) return;
 
         NetworkStorageCache networkStorageCache = context.getGraph().getGraphEntity(NetworkRegistry.STORAGE_CACHE_TYPE);
         // Structure updates are handled elsewhere and count updates don't matter
@@ -42,7 +42,7 @@ public class UpdateHandler implements GraphEntity<UpdateHandler> {
                 .getNodes()
                 .forEach(node -> {
                     if (node.getNode() instanceof DrawerNetworkBlockNode drawerNode) {
-                        drawerNode.update(world, node);
+                        drawerNode.update(level, node);
                     }
                 });
         queuedUpdate = null;

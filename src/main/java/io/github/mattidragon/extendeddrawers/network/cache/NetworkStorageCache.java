@@ -18,8 +18,8 @@ public interface NetworkStorageCache extends GraphEntity<NetworkStorageCache> {
     /**
      * Helper to easily get the cached storage from a world and pos.
      */
-    static CombinedStorage<ItemVariant, DrawerStorage> get(ServerLevel world, BlockPos pos) {
-        return NetworkRegistry.UNIVERSE.getGraphWorld(world)
+    static CombinedStorage<ItemVariant, DrawerStorage> get(ServerLevel serverLevel, BlockPos pos) {
+        return NetworkRegistry.UNIVERSE.getGraphWorld(serverLevel)
                 .getLoadedGraphsAt(pos)
                 .map(graph -> graph.getGraphEntity(NetworkRegistry.STORAGE_CACHE_TYPE))
                 .map(NetworkStorageCache::get)

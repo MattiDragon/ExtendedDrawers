@@ -6,7 +6,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
 @Mixin(ClientPacketListener.class)
-public class ClientPlayNetworkHandlerMixin implements ClientCompressionRecipeManager.Provider {
+public class ClientPacketListenerMixin implements ClientCompressionRecipeManager.Provider {
     @Unique
     private final ClientCompressionRecipeManager compactingManager = new ClientCompressionRecipeManager();
 

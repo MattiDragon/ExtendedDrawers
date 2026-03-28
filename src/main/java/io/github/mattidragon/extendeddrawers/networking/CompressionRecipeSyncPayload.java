@@ -22,8 +22,8 @@ public record CompressionRecipeSyncPayload(List<CompressionLadder> recipes, bool
     );
 
     public static void register() {
-        PayloadTypeRegistry.playS2C().register(ID, CODEC);
-        ServerLifecycleEvents.SYNC_DATA_PACK_CONTENTS.register((player, joined) -> {
+        PayloadTypeRegistry.clientboundPlay().register(ID, CODEC);
+        ServerLifecycleEvents.SYNC_DATA_PACK_CONTENTS.register((player, _) -> {
             var server = player.level().getServer();
             ServerPlayNetworking.send(player, new CompressionRecipeSyncPayload(List.copyOf(ServerCompressionRecipeManager.of(server.getRecipeManager()).getLadders()), true));
         });

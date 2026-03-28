@@ -9,9 +9,9 @@ import io.github.mattidragon.extendeddrawers.client.renderer.state.DrawerSlotRen
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
-import net.minecraft.client.renderer.state.CameraRenderState;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.client.renderer.texture.TextureAtlas;
-import net.minecraft.client.resources.model.Material;
+import net.minecraft.client.resources.model.sprite.SpriteId;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.phys.Vec3;
@@ -51,48 +51,50 @@ public class DrawerBlockEntityRenderer extends AbstractDrawerBlockEntityRenderer
             slotState.isDuping = slot.isDuping();
             slotState.upgrade = slot.getUpgrade();
             slotState.hasLimiter = slot.hasLimiter();
-            itemModelManager.appendItemLayers(slotState.item, slot.getResource().toStack(), ItemDisplayContext.GUI, drawer.getLevel(), null, drawer.getBlockPos().hashCode() * i);
+            itemModelResolver.appendItemLayers(slotState.item, slot.getResource().toStack(), ItemDisplayContext.GUI, drawer.getLevel(), null, drawer.getBlockPos().hashCode() * i);
             slotState.amount = slot.getAmount();
 
             state.slots[i] = slotState;
         }
+
+        state.blockState = drawer.getBlockState();
     }
 
     @Override
-    public void submit(DrawerRenderState state, PoseStack matrices, SubmitNodeCollector queue, CameraRenderState cameraState) {
+    public void submit(DrawerRenderState state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState camera) {
         var horizontalDir = state.blockState.getValue(StorageDrawerBlock.FACING);
         var face = state.blockState.getValue(StorageDrawerBlock.FACE);
 
         // TODO: shouldRender()
 
-        matrices.pushPose();
-        alignMatrices(matrices, horizontalDir, face);
+        poseStack.pushPose();
+        alignMatrices(poseStack, horizontalDir, face);
         var light = state.lightCoords;
         var slots = state.slotCount;
         var pos = state.blockPos;
 
         switch (slots) {
-            case 1 -> renderSlot(state.slots[0], false, light, matrices, queue, cameraState, pos);
+            case 1 -> renderSlot(state.slots[0], false, light, poseStack, submitNodeCollector, camera, pos);
             case 2 -> {
-                matrices.translate(-0.25, 0, 0);
-                renderSlot(state.slots[0], true, light, matrices, queue, cameraState, pos);
-                matrices.translate(0.5, 0, 0);
-                renderSlot(state.slots[1], true, light, matrices, queue, cameraState, pos);
+                poseStack.translate(-0.25, 0, 0);
+                renderSlot(state.slots[0], true, light, poseStack, submitNodeCollector, camera, pos);
+                poseStack.translate(0.5, 0, 0);
+                renderSlot(state.slots[1], true, light, poseStack, submitNodeCollector, camera, pos);
             }
             case 4 -> {
-                matrices.translate(-0.25, 0.25, 0);
-                renderSlot(state.slots[0], true, light, matrices, queue, cameraState, pos);
-                matrices.translate(0.5, 0, 0);
-                renderSlot(state.slots[1], true, light, matrices, queue, cameraState, pos);
-                matrices.translate(-0.5, -0.5, 0);
-                renderSlot(state.slots[2], true, light, matrices, queue, cameraState, pos);
-                matrices.translate(0.5, 0, 0);
-                renderSlot(state.slots[3], true, light, matrices, queue, cameraState, pos);
+                poseStack.translate(-0.25, 0.25, 0);
+                renderSlot(state.slots[0], true, light, poseStack, submitNodeCollector, camera, pos);
+                poseStack.translate(0.5, 0, 0);
+                renderSlot(state.slots[1], true, light, poseStack, submitNodeCollector, camera, pos);
+                poseStack.translate(-0.5, -0.5, 0);
+                renderSlot(state.slots[2], true, light, poseStack, submitNodeCollector, camera, pos);
+                poseStack.translate(0.5, 0, 0);
+                renderSlot(state.slots[3], true, light, poseStack, submitNodeCollector, camera, pos);
             }
             default -> ExtendedDrawers.LOGGER.error("Unexpected drawer slot count, skipping rendering. Are you an addon dev adding more configurations? If so please mixin into DrawerBlockEntityRenderer and add your layout.");
         }
 
-        matrices.popPose();
+        poseStack.popPose();
     }
 
     @Override
@@ -113,18 +115,18 @@ public class DrawerBlockEntityRenderer extends AbstractDrawerBlockEntityRenderer
         renderSlot(slotState.item, amount, small, slotState.isHidden, icons, matrices, queue, cameraState, light, pos);
     }
 
-    private static List<Material> getIconsForSlot(DrawerSlotRenderState slotState) {
-        var icons = new ArrayList<Material>();
+    private static List<SpriteId> getIconsForSlot(DrawerSlotRenderState slotState) {
+        var icons = new ArrayList<SpriteId>();
         var config = ExtendedDrawers.CONFIG.get().client().icons();
         @SuppressWarnings("deprecation")
         var atlas = TextureAtlas.LOCATION_ITEMS;
 
-        if (slotState.isLocked) icons.add(new Material(atlas, config.lockedIcon()));
-        if (slotState.isVoiding) icons.add(new Material(atlas, config.voidingIcon()));
-        if (slotState.isHidden) icons.add(new Material(atlas, config.hiddenIcon()));
-        if (slotState.isDuping) icons.add(new Material(atlas, config.dupingIcon()));
-        if (slotState.upgrade != null) icons.add(new Material(atlas, slotState.upgrade.sprite));
-        if (slotState.hasLimiter) icons.add(new Material(atlas, ExtendedDrawers.id("item/limiter")));
+        if (slotState.isLocked) icons.add(new SpriteId(atlas, config.lockedIcon()));
+        if (slotState.isVoiding) icons.add(new SpriteId(atlas, config.voidingIcon()));
+        if (slotState.isHidden) icons.add(new SpriteId(atlas, config.hiddenIcon()));
+        if (slotState.isDuping) icons.add(new SpriteId(atlas, config.dupingIcon()));
+        if (slotState.upgrade != null) icons.add(new SpriteId(atlas, slotState.upgrade.sprite));
+        if (slotState.hasLimiter) icons.add(new SpriteId(atlas, ExtendedDrawers.id("item/limiter")));
         return icons;
     }
 }

@@ -14,11 +14,11 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 
 @Mixin(ServerPlayerGameMode.class)
-public class ServerPlayerInteractionManagerMixin {
+public class ServerPlayerGameModeMixin {
     @Shadow protected ServerLevel level;
     
     @ModifyExpressionValue(method = "handleBlockBreakAction", at = @At(value = "FIELD", opcode = Opcodes.GETFIELD, target = "Lnet/minecraft/world/entity/player/Abilities;instabuild:Z"))
-    private boolean extended_drawers$stopCreativeBreaking(boolean original, BlockPos pos, ServerboundPlayerActionPacket.Action action, Direction direction, int worldHeight) {
+    private boolean stopCreativeBreaking(boolean original, BlockPos pos, ServerboundPlayerActionPacket.Action action, Direction direction, int maxY) {
         var state = level.getBlockState(pos);
         if (!(state.getBlock() instanceof CreativeBreakBlocker blocker)) return original;
 

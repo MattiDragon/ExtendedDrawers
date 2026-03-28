@@ -1,26 +1,27 @@
 package io.github.mattidragon.extendeddrawers.recipe;
 
+import com.mojang.serialization.MapCodec;
 import io.github.mattidragon.extendeddrawers.component.LimiterLimitComponent;
 import io.github.mattidragon.extendeddrawers.item.LimiterItem;
 import io.github.mattidragon.extendeddrawers.registry.ModDataComponents;
 import io.github.mattidragon.extendeddrawers.registry.ModItems;
-import io.github.mattidragon.extendeddrawers.registry.ModRecipes;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.CustomRecipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 
 public class CopyLimiterRecipe extends CustomRecipe {
-    public CopyLimiterRecipe(CraftingBookCategory category) {
-        super(category);
-    }
+    public static final CopyLimiterRecipe INSTANCE = new CopyLimiterRecipe();
+    public static final MapCodec<CopyLimiterRecipe> MAP_CODEC = MapCodec.unit(INSTANCE);
+    public static final StreamCodec<RegistryFriendlyByteBuf, CopyLimiterRecipe> STREAM_CODEC = StreamCodec.unit(INSTANCE);
+    public static final RecipeSerializer<CopyLimiterRecipe> SERIALIZER = new RecipeSerializer<>(MAP_CODEC, STREAM_CODEC);
 
     @Override
-    public boolean matches(CraftingInput input, Level world) {
+    public boolean matches(CraftingInput input, Level level) {
         var stacks = input.items();
         boolean setLimiterFound = false;
         boolean unsetLimiterFound = false;
@@ -42,7 +43,7 @@ public class CopyLimiterRecipe extends CustomRecipe {
     }
 
     @Override
-    public ItemStack assemble(CraftingInput input, HolderLookup.Provider provider) {
+    public ItemStack assemble(CraftingInput input) {
         var stacks = input.items();
         Long limit = null;
 
@@ -69,8 +70,8 @@ public class CopyLimiterRecipe extends CustomRecipe {
         for(int i = 0; i < result.size(); ++i) {
             var stack = input.getItem(i);
             var item = stack.getItem();
-            if (!stack.getRecipeRemainder().isEmpty()) {
-                result.set(i, stack.getRecipeRemainder());
+            if (stack.getCraftingRemainder() != null) {
+                result.set(i, stack.getCraftingRemainder().create());
             } else {
                 if (item instanceof LimiterItem && stack.get(ModDataComponents.LIMITER_LIMIT) != null) {
                     result.set(i, stack.copyWithCount(1));
@@ -83,6 +84,6 @@ public class CopyLimiterRecipe extends CustomRecipe {
 
     @Override
     public RecipeSerializer<CopyLimiterRecipe> getSerializer() {
-        return ModRecipes.COPY_LIMITER_SERIALIZER;
+        return SERIALIZER;
     }
 }

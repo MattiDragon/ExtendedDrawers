@@ -40,10 +40,10 @@ public record DrawerSlotComponent(
     public static final StreamCodec<RegistryFriendlyByteBuf, DrawerSlotComponent> PACKET_CODEC = ByteBufCodecs.fromCodecWithRegistries(CODEC);
 
     @Override
-    public void addToTooltip(Item.TooltipContext context, Consumer<Component> consumer, TooltipFlag type, DataComponentGetter components) {
+    public void addToTooltip(Item.TooltipContext context, Consumer<Component> consumer, TooltipFlag flag, DataComponentGetter components) {
         if (ExtendedDrawers.SHIFT_ACCESS.isShiftPressed()) {
-            if (upgrade().getItem() instanceof UpgradeItem upgradeItem) {
-                consumer.accept(upgradeItem.getName().copy().withStyle(ChatFormatting.AQUA));
+            if (upgrade().getItem() instanceof UpgradeItem) {
+                consumer.accept(upgrade().toStack().getDisplayName().copy().withStyle(ChatFormatting.AQUA));
             }
 
             var modifierText = Component.empty()

@@ -12,11 +12,11 @@ import io.github.mattidragon.extendeddrawers.config.category.MutableStorageCateg
 import io.github.mattidragon.extendeddrawers.misc.CreativeBreakingBehaviour;
 import io.github.mattidragon.extendeddrawers.network.cache.CachingMode;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.texture.TextureAtlas;
-import net.minecraft.client.resources.model.Material;
+import net.minecraft.client.resources.model.sprite.SpriteId;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 
@@ -282,10 +282,10 @@ public class ConfigScreenFactory {
 
     private record IconRenderer(Identifier id) implements ImageRenderer {
         @Override
-        public int render(GuiGraphics graphics, int x, int y, int renderWidth, float tickDelta) {
+        public int render(GuiGraphicsExtractor graphics, int x, int y, int renderWidth, float tickDelta) {
             @SuppressWarnings("deprecation")
             var blockAtlas = TextureAtlas.LOCATION_BLOCKS;
-            var sprite = graphics.getSprite(new Material(blockAtlas, id));
+            var sprite = graphics.getSprite(new SpriteId(blockAtlas, id));
 
             graphics.blitSprite(RenderPipelines.GUI_TEXTURED, sprite, x + renderWidth / 3, y, renderWidth / 3, renderWidth / 3);
 

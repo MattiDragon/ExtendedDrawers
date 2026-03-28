@@ -10,7 +10,7 @@ import io.github.mattidragon.extendeddrawers.networking.CompressionRecipeSyncPay
 import io.github.mattidragon.extendeddrawers.registry.ModBlocks;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.fabricmc.fabric.api.client.rendering.v1.SpecialGuiElementRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.PictureInPictureRendererRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 
@@ -24,7 +24,7 @@ public class ExtendedDrawersClient implements ClientModInitializer {
         ClientPlayNetworking.registerGlobalReceiver(CompressionRecipeSyncPayload.ID, (packet, context) ->
                 ClientCompressionRecipeManager.of(context.player().connection).addLadders(packet.recipes()));
 
-        SpecialGuiElementRegistry.register(ctx -> new LayoutPreviewRenderer(ctx.vertexConsumers()));
+        PictureInPictureRendererRegistry.register(ctx -> new LayoutPreviewRenderer(ctx.bufferSource()));
 
         ExtendedDrawers.SHIFT_ACCESS = Minecraft.getInstance()::hasShiftDown;
     }

@@ -25,7 +25,7 @@ public record SetLimiterLimitPayload(int slot, long limit) implements CustomPack
     }
 
     public static void register() {
-        PayloadTypeRegistry.playC2S().register(ID, CODEC);
+        PayloadTypeRegistry.serverboundPlay().register(ID, CODEC);
         ServerPlayNetworking.registerGlobalReceiver(ID, (packet, context) -> {
             var slot = packet.slot;
             var player = context.player();

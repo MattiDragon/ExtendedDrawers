@@ -26,10 +26,10 @@ public class CompactingDrawerBlock extends StorageDrawerBlock<CompactingDrawerBl
     }
 
     @Override
-    public int getAnalogOutputSignal(BlockState state, Level world, BlockPos pos, Direction direction) {
-        var drawer = getBlockEntity(world, pos);
+    public int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos, Direction direction) {
+        var drawer = getBlockEntity(level, pos);
         if (drawer == null) return 0;
-        return StorageUtil.calculateComparatorOutput(drawer.storage);
+        return StorageUtil.getRedstoneSignal(drawer.storage);
     }
 
     @Override

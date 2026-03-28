@@ -16,6 +16,6 @@ public interface DrawerNetworkBlockNode extends FullWireBlockNode {
         }
     }
 
-    default void update(ServerLevel world, NodeHolder<BlockNode> node) {
+    default void update(ServerLevel level, NodeHolder<BlockNode> node) {
     }
 }

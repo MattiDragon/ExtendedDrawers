@@ -15,12 +15,12 @@ import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
 import net.minecraft.client.renderer.item.ItemModelResolver;
 import net.minecraft.client.renderer.item.ItemStackRenderState;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
-import net.minecraft.client.renderer.state.CameraRenderState;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.resources.model.Material;
-import net.minecraft.client.resources.model.MaterialSet;
+import net.minecraft.client.resources.model.sprite.SpriteGetter;
+import net.minecraft.client.resources.model.sprite.SpriteId;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -28,9 +28,9 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.properties.AttachFace;
 import net.minecraft.world.phys.Vec3;
-import org.jspecify.annotations.Nullable;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Objects;
@@ -40,21 +40,21 @@ public abstract class AbstractDrawerBlockEntityRenderer<T extends BlockEntity, S
     private static final Quaternionf ITEM_LIGHT_ROTATION_3D = Axis.XP.rotationDegrees(-15).mul(Axis.YP.rotationDegrees(15));
     private static final Quaternionf ITEM_LIGHT_ROTATION_FLAT = Axis.XP.rotationDegrees(-45);
 
-    private final Font textRenderer;
-    private final MaterialSet spriteHolder;
-    protected final ItemModelResolver itemModelManager;
+    private final Font font;
+    private final SpriteGetter spriteGetter;
+    protected final ItemModelResolver itemModelResolver;
 
     public AbstractDrawerBlockEntityRenderer(BlockEntityRendererProvider.Context context) {
-        this.textRenderer = context.font();
-        this.spriteHolder = context.materials();
-        this.itemModelManager = context.itemModelResolver();
+        this.font = context.font();
+        this.spriteGetter = context.sprites();
+        this.itemModelResolver = context.itemModelResolver();
     }
 
     @Override
-    public void extractRenderState(T blockEntity, S state, float tickProgress, Vec3 cameraPos, ModelFeatureRenderer.@Nullable CrumblingOverlay crumblingOverlay) {
-        BlockEntityRenderer.super.extractRenderState(blockEntity, state, tickProgress, cameraPos, crumblingOverlay);
+    public void extractRenderState(T blockEntity, S state, float partialTicks, Vec3 cameraPosition, ModelFeatureRenderer.@Nullable CrumblingOverlay breakProgress) {
+        BlockEntityRenderer.super.extractRenderState(blockEntity, state, partialTicks, cameraPosition, breakProgress);
         var dir = StorageDrawerBlock.getFront(blockEntity.getBlockState());
-        state.lightCoords = LevelRenderer.getLightColor(Objects.requireNonNull(blockEntity.getLevel()), blockEntity.getBlockPos().relative(dir));
+        state.lightCoords = LevelRenderer.getLightCoords(Objects.requireNonNull(blockEntity.getLevel()), blockEntity.getBlockPos().relative(dir));
     }
 
     // TODO: update
@@ -71,7 +71,7 @@ public abstract class AbstractDrawerBlockEntityRenderer<T extends BlockEntity, S
 //        };
 //    }
 
-    public void renderSlot(ItemStackRenderState item, @Nullable String amount, boolean small, boolean hidden, Collection<Material> icons, PoseStack matrices, SubmitNodeCollector queue, CameraRenderState cameraState, int light, BlockPos pos) {
+    public void renderSlot(ItemStackRenderState item, @Nullable String amount, boolean small, boolean hidden, Collection<SpriteId> icons, PoseStack matrices, SubmitNodeCollector queue, CameraRenderState cameraState, int light, BlockPos pos) {
         var playerPos = cameraState.pos;
         var config = ExtendedDrawers.CONFIG.get().client();
 
@@ -98,8 +98,8 @@ public abstract class AbstractDrawerBlockEntityRenderer<T extends BlockEntity, S
         matrices.translate(-0.5, -1, -0.5);
 
         @SuppressWarnings("deprecation")
-        var spriteId = new Material(TextureAtlas.LOCATION_BLOCKS, ExtendedDrawers.id("block/drawer_hidden_overlay"));
-        var sprite = spriteHolder.get(spriteId);
+        var spriteId = new SpriteId(TextureAtlas.LOCATION_BLOCKS, ExtendedDrawers.id("block/drawer_hidden_overlay"));
+        var sprite = spriteGetter.get(spriteId);
 
         queue.submitCustomGeometry(matrices, RenderTypes.cutoutMovingBlock(), (matricesEntry, vertexConsumer) ->
                 renderIcon(sprite, light, matricesEntry, vertexConsumer));
@@ -109,15 +109,15 @@ public abstract class AbstractDrawerBlockEntityRenderer<T extends BlockEntity, S
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public final boolean shouldRender(T drawer, Direction facing) {
-        var world = drawer.getLevel();
-        if (world == null) return false;
+        var level = drawer.getLevel();
+        if (level == null) return false;
         var pos = drawer.getBlockPos();
         var state = drawer.getBlockState();
 
-        return Block.shouldRenderFace(state, world.getBlockState(pos.relative(facing)), facing);
+        return Block.shouldRenderFace(state, level.getBlockState(pos.relative(facing)), facing);
     }
 
-    public void renderIcons(Collection<Material> icons, boolean small, int light, PoseStack matrices, SubmitNodeCollector queue) {
+    public void renderIcons(Collection<SpriteId> icons, boolean small, int light, PoseStack matrices, SubmitNodeCollector queue) {
         var increment = 1.0 / (icons.size() + 1.0);
         matrices.pushPose();
         if (small) matrices.scale(0.5f, 0.5f, 1);
@@ -130,7 +130,7 @@ public abstract class AbstractDrawerBlockEntityRenderer<T extends BlockEntity, S
             matrices.translate(-0.125, -0.24, -0.5);
             matrices.scale(0.25f, 0.25f, 0.25f);
 
-            var sprite = spriteHolder.get(icon);
+            var sprite = spriteGetter.get(icon);
             queue.submitCustomGeometry(matrices, RenderTypes.entityCutout(sprite.atlasLocation()), (matricesEntry, vertexConsumer) ->
                     renderIcon(sprite, light, matricesEntry, vertexConsumer));
 
@@ -201,7 +201,7 @@ public abstract class AbstractDrawerBlockEntityRenderer<T extends BlockEntity, S
         matrices.scale(0.02f, 0.02f, 0.02f);
         queue.submitText(
                 matrices,
-                -textRenderer.width(amount) / 2f,
+                -font.width(amount) / 2f,
                 0,
                 Component.literal(amount).getVisualOrderText(),
                 false,

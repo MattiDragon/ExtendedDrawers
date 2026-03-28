@@ -8,9 +8,9 @@ import io.github.mattidragon.extendeddrawers.client.renderer.state.ShadowDrawerR
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
-import net.minecraft.client.renderer.state.CameraRenderState;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.client.renderer.texture.TextureAtlas;
-import net.minecraft.client.resources.model.Material;
+import net.minecraft.client.resources.model.sprite.SpriteId;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
@@ -32,16 +32,17 @@ public class ShadowDrawerBlockEntityRenderer extends AbstractDrawerBlockEntityRe
         super.extractRenderState(drawer, state, tickProgress, cameraPos, crumblingOverlay);
         state.isHidden = drawer.isHidden();
         state.count = drawer.countCache;
-        itemModelManager.appendItemLayers(state.item, drawer.item.toStack(), ItemDisplayContext.GUI, drawer.getLevel(), null, drawer.getBlockPos().hashCode());
+        itemModelResolver.appendItemLayers(state.item, drawer.item.toStack(), ItemDisplayContext.GUI, drawer.getLevel(), null, drawer.getBlockPos().hashCode());
+        state.blockState = drawer.getBlockState();
     }
 
     @Override
-    public void submit(ShadowDrawerRenderState state, PoseStack matrices, SubmitNodeCollector queue, CameraRenderState cameraState) {
+    public void submit(ShadowDrawerRenderState state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState camera) {
         var horizontalDir = state.blockState.getValue(StorageDrawerBlock.FACING);
         var face = state.blockState.getValue(StorageDrawerBlock.FACE);
 
-        matrices.pushPose();
-        alignMatrices(matrices, horizontalDir, face);
+        poseStack.pushPose();
+        alignMatrices(poseStack, horizontalDir, face);
 
         String amount = String.valueOf(state.count);
         if (state.count == ShadowDrawerBlockEntity.INFINITE_COUNT_MARKER)
@@ -55,11 +56,11 @@ public class ShadowDrawerBlockEntityRenderer extends AbstractDrawerBlockEntityRe
         @SuppressWarnings("deprecation")
         var atlas = TextureAtlas.LOCATION_ITEMS;
         var icons = state.isHidden
-                ? List.of(new Material(atlas, config.hiddenIcon()))
-                : List.<Material>of();
+                ? List.of(new SpriteId(atlas, config.hiddenIcon()))
+                : List.<SpriteId>of();
 
-        renderSlot(state.item, amount, false, state.isHidden, icons, matrices, queue, cameraState, state.lightCoords, state.blockPos);
-        matrices.popPose();
+        renderSlot(state.item, amount, false, state.isHidden, icons, poseStack, submitNodeCollector, camera, state.lightCoords, state.blockPos);
+        poseStack.popPose();
     }
 
     @Override

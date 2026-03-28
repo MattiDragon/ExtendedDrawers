@@ -52,8 +52,8 @@ public abstract class StorageDrawerBlock<T extends StorageDrawerBlockEntity> ext
     }
 
     @Override
-    public BlockState getStateForPlacement(BlockPlaceContext ctx) {
-        var face = switch (ctx.getNearestLookingDirection().getOpposite()) {
+    public BlockState getStateForPlacement(BlockPlaceContext context) {
+        var face = switch (context.getNearestLookingDirection().getOpposite()) {
             case DOWN -> AttachFace.CEILING;
             case UP -> AttachFace.FLOOR;
             default -> AttachFace.WALL;
@@ -61,7 +61,7 @@ public abstract class StorageDrawerBlock<T extends StorageDrawerBlockEntity> ext
 
         return this.defaultBlockState()
                 .setValue(FACE, face)
-                .setValue(FACING, ctx.getHorizontalDirection().getOpposite());
+                .setValue(FACING, context.getHorizontalDirection().getOpposite());
     }
 
     @Override
@@ -80,21 +80,21 @@ public abstract class StorageDrawerBlock<T extends StorageDrawerBlockEntity> ext
     }
 
     @Override
-    public BlockState playerWillDestroy(Level world, BlockPos pos, BlockState state, Player player) {
-        var blockEntity = getBlockEntity(world, pos);
-        if (blockEntity != null && ExtendedDrawers.CONFIG.get().misc().dropDrawersInCreative() && !world.isClientSide() && player.isCreative() && !blockEntity.isEmpty()) {
-            getDrops(state, (ServerLevel) world, pos, blockEntity, player, player.getItemInHand(InteractionHand.MAIN_HAND))
-                    .forEach(stack -> Containers.dropItemStack(world, pos.getX(), pos.getY(), pos.getZ(), stack));
+    public BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
+        var blockEntity = getBlockEntity(level, pos);
+        if (blockEntity != null && ExtendedDrawers.CONFIG.get().misc().dropDrawersInCreative() && !level.isClientSide() && player.isCreative() && !blockEntity.isEmpty()) {
+            getDrops(state, (ServerLevel) level, pos, blockEntity, player, player.getItemInHand(InteractionHand.MAIN_HAND))
+                    .forEach(stack -> Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), stack));
         }
 
-        return super.playerWillDestroy(world, pos, state, player);
+        return super.playerWillDestroy(level, pos, state, player);
     }
 
     @Override
-    public void attack(BlockState state, Level world, BlockPos pos, Player player) {
+    public void attack(BlockState state, Level level, BlockPos pos, Player player) {
         if (!player.mayBuild()) return;
 
-        var drawer = getBlockEntity(world, pos);
+        var drawer = getBlockEntity(level, pos);
         if (drawer == null) return;
 
         // We don't have sub-block position or a hit result, so we need to raycast ourselves
@@ -108,7 +108,7 @@ public abstract class StorageDrawerBlock<T extends StorageDrawerBlockEntity> ext
 
         try (var t = Transaction.openOuter()) {
             var item = storage.getResource(); // cache because it changes
-            var extracted = (int) storage.extract(item, player.isShiftKeyDown() ? item.getItem().getDefaultMaxStackSize() : 1, t);
+            var extracted = (int) storage.extract(item, player.isShiftKeyDown() ? item.toStack().getMaxStackSize() : 1, t);
             if (extracted == 0) return;
 
             player.getInventory().placeItemBackInInventory(item.toStack(extracted));
@@ -118,15 +118,15 @@ public abstract class StorageDrawerBlock<T extends StorageDrawerBlockEntity> ext
     }
 
     @Override
-    public InteractionResult useWithoutItem(BlockState state, Level world, BlockPos pos, Player player, BlockHitResult hit) {
-        if (!isFront(state, hit.getDirection()) || !player.mayBuild())
+    public InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
+        if (!isFront(state, hitResult.getDirection()) || !player.mayBuild())
             return InteractionResult.PASS;
-        if (!(world instanceof ServerLevel)) return InteractionResult.CONSUME;
+        if (!(level instanceof ServerLevel)) return InteractionResult.CONSUME;
 
-        var internalPos = DrawerRaycastUtil.calculateFaceLocation(pos, hit.getLocation(), hit.getDirection(), state.getValue(FACING), state.getValue(FACE));
+        var internalPos = DrawerRaycastUtil.calculateFaceLocation(pos, hitResult.getLocation(), hitResult.getDirection(), state.getValue(FACING), state.getValue(FACE));
         if (internalPos == null) return InteractionResult.PASS;
 
-        var drawer = getBlockEntity(world, pos);
+        var drawer = getBlockEntity(level, pos);
         if (drawer == null) return InteractionResult.PASS;
         var slot = getSlotIndex(drawer, internalPos);
         var storage = getSlot(drawer, slot);
@@ -137,8 +137,8 @@ public abstract class StorageDrawerBlock<T extends StorageDrawerBlockEntity> ext
         // Upgrade & limiter removal
         if (playerStack.isEmpty() && player.isShiftKeyDown()) {
             // remove limiter first, if that fails, remove upgrade
-            var changeResult = modifiers.changeLimiter(ItemVariant.blank(), world, pos, hit.getDirection(), player)
-                               || modifiers.changeUpgrade(ItemVariant.blank(), world, pos, hit.getDirection(), player);
+            var changeResult = modifiers.changeLimiter(ItemVariant.blank(), level, pos, hitResult.getDirection(), player)
+                               || modifiers.changeUpgrade(ItemVariant.blank(), level, pos, hitResult.getDirection(), player);
             return changeResult ? InteractionResult.SUCCESS : InteractionResult.FAIL;
         }
 
@@ -150,7 +150,7 @@ public abstract class StorageDrawerBlock<T extends StorageDrawerBlockEntity> ext
             modifiers.overrideLock(t);
             if (isDoubleClick) {
                 if (storage.isResourceBlank()) return InteractionResult.PASS;
-                inserted = (int) StorageUtil.move(PlayerInventoryStorage.of(player), (SingleSlotStorage<ItemVariant>) storage, itemVariant -> true, Long.MAX_VALUE, t);
+                inserted = (int) StorageUtil.move(PlayerInventoryStorage.of(player), (SingleSlotStorage<ItemVariant>) storage, _ -> true, Long.MAX_VALUE, t);
             } else {
                 if (playerStack.isEmpty()) return InteractionResult.PASS;
 
@@ -169,55 +169,55 @@ public abstract class StorageDrawerBlock<T extends StorageDrawerBlockEntity> ext
     public abstract StorageView<ItemVariant> getSlot(T drawer, int slot);
 
     @Override
-    public abstract int getAnalogOutputSignal(BlockState state, Level world, BlockPos pos, Direction direction);
+    public abstract int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos, Direction direction);
 
     protected abstract ModifierAccess getModifierAccess(T drawer, Vec2 facePos);
 
-    protected @Nullable ModifierAccess tryGetModifierAccess(BlockState state, Level world, BlockPos pos, Vec3 hitPos, Direction side) {
+    protected @Nullable ModifierAccess tryGetModifierAccess(BlockState state, Level level, BlockPos pos, Vec3 hitPos, Direction side) {
         var facePos = DrawerRaycastUtil.calculateFaceLocation(pos, hitPos, side, state.getValue(StorageDrawerBlock.FACING), state.getValue(FACE));
         if (facePos == null) return null;
-        var drawer = getBlockEntity(world, pos);
+        var drawer = getBlockEntity(level, pos);
         if (drawer == null) return null;
         return getModifierAccess(drawer, facePos);
     }
 
     @Override
-    public InteractionResult toggleLock(BlockState state, Level world, BlockPos pos, Vec3 hitPos, Direction side) {
-        var access = tryGetModifierAccess(state, world, pos, hitPos, side);
+    public InteractionResult toggleLock(BlockState state, Level level, BlockPos pos, Vec3 hitPos, Direction side) {
+        var access = tryGetModifierAccess(state, level, pos, hitPos, side);
         if (access == null) return InteractionResult.PASS;
         access.setLocked(!access.isLocked());
         return InteractionResult.SUCCESS;
     }
 
     @Override
-    public InteractionResult toggleVoid(BlockState state, Level world, BlockPos pos, Vec3 hitPos, Direction side) {
-        var access = tryGetModifierAccess(state, world, pos, hitPos, side);
+    public InteractionResult toggleVoid(BlockState state, Level level, BlockPos pos, Vec3 hitPos, Direction side) {
+        var access = tryGetModifierAccess(state, level, pos, hitPos, side);
         if (access == null) return InteractionResult.PASS;
         access.setVoiding(!access.isVoiding());
         return InteractionResult.SUCCESS;
     }
 
     @Override
-    public InteractionResult toggleHide(BlockState state, Level world, BlockPos pos, Vec3 hitPos, Direction side) {
-        var access = tryGetModifierAccess(state, world, pos, hitPos, side);
+    public InteractionResult toggleHide(BlockState state, Level level, BlockPos pos, Vec3 hitPos, Direction side) {
+        var access = tryGetModifierAccess(state, level, pos, hitPos, side);
         if (access == null) return InteractionResult.PASS;
         access.setHidden(!access.isHidden());
         return InteractionResult.SUCCESS;
     }
 
     @Override
-    public InteractionResult toggleDuping(BlockState state, Level world, BlockPos pos, Vec3 hitPos, Direction side) {
-        var access = tryGetModifierAccess(state, world, pos, hitPos, side);
+    public InteractionResult toggleDuping(BlockState state, Level level, BlockPos pos, Vec3 hitPos, Direction side) {
+        var access = tryGetModifierAccess(state, level, pos, hitPos, side);
         if (access == null) return InteractionResult.PASS;
         access.setDuping(!access.isDuping());
         return InteractionResult.SUCCESS;
     }
 
     @Override
-    public InteractionResult changeUpgrade(BlockState state, Level world, BlockPos pos, Vec3 hitPos, Direction side, @Nullable Player player, ItemStack stack) {
-        if (world.isClientSide()) return InteractionResult.SUCCESS;
+    public InteractionResult changeUpgrade(BlockState state, Level level, BlockPos pos, Vec3 hitPos, Direction side, @Nullable Player player, ItemStack stack) {
+        if (level.isClientSide()) return InteractionResult.SUCCESS;
 
-        var access = tryGetModifierAccess(state, world, pos, hitPos, side);
+        var access = tryGetModifierAccess(state, level, pos, hitPos, side);
         if (access == null) return InteractionResult.PASS;
 
         if (!(stack.getItem() instanceof UpgradeItem)) {
@@ -225,7 +225,7 @@ public abstract class StorageDrawerBlock<T extends StorageDrawerBlockEntity> ext
             return InteractionResult.FAIL;
         }
 
-        var changed = access.changeUpgrade(ItemVariant.of(stack), world, pos, side, player);
+        var changed = access.changeUpgrade(ItemVariant.of(stack), level, pos, side, player);
         if (changed)
             stack.shrink(1);
 
@@ -233,10 +233,10 @@ public abstract class StorageDrawerBlock<T extends StorageDrawerBlockEntity> ext
     }
 
     @Override
-    public InteractionResult changeLimiter(BlockState state, Level world, BlockPos pos, Vec3 hitPos, Direction side, @Nullable Player player, ItemStack stack) {
-        if (world.isClientSide()) return InteractionResult.SUCCESS;
+    public InteractionResult changeLimiter(BlockState state, Level level, BlockPos pos, Vec3 hitPos, Direction side, @Nullable Player player, ItemStack stack) {
+        if (level.isClientSide()) return InteractionResult.SUCCESS;
 
-        var access = tryGetModifierAccess(state, world, pos, hitPos, side);
+        var access = tryGetModifierAccess(state, level, pos, hitPos, side);
         if (access == null) return InteractionResult.PASS;
 
         if (!stack.is(ModItems.LIMITER)) {
@@ -244,7 +244,7 @@ public abstract class StorageDrawerBlock<T extends StorageDrawerBlockEntity> ext
             return InteractionResult.FAIL;
         }
 
-        var changed = access.changeLimiter(ItemVariant.of(stack), world, pos, side, player);
+        var changed = access.changeLimiter(ItemVariant.of(stack), level, pos, side, player);
         if (changed) {
             stack.shrink(1);
             return InteractionResult.SUCCESS;
