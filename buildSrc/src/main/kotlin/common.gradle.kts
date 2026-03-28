@@ -19,11 +19,11 @@ repositories {
     maven("https://jitpack.io")
     maven("https://maven.nucleoid.xyz/releases") {
         content {
-            includeGroupAndSubgroups("com.kneelawk.graphlib")
+            includeGroupAndSubgroups("com.kneelawk")
             includeGroupAndSubgroups("eu.pb4")
         }
     }
-    mavenLocal()
+//    mavenLocal()
 }
 
 loom.splitEnvironmentSourceSets()
