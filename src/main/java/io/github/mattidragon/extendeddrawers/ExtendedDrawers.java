@@ -41,6 +41,9 @@ public class ExtendedDrawers implements ModInitializer {
 
     @Override
     public void onInitialize() {
+        // Ensure that file is created
+        CONFIG.get();
+
         ModBlocks.register();
         ModDataComponents.register();
         ModItems.register();
