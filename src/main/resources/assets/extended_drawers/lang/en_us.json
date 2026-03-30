@@ -93,6 +93,8 @@
   "config.extended_drawers.client.textRenderDistance.description": "The render distance of the items counter on the drawers. Measured in blocks.",
   "config.extended_drawers.client.displayEmptyCount": "Display empty count",
   "config.extended_drawers.client.displayEmptyCount.description": "Whether to display the amount of items on empty drawers.",
+  "config.extended_drawers.client.indicateFullDrawers": "Indicate full drawers",
+  "config.extended_drawers.client.indicateFullDrawers.description": "Whether to display the amount of items in a different color when a drawer is at capacity.",
   "config.extended_drawers.client.layout": "Layout",
   "config.extended_drawers.client.smallItemScale": "Small item scale",
   "config.extended_drawers.client.smallItemScale.description": "The scale at which to render the items on drawers for small slots",

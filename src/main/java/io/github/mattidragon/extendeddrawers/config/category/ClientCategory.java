@@ -13,15 +13,17 @@ public record ClientCategory(int itemRenderDistance,
                              int iconRenderDistance,
                              int textRenderDistance,
                              boolean displayEmptyCount,
+                             boolean indicateFullDrawers,
                              LayoutGroup layout,
                              IconGroup icons) implements MutableClientCategory.Source {
-    public static final ClientCategory DEFAULT = new ClientCategory(64, 16, 32, false, LayoutGroup.DEFAULT, IconGroup.DEFAULT);
+    public static final ClientCategory DEFAULT = new ClientCategory(64, 16, 32, false, true, LayoutGroup.DEFAULT, IconGroup.DEFAULT);
 
     public static final Codec<ClientCategory> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             AlwaysSerializedOptionalFieldCodec.create(Codec.INT, "itemRenderDistance", DEFAULT.itemRenderDistance).forGetter(ClientCategory::itemRenderDistance),
             AlwaysSerializedOptionalFieldCodec.create(Codec.INT, "iconRenderDistance", DEFAULT.iconRenderDistance).forGetter(ClientCategory::iconRenderDistance),
             AlwaysSerializedOptionalFieldCodec.create(Codec.INT, "textRenderDistance", DEFAULT.textRenderDistance).forGetter(ClientCategory::textRenderDistance),
             AlwaysSerializedOptionalFieldCodec.create(Codec.BOOL, "displayEmptyCount", DEFAULT.displayEmptyCount).forGetter(ClientCategory::displayEmptyCount),
+            AlwaysSerializedOptionalFieldCodec.create(Codec.BOOL, "indicateFullDrawers", DEFAULT.indicateFullDrawers).forGetter(ClientCategory::indicateFullDrawers),
             AlwaysSerializedOptionalFieldCodec.create(LayoutGroup.CODEC, "layout", DEFAULT.layout).forGetter(ClientCategory::layout),
             AlwaysSerializedOptionalFieldCodec.create(IconGroup.CODEC, "icons", DEFAULT.icons).forGetter(ClientCategory::icons)
     ).apply(instance, ClientCategory::new));

@@ -71,7 +71,7 @@ public abstract class AbstractDrawerBlockEntityRenderer<T extends BlockEntity, S
 //        };
 //    }
 
-    public void renderSlot(ItemStackRenderState item, @Nullable String amount, boolean small, boolean hidden, Collection<SpriteId> icons, PoseStack matrices, SubmitNodeCollector queue, CameraRenderState cameraState, int light, BlockPos pos) {
+    public void renderSlot(ItemStackRenderState item, @Nullable String amount, boolean small, boolean hidden, boolean full, Collection<SpriteId> icons, PoseStack matrices, SubmitNodeCollector queue, CameraRenderState cameraState, int light, BlockPos pos) {
         var playerPos = cameraState.pos;
         var config = ExtendedDrawers.CONFIG.get().client();
 
@@ -81,7 +81,7 @@ public abstract class AbstractDrawerBlockEntityRenderer<T extends BlockEntity, S
         }
 
         if (pos.closerToCenterThan(playerPos, config.textRenderDistance()) && amount != null) {
-            renderText(amount, small, light, matrices, queue);
+            renderText(amount, full && config.indicateFullDrawers(), small, light, matrices, queue);
         }
         if (pos.closerToCenterThan(playerPos, config.iconRenderDistance())) {
             renderIcons(icons, small, light, matrices, queue);
@@ -185,7 +185,7 @@ public abstract class AbstractDrawerBlockEntityRenderer<T extends BlockEntity, S
         matrices.popPose();
     }
 
-    public void renderText(String amount, boolean small, int light, PoseStack matrices, SubmitNodeCollector queue) {
+    public void renderText(String amount, boolean full, boolean small, int light, PoseStack matrices, SubmitNodeCollector queue) {
         var config = ExtendedDrawers.CONFIG.get().client();
 
         matrices.pushPose();
@@ -207,7 +207,7 @@ public abstract class AbstractDrawerBlockEntityRenderer<T extends BlockEntity, S
                 false,
                 Font.DisplayMode.NORMAL,
                 light,
-                0xffffffff,
+                full ? 0xffffff00 : 0xffffffff,
                 0x00000000,
                 0x00000000
         );

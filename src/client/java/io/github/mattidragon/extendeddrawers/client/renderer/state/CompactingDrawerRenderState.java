@@ -14,6 +14,7 @@ public class CompactingDrawerRenderState extends BlockEntityRenderState {
     public @Nullable UpgradeItem upgrade;
     public boolean hasLimiter;
     public BlockState blockState = ModBlocks.COMPACTING_DRAWER.defaultBlockState();
+    public boolean isFull;
 
     public final CompactingSlotRenderState[] slots = new CompactingSlotRenderState[3];
 

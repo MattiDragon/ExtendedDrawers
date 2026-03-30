@@ -45,6 +45,7 @@ public class LayoutPreviewImageRenderer implements ImageRenderer {
                         client.iconRenderDistance(),
                         client.textRenderDistance(),
                         client.displayEmptyCount(),
+                        client.indicateFullDrawers(),
                         new ClientCategory.LayoutGroup(smallItemScale.pendingValue(),
                                 largeItemScale.pendingValue(),
                                 smallTextScale.pendingValue(),

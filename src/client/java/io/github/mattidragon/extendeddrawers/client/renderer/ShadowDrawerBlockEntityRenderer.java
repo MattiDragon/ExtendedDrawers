@@ -59,7 +59,7 @@ public class ShadowDrawerBlockEntityRenderer extends AbstractDrawerBlockEntityRe
                 ? List.of(new SpriteId(atlas, config.hiddenIcon()))
                 : List.<SpriteId>of();
 
-        renderSlot(state.item, amount, false, state.isHidden, icons, poseStack, submitNodeCollector, camera, state.lightCoords, state.blockPos);
+        renderSlot(state.item, amount, false, state.isHidden, false, icons, poseStack, submitNodeCollector, camera, state.lightCoords, state.blockPos);
         poseStack.popPose();
     }
 

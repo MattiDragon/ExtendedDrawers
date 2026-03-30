@@ -193,6 +193,12 @@ public class ConfigScreenFactory {
                         .controller(TickBoxControllerBuilder::create)
                         .description(OptionDescription.of(Component.translatable("config.extended_drawers.client.displayEmptyCount.description")))
                         .build())
+                .option(Option.<Boolean>createBuilder()
+                        .name(Component.translatable("config.extended_drawers.client.indicateFullDrawers"))
+                        .binding(DEFAULT.client().indicateFullDrawers(), instance::indicateFullDrawers, instance::indicateFullDrawers)
+                        .controller(TickBoxControllerBuilder::create)
+                        .description(OptionDescription.of(Component.translatable("config.extended_drawers.client.indicateFullDrawers.description")))
+                        .build())
                 .group(createLayoutGroup(instance.layout()))
                 .group(createIconGroup(instance.icons()))
                 .build();

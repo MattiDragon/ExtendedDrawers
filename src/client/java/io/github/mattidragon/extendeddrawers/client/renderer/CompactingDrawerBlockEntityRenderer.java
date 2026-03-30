@@ -42,6 +42,7 @@ public class CompactingDrawerBlockEntityRenderer extends AbstractDrawerBlockEnti
         state.isDuping = drawer.storage.isDuping();
         state.upgrade = drawer.storage.getUpgrade();
         state.hasLimiter = drawer.storage.hasLimiter();
+        state.isFull = drawer.storage.getTrueAmount() == drawer.storage.getCapacity() && !drawer.storage.isDuping();
 
         var block = ModBlocks.COMPACTING_DRAWER;
 
@@ -146,6 +147,6 @@ public class CompactingDrawerBlockEntityRenderer extends AbstractDrawerBlockEnti
             amount = "∞";
 
         var item = slot.item;
-        renderSlot(item, amount, true, false, List.of(), matrices, queue, cameraState, light, state.blockPos);
+        renderSlot(item, amount, true, false, state.isFull, List.of(), matrices, queue, cameraState, light, state.blockPos);
     }
 }

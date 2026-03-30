@@ -14,4 +14,5 @@ public class DrawerSlotRenderState {
 
     public final ItemStackRenderState item = new ItemStackRenderState();
     public long amount;
+    public boolean isFull;
 }

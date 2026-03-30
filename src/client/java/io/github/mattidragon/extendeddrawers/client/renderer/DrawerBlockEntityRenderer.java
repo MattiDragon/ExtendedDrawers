@@ -53,6 +53,7 @@ public class DrawerBlockEntityRenderer extends AbstractDrawerBlockEntityRenderer
             slotState.hasLimiter = slot.hasLimiter();
             itemModelResolver.appendItemLayers(slotState.item, slot.getResource().toStack(), ItemDisplayContext.GUI, drawer.getLevel(), null, drawer.getBlockPos().hashCode() * i);
             slotState.amount = slot.getAmount();
+            slotState.isFull = slot.getAmount() == slot.getCapacity() && !slot.isDuping();
 
             state.slots[i] = slotState;
         }
@@ -112,7 +113,7 @@ public class DrawerBlockEntityRenderer extends AbstractDrawerBlockEntityRenderer
         if (slotState.isDuping)
             amount = "∞";
 
-        renderSlot(slotState.item, amount, small, slotState.isHidden, icons, matrices, queue, cameraState, light, pos);
+        renderSlot(slotState.item, amount, small, slotState.isHidden, slotState.isFull, icons, matrices, queue, cameraState, light, pos);
     }
 
     private static List<SpriteId> getIconsForSlot(DrawerSlotRenderState slotState) {
