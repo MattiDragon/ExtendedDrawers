@@ -1,8 +1,22 @@
 package io.github.mattidragon.extendeddrawers.client.config.render;
 
+import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Axis;
+import io.github.mattidragon.extendeddrawers.ExtendedDrawers;
+import io.github.mattidragon.extendeddrawers.client.renderer.state.CompactingDrawerRenderState;
+import io.github.mattidragon.extendeddrawers.client.renderer.state.DrawerRenderState;
+import io.github.mattidragon.extendeddrawers.client.renderer.state.DrawerSlotRenderState;
+import io.github.mattidragon.extendeddrawers.registry.ModBlocks;
+import io.github.mattidragon.extendeddrawers.registry.ModItems;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
+import net.minecraft.util.LightCoordsUtil;
+import net.minecraft.util.Util;
+import net.minecraft.world.item.ItemDisplayContext;
+import net.minecraft.world.item.Items;
 
 public class LayoutPreviewRenderer extends PictureInPictureRenderer<LayoutPreviewRenderState> {
     public LayoutPreviewRenderer(MultiBufferSource.BufferSource bufferSource) {
@@ -16,46 +30,98 @@ public class LayoutPreviewRenderer extends PictureInPictureRenderer<LayoutPrevie
 
     @Override
     protected void renderToTexture(LayoutPreviewRenderState state, PoseStack poseStack) {
-        // TODO: update
-//        var renderer = AbstractDrawerBlockEntityRenderer.createRendererTool();
-//
-//        @SuppressWarnings("deprecation")
-//        var atlas = MinecraftClient.getInstance().getSpriteAtlas(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE);
-//        var player = MinecraftClient.getInstance().player;
-//        var playerPos = player == null ? BlockPos.ORIGIN : player.getBlockPos();
-//
-//        var voidingSprite = atlas.apply(Identifier.ofVanilla("item/lava_bucket"));
-//        var lockSprite = atlas.apply(id("item/lock"));
-//        var upgrade2Sprite = atlas.apply(id("item/t2_upgrade"));
-//        var upgrade4Sprite = atlas.apply(id("item/t4_upgrade"));
-//
-//        matrices.push();
-//        matrices.scale(state.size(), state.size(), state.size());
-//        matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(180));
-//        matrices.translate(-1, 0.5, 0);
-//
-//        try (var ignored = ExtendedDrawers.CONFIG.override(state.config())) {
-//            renderer.renderSlot(ItemVariant.of(Items.COBBLESTONE), String.valueOf((Long) 128L), false, false, List.of(lockSprite), matrices, vertexConsumers, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 0, playerPos);
-//
-//            matrices.translate(0.75f, 0.25f, 0f);
-//            renderer.renderSlot(ItemVariant.of(Items.REDSTONE), String.valueOf((Long) 16L), true, false, List.of(lockSprite), matrices, vertexConsumers, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 0, playerPos);
-//            matrices.translate(0.5f, 0f, 0f);
-//            renderer.renderSlot(ItemVariant.of(Items.GUNPOWDER), String.valueOf((Long) 32L), true, false, List.of(voidingSprite), matrices, vertexConsumers, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 0, playerPos);
-//            matrices.translate(-0.5f, -0.5f, 0f);
-//            renderer.renderSlot(ItemVariant.of(Items.SUGAR), String.valueOf((Long) 64L), true, false, List.of(lockSprite, voidingSprite, upgrade2Sprite), matrices, vertexConsumers, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 0, playerPos);
-//            matrices.translate(0.5f, 0f, 0f);
-//            renderer.renderSlot(ItemVariant.of(Items.GLOWSTONE_DUST), String.valueOf((Long) 128L), true, false, List.of(upgrade4Sprite), matrices, vertexConsumers, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 0, playerPos);
-//
-//            matrices.translate(0.75f, 0.5f, 0f);
-//            renderer.renderIcons(List.of(lockSprite, voidingSprite, upgrade4Sprite), true, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, matrices, vertexConsumers);
-//            renderer.renderSlot(ItemVariant.of(Items.IRON_INGOT), String.valueOf((Long) 9L), true, false, List.of(), matrices, vertexConsumers, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 0, playerPos);
-//            matrices.translate(0.25f, -0.5f, 0f);
-//            renderer.renderSlot(ItemVariant.of(Items.IRON_NUGGET), String.valueOf((Long) 81L), true, false, List.of(), matrices, vertexConsumers, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 0, playerPos);
-//            matrices.translate(-0.5f, 0f, 0f);
-//            renderer.renderSlot(ItemVariant.of(Items.IRON_BLOCK), String.valueOf((Long) 1L), true, false, List.of(), matrices, vertexConsumers, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, 0, playerPos);
-//        }
-//
-//        matrices.pop();
+        if (!areComponentsBound()) {
+            return;
+        }
+
+        var minecraft = Minecraft.getInstance();
+        minecraft.gameRenderer.getLighting().setupFor(Lighting.Entry.ENTITY_IN_UI);
+
+        poseStack.pushPose();
+        poseStack.scale(state.size(), state.size(), state.size());
+        poseStack.mulPose(Axis.XP.rotationDegrees(180));
+        poseStack.mulPose(Axis.YP.rotationDegrees(180));
+        poseStack.last().normal().rotate(Axis.XP.rotationDegrees(-90));
+
+        var state1 = new DrawerRenderState();
+        state1.blockEntityType = ModBlocks.DRAWER_BLOCK_ENTITY;
+        state1.lightCoords = LightCoordsUtil.FULL_BRIGHT;
+        state1.slotCount = 1;
+        state1.slots = new DrawerSlotRenderState[] {
+                Util.make(new DrawerSlotRenderState(), slot -> {
+                    minecraft.getItemModelResolver()
+                            .appendItemLayers(slot.item, Items.COBBLESTONE.getDefaultInstance(), ItemDisplayContext.GUI, null, null, 0);
+                    slot.amount = 1024;
+                    slot.isFull = true;
+                    slot.isLocked = true;
+                })
+        };
+
+        var state2 = new DrawerRenderState();
+        state2.blockEntityType = ModBlocks.DRAWER_BLOCK_ENTITY;
+        state2.slotCount = 4;
+        state2.slots = new DrawerSlotRenderState[] {
+                Util.make(new DrawerSlotRenderState(), slot -> {
+                    minecraft.getItemModelResolver()
+                            .appendItemLayers(slot.item, Items.REDSTONE.getDefaultInstance(), ItemDisplayContext.GUI, null, null, 0);
+                    slot.amount = 16;
+                    slot.isLocked = true;
+                }),
+                Util.make(new DrawerSlotRenderState(), slot -> {
+                    minecraft.getItemModelResolver()
+                            .appendItemLayers(slot.item, Items.GUNPOWDER.getDefaultInstance(), ItemDisplayContext.GUI, null, null, 0);
+                    slot.amount = 32;
+                    slot.isVoiding = true;
+                }),
+                Util.make(new DrawerSlotRenderState(), slot -> {
+                    minecraft.getItemModelResolver()
+                            .appendItemLayers(slot.item, Items.SUGAR.getDefaultInstance(), ItemDisplayContext.GUI, null, null, 0);
+                    slot.amount = 64;
+                    slot.isLocked = true;
+                    slot.isVoiding = true;
+                    slot.upgrade = ModItems.T2_UPGRADE;
+                }),
+                Util.make(new DrawerSlotRenderState(), slot -> {
+                    minecraft.getItemModelResolver()
+                            .appendItemLayers(slot.item, Items.GLOWSTONE.getDefaultInstance(), ItemDisplayContext.GUI, null, null, 0);
+                    slot.amount = 128;
+                    slot.upgrade = ModItems.T4_UPGRADE;
+                })
+        };
+
+        var state3 = new CompactingDrawerRenderState();
+        state3.blockEntityType = ModBlocks.COMPACTING_DRAWER_BLOCK_ENTITY;
+        minecraft.getItemModelResolver()
+                .appendItemLayers(state3.slots[2].item, Items.IRON_NUGGET.getDefaultInstance(), ItemDisplayContext.GUI, null, null, 0);
+        state3.slots[2].amount = 81;
+        minecraft.getItemModelResolver()
+                .appendItemLayers(state3.slots[0].item, Items.IRON_INGOT.getDefaultInstance(), ItemDisplayContext.GUI, null, null, 0);
+        state3.slots[0].amount = 9;
+        minecraft.getItemModelResolver()
+                .appendItemLayers(state3.slots[1].item, Items.IRON_BLOCK.getDefaultInstance(), ItemDisplayContext.GUI, null, null, 0);
+        state3.slots[1].amount = 1;
+
+        state3.isLocked = true;
+        state3.isVoiding = true;
+        state3.upgrade = ModItems.T4_UPGRADE;
+        state3.hasLimiter = true;
+
+        try (var ignored = ExtendedDrawers.CONFIG.override(state.config())) {
+            poseStack.translate(0.5, 0, 0);
+            minecraft.getBlockEntityRenderDispatcher().submit(state1, poseStack, minecraft.gameRenderer.getSubmitNodeStorage(), new CameraRenderState());
+            poseStack.translate(-1, 0, 0);
+            minecraft.getBlockEntityRenderDispatcher().submit(state2, poseStack, minecraft.gameRenderer.getSubmitNodeStorage(), new CameraRenderState());
+            poseStack.translate(-1, 0, 0);
+            minecraft.getBlockEntityRenderDispatcher().submit(state3, poseStack, minecraft.gameRenderer.getSubmitNodeStorage(), new CameraRenderState());
+        }
+
+        minecraft.gameRenderer.getFeatureRenderDispatcher().renderAllFeatures();
+        poseStack.popPose();
+    }
+
+    @SuppressWarnings("deprecation")
+    public static boolean areComponentsBound() {
+        return Items.AIR.builtInRegistryHolder().areComponentsBound();
     }
 
     @Override

@@ -5,13 +5,17 @@ import dev.isxander.yacl3.gui.image.ImageRenderer;
 import io.github.mattidragon.extendeddrawers.ExtendedDrawers;
 import io.github.mattidragon.extendeddrawers.config.ConfigData;
 import io.github.mattidragon.extendeddrawers.config.category.ClientCategory;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.resources.model.sprite.SpriteId;
+import net.minecraft.network.chat.Component;
 import org.joml.Matrix3x2f;
 
 import static io.github.mattidragon.extendeddrawers.ExtendedDrawers.id;
+import static io.github.mattidragon.extendeddrawers.client.config.render.LayoutPreviewRenderer.areComponentsBound;
 
 @SuppressWarnings("NotNullFieldNotInitialized")
 public class LayoutPreviewImageRenderer implements ImageRenderer {
@@ -19,21 +23,27 @@ public class LayoutPreviewImageRenderer implements ImageRenderer {
     private Option<Float> largeItemScale;
     private Option<Float> smallTextScale;
     private Option<Float> largeTextScale;
-    private Option<Float> textOffset;
+    private Option<Float> smallTextOffset;
+    private Option<Float> largeTextOffset;
     private boolean initialized = false;
 
-    public void init(Option<Float> smallItemScale, Option<Float> largeItemScale, Option<Float> smallTextScale, Option<Float> largeTextScale, Option<Float> textOffset) {
+    public void init(Option<Float> smallItemScale, Option<Float> largeItemScale, Option<Float> smallTextScale, Option<Float> largeTextScale, Option<Float> smallTextOffset, Option<Float> largeTextOffset) {
         this.smallItemScale = smallItemScale;
         this.largeItemScale = largeItemScale;
         this.smallTextScale = smallTextScale;
         this.largeTextScale = largeTextScale;
-        this.textOffset = textOffset;
+        this.smallTextOffset = smallTextOffset;
+        this.largeTextOffset = largeTextOffset;
         this.initialized = true;
     }
 
     @Override
     public int render(GuiGraphicsExtractor graphics, int x, int y, int renderWidth, float tickDelta) {
         if (!initialized) return 0;
+
+        if (!areComponentsBound()) {
+            return renderPlaceHolder(graphics, x, y, renderWidth, tickDelta);
+        }
 
         @SuppressWarnings("deprecation")
         var atlas = TextureAtlas.LOCATION_BLOCKS;
@@ -50,7 +60,8 @@ public class LayoutPreviewImageRenderer implements ImageRenderer {
                                 largeItemScale.pendingValue(),
                                 smallTextScale.pendingValue(),
                                 largeTextScale.pendingValue(),
-                                textOffset.pendingValue()),
+                                smallTextOffset.pendingValue(),
+                                largeTextOffset.pendingValue()),
                         client.icons()),
                 config.storage(),
                 config.misc());
@@ -66,6 +77,14 @@ public class LayoutPreviewImageRenderer implements ImageRenderer {
         ));
 
         return size;
+    }
+
+    private int renderPlaceHolder(GuiGraphicsExtractor graphics, int x, int y, int renderWidth, float tickDelta) {
+        var font = Minecraft.getInstance().font;
+        graphics.centeredText(font, Component.translatable("config.extended_drawers.info.previewNotAvailable").withStyle(ChatFormatting.RED), x + renderWidth / 2, y + 2, 0xffffffff);
+        graphics.centeredText(font, Component.translatable("config.extended_drawers.info.previewNotAvailable.reason").withStyle(ChatFormatting.YELLOW), x + renderWidth / 2, y + 12, 0xffffffff);
+
+        return 20;
     }
 
     @Override

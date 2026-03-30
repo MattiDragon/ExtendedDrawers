@@ -48,15 +48,17 @@ public record ClientCategory(int itemRenderDistance,
                               float largeItemScale,
                               float smallTextScale,
                               float largeTextScale,
-                              float textOffset) implements MutableClientCategory.MutableLayoutGroup.Source {
-        private static final LayoutGroup DEFAULT = new LayoutGroup(0.4f, 1f, 0.5f, 1f, 0.8f);
+                              float smallTextOffset,
+                              float largeTextOffset) implements MutableClientCategory.MutableLayoutGroup.Source {
+        private static final LayoutGroup DEFAULT = new LayoutGroup(0.35f, 0.95f, 0.5f, 0.75f, 1f, 0.9f);
 
         public static final Codec<LayoutGroup> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 AlwaysSerializedOptionalFieldCodec.create(Codec.FLOAT, "smallItemScale", DEFAULT.smallItemScale).forGetter(LayoutGroup::smallItemScale),
                 AlwaysSerializedOptionalFieldCodec.create(Codec.FLOAT, "largeItemScale", DEFAULT.largeItemScale).forGetter(LayoutGroup::largeItemScale),
                 AlwaysSerializedOptionalFieldCodec.create(Codec.FLOAT, "smallTextScale", DEFAULT.smallTextScale).forGetter(LayoutGroup::smallTextScale),
                 AlwaysSerializedOptionalFieldCodec.create(Codec.FLOAT, "largeTextScale", DEFAULT.largeTextScale).forGetter(LayoutGroup::largeTextScale),
-                AlwaysSerializedOptionalFieldCodec.create(Codec.FLOAT, "textOffset", DEFAULT.textOffset).forGetter(LayoutGroup::textOffset)
+                AlwaysSerializedOptionalFieldCodec.create(Codec.FLOAT, "smallTextOffset", DEFAULT.smallTextOffset).forGetter(LayoutGroup::smallTextOffset),
+                AlwaysSerializedOptionalFieldCodec.create(Codec.FLOAT, "largeTextOffset", DEFAULT.largeTextOffset).forGetter(LayoutGroup::largeTextOffset)
         ).apply(instance, LayoutGroup::new));
 
         public float itemScale(boolean small) {
@@ -65,6 +67,10 @@ public record ClientCategory(int itemRenderDistance,
 
         public float textScale(boolean small) {
             return small ? smallTextScale : largeTextScale;
+        }
+
+        public float textOffset(boolean small) {
+            return small ? smallTextOffset : largeTextOffset;
         }
     }
 }

@@ -104,8 +104,10 @@
   "config.extended_drawers.client.smallTextScale.description": "The scale at which to render the text on drawers for small slots",
   "config.extended_drawers.client.largeTextScale": "Large text scale",
   "config.extended_drawers.client.largeTextScale.description": "The scale at which to render the text on drawers for large slots",
-  "config.extended_drawers.client.textOffset": "Text offset",
-  "config.extended_drawers.client.textOffset.description": "Offset from the bottom of the slot to move the text by on drawers",
+  "config.extended_drawers.client.smallTextOffset": "Small text offset",
+  "config.extended_drawers.client.smallTextOffset.description": "Offset from the bottom of the slot to move the text by on large slots",
+  "config.extended_drawers.client.largeTextOffset": "Large text offset",
+  "config.extended_drawers.client.largeTextOffset.description": "Offset from the bottom of the slot to move the text by on small slots",
   "config.extended_drawers.client.icons": "Icons",
   "config.extended_drawers.client.lockedIcon": "Locked mode icon",
   "config.extended_drawers.client.lockedIcon.description": "The id of icon to be displayed on locked drawers. This texture must be available on the block texture atlas (all block and item textures reside there) to work properly.\n\nThe actual behaviour is controlled by the 'extended_drawers:toggle/lock' tag.",
@@ -115,6 +117,9 @@
   "config.extended_drawers.client.hiddenIcon.description": "The id of icon to be displayed on hidden drawers. This texture must be available on the block texture atlas (all block and item textures reside there) to work properly.\n\nThe actual behaviour is controlled by the 'extended_drawers:toggle/hidden' tag.",
   "config.extended_drawers.client.dupingIcon": "Duping mode icon",
   "config.extended_drawers.client.dupingIcon.description": "The id of icon to be displayed on duping drawers. This texture must be available on the block texture atlas (all block and item textures reside there) to work properly.\n\nThe actual behaviour is controlled by the 'extended_drawers:toggle/duping' tag.",
+
+  "config.extended_drawers.info.previewNotAvailable": "Preview not available",
+  "config.extended_drawers.info.previewNotAvailable.reason": "Enter a world to fix",
 
   "config.extended_drawers.creativeBreakingBehaviour.break": "Break",
   "config.extended_drawers.creativeBreakingBehaviour.break.description": "Break: Breaking is instant as normal.",

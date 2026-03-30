@@ -160,7 +160,7 @@ public abstract class AbstractDrawerBlockEntityRenderer<T extends BlockEntity, S
         matrices.pushPose();
         matrices.scale(itemScale, itemScale, 1);
         matrices.scale(0.75f, 0.75f, 1);
-        matrices.last().pose().mul(new Matrix4f().scale(1, 1, 0.01f));
+        matrices.last().pose().mul(new Matrix4f().scale(1, 1, 0.001f));
 
         // TODO: Fix lighting hack
 //        // Copy existing light configuration
@@ -191,12 +191,12 @@ public abstract class AbstractDrawerBlockEntityRenderer<T extends BlockEntity, S
         matrices.pushPose();
         matrices.mulPose(Axis.XP.rotationDegrees(180));
         if (small) {
-            matrices.translate(0, 0.25, -0.01);
+            matrices.translate(0, 0.25, 0);
         } else {
-            matrices.translate(0, 0.5, -0.01);
+            matrices.translate(0, 0.5, 0);
         }
         matrices.scale(config.layout().textScale(small), config.layout().textScale(small), 1);
-        matrices.translate(0, config.layout().textOffset() / -4, -0.01);
+        matrices.translate(0, config.layout().textOffset(small) / -4, -0.001);
 
         matrices.scale(0.02f, 0.02f, 0.02f);
         queue.submitText(

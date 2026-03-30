@@ -262,14 +262,20 @@ public class ConfigScreenFactory {
                 .controller(option -> FloatSliderControllerBuilder.create(option).range(0f, 2f).step(0.05f).formatValue(FLOAT_FORMATTER))
                 .description(OptionDescription.createBuilder().customImage(CompletableFuture.completedFuture(Optional.of(layoutRenderer))).text(Component.translatable("config.extended_drawers.client.largeTextScale.description")).build())
                 .build();
-        var textOffset = Option.<Float>createBuilder()
-                .name(Component.translatable("config.extended_drawers.client.textOffset"))
-                .binding(DEFAULT.client().layout().textOffset(), instance::textOffset, instance::textOffset)
-                .controller(option -> FloatSliderControllerBuilder.create(option).range(0f, 1f).step(0.05f).formatValue(FLOAT_FORMATTER))
-                .description(OptionDescription.createBuilder().customImage(CompletableFuture.completedFuture(Optional.of(layoutRenderer))).text(Component.translatable("config.extended_drawers.client.textOffset.description")).build())
+        var smallTextOffset = Option.<Float>createBuilder()
+                .name(Component.translatable("config.extended_drawers.client.smallTextOffset"))
+                .binding(DEFAULT.client().layout().smallTextOffset(), instance::smallTextOffset, instance::smallTextOffset)
+                .controller(option -> FloatSliderControllerBuilder.create(option).range(0.5f, 1.5f).step(0.05f).formatValue(FLOAT_FORMATTER))
+                .description(OptionDescription.createBuilder().customImage(CompletableFuture.completedFuture(Optional.of(layoutRenderer))).text(Component.translatable("config.extended_drawers.client.smallTextOffset.description")).build())
+                .build();
+        var largeTextOffset = Option.<Float>createBuilder()
+                .name(Component.translatable("config.extended_drawers.client.largeTextOffset"))
+                .binding(DEFAULT.client().layout().largeTextOffset(), instance::largeTextOffset, instance::largeTextOffset)
+                .controller(option -> FloatSliderControllerBuilder.create(option).range(0.5f, 1.5f).step(0.05f).formatValue(FLOAT_FORMATTER))
+                .description(OptionDescription.createBuilder().customImage(CompletableFuture.completedFuture(Optional.of(layoutRenderer))).text(Component.translatable("config.extended_drawers.client.largeTextOffset.description")).build())
                 .build();
 
-        layoutRenderer.init(smallItemScale, largeItemScale, smallTextScale, largeTextScale, textOffset);
+        layoutRenderer.init(smallItemScale, largeItemScale, smallTextScale, largeTextScale, smallTextOffset, largeTextOffset);
 
         return OptionGroup.createBuilder()
                 .name(Component.translatable("config.extended_drawers.client.layout"))
@@ -278,7 +284,8 @@ public class ConfigScreenFactory {
                 .option(largeItemScale)
                 .option(smallTextScale)
                 .option(largeTextScale)
-                .option(textOffset)
+                .option(smallTextOffset)
+                .option(largeTextOffset)
                 .build();
     }
 
@@ -290,7 +297,7 @@ public class ConfigScreenFactory {
         @Override
         public int render(GuiGraphicsExtractor graphics, int x, int y, int renderWidth, float tickDelta) {
             @SuppressWarnings("deprecation")
-            var blockAtlas = TextureAtlas.LOCATION_BLOCKS;
+            var blockAtlas = TextureAtlas.LOCATION_ITEMS;
             var sprite = graphics.getSprite(new SpriteId(blockAtlas, id));
 
             graphics.blitSprite(RenderPipelines.GUI_TEXTURED, sprite, x + renderWidth / 3, y, renderWidth / 3, renderWidth / 3);
