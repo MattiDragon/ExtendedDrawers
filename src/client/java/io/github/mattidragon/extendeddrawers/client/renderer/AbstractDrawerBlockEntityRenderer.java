@@ -24,7 +24,6 @@ import net.minecraft.client.resources.model.sprite.SpriteId;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.properties.AttachFace;
 import net.minecraft.world.phys.Vec3;
@@ -105,16 +104,6 @@ public abstract class AbstractDrawerBlockEntityRenderer<T extends BlockEntity, S
                 renderIcon(sprite, light, matricesEntry, vertexConsumer));
 
         matrices.popPose();
-    }
-
-    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-    public final boolean shouldRender(T drawer, Direction facing) {
-        var level = drawer.getLevel();
-        if (level == null) return false;
-        var pos = drawer.getBlockPos();
-        var state = drawer.getBlockState();
-
-        return Block.shouldRenderFace(state, level.getBlockState(pos.relative(facing)), facing);
     }
 
     public void renderIcons(Collection<SpriteId> icons, boolean small, int light, PoseStack matrices, SubmitNodeCollector queue) {
