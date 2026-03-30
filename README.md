@@ -57,7 +57,7 @@ Hide icons on drawers to reduce lag or hide your valuables, but remember, anyone
 Applied by sneaking and using black dye or ink sacs on drawers.
 
 ### Duping mode
-As for 1.20, you can use a by default unobtainable dupe wand to toggle duping mode on drawers.
+You can use a, by default unobtainable, dupe wand to toggle duping mode on drawers.
 They will continue to provide items even when empty. Voiding mode must still be applied separately.
 
 ### Addon
@@ -115,7 +115,7 @@ Any other sites are third-party reuploads and should not be trusted.
 ### Porting and Forking
 You can read my policy on [forking and porting mods](https://gist.github.com/MattiDragon/6b9e71e8516447f53f0d5fb296ab8868).
 
-Current target: 1.21.11.
+Current target: 26.1.
 
 ### Incompatibilities
 I intend to try and stay compatible with as many mods as possible, but might abandon support for some if it becomes too hard.
