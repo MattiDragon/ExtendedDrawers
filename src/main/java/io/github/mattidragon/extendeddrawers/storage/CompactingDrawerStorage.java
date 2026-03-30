@@ -358,7 +358,7 @@ public final class CompactingDrawerStorage extends SnapshotParticipant<Compactin
             StoragePreconditions.notBlankNotNegative(item, maxAmount);
             if (blocked) return 0;
             if (!this.item.equals(item) && !this.item.isBlank()) return 0;
-            if (!ExtendedDrawers.CONFIG.get().misc().allowRecursion() && !item.getItem().canFitInsideContainerItems()) return 0;
+            if (!ItemUtils.canStoreInDrawer(item)) return 0;
             if (this.item.isBlank() && settings.locked && !settings.lockOverridden) return 0;
 
             if (this.item.isBlank()) { // Special case for when drawer doesn't have item

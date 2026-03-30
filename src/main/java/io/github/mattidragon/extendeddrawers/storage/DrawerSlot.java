@@ -68,7 +68,7 @@ public final class DrawerSlot extends SnapshotParticipant<DrawerSlot.Snapshot> i
     @Override
     public long insert(ItemVariant resource, long maxAmount, TransactionContext transaction) {
         if (!resource.equals(item) && !item.isBlank()) return 0;
-        if (!ExtendedDrawers.CONFIG.get().misc().allowRecursion() && !resource.getItem().canFitInsideContainerItems()) return 0;
+        if (!ItemUtils.canStoreInDrawer(resource)) return 0;
         if (item.isBlank() && settings.locked && !settings.lockOverridden) return 0;
 
         var inserted = Math.min(getCapacity() - amount, maxAmount);

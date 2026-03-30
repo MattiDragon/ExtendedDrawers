@@ -1,5 +1,8 @@
 package io.github.mattidragon.extendeddrawers.misc;
 
+import io.github.mattidragon.extendeddrawers.ExtendedDrawers;
+import io.github.mattidragon.extendeddrawers.item.DrawerItem;
+import io.github.mattidragon.extendeddrawers.registry.ModDataComponents;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -26,5 +29,20 @@ public class ItemUtils {
             level.addFreshEntity(new ItemEntity(level, x, pos.getY(), z, stack));
         } else
             player.getInventory().placeItemBackInInventory(stack);
+    }
+
+    public static boolean canStoreInDrawer(ItemVariant variant) {
+        if (ExtendedDrawers.CONFIG.get().misc().allowRecursion()) {
+            return true;
+        }
+        if (variant.getItem().canFitInsideContainerItems()) {
+            return true;
+        }
+        if (variant.getItem() instanceof DrawerItem) {
+            var components = variant.getComponents();
+            return components.get(ModDataComponents.DRAWER_CONTENTS) == null
+                   && components.get(ModDataComponents.COMPACTING_DRAWER_CONTENTS) == null;
+        }
+        return false;
     }
 }
