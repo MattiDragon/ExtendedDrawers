@@ -1,0 +1,9 @@
+{
+  "name": "模组互通性",
+  "icon": "minecraft:hopper",
+  "category": "extended_drawers:networks",
+  "pages": [
+    "$(l:simple_networks)网络@!可以与任何使用 @thing@fabric 传输 API@! 的模组以及原版漏斗互动@p@个别$(l:drawers)抽屉@!支持从其栏位插入和取出物品@p@$(l:access_points)连接点@!和$(l:shadow_drawers)暗影抽屉@!提供对整个网络的存取，如果使用暗影抽屉，则提供额外的过滤功能。",
+    "这些系统允许您制作复杂的装置，可以执行各种操作$(br2)以下是一些示例：$(br)$(li)您可以将应用能源连接到连接点，以便轻松进行 GUI 存取$(li)您可以使用长连接器链和暗影抽屉即时传输远距离的物品，而无需在中间载入区块。"
+  ]
+}

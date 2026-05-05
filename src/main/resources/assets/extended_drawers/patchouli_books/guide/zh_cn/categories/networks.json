@@ -1,0 +1,6 @@
+{
+  "name": "抽屉网络",
+  "description": "本节说明抽屉网络的运作方式以及如何设置一个抽屉网络。$(br2)它还包含如何将您的网络与其他模组整合的提示。",
+  "icon": "extended_drawers:access_point",
+  "sortnum": 1
+}
