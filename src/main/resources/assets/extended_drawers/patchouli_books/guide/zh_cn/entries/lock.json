@@ -1,0 +1,13 @@
+{
+  "name": "上锁",
+  "icon": "extended_drawers:lock",
+  "category": "extended_drawers:modifiers",
+  "pages": [
+    "使用$(item)锁/$物品完成上锁和解锁。它使得无法变更$(l:drawers)抽屉@!所持有的物品类型，同时允许物品的输入和输出。@p@在建立有条理的分类系统或$(l:mod_interoperability)连接到其他模组@!时非常有用。",
+    {
+      "type": "patchouli:crafting",
+      "recipe": "extended_drawers:lock",
+      "text": "锁在使用时不会被消耗，因此您不必担心每个抽屉都要制作一个锁。它也可以用于连接点以切换整个网络中抽屉的上锁状态。"
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "name": "隐藏模式",
+  "icon": "minecraft:black_dye",
+  "category": "extended_drawers:modifiers",
+  "pages": [
+    "隐藏模式可以使用$(item)黑色染料/$切换。它可以让$(l:drawers)抽屉@!不显示其物品。@p@当您拥有大型抽屉网络并想要提升性能时这将非常有用，因为显示物品图标可能会消耗很多性能。",
+    "与$(l:lock)锁@!一样，物品不会被消耗，并且可以应用到连接点。@p@隐藏也可以套用到$(l:shadow_drawers)暗影抽屉@!。如果您想在装置中使用一个，这将非常有用。"
+  ]
+}

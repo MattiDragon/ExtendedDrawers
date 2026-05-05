@@ -1,0 +1,12 @@
+{
+  "name": "连接点",
+  "icon": "extended_drawers:access_point",
+  "category": "extended_drawers:blocks",
+  "pages": [
+    "「@item@连接点@!」允许将物品输入到整个$(l:simple_networks)网络@!，它会自动寻找正确的抽屉，请参阅$(l:insertion_order)此处@!以了解排序。@p@它们还充当其他模组与该存储网络交互的接口，请参阅$(l:mod_interoperability)此处@!以取得更多信息。",
+    {
+      "type": "patchouli:crafting",
+      "recipe": "extended_drawers:access_point"
+    }
+  ]
+}

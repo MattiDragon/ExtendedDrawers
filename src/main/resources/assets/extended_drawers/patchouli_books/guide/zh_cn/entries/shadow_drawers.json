@@ -1,0 +1,12 @@
+{
+  "name": "暗影抽屉",
+  "icon": "extended_drawers:shadow_drawer",
+  "category": "extended_drawers:blocks",
+  "pages": [
+    "$(item)暗影抽屉/$类似于$(l:access_points)连接点/$，但仅适用于单一物品。它们还允许玩家取出物品并显示计数。$(br2)它们的就像已被$(l:lock)锁定@!一样，但可以通过按住 Shift 并点击使用键（默认鼠标右键）来清除其物品。",
+    {
+      "type": "patchouli:crafting",
+      "recipe": "extended_drawers:shadow_drawer"
+    }
+  ]
+}
