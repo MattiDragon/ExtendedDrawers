@@ -23,7 +23,7 @@ repositories {
             includeGroupAndSubgroups("eu.pb4")
         }
     }
-//    mavenLocal()
+    mavenLocal()
 }
 
 loom.splitEnvironmentSourceSets()
@@ -47,7 +47,7 @@ fabricApi.configureDataGeneration {
 }
 
 loom.runs.configureEach {
-    ideConfigGenerated(true)
+    generateRunConfig = true
 
     // If we're running datagen and other runs at the same time, datagen must run first to make gradle happy
     if (name != "datagen") {

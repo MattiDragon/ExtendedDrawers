@@ -2,9 +2,9 @@ package io.github.mattidragon.extendeddrawers.recipe;
 
 import com.mojang.serialization.MapCodec;
 import io.github.mattidragon.extendeddrawers.component.LimiterLimitComponent;
+import io.github.mattidragon.extendeddrawers.component.ModDataComponents;
 import io.github.mattidragon.extendeddrawers.item.LimiterItem;
-import io.github.mattidragon.extendeddrawers.registry.ModDataComponents;
-import io.github.mattidragon.extendeddrawers.registry.ModItems;
+import io.github.mattidragon.extendeddrawers.item.ModItems;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;

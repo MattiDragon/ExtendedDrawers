@@ -1,6 +1,6 @@
 package io.github.mattidragon.extendeddrawers.extensions.datagen;
 
-import io.github.mattidragon.extendeddrawers.extensions.registry.ExtensionItems;
+import io.github.mattidragon.extendeddrawers.extensions.item.ExtensionItems;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;

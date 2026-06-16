@@ -4,14 +4,14 @@ import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import io.github.mattidragon.extendeddrawers.ExtendedDrawers;
+import io.github.mattidragon.extendeddrawers.block.ModBlocks;
 import io.github.mattidragon.extendeddrawers.client.renderer.state.CompactingDrawerRenderState;
 import io.github.mattidragon.extendeddrawers.client.renderer.state.DrawerRenderState;
 import io.github.mattidragon.extendeddrawers.client.renderer.state.DrawerSlotRenderState;
-import io.github.mattidragon.extendeddrawers.registry.ModBlocks;
-import io.github.mattidragon.extendeddrawers.registry.ModItems;
+import io.github.mattidragon.extendeddrawers.item.ModItems;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.util.Util;
@@ -19,23 +19,19 @@ import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.Items;
 
 public class LayoutPreviewRenderer extends PictureInPictureRenderer<LayoutPreviewRenderState> {
-    public LayoutPreviewRenderer(MultiBufferSource.BufferSource bufferSource) {
-        super(bufferSource);
-    }
-
     @Override
     public Class<LayoutPreviewRenderState> getRenderStateClass() {
         return LayoutPreviewRenderState.class;
     }
 
     @Override
-    protected void renderToTexture(LayoutPreviewRenderState state, PoseStack poseStack) {
+    protected void renderToTexture(LayoutPreviewRenderState state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector) {
         if (!areComponentsBound()) {
             return;
         }
 
         var minecraft = Minecraft.getInstance();
-        minecraft.gameRenderer.getLighting().setupFor(Lighting.Entry.ENTITY_IN_UI);
+        minecraft.gameRenderer.lighting().setupFor(Lighting.Entry.ENTITY_IN_UI);
 
         poseStack.pushPose();
         poseStack.scale(state.size(), state.size(), state.size());
@@ -108,14 +104,13 @@ public class LayoutPreviewRenderer extends PictureInPictureRenderer<LayoutPrevie
 
         try (var ignored = ExtendedDrawers.CONFIG.override(state.config())) {
             poseStack.translate(0.5, 0, 0);
-            minecraft.getBlockEntityRenderDispatcher().submit(state1, poseStack, minecraft.gameRenderer.getSubmitNodeStorage(), new CameraRenderState());
+            minecraft.getBlockEntityRenderDispatcher().submit(state1, poseStack, submitNodeCollector, new CameraRenderState());
             poseStack.translate(-1, 0, 0);
-            minecraft.getBlockEntityRenderDispatcher().submit(state2, poseStack, minecraft.gameRenderer.getSubmitNodeStorage(), new CameraRenderState());
+            minecraft.getBlockEntityRenderDispatcher().submit(state2, poseStack, submitNodeCollector, new CameraRenderState());
             poseStack.translate(-1, 0, 0);
-            minecraft.getBlockEntityRenderDispatcher().submit(state3, poseStack, minecraft.gameRenderer.getSubmitNodeStorage(), new CameraRenderState());
+            minecraft.getBlockEntityRenderDispatcher().submit(state3, poseStack, submitNodeCollector, new CameraRenderState());
         }
 
-        minecraft.gameRenderer.getFeatureRenderDispatcher().renderAllFeatures();
         poseStack.popPose();
     }
 

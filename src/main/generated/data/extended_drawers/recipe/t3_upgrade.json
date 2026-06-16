@@ -1,6 +1,5 @@
 {
   "type": "minecraft:crafting_shaped",
-  "category": "misc",
   "key": {
     "B": "extended_drawers:t2_upgrade",
     "M": "minecraft:diamond_block",

@@ -2,8 +2,8 @@ package io.github.mattidragon.extendeddrawers.networking;
 
 import io.github.mattidragon.extendeddrawers.ExtendedDrawers;
 import io.github.mattidragon.extendeddrawers.component.LimiterLimitComponent;
-import io.github.mattidragon.extendeddrawers.registry.ModDataComponents;
-import io.github.mattidragon.extendeddrawers.registry.ModItems;
+import io.github.mattidragon.extendeddrawers.component.ModDataComponents;
+import io.github.mattidragon.extendeddrawers.item.ModItems;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.network.FriendlyByteBuf;

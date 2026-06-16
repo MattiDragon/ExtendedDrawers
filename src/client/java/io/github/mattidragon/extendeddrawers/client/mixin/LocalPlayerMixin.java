@@ -3,8 +3,8 @@ package io.github.mattidragon.extendeddrawers.client.mixin;
 import com.mojang.authlib.GameProfile;
 import io.github.mattidragon.extendeddrawers.client.screen.EditLimiterScreen;
 import io.github.mattidragon.extendeddrawers.component.LimiterLimitComponent;
-import io.github.mattidragon.extendeddrawers.registry.ModDataComponents;
-import io.github.mattidragon.extendeddrawers.registry.ModItems;
+import io.github.mattidragon.extendeddrawers.component.ModDataComponents;
+import io.github.mattidragon.extendeddrawers.item.ModItems;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.InteractionHand;
@@ -35,7 +35,7 @@ public abstract class LocalPlayerMixin extends Player {
                     .map(LimiterLimitComponent::limit)
                     .orElse(null);
 
-            minecraft.setScreen(new EditLimiterScreen(stack.getHoverName(), hand == InteractionHand.MAIN_HAND ? getInventory().getSelectedSlot() : 40, limit));
+            minecraft.gui.setScreen(new EditLimiterScreen(stack.getHoverName(), hand == InteractionHand.MAIN_HAND ? getInventory().getSelectedSlot() : 40, limit));
         }
     }
 }

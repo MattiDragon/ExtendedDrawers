@@ -1,8 +1,8 @@
 package io.github.mattidragon.extendeddrawers.misc;
 
 import io.github.mattidragon.extendeddrawers.ExtendedDrawers;
+import io.github.mattidragon.extendeddrawers.component.ModDataComponents;
 import io.github.mattidragon.extendeddrawers.item.DrawerItem;
-import io.github.mattidragon.extendeddrawers.registry.ModDataComponents;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

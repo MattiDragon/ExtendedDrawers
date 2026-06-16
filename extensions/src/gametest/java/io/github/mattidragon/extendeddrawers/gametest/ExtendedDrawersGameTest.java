@@ -1,9 +1,9 @@
 package io.github.mattidragon.extendeddrawers.gametest;
 
 import io.github.mattidragon.extendeddrawers.ExtendedDrawers;
+import io.github.mattidragon.extendeddrawers.block.ModBlocks;
+import io.github.mattidragon.extendeddrawers.item.ModItems;
 import io.github.mattidragon.extendeddrawers.network.NetworkRegistry;
-import io.github.mattidragon.extendeddrawers.registry.ModBlocks;
-import io.github.mattidragon.extendeddrawers.registry.ModItems;
 import net.fabricmc.fabric.api.gametest.v1.CustomTestMethodInvoker;
 import net.fabricmc.fabric.api.gametest.v1.GameTest;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;

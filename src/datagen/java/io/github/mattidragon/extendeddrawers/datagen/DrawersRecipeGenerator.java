@@ -1,8 +1,8 @@
 package io.github.mattidragon.extendeddrawers.datagen;
 
 import io.github.mattidragon.extendeddrawers.ExtendedDrawers;
+import io.github.mattidragon.extendeddrawers.item.ModItems;
 import io.github.mattidragon.extendeddrawers.recipe.CopyLimiterRecipe;
-import io.github.mattidragon.extendeddrawers.registry.ModItems;
 import io.github.mattidragon.extendeddrawers.registry.ModTags;
 import net.fabricmc.fabric.api.tag.convention.v2.ConventionalItemTags;
 import net.minecraft.core.HolderLookup;

@@ -1,7 +1,7 @@
 package io.github.mattidragon.extendeddrawers.item;
 
 import io.github.mattidragon.extendeddrawers.block.base.DrawerInteractionHandler;
-import io.github.mattidragon.extendeddrawers.registry.ModDataComponents;
+import io.github.mattidragon.extendeddrawers.component.ModDataComponents;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.stats.Stats;

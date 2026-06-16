@@ -2,10 +2,10 @@ package io.github.mattidragon.extendeddrawers.block.base;
 
 import io.github.mattidragon.extendeddrawers.ExtendedDrawers;
 import io.github.mattidragon.extendeddrawers.block.entity.StorageDrawerBlockEntity;
+import io.github.mattidragon.extendeddrawers.item.ModItems;
 import io.github.mattidragon.extendeddrawers.item.UpgradeItem;
 import io.github.mattidragon.extendeddrawers.misc.DrawerInteractionStatusManager;
 import io.github.mattidragon.extendeddrawers.misc.DrawerRaycastUtil;
-import io.github.mattidragon.extendeddrawers.registry.ModItems;
 import io.github.mattidragon.extendeddrawers.storage.ModifierAccess;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.item.PlayerInventoryStorage;

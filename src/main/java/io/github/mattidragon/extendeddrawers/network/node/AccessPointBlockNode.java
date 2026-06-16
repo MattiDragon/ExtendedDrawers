@@ -3,7 +3,7 @@ package io.github.mattidragon.extendeddrawers.network.node;
 import com.kneelawk.graphlib.api.graph.NodeHolder;
 import com.kneelawk.graphlib.api.graph.user.BlockNode;
 import com.kneelawk.graphlib.api.graph.user.BlockNodeType;
-import io.github.mattidragon.extendeddrawers.registry.ModBlocks;
+import io.github.mattidragon.extendeddrawers.block.ModBlocks;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 

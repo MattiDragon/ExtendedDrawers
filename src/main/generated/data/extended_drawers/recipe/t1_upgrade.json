@@ -1,6 +1,5 @@
 {
   "type": "minecraft:crafting_shaped",
-  "category": "misc",
   "key": {
     "B": "extended_drawers:upgrade_frame",
     "M": "minecraft:barrel",

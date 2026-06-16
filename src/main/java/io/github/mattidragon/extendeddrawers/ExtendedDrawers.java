@@ -1,16 +1,16 @@
 package io.github.mattidragon.extendeddrawers;
 
 import io.github.mattidragon.configloader.api.ConfigManager;
+import io.github.mattidragon.extendeddrawers.block.ModBlocks;
+import io.github.mattidragon.extendeddrawers.component.ModDataComponents;
 import io.github.mattidragon.extendeddrawers.config.ConfigData;
+import io.github.mattidragon.extendeddrawers.item.ModItems;
 import io.github.mattidragon.extendeddrawers.misc.DrawerCacheCommand;
 import io.github.mattidragon.extendeddrawers.misc.ShiftAccess;
 import io.github.mattidragon.extendeddrawers.network.NetworkRegistry;
 import io.github.mattidragon.extendeddrawers.networking.CompressionRecipeSyncPayload;
 import io.github.mattidragon.extendeddrawers.networking.SetLimiterLimitPayload;
-import io.github.mattidragon.extendeddrawers.registry.ModBlocks;
-import io.github.mattidragon.extendeddrawers.registry.ModDataComponents;
-import io.github.mattidragon.extendeddrawers.registry.ModItems;
-import io.github.mattidragon.extendeddrawers.registry.ModRecipes;
+import io.github.mattidragon.extendeddrawers.recipe.ModRecipes;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.creativetab.v1.FabricCreativeModeTab;

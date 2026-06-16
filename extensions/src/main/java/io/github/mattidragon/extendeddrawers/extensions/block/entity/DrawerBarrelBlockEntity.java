@@ -2,8 +2,8 @@ package io.github.mattidragon.extendeddrawers.extensions.block.entity;
 
 import io.github.mattidragon.extendeddrawers.block.entity.DrawerBlockEntityUtils;
 import io.github.mattidragon.extendeddrawers.block.entity.StorageProvidingDrawerBlockEntity;
+import io.github.mattidragon.extendeddrawers.extensions.block.ExtensionBlocks;
 import io.github.mattidragon.extendeddrawers.extensions.mixin.BlockEntityAccess;
-import io.github.mattidragon.extendeddrawers.extensions.registry.ExtensionBlocks;
 import io.github.mattidragon.extendeddrawers.extensions.storage.DrawerBarrelStorage;
 import io.github.mattidragon.extendeddrawers.storage.DrawerStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;

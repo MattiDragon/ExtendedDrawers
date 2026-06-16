@@ -1,9 +1,9 @@
 package io.github.mattidragon.extendeddrawers.block.entity;
 
 import io.github.mattidragon.extendeddrawers.ExtendedDrawers;
+import io.github.mattidragon.extendeddrawers.block.ModBlocks;
+import io.github.mattidragon.extendeddrawers.component.ModDataComponents;
 import io.github.mattidragon.extendeddrawers.misc.ItemUtils;
-import io.github.mattidragon.extendeddrawers.registry.ModBlocks;
-import io.github.mattidragon.extendeddrawers.registry.ModDataComponents;
 import io.github.mattidragon.extendeddrawers.storage.CompactingDrawerStorage;
 import io.github.mattidragon.extendeddrawers.storage.DrawerStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;

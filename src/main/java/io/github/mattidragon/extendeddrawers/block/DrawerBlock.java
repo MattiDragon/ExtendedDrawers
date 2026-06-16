@@ -4,7 +4,6 @@ import io.github.mattidragon.extendeddrawers.block.base.StorageDrawerBlock;
 import io.github.mattidragon.extendeddrawers.block.entity.DrawerBlockEntity;
 import io.github.mattidragon.extendeddrawers.network.node.DrawerBlockNode;
 import io.github.mattidragon.extendeddrawers.network.node.DrawerNetworkBlockNode;
-import io.github.mattidragon.extendeddrawers.registry.ModBlocks;
 import io.github.mattidragon.extendeddrawers.storage.DrawerSlot;
 import io.github.mattidragon.extendeddrawers.storage.ModifierAccess;
 import net.fabricmc.fabric.api.transfer.v1.storage.StorageUtil;

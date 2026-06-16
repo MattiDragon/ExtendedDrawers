@@ -1,6 +1,6 @@
 package io.github.mattidragon.extendeddrawers.datagen;
 
-import io.github.mattidragon.extendeddrawers.registry.ModBlocks;
+import io.github.mattidragon.extendeddrawers.block.ModBlockItemIds;
 import io.github.mattidragon.extendeddrawers.registry.ModTags;
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagsProvider;
@@ -16,10 +16,10 @@ class DrawersBlockTagProvider extends FabricTagsProvider.BlockTagsProvider {
 
     @Override
     protected void addTags(HolderLookup.Provider registries) {
-        valueLookupBuilder(ModTags.BlockTags.DRAWERS).add(ModBlocks.SHADOW_DRAWER, ModBlocks.COMPACTING_DRAWER, ModBlocks.COMPACTING_DRAWER, ModBlocks.SINGLE_DRAWER, ModBlocks.DOUBLE_DRAWER, ModBlocks.QUAD_DRAWER);
-        valueLookupBuilder(ModTags.BlockTags.NETWORK_COMPONENTS).addTag(ModTags.BlockTags.DRAWERS).add(ModBlocks.ACCESS_POINT, ModBlocks.CONNECTOR);
+        builder(ModTags.BlockTags.DRAWERS).add(ModBlockItemIds.SHADOW_DRAWER, ModBlockItemIds.COMPACTING_DRAWER, ModBlockItemIds.COMPACTING_DRAWER, ModBlockItemIds.SINGLE_DRAWER, ModBlockItemIds.DOUBLE_DRAWER, ModBlockItemIds.QUAD_DRAWER);
+        builder(ModTags.BlockTags.NETWORK_COMPONENTS).addTag(ModTags.BlockTags.DRAWERS).add(ModBlockItemIds.ACCESS_POINT, ModBlockItemIds.CONNECTOR);
 
-        valueLookupBuilder(BlockTags.MINEABLE_WITH_AXE).add(ModBlocks.SINGLE_DRAWER, ModBlocks.DOUBLE_DRAWER, ModBlocks.QUAD_DRAWER, ModBlocks.CONNECTOR);
-        valueLookupBuilder(BlockTags.MINEABLE_WITH_PICKAXE).add(ModBlocks.ACCESS_POINT, ModBlocks.COMPACTING_DRAWER, ModBlocks.SHADOW_DRAWER);
+        builder(BlockTags.MINEABLE_WITH_AXE).add(ModBlockItemIds.SINGLE_DRAWER, ModBlockItemIds.DOUBLE_DRAWER, ModBlockItemIds.QUAD_DRAWER, ModBlockItemIds.CONNECTOR);
+        builder(BlockTags.MINEABLE_WITH_PICKAXE).add(ModBlockItemIds.ACCESS_POINT, ModBlockItemIds.COMPACTING_DRAWER, ModBlockItemIds.SHADOW_DRAWER);
     }
 }

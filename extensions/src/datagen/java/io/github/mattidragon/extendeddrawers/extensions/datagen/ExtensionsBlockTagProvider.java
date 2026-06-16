@@ -1,6 +1,6 @@
 package io.github.mattidragon.extendeddrawers.extensions.datagen;
 
-import io.github.mattidragon.extendeddrawers.extensions.registry.ExtensionBlocks;
+import io.github.mattidragon.extendeddrawers.extensions.block.ExtensionBlockItemIds;
 import io.github.mattidragon.extendeddrawers.registry.ModTags;
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagsProvider;
@@ -16,9 +16,9 @@ class ExtensionsBlockTagProvider extends FabricTagsProvider.BlockTagsProvider {
 
     @Override
     protected void addTags(HolderLookup.Provider registries) {
-        valueLookupBuilder(ModTags.BlockTags.DRAWERS).add(ExtensionBlocks.DRAWER_BARREL);
-        valueLookupBuilder(ModTags.BlockTags.NETWORK_COMPONENTS).add(ExtensionBlocks.ENDER_CONNECTOR);
+        builder(ModTags.BlockTags.DRAWERS).add(ExtensionBlockItemIds.DRAWER_BARREL);
+        builder(ModTags.BlockTags.NETWORK_COMPONENTS).add(ExtensionBlockItemIds.ENDER_CONNECTOR);
 
-        valueLookupBuilder(BlockTags.MINEABLE_WITH_AXE).add(ExtensionBlocks.DRAWER_BARREL);
+        builder(BlockTags.MINEABLE_WITH_AXE).add(ExtensionBlockItemIds.DRAWER_BARREL);
     }
 }

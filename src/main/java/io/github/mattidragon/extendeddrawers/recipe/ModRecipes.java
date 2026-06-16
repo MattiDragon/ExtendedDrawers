@@ -1,7 +1,6 @@
-package io.github.mattidragon.extendeddrawers.registry;
+package io.github.mattidragon.extendeddrawers.recipe;
 
 import io.github.mattidragon.extendeddrawers.ExtendedDrawers;
-import io.github.mattidragon.extendeddrawers.recipe.CopyLimiterRecipe;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 

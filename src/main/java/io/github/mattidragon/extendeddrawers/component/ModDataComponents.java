@@ -1,9 +1,6 @@
-package io.github.mattidragon.extendeddrawers.registry;
+package io.github.mattidragon.extendeddrawers.component;
 
 import io.github.mattidragon.extendeddrawers.ExtendedDrawers;
-import io.github.mattidragon.extendeddrawers.component.DrawerContentsComponent;
-import io.github.mattidragon.extendeddrawers.component.DrawerSlotComponent;
-import io.github.mattidragon.extendeddrawers.component.LimiterLimitComponent;
 import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.BuiltInRegistries;

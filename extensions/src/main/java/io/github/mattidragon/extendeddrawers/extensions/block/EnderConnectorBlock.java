@@ -4,7 +4,6 @@ import com.mojang.math.OctahedralGroup;
 import io.github.mattidragon.extendeddrawers.block.base.NetworkBlockWithEntity;
 import io.github.mattidragon.extendeddrawers.extensions.block.entity.EnderConnectorBlockEntity;
 import io.github.mattidragon.extendeddrawers.extensions.network.node.EnderConnectorBlockNode;
-import io.github.mattidragon.extendeddrawers.extensions.registry.ExtensionBlocks;
 import io.github.mattidragon.extendeddrawers.network.node.DrawerNetworkBlockNode;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;

@@ -4,9 +4,9 @@ import com.kneelawk.graphlib.api.graph.NodeHolder;
 import com.kneelawk.graphlib.api.graph.user.BlockNode;
 import com.kneelawk.graphlib.api.util.NodePos;
 import io.github.mattidragon.extendeddrawers.extensions.ExtendedDrawersExtensions;
+import io.github.mattidragon.extendeddrawers.extensions.block.ExtensionBlocks;
 import io.github.mattidragon.extendeddrawers.extensions.network.link.EnderConnectorLinkKey;
 import io.github.mattidragon.extendeddrawers.extensions.network.node.EnderConnectorBlockNode;
-import io.github.mattidragon.extendeddrawers.extensions.registry.ExtensionBlocks;
 import io.github.mattidragon.extendeddrawers.network.NetworkRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -23,8 +23,9 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.TagValueOutput;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
-import org.jspecify.annotations.Nullable;
+import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3fc;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 
@@ -77,9 +78,9 @@ public class EnderConnectorBlockEntity extends BlockEntity {
     }
 
     public void updateRayCache(NodeHolder<BlockNode> self) {
-        var centerPos = self.getBlockPos().getCenter();
+        var centerPos = Vec3.atCenterOf(self.getBlockPos());
         rayDirectionCache = self.getConnectionsOfType(EnderConnectorLinkKey.class)
-                .map(holder -> holder.other(self).getBlockPos().getCenter())
+                .map(holder -> Vec3.atCenterOf(holder.other(self).getBlockPos()))
                 .map(pos1 -> pos1.subtract(centerPos).toVector3f())
                 .<Vector3fc>map(pos1 -> pos1.lengthSquared() > (6 * 6) ? pos1.normalize(3) : pos1.mul(0.5f))
                 .toList();

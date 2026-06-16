@@ -1,22 +1,22 @@
 package io.github.mattidragon.extendeddrawers.extensions;
 
 import io.github.mattidragon.extendeddrawers.ExtendedDrawers;
+import io.github.mattidragon.extendeddrawers.extensions.block.ExtensionBlocks;
+import io.github.mattidragon.extendeddrawers.extensions.component.ExtensionDataComponents;
+import io.github.mattidragon.extendeddrawers.extensions.item.ExtensionItems;
 import io.github.mattidragon.extendeddrawers.extensions.network.link.EnderConnectorLinkKey;
 import io.github.mattidragon.extendeddrawers.extensions.network.node.DrawerBarrelBlockNode;
 import io.github.mattidragon.extendeddrawers.extensions.network.node.EnderConnectorBlockNode;
-import io.github.mattidragon.extendeddrawers.extensions.registry.ExtensionBlocks;
-import io.github.mattidragon.extendeddrawers.extensions.registry.ExtensionDataComponents;
-import io.github.mattidragon.extendeddrawers.extensions.registry.ExtensionItems;
+import io.github.mattidragon.extendeddrawers.item.ModItems;
 import io.github.mattidragon.extendeddrawers.network.NetworkRegistry;
-import io.github.mattidragon.extendeddrawers.registry.ModItems;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.item.v1.ItemComponentTooltipProviderRegistry;
 import net.fabricmc.fabric.api.creativetab.v1.CreativeModeTabEvents;
+import net.fabricmc.fabric.api.item.v1.ItemComponentTooltipProviderRegistry;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.entity.BlockEntityTypes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,7 +34,7 @@ public class ExtendedDrawersExtensions implements ModInitializer {
         ExtensionItems.register();
         ExtensionDataComponents.register();
 
-        BlockEntityType.BARREL.addValidBlock(ExtensionBlocks.DRAWER_BARREL);
+        BlockEntityTypes.BARREL.addValidBlock(ExtensionBlocks.DRAWER_BARREL);
 
         CreativeModeTabEvents.modifyOutputEvent(ResourceKey.create(Registries.CREATIVE_MODE_TAB, ExtendedDrawers.id("main")))
                 .register(output -> {

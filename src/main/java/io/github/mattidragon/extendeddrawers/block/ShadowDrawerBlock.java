@@ -8,7 +8,6 @@ import io.github.mattidragon.extendeddrawers.misc.DrawerRaycastUtil;
 import io.github.mattidragon.extendeddrawers.network.cache.NetworkStorageCache;
 import io.github.mattidragon.extendeddrawers.network.node.DrawerNetworkBlockNode;
 import io.github.mattidragon.extendeddrawers.network.node.ShadowDrawerBlockNode;
-import io.github.mattidragon.extendeddrawers.registry.ModBlocks;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.item.PlayerInventoryStorage;
 import net.fabricmc.fabric.api.transfer.v1.storage.Storage;

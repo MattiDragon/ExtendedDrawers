@@ -1,7 +1,7 @@
 package io.github.mattidragon.extendeddrawers.mixin;
 
 import io.github.mattidragon.extendeddrawers.block.base.DrawerInteractionHandler;
-import io.github.mattidragon.extendeddrawers.registry.ModDataComponents;
+import io.github.mattidragon.extendeddrawers.component.ModDataComponents;
 import io.github.mattidragon.extendeddrawers.registry.ModTags;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponentType;

@@ -2,11 +2,11 @@ package io.github.mattidragon.extendeddrawers.extensions.item;
 
 import com.kneelawk.graphlib.api.util.LinkPos;
 import com.kneelawk.graphlib.api.util.NodePos;
+import io.github.mattidragon.extendeddrawers.extensions.block.ExtensionBlocks;
+import io.github.mattidragon.extendeddrawers.extensions.component.ExtensionDataComponents;
 import io.github.mattidragon.extendeddrawers.extensions.component.LinkingEnderConnectorComponent;
 import io.github.mattidragon.extendeddrawers.extensions.network.link.EnderConnectorLinkKey;
 import io.github.mattidragon.extendeddrawers.extensions.network.node.EnderConnectorBlockNode;
-import io.github.mattidragon.extendeddrawers.extensions.registry.ExtensionBlocks;
-import io.github.mattidragon.extendeddrawers.extensions.registry.ExtensionDataComponents;
 import io.github.mattidragon.extendeddrawers.network.NetworkRegistry;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;

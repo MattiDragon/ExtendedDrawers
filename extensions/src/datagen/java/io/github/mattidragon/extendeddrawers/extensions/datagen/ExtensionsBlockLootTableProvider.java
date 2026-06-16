@@ -1,6 +1,6 @@
 package io.github.mattidragon.extendeddrawers.extensions.datagen;
 
-import io.github.mattidragon.extendeddrawers.extensions.registry.ExtensionBlocks;
+import io.github.mattidragon.extendeddrawers.extensions.block.ExtensionBlocks;
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricBlockLootSubProvider;
 import net.minecraft.core.HolderLookup;

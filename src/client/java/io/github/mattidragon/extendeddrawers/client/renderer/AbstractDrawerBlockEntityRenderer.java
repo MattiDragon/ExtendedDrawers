@@ -6,7 +6,6 @@ import com.mojang.math.Axis;
 import io.github.mattidragon.extendeddrawers.ExtendedDrawers;
 import io.github.mattidragon.extendeddrawers.block.base.StorageDrawerBlock;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
@@ -24,6 +23,7 @@ import net.minecraft.client.resources.model.sprite.SpriteId;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.properties.AttachFace;
 import net.minecraft.world.phys.Vec3;
@@ -53,22 +53,8 @@ public abstract class AbstractDrawerBlockEntityRenderer<T extends BlockEntity, S
     public void extractRenderState(T blockEntity, S state, float partialTicks, Vec3 cameraPosition, ModelFeatureRenderer.@Nullable CrumblingOverlay breakProgress) {
         BlockEntityRenderer.super.extractRenderState(blockEntity, state, partialTicks, cameraPosition, breakProgress);
         var dir = StorageDrawerBlock.getFront(blockEntity.getBlockState());
-        state.lightCoords = LevelRenderer.getLightCoords(Objects.requireNonNull(blockEntity.getLevel()), blockEntity.getBlockPos().relative(dir));
+        state.lightCoords = LightCoordsUtil.getLightCoords(Objects.requireNonNull(blockEntity.getLevel()), blockEntity.getBlockPos().relative(dir));
     }
-
-    // TODO: update
-//    /**
-//     * Creates an instance for rendering slots in guis for layout preview.
-//     */
-//    public static AbstractDrawerBlockEntityRenderer<BlockEntity> createRendererTool() {
-//        var client = MinecraftClient.getInstance();
-//        return new AbstractDrawerBlockEntityRenderer<>(client.textRenderer, context.spriteHolder()) {
-//            @Override
-//            public void render(BlockEntity entity, float tickProgress, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay, Vec3d cameraPos) {
-//
-//            }
-//        };
-//    }
 
     public void renderSlot(ItemStackRenderState item, @Nullable String amount, boolean small, boolean hidden, boolean full, Collection<SpriteId> icons, PoseStack matrices, SubmitNodeCollector queue, CameraRenderState cameraState, int light, BlockPos pos) {
         var playerPos = cameraState.pos;

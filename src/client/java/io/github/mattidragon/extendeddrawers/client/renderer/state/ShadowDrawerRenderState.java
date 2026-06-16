@@ -1,6 +1,6 @@
 package io.github.mattidragon.extendeddrawers.client.renderer.state;
 
-import io.github.mattidragon.extendeddrawers.registry.ModBlocks;
+import io.github.mattidragon.extendeddrawers.block.ModBlocks;
 import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
 import net.minecraft.client.renderer.item.ItemStackRenderState;
 import net.minecraft.world.level.block.Blocks;
