@@ -2,6 +2,7 @@ package io.github.mattidragon.extendeddrawers;
 
 import io.github.mattidragon.configloader.api.ConfigManager;
 import io.github.mattidragon.extendeddrawers.block.ModBlocks;
+import io.github.mattidragon.extendeddrawers.compacting.ModResourceReloaders;
 import io.github.mattidragon.extendeddrawers.component.ModDataComponents;
 import io.github.mattidragon.extendeddrawers.config.ConfigData;
 import io.github.mattidragon.extendeddrawers.item.ModItems;
@@ -56,6 +57,7 @@ public class ExtendedDrawers implements ModInitializer {
         DrawerCacheCommand.register();
         ResourceLoader.registerBuiltinPack(id("alt"), MOD_CONTAINER, Component.translatable("resourcepack.extended_drawers.alt"), PackActivationType.NORMAL);
         ResourceLoader.registerBuiltinPack(id("dev"), MOD_CONTAINER, Component.translatable("resourcepack.extended_drawers.programmer_art"), PackActivationType.NORMAL);
+        ModResourceReloaders.register();
     }
 
     private static void registerCommand() {

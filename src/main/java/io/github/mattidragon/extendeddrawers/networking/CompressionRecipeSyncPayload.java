@@ -25,7 +25,7 @@ public record CompressionRecipeSyncPayload(List<CompressionLadder> recipes, bool
         PayloadTypeRegistry.clientboundPlay().register(ID, CODEC);
         ServerLifecycleEvents.SYNC_DATA_PACK_CONTENTS.register((player, _) -> {
             var server = player.level().getServer();
-            ServerPlayNetworking.send(player, new CompressionRecipeSyncPayload(List.copyOf(ServerCompressionRecipeManager.of(server.getRecipeManager()).getLadders()), true));
+            ServerPlayNetworking.send(player, new CompressionRecipeSyncPayload(List.copyOf(ServerCompressionRecipeManager.of(server).getLadders()), true));
         });
     }
 

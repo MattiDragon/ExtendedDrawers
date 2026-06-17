@@ -1,9 +1,10 @@
 package io.github.mattidragon.extendeddrawers.compacting;
 
-import io.github.mattidragon.extendeddrawers.misc.RecipeManagerAccess;
 import io.github.mattidragon.extendeddrawers.networking.CompressionRecipeSyncPayload;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.fabricmc.fabric.api.resource.v1.DataResourceStore;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingInput;
@@ -19,33 +20,22 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public final class ServerCompressionRecipeManager implements CompressionRecipeManager {
+    public static final DataResourceStore.Key<ServerCompressionRecipeManager> DATA_RESOURCE_STORE_KEY = new DataResourceStore.Key<>();
+
     private final RecipeManager recipeManager;
     private final Map<ItemVariant, CompressionLadder> ladders = new HashMap<>();
-    private final List<CompressionLadder> overrides = new ArrayList<>();
 
-    public ServerCompressionRecipeManager(RecipeManager recipeManager) {
+    public ServerCompressionRecipeManager(RecipeManager recipeManager, List<CompressionLadder> overrides) {
         this.recipeManager = recipeManager;
+        overrides.forEach(this::addLadder);
     }
 
-    public static ServerCompressionRecipeManager of(RecipeManager recipeManager) {
-        return ((io.github.mattidragon.extendeddrawers.compacting.ServerCompressionRecipeManager.Provider) recipeManager).extended_drawers$getCompactingManager();
-    }
-
-    public void setOverrides(List<CompressionLadder> overrides) {
-        this.overrides.clear();
-        this.overrides.addAll(overrides);
-        reload();
+    public static ServerCompressionRecipeManager of(MinecraftServer server) {
+        return server.getOrThrow(DATA_RESOURCE_STORE_KEY);
     }
 
     public Collection<CompressionLadder> getLadders() {
         return ladders.values();
-    }
-
-    public void reload() {
-        ladders.clear();
-        for (var override : overrides) {
-            addLadder(override);
-        }
     }
 
     @Override
@@ -129,7 +119,7 @@ public final class ServerCompressionRecipeManager implements CompressionRecipeMa
 
     private Stream<ItemStack> findRecipes(ItemStack stack, int size, Level level) {
         var inventory = createInventory(stack, size);
-        return ((RecipeManagerAccess) recipeManager).getRecipes().getRecipesFor(RecipeType.CRAFTING, inventory, level)
+        return recipeManager.getAllMatches(RecipeType.CRAFTING, inventory, level)
                 .map(RecipeHolder::value)
                 .filter(recipe -> recipe.getRemainingItems(inventory).stream().allMatch(ItemStack::isEmpty)) // We can't deal with remainders, so we just prevent recipe with them from being used
                 .map(recipe -> recipe.assemble(inventory))
@@ -151,9 +141,5 @@ public final class ServerCompressionRecipeManager implements CompressionRecipeMa
     }
 
     private record RecipePair(ItemVariant compressed, ItemVariant decompressed, int scale) {
-    }
-    
-    public interface Provider extends CompressionRecipeManager.Provider {
-        ServerCompressionRecipeManager extended_drawers$getCompactingManager();
     }
 }
