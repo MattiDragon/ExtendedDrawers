@@ -23,7 +23,7 @@ repositories {
             includeGroupAndSubgroups("eu.pb4")
         }
     }
-    mavenLocal()
+//    mavenLocal()
 }
 
 loom.splitEnvironmentSourceSets()
@@ -120,6 +120,8 @@ publishMods {
     }
 
     curseforge {
+        server = true
+        client = true
         accessToken.set(providers.environmentVariable("CURSEFORGE_TOKEN"))
         minecraftVersions.add(libs.versions.minecraft.get())
     }
