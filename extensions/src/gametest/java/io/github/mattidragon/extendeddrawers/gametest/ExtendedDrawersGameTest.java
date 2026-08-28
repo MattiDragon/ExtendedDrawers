@@ -4,10 +4,13 @@ import io.github.mattidragon.extendeddrawers.ExtendedDrawers;
 import io.github.mattidragon.extendeddrawers.block.ModBlocks;
 import io.github.mattidragon.extendeddrawers.item.ModItems;
 import io.github.mattidragon.extendeddrawers.network.NetworkRegistry;
+import io.github.mattidragon.extendeddrawers.storage.CompactingDrawerStorage;
+import io.github.mattidragon.extendeddrawers.storage.DrawerSlot;
 import net.fabricmc.fabric.api.gametest.v1.CustomTestMethodInvoker;
 import net.fabricmc.fabric.api.gametest.v1.GameTest;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
+import net.fabricmc.fabric.api.transfer.v1.storage.SlottedStorage;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -129,6 +132,94 @@ public class ExtendedDrawersGameTest implements CustomTestMethodInvoker {
         }
 
         helper.succeed();
+    }
+
+    private static void insertSingleItem(GameTestHelper helper, BlockPos pos, ItemVariant resource) {
+        var storage = ItemStorage.SIDED.find(helper.getLevel(), helper.absolutePos(pos), Direction.UP);
+        helper.assertTrue(storage != null, "Storage must not be null");
+
+        try (var transaction = Transaction.openOuter()) {
+            var inserted = storage.insert(resource, 1, transaction);
+            helper.assertTrue(inserted == 1, "Drawer should accept a single item to initialize compacting storage");
+            transaction.commit();
+        }
+    }
+
+    private static CompactingDrawerStorage.Slot findSlotForResource(CompactingDrawerStorage storage, ItemVariant resource) {
+        for (int i = 0; i < storage.getSlotCount(); i++) {
+            var slot = storage.getSlot(i);
+            if (!slot.isBlocked() && slot.getResource().equals(resource)) {
+                return slot;
+            }
+        }
+
+        throw new AssertionError("No slot for resource " + resource + " in compacting drawer");
+    }
+
+    @GameTest
+    public void voidingTest(GameTestHelper helper) {
+        var normalSlotPos = new BlockPos(0, 0, 0);
+        var normalStoragePos = new BlockPos(0, 0, 2);
+        var compactingSlotPos = new BlockPos(3, 0, 0);
+        var compactingStoragePos = new BlockPos(3, 0, 2);
+
+        helper.setBlock(normalSlotPos, ModBlocks.SINGLE_DRAWER);
+        helper.setBlock(normalStoragePos, ModBlocks.SINGLE_DRAWER);
+        helper.setBlock(compactingSlotPos, ModBlocks.COMPACTING_DRAWER);
+        helper.setBlock(compactingStoragePos, ModBlocks.COMPACTING_DRAWER);
+
+        helper.runAtTickTime(1, () -> {
+            var normalSlotStorage = (SlottedStorage<ItemVariant>) ItemStorage.SIDED.find(helper.getLevel(), helper.absolutePos(normalSlotPos), Direction.UP);
+            helper.assertTrue(normalSlotStorage != null, "Normal drawer slot storage must not be null");
+            DrawerSlot normalSlot = (DrawerSlot) normalSlotStorage.getSlot(0);
+            normalSlot.setVoiding(true);
+
+            try (var transaction = Transaction.openOuter()) {
+                var inserted = normalSlot.insert(ItemVariant.of(Items.STONE), Long.MAX_VALUE, transaction);
+                helper.assertTrue(inserted == Long.MAX_VALUE, "Single-slot voiding should consume all inserted items");
+                helper.assertTrue(normalSlot.getTrueAmount() == normalSlot.getCapacity(), "Single-slot voiding should fill the drawer to capacity");
+                transaction.abort();
+            }
+
+            var normalStorage = (SlottedStorage<ItemVariant>) ItemStorage.SIDED.find(helper.getLevel(), helper.absolutePos(normalStoragePos), Direction.UP);
+            helper.assertTrue(normalStorage != null, "Normal drawer storage must not be null");
+            DrawerSlot normalStorageSlot = (DrawerSlot) normalStorage.getSlot(0);
+            normalStorageSlot.setVoiding(true);
+
+            try (var transaction = Transaction.openOuter()) {
+                var inserted = normalStorage.insert(ItemVariant.of(Items.STONE), Long.MAX_VALUE, transaction);
+                helper.assertTrue(inserted == Long.MAX_VALUE, "Whole-storage voiding should consume all inserted items");
+                helper.assertTrue(normalStorageSlot.getTrueAmount() == normalStorageSlot.getCapacity(), "Whole-storage voiding should fill the drawer to capacity");
+                transaction.abort();
+            }
+
+            var compactingSlotStorage = (CompactingDrawerStorage) ItemStorage.SIDED.find(helper.getLevel(), helper.absolutePos(compactingSlotPos), Direction.UP);
+            helper.assertTrue(compactingSlotStorage != null, "Compacting drawer slot storage must not be null");
+            insertSingleItem(helper, compactingSlotPos, ItemVariant.of(Items.IRON_INGOT));
+            compactingSlotStorage.setVoiding(true);
+            var compactingSlot = findSlotForResource(compactingSlotStorage, ItemVariant.of(Items.IRON_INGOT));
+
+            try (var transaction = Transaction.openOuter()) {
+                var inserted = compactingSlot.insert(ItemVariant.of(Items.IRON_INGOT), Long.MAX_VALUE, transaction);
+                helper.assertTrue(inserted == Long.MAX_VALUE, "Compacting single-slot voiding should consume all inserted items");
+                helper.assertTrue(compactingSlotStorage.getTrueAmount() == compactingSlotStorage.getCapacity(), "Compacting single-slot voiding should fill to capacity");
+                transaction.abort();
+            }
+
+            var compactingStorage = (CompactingDrawerStorage) ItemStorage.SIDED.find(helper.getLevel(), helper.absolutePos(compactingStoragePos), Direction.UP);
+            helper.assertTrue(compactingStorage != null, "Compacting drawer storage must not be null");
+            insertSingleItem(helper, compactingStoragePos, ItemVariant.of(Items.IRON_INGOT));
+            compactingStorage.setVoiding(true);
+
+            try (var transaction = Transaction.openOuter()) {
+                var inserted = compactingStorage.insert(ItemVariant.of(Items.IRON_INGOT), Long.MAX_VALUE, transaction);
+                helper.assertTrue(inserted == Long.MAX_VALUE, "Compacting whole-storage voiding should consume all inserted items");
+                helper.assertTrue(compactingStorage.getTrueAmount() == compactingStorage.getCapacity(), "Compacting whole-storage voiding should fill to capacity");
+                transaction.abort();
+            }
+
+            helper.succeed();
+        });
     }
 
     @Override

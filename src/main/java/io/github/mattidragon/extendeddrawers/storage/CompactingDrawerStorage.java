@@ -369,7 +369,15 @@ public final class CompactingDrawerStorage extends SnapshotParticipant<Compactin
                 return CompactingDrawerStorage.this.insert(item, maxAmount, transaction);
             }
 
-            var inserted = Math.min(maxAmount, getSpace());
+            var space = getSpace();
+
+            if (settings.voiding && maxAmount > space) {
+                updateSnapshots(transaction);
+                amount = CompactingDrawerStorage.this.getCapacity();
+                return maxAmount;
+            }
+
+            var inserted = Math.min(maxAmount, space);
             if (inserted > 0) {
                 updateSnapshots(transaction);
                 amount += inserted * compression;
